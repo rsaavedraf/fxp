@@ -1,0 +1,107 @@
+==============
+FXP Tester run
+==============
+Num type sizes in this system:
+char        has a size of 1 bytes.
+int         has a size of 4 bytes.
+long        has a size of 8 bytes.
+long long   has a size of 8 bytes.
+float       has a size of 4 bytes.
+double      has a size of 8 bytes.
+long double has a size of 16 bytes.
+
+FXP configuration constants:
+frac bits   : 10
+max fraction: 1023
+max whole   : 2097151
+min whole   : -2097151
+pos infinity: 2147483647
+neg infinity: -2147483647
+undefined   : -2147483648
+
+Simple operations with no overflows, checking signs
+fxp test:  10.5 +  2 == 12.499 (bin frac=511)
+fxp test:  10.5 + -2 == 8.499 (bin frac=511)
+fxp test: -10.5 +  2 == -8.-499 (bin frac=-511)
+fxp test: -10.5 + -2 == -12.-499 (bin frac=-511)
+fxp test:  10.5 -  2 == 8.499 (bin frac=511)
+fxp test:  10.5 - -2 == 12.499 (bin frac=511)
+fxp test: -10.5 -  2 == -12.-499 (bin frac=-511)
+fxp test: -10.5 - -2 == -8.-499 (bin frac=-511)
+fxp test:  10.5 *  2 == 20.999 (bin frac=1022)
+fxp test:  10.5 * -2 == -20.-999 (bin frac=-1022)
+fxp test: -10.5 *  2 == -20.-999 (bin frac=-1022)
+fxp test: -10.5 * -2 == 20.999 (bin frac=1022)
+fxp test:  10.5 /  2 == 5.249 (bin frac=255)
+fxp test:  10.5 / -2 == -5.-249 (bin frac=-255)
+fxp test: -10.5 /  2 == -5.-249 (bin frac=-255)
+fxp test: -10.5 / -2 == 5.249 (bin frac=255)
+
+Some general tests
+fxp test: Infinity == +INF
+fxp test: -Infinity == -INF
+fxp test: Undefined == UNDEF
+fxp test: zero == 0.0 (bin frac=0)
+fxp test: tiniest == 0.0 (bin frac=1)
+fxp test: -tiniest == 0.0 (bin frac=-1)
+fxp test: one == 1.0 (bin frac=0)
+fxp test: Largest == 2097151.999 (bin frac=1022)
+fxp test: Largest - tiniest == 2097151.998 (bin frac=1021)
+fxp test: Largest + tiniest safe == +INF
+fxp test: Largest + tiniest unsafe == +INF
+fxp test: Largest + one safe == +INF
+fxp test: Largest + one unsafe == -2097151.-1 (bin frac=-2)
+fxp test: Way Too Large whole part! == +INF
+fxp test: Almost most negative == -2097151.-998 (bin frac=-1021)
+fxp test: Most negative == -2097151.-999 (bin frac=-1022)
+fxp test: Safe Too negative substraction == -INF
+fxp test: Unsafe Too negative substraction == 2097151.1 (bin frac=2)
+fxp test: +inf + +inf == +INF
+fxp test: -inf - +inf == -INF
+fxp test: +inf + -inf == UNDEF
+fxp test: -inf + -inf == -INF
+fxp test: -inf - -inf == UNDEF
+fxp test: +inf * -inf == -INF
+fxp test: +num / zero == +INF
+fxp test: zero / zero == UNDEF
+fxp test: zero * zero == 0.0 (bin frac=0)
+fxp test: zero + zero == 0.0 (bin frac=0)
+fxp test: zero - zero == 0.0 (bin frac=0)
+fxp test: -num / zero == -INF
+fxp test: zero * +inf == UNDEF
+fxp test: zero * -inf == UNDEF
+fxp test: zero * undef == UNDEF
+fxp test: -inf * undef == UNDEF
+fxp test: +inf * undef == UNDEF
+fxp test: undef * undef == UNDEF
+fxp test: tiniest * inf == +INF
+
+Checking sign taken from frac when whole==0
+fxp test: -1.250 == -1.-249 (bin frac=-255)
+fxp test: -1.(-)250 == -1.-249 (bin frac=-255)
+fxp test: -1.250 + 1 == 0.-249 (bin frac=-255)
+fxp test:  0.500 == 0.499 (bin frac=511)
+fxp test: -0.(+)500 == 0.499 (bin frac=511)
+fxp test: -0.(-)500 == 0.-499 (bin frac=-511)
+fxp test:  0.(-)500 == 0.-499 (bin frac=-511)
+
+Trimming of large frac decimal arguments
+fxp test: 1000.777777 == 1000.777 (bin frac=795)
+fxp test: 2000.222222 == 2000.221 (bin frac=227)
+fxp test: 9.991999 is: == 9.991 (bin frac=1014)
+
+Further tests overflowing into infinities
+fxp test:  Max Fixed Point number == 2097151.999 (bin frac=1022)
+fxp test: ~Half Max == 1048575.999 (bin frac=1022)
+fxp test: Half Max + 1000 == 1049575.999 (bin frac=1022)
+fxp test: Half Max + Half Max == 2097151.997 (bin frac=1020)
+fxp test: FXP_MAX - Half Max == 1048576.0 (bin frac=0)
+fxp test: Half Max + FXP_MAX == +INF
+fxp test: -FXP_MAX - Half Max == -INF
+fxp test: Half Max * 2 == 2097151.997 (bin frac=1020)
+fxp test: Half Max * 2.001 == +INF
+fxp test: Half Max * 3 == +INF
+fxp test: -Half Max * 3 == -INF
+fxp test: Half Max / 0.25 == +INF
+fxp test: -Half Max / 0.25 == -INF
+
