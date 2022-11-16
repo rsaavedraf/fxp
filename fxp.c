@@ -49,8 +49,8 @@ int fxp_bin(int whole, int frac)
  * FXP_FRAC_DECS-1, e.g. between 0 and 999
  * Usage examples:
  *     For fxp=16.001, you would invoke: fxp_from_dec_frac(16, 1)
- *     For 20.09: fxp_from_dec_frac(24, 90)
- *     For 24.5:  fxp_from_dec_frac(24, 500)
+ *     For 20.09: fxp_dec(24, 90)
+ *     For 24.5:  fxp_dec(24, 500)
  * Note last example frac is not 5 but 500. (5 would correspond to 24.005)
  * This decimal value gets scaled into the binary range available for frac.
  * If frac is too large it will get trimmed-rounded to its most
