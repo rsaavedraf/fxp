@@ -12,8 +12,8 @@
 #define FXP_FRAC_BITS 10
 
 // FXP_FRAC_MAX should correspond to 2^FXP_FRAC_BITS - 1
-// Also used as mask for frac part. Hardcoded to avoid computing it
-#define FXP_FRAC_MAX 1023
+// Also used as mask for frac part.
+#define FXP_FRAC_MAX ((1 << FXP_FRAC_BITS) - 1)
 
 // Scale for decimal frac inputs (decimal range will be 0 .. FXP_FRAC_DECS-1)
 #define FXP_FRAC_DECS 1000
