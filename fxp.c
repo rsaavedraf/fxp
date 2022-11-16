@@ -48,7 +48,7 @@ int fxp_bin(int whole, int frac)
  * dec_frac is expected to be a decimal number between 0 and
  * FXP_FRAC_DECS-1, e.g. between 0 and 999
  * Usage examples:
- *     For fxp=16.001, you would invoke: fxp_from_dec_frac(16, 1)
+ *     For fxp=16.001, you would invoke: fxp_dec(16, 1)
  *     For 20.09: fxp_dec(24, 90)
  *     For 24.5:  fxp_dec(24, 500)
  * Note last example frac is not 5 but 500. (5 would correspond to 24.005)
