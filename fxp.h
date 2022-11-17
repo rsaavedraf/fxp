@@ -8,7 +8,7 @@
 #include <limits.h>
 
 // Number of bits to use for the frac part
-#define FXP_FRAC_BITS 10
+#define FXP_FRAC_BITS 12
 
 // FXP_FRAC_MAX should correspond to 2^FXP_FRAC_BITS - 1
 // Also used as mask for frac part.

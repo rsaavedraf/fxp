@@ -9,21 +9,32 @@
 #include <assert.h>
 #include "fxp.h"
 
-// Prints an fxp, and check it's equal to the assert value
-void test_fxp(char *s, int fxp, int assert_val)
+void print_fxp(int fxp)
 {
         if (fxp == FXP_POS_INF || fxp == FXP_NEG_INF || fxp == FXP_UNDEF)
-                printf("fxp test: %s == %s\n",
-                        s, (fxp==FXP_UNDEF?
-                                "UNDEF":
-                                (fxp==FXP_POS_INF? "+INF": "-INF")));
+                printf(fxp==FXP_UNDEF? "UNDEF":
+                      (fxp==FXP_POS_INF? "+INF": "-INF"));
         else
-                printf("fxp test: %s == %d.%d (bin frac=%d)\n",
-                        s,
+                printf("%d.%d (bin frac=%d)",
                         fxp_get_whole_part(fxp),
                         fxp_get_dec_frac(fxp),
                         fxp_get_bin_frac(fxp));
-        assert( fxp == assert_val );
+}
+
+// Check if equal to the assert value
+void test_fxp(char *s, int fxp, int assert_val)
+{
+        printf("For %s got ", s);
+        print_fxp(fxp);
+        printf(",\texpected ");
+        print_fxp(assert_val);
+        printf("\n");
+        fflush( stdout );
+        // Allowing 1 bit error (least significant bit in frac part)
+        if (fxp >= assert_val)
+            assert( fxp - assert_val <= 1);
+        else
+            assert( assert_val -fxp <= 1);
 }
 
 
@@ -50,32 +61,32 @@ int main(void)
         printf("undefined   : %d\n", FXP_UNDEF);
 
         printf("\nSimple operations with no overflows, checking signs\n");
-        int fxp1 = fxp_dec(10, 500);
+        int fxp1 = fxp_dec(10, 250);
         int fxp2 = fxp(2);
-        int a12  = fxp_bin(12, 511);
-        int am12 = fxp_bin(-12, -511);
-        int a8   = fxp_bin(8, 511);
-        int am8  = fxp_bin(-8, -511);
-        int a20  = fxp_bin(20, 1022);
-        int am20 = fxp_bin(-20, -1022);
-        int a5   = fxp_bin(5, 255);
-        int am5  = fxp_bin(-5, -255);
-        test_fxp(" 10.5 +  2", fxp_sum( fxp1, fxp2),  a12);
-        test_fxp(" 10.5 + -2", fxp_sum( fxp1, -fxp2), a8);
-        test_fxp("-10.5 +  2", fxp_sum(-fxp1,  fxp2), am8);
-        test_fxp("-10.5 + -2", fxp_sum(-fxp1, -fxp2), am12);
-        test_fxp(" 10.5 -  2", fxp_sub( fxp1,  fxp2), a8);
-        test_fxp(" 10.5 - -2", fxp_sub( fxp1, -fxp2), a12);
-        test_fxp("-10.5 -  2", fxp_sub(-fxp1,  fxp2), am12);
-        test_fxp("-10.5 - -2", fxp_sub(-fxp1, -fxp2), am8);
-        test_fxp(" 10.5 *  2", fxp_mul( fxp1,  fxp2), a20);
-        test_fxp(" 10.5 * -2", fxp_mul( fxp1, -fxp2), am20);
-        test_fxp("-10.5 *  2", fxp_mul(-fxp1,  fxp2), am20);
-        test_fxp("-10.5 * -2", fxp_mul(-fxp1, -fxp2), a20);
-        test_fxp(" 10.5 /  2", fxp_div( fxp1,  fxp2), a5);
-        test_fxp(" 10.5 / -2", fxp_div( fxp1, -fxp2), am5);
-        test_fxp("-10.5 /  2", fxp_div(-fxp1,  fxp2), am5);
-        test_fxp("-10.5 / -2", fxp_div(-fxp1, -fxp2), a5);
+        int a12  = fxp_dec(12, 250);
+        int am12 = fxp_dec(-12, -250);
+        int a8   = fxp_dec(8, 250);
+        int am8  = fxp_dec(-8, -250);
+        int a20  = fxp_dec(20, 500);
+        int am20 = fxp_dec(-20, -500);
+        int a5   = fxp_dec(5, 125);
+        int am5  = fxp_dec(-5, -125);
+        test_fxp(" 10.25 +  2", fxp_sum( fxp1,  fxp2), a12);
+        test_fxp(" 10.25 + -2", fxp_sum( fxp1, -fxp2), a8);
+        test_fxp("-10.25 +  2", fxp_sum(-fxp1,  fxp2), am8);
+        test_fxp("-10.25 + -2", fxp_sum(-fxp1, -fxp2), am12);
+        test_fxp(" 10.25 -  2", fxp_sub( fxp1,  fxp2), a8);
+        test_fxp(" 10.25 - -2", fxp_sub( fxp1, -fxp2), a12);
+        test_fxp("-10.25 -  2", fxp_sub(-fxp1,  fxp2), am12);
+        test_fxp("-10.25 - -2", fxp_sub(-fxp1, -fxp2), am8);
+        test_fxp(" 10.25 *  2", fxp_mul( fxp1,  fxp2), a20);
+        test_fxp(" 10.25 * -2", fxp_mul( fxp1, -fxp2), am20);
+        test_fxp("-10.25 *  2", fxp_mul(-fxp1,  fxp2), am20);
+        test_fxp("-10.25 * -2", fxp_mul(-fxp1, -fxp2), a20);
+        test_fxp(" 10.25 /  2", fxp_div( fxp1,  fxp2), a5);
+        test_fxp(" 10.25 / -2", fxp_div( fxp1, -fxp2), am5);
+        test_fxp("-10.25 /  2", fxp_div(-fxp1,  fxp2), am5);
+        test_fxp("-10.25 / -2", fxp_div(-fxp1, -fxp2), a5);
 
         printf("\nSome general tests\n");
         int fxp_zero     = fxp(0);
@@ -93,7 +104,7 @@ int main(void)
         test_fxp("Largest",  fxp_largest,
                              fxp_bin(FXP_WHOLE_MAX, FXP_FRAC_MAX-1));
         test_fxp("Largest - tiniest", fxp_sub(fxp_largest, fxp_tiniest),
-                                      fxp_bin(2097151, 1021));
+                                      fxp_largest-1);
         test_fxp("Largest + tiniest safe",
                             fxp_sum(fxp_largest, fxp_tiniest),
                             FXP_POS_INF);
@@ -105,13 +116,13 @@ int main(void)
                             FXP_POS_INF);
         test_fxp("Largest + one unsafe",
                             fxp_unsafe_sum(fxp_largest, fxp_one),
-                            fxp_bin(-2097151, -2));
+                            fxp_largest + fxp_one);
         test_fxp("Way Too Large whole part!",
-                            fxp(FXP_WHOLE_MAX*50),
+                            fxp(FXP_WHOLE_MAX*5),
                             FXP_POS_INF);
         test_fxp("Almost most negative",
                             fxp_sum(-fxp_largest, fxp_tiniest),
-                            fxp_bin(FXP_WHOLE_MIN, -1021));
+                            fxp_bin(FXP_WHOLE_MIN, -FXP_FRAC_MAX+1));
         test_fxp("Most negative",
                             -fxp_largest,
                             FXP_MIN);
@@ -120,7 +131,7 @@ int main(void)
                             FXP_NEG_INF);
         test_fxp("Unsafe Too negative substraction",
                             fxp_unsafe_sub(-fxp_largest, fxp_one),
-                            fxp_bin(2097151, 2));
+                            -fxp_largest - fxp_one);
         test_fxp("+inf + +inf",
                             fxp_sum(FXP_POS_INF, FXP_POS_INF),
                             FXP_POS_INF);
@@ -180,54 +191,44 @@ int main(void)
                             FXP_POS_INF);
 
         printf("\nChecking sign taken from frac when whole==0\n");
-        test_fxp("-1.250",
-                            fxp_dec(-1, 250),
-                            fxp_bin(-1, 255));
-        test_fxp("-1.(-)250",
-                            fxp_dec(-1,-250),
-                            fxp_bin(-1,-255));
-        test_fxp("-1.250 + 1",
-                            fxp_sum(fxp_dec(-1,250), fxp(1)),
-                            fxp_bin(0, -255));
-        test_fxp(" 0.500",
-                            fxp_dec(0, 500),
-                            fxp_bin(0, 511));
+        test_fxp("tiniest - 1",
+                            fxp_sum(fxp_bin(0,1), fxp(-1)),
+                            fxp_bin(0, 1-FXP_FRAC_MAX));
         test_fxp("-0.(+)500",
                             fxp_dec(-0, 500),
-                            fxp_bin(0, 511));
+                            fxp_dec(0, 500));
         test_fxp("-0.(-)500",
                             fxp_dec(-0, -500),
-                            fxp_bin(0, -511));
-        test_fxp(" 0.(-)500",
-                            fxp_dec(0, -500),
-                            fxp_bin(0, -511));
+                            fxp_dec(0, -500));
 
         printf("\nTrimming of large frac decimal arguments\n");
+        print_fxp(fxp_dec(1000, 777)); printf("\n");
+        print_fxp(fxp_dec(1000, 778)); printf("\n");
         test_fxp("1000.777777",
                             fxp_dec(1000, 777777),
-                            fxp_bin(1000, 795));
+                            fxp_dec(1000, 778));
         test_fxp("2000.222222",
                             fxp_dec(2000, 222222),
-                            fxp_bin(2000, 227));
+                            fxp_dec(2000, 222));
         test_fxp("9.991999 is:",
                             fxp_dec(9, 991999),
-                            fxp_bin(9, 1014));
+                            fxp_dec(9, 992));
 
         printf("\nFurther tests overflowing into infinities\n");
         test_fxp(" Max Fixed Point number", FXP_MAX, FXP_MAX);
         int halfmax = fxp_sub( fxp_div(FXP_MAX, fxp(2)), fxp_tiniest);
         test_fxp("~Half Max",
                             halfmax,
-                            fxp_bin(1048575, 1022));
+                            fxp_bin(FXP_WHOLE_MAX/2, FXP_FRAC_MAX-1));
         test_fxp("Half Max + 1000",
                             fxp_sum(halfmax, fxp(1000)),
-                            fxp_bin(1049575, 1022));
+                            fxp_bin(FXP_WHOLE_MAX/2+1000, FXP_FRAC_MAX-1));
         test_fxp("Half Max + Half Max",
                             fxp_sum(halfmax, halfmax),
-                            fxp_bin(FXP_WHOLE_MAX, 1020));
+                            fxp_bin(FXP_WHOLE_MAX, FXP_FRAC_MAX-2));
         test_fxp("FXP_MAX - Half Max",
                             fxp_sub(FXP_MAX, halfmax),
-                            fxp_bin(1048576, 0));
+                            FXP_MAX/2);
         test_fxp("Half Max + FXP_MAX",
                             fxp_sum(halfmax, FXP_MAX),
                             FXP_POS_INF);
@@ -236,7 +237,7 @@ int main(void)
                             FXP_NEG_INF);
         test_fxp("Half Max * 2",
                             fxp_mul(halfmax, fxp(2)),
-                            fxp_bin(FXP_WHOLE_MAX, 1020));
+                            FXP_MAX - 2);
         test_fxp("Half Max * 2.001",
                             fxp_mul(halfmax, fxp_bin(2, 1)),
                             FXP_POS_INF);
@@ -253,7 +254,7 @@ int main(void)
                             fxp_div(-halfmax, fxp_dec(0, 250)),
                             FXP_NEG_INF);
 
-        printf("\n");
+        printf("\nAll fxp tests passed for %d frac bits!\n", FXP_FRAC_BITS);
 
         return 0;
 }
