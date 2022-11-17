@@ -47,7 +47,7 @@ int fxp_bin(int whole, int bin_frac)
 /*
  * Create an fxp number given its whole and (decimal) frac parts.
  * dec_frac is expected to be a decimal number between 0 and
- * FXP_FRAC_MAX_DECS, e.g. between 0 and 999
+ * FXP_FRAC_MAX_DEC, e.g. between 0 and 999
  * Usage examples:
  *     For fxp=16.001, you would invoke: fxp_dec(16, 1)
  *     For 20.09: fxp_dec(24, 90)
