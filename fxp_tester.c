@@ -9,38 +9,52 @@
 #include <assert.h>
 #include "fxp.h"
 
+#define DASHES "========================\n"
+
+static int nwarnings = 0;
+
 void print_fxp(int fxp)
 {
         if (fxp == FXP_POS_INF || fxp == FXP_NEG_INF || fxp == FXP_UNDEF)
                 printf(fxp==FXP_UNDEF? "UNDEF":
                       (fxp==FXP_POS_INF? "+INF": "-INF"));
-        else
-                printf("%d.%d (bin frac=%d)",
-                        fxp_get_whole_part(fxp),
+        else {
+                int whole = fxp_get_whole_part(fxp);
+                char * sign  = ((fxp<0) && (whole==0))? "-": "";
+                printf("%s%d.%3d (bin frac=%d)",
+                        sign,
+                        whole,
                         fxp_get_dec_frac(fxp),
                         fxp_get_bin_frac(fxp));
+        }
 }
 
-// Check if equal to the assert value
 void test_fxp(char *s, int fxp, int assert_val)
 {
-        printf("For %s got ", s);
+        printf("'%s', got ", s);
         print_fxp(fxp);
         printf(",\texpected ");
         print_fxp(assert_val);
         printf("\n");
         fflush( stdout );
         // Allowing 1 bit error (least significant bit in frac part)
-        if (fxp >= assert_val)
-            assert( fxp - assert_val <= 1);
-        else
-            assert( assert_val -fxp <= 1);
+        int delta = 0;
+        if (fxp >= assert_val) {
+                delta = fxp - assert_val;
+                assert( delta <= 1);
+        } else {
+                delta = assert_val - fxp;
+                assert( delta <= 1);
+        }
+        if (delta == 1) {
+            nwarnings++;
+            printf("***** Warning %d: delta == 1 found!\n", nwarnings);
+        }
 }
-
 
 int main(void)
 {
-        printf("==============\nFXP Tester run\n==============\n");
+        printf("%sFXP Tester run\n%s", DASHES, DASHES);
 
         printf("Num type sizes in this system:\n");
         printf("char        has a size of %zd bytes.\n", sizeof(char));
@@ -53,12 +67,30 @@ int main(void)
 
         printf("\nFXP configuration constants:\n");
         printf("frac bits   : %d\n", FXP_FRAC_BITS);
-        printf("max fraction: %d\n", FXP_FRAC_MAX);
+        printf("max fraction: %d (->decimals: .%d)\n", FXP_FRAC_MAX, FXP_FRAC_MAX_DEC );
         printf("max whole   : %d\n", FXP_WHOLE_MAX);
         printf("min whole   : %d\n", FXP_WHOLE_MIN);
         printf("pos infinity: %d\n", FXP_POS_INF);
         printf("neg infinity: %d\n", FXP_NEG_INF);
         printf("undefined   : %d\n", FXP_UNDEF);
+
+        printf("\nChecking decimal<=>bin mappings of frac ranges:");
+        for (int i=0; i<=10; i++) {
+                printf("\nShowing fxp for 10.%3d: ", i);
+                print_fxp(fxp_dec(10, i));
+        }
+        printf("\n");
+        int m = (FXP_FRAC_MAX_DEC+1)/2;
+        for (int i=m-5; i<=m+5; i++) {
+                printf("\nShowing fxp for 10.%3d: ", i);
+                print_fxp(fxp_dec(10, i));
+        }
+        printf("\n");
+        for (int i=FXP_FRAC_MAX_DEC-10; i<=FXP_FRAC_MAX_DEC; i++) {
+                printf("\nShowing fxp for 10.%3d: ", i);
+                print_fxp(fxp_dec(10, i));
+        }
+        printf("\n");
 
         printf("\nSimple operations with no overflows, checking signs\n");
         int fxp1 = fxp_dec(10, 250);
@@ -120,16 +152,16 @@ int main(void)
         test_fxp("Way Too Large whole part!",
                             fxp(FXP_WHOLE_MAX*5),
                             FXP_POS_INF);
-        test_fxp("Almost most negative",
-                            fxp_sum(-fxp_largest, fxp_tiniest),
-                            fxp_bin(FXP_WHOLE_MIN, -FXP_FRAC_MAX+1));
         test_fxp("Most negative",
                             -fxp_largest,
                             FXP_MIN);
-        test_fxp("Safe Too negative substraction",
+        test_fxp("Almost most negative",
+                            fxp_sum(-fxp_largest, fxp_tiniest),
+                            fxp_bin(FXP_WHOLE_MIN, -FXP_FRAC_MAX+2));
+        test_fxp("Safe Too neg substraction",
                             fxp_sub(-fxp_largest, fxp_one),
                             FXP_NEG_INF);
-        test_fxp("Unsafe Too negative substraction",
+        test_fxp("Unsafe Too neg substraction",
                             fxp_unsafe_sub(-fxp_largest, fxp_one),
                             -fxp_largest - fxp_one);
         test_fxp("+inf + +inf",
@@ -201,18 +233,11 @@ int main(void)
                             fxp_dec(-0, -500),
                             fxp_dec(0, -500));
 
-        printf("\nTrimming of large frac decimal arguments\n");
-        print_fxp(fxp_dec(1000, 777)); printf("\n");
-        print_fxp(fxp_dec(1000, 778)); printf("\n");
-        test_fxp("1000.777777",
-                            fxp_dec(1000, 777777),
-                            fxp_dec(1000, 778));
-        test_fxp("2000.222222",
-                            fxp_dec(2000, 222222),
-                            fxp_dec(2000, 222));
-        test_fxp("9.991999 is:",
-                            fxp_dec(9, 991999),
-                            fxp_dec(9, 992));
+        printf("\nTruncation of longer frac decimal arguments\n");
+        test_fxp("10.222222", fxp_dec(10, 222222), fxp_dec(10, 222));
+        test_fxp("10.777777", fxp_dec(10, 777777), fxp_dec(10, 777));
+        test_fxp("10.991999", fxp_dec(10, 991999), fxp_dec(10, 991));
+        test_fxp("10.999999", fxp_dec(10, 999999), fxp_dec(10, 999));
 
         printf("\nFurther tests overflowing into infinities\n");
         test_fxp(" Max Fixed Point number", FXP_MAX, FXP_MAX);
@@ -225,10 +250,10 @@ int main(void)
                             fxp_bin(FXP_WHOLE_MAX/2+1000, FXP_FRAC_MAX-1));
         test_fxp("Half Max + Half Max",
                             fxp_sum(halfmax, halfmax),
-                            fxp_bin(FXP_WHOLE_MAX, FXP_FRAC_MAX-2));
+                            halfmax+halfmax);
         test_fxp("FXP_MAX - Half Max",
                             fxp_sub(FXP_MAX, halfmax),
-                            FXP_MAX/2);
+                            FXP_MAX/2 + fxp_tiniest);
         test_fxp("Half Max + FXP_MAX",
                             fxp_sum(halfmax, FXP_MAX),
                             FXP_POS_INF);
@@ -254,7 +279,10 @@ int main(void)
                             fxp_div(-halfmax, fxp_dec(0, 250)),
                             FXP_NEG_INF);
 
-        printf("\nAll fxp tests passed for %d frac bits!\n", FXP_FRAC_BITS);
+        printf("\nTotal # of warnings: %d\n", nwarnings);
+        printf("All tests passed using %d-bit and '%d' decimal fracs.\n",
+                FXP_FRAC_BITS,
+                FXP_FRAC_MAX_DEC);
 
         return 0;
 }

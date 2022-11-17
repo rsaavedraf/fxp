@@ -15,19 +15,20 @@ int fxp(int whole)
 
 /*
  * Create an fxp number given its whole and (binary) frac parts.
+ * bin_frac should be a value between 0 and FXP_MAX_FRAC
  */
-int fxp_bin(int whole, int frac)
+int fxp_bin(int whole, int bin_frac)
 {
         if (whole > FXP_WHOLE_MAX)
                 return FXP_POS_INF;
         if (whole < FXP_WHOLE_MIN)
                 return FXP_NEG_INF;
         int sign = 1;
-        if ((whole==0) && (frac < 0)) {
+        if ((whole==0) && (bin_frac < 0)) {
                 // Special case for negative numbers when whole part is zero,
                 // then the fxp gets its sign from the frac
                 sign = -1;
-                frac = -frac;
+                bin_frac = -bin_frac;
         }
         else {
                 // All other cases, fxp gets its sign from the whole part
@@ -35,10 +36,10 @@ int fxp_bin(int whole, int frac)
                     sign = -1;
                     whole = -whole;
                 }
-                if (frac < 0)
-                    frac = -frac;
+                if (bin_frac < 0)
+                    bin_frac = -frac;
         }
-        int positive_fxp = (whole << FXP_FRAC_BITS) | frac;
+        int positive_fxp = (whole << FXP_FRAC_BITS) | bin_frac;
         //printf("fxp_from_bin_frac: frac is: %d\n", frac);
         return (sign==1)? positive_fxp: -positive_fxp;
 }
@@ -46,16 +47,19 @@ int fxp_bin(int whole, int frac)
 /*
  * Create an fxp number given its whole and (decimal) frac parts.
  * dec_frac is expected to be a decimal number between 0 and
- * FXP_FRAC_DECS-1, e.g. between 0 and 999
+ * FXP_FRAC_MAX_DECS, e.g. between 0 and 999
  * Usage examples:
  *     For fxp=16.001, you would invoke: fxp_dec(16, 1)
  *     For 20.09: fxp_dec(24, 90)
  *     For 24.5:  fxp_dec(24, 500)
  * Note last example frac is not 5 but 500. (5 would correspond to 24.005)
  * This decimal value gets scaled into the binary range available for frac.
- * If frac is too large it will get trimmed-rounded to its most
- * significant digits until under the value of FXP_FRAC_DECS, e.g. for a
- * scale of 1000, if frac=987654 it will be trimmed to ~988
+ * For negative numbers with whole part=0, the frac value must be negative.
+ * If frac is too large it will get truncated to its most
+ * significant decimal digits until under the value of FXP_FRAC_MAX_DEC,
+ * e.g. for a max of 999, a frac=987654 will be truncated to 987
+ * (Truncating and not rounding, because the latter would require
+ * changing the whole part in some border cases)
  */
 int fxp_dec(int whole, int dec_frac)
 {
@@ -64,11 +68,15 @@ int fxp_dec(int whole, int dec_frac)
                 frac_sign = -1;
                 dec_frac = -dec_frac;
         }
-        int trimed_frac = dec_frac;
-        while (trimed_frac > FXP_FRAC_DECS)
-                trimed_frac = (trimed_frac + 5)/10;
-        int bin_frac = (trimed_frac * FXP_FRAC_MAX) / FXP_FRAC_DECS;
-        //printf("fxp_from_dec_frac: bin_frac is: %d\n", bin_frac);
+        int trunc_frac = dec_frac;
+        //printf("   fxp_from_dec_frac: original frac: %d\n", dec_frac);
+        while (trunc_frac > FXP_FRAC_MAX_DEC) {
+                //trimmed_frac = (trimmed_frac + 5)/10;
+                trunc_frac = trunc_frac/10;
+                //printf("   fxp_from_dec_frac: frac trimmed to: %d\n", trunc_frac);
+        }
+        int bin_frac = (trunc_frac * FXP_FRAC_MAX) / FXP_FRAC_MAX_DEC ;
+        //printf("   fxp_from_dec_frac: bin_frac is: %d\n", bin_frac);
         return fxp_bin(whole, (frac_sign==1)? bin_frac: -bin_frac);
 }
 
@@ -92,19 +100,14 @@ int fxp_get_bin_frac(int fxp)
 }
 
 /*
- * Get the frac part as decimal between 0 and FXP_FRAC_DECS, e.g. 0 .. 999
+ * Get the frac part as decimal between 0 and FXP_FRAC_MAX_DEC, e.g. 0 .. 999
  */
 int fxp_get_dec_frac(int fxp)
 {
-        if (fxp < 0) {
-                //return -(((-fxp) & FXP_FRAC_MAX) * FXP_FRAC_DECS)/FXP_FRAC_MAX;
-                int df = -(((-fxp) & FXP_FRAC_MAX) * FXP_FRAC_DECS)/FXP_FRAC_MAX;
-                return (df == -FXP_FRAC_DECS)? df+1: df;
-        } else {
-                //return ((fxp & FXP_FRAC_MAX) * FXP_FRAC_DECS)/FXP_FRAC_MAX;
-                int df = ((fxp & FXP_FRAC_MAX) * FXP_FRAC_DECS)/FXP_FRAC_MAX;
-                return (df == FXP_FRAC_DECS)? df-1: df;
-        }
+        if (fxp < 0)
+                return -(((-fxp) & FXP_FRAC_MAX) * FXP_FRAC_MAX_DEC)/FXP_FRAC_MAX;
+        else
+                return ((fxp & FXP_FRAC_MAX) * FXP_FRAC_MAX_DEC)/FXP_FRAC_MAX;
 }
 
 /*

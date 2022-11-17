@@ -11,11 +11,11 @@
 #define FXP_FRAC_BITS 12
 
 // FXP_FRAC_MAX should correspond to 2^FXP_FRAC_BITS - 1
-// Also used as mask for frac part.
+// Also used as mask for binary frac part of the int
 #define FXP_FRAC_MAX ((1 << FXP_FRAC_BITS) - 1)
 
-// Scale for decimal frac inputs (decimal range will be 0 .. FXP_FRAC_DECS-1)
-#define FXP_FRAC_DECS 1000
+// Desired max frac decimal value
+#define FXP_FRAC_MAX_DEC 999
 
 // Infinity constants and Max and min fxp valid values
 #define FXP_POS_INF INT_MAX
