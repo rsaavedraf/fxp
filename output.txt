@@ -11,97 +11,96 @@ double      has a size of 8 bytes.
 long double has a size of 16 bytes.
 
 FXP configuration constants:
-frac bits   : 10
-max fraction: 1023
-max whole   : 2097151
-min whole   : -2097151
+frac bits   : 12
+max fraction: 4095
+max whole   : 524287
+min whole   : -524287
 pos infinity: 2147483647
 neg infinity: -2147483647
 undefined   : -2147483648
 
 Simple operations with no overflows, checking signs
-fxp test:  10.5 +  2 == 12.499 (bin frac=511)
-fxp test:  10.5 + -2 == 8.499 (bin frac=511)
-fxp test: -10.5 +  2 == -8.-499 (bin frac=-511)
-fxp test: -10.5 + -2 == -12.-499 (bin frac=-511)
-fxp test:  10.5 -  2 == 8.499 (bin frac=511)
-fxp test:  10.5 - -2 == 12.499 (bin frac=511)
-fxp test: -10.5 -  2 == -12.-499 (bin frac=-511)
-fxp test: -10.5 - -2 == -8.-499 (bin frac=-511)
-fxp test:  10.5 *  2 == 20.999 (bin frac=1022)
-fxp test:  10.5 * -2 == -20.-999 (bin frac=-1022)
-fxp test: -10.5 *  2 == -20.-999 (bin frac=-1022)
-fxp test: -10.5 * -2 == 20.999 (bin frac=1022)
-fxp test:  10.5 /  2 == 5.249 (bin frac=255)
-fxp test:  10.5 / -2 == -5.-249 (bin frac=-255)
-fxp test: -10.5 /  2 == -5.-249 (bin frac=-255)
-fxp test: -10.5 / -2 == 5.249 (bin frac=255)
+For  10.25 +  2 got 12.249 (bin frac=1023),	expected 12.249 (bin frac=1023)
+For  10.25 + -2 got 8.249 (bin frac=1023),	expected 8.249 (bin frac=1023)
+For -10.25 +  2 got -8.-249 (bin frac=-1023),	expected -8.-249 (bin frac=-1023)
+For -10.25 + -2 got -12.-249 (bin frac=-1023),	expected -12.-249 (bin frac=-1023)
+For  10.25 -  2 got 8.249 (bin frac=1023),	expected 8.249 (bin frac=1023)
+For  10.25 - -2 got 12.249 (bin frac=1023),	expected 12.249 (bin frac=1023)
+For -10.25 -  2 got -12.-249 (bin frac=-1023),	expected -12.-249 (bin frac=-1023)
+For -10.25 - -2 got -8.-249 (bin frac=-1023),	expected -8.-249 (bin frac=-1023)
+For  10.25 *  2 got 20.499 (bin frac=2046),	expected 20.499 (bin frac=2047)
+For  10.25 * -2 got -20.-499 (bin frac=-2046),	expected -20.-499 (bin frac=-2047)
+For -10.25 *  2 got -20.-499 (bin frac=-2046),	expected -20.-499 (bin frac=-2047)
+For -10.25 * -2 got 20.499 (bin frac=2046),	expected 20.499 (bin frac=2047)
+For  10.25 /  2 got 5.124 (bin frac=511),	expected 5.124 (bin frac=511)
+For  10.25 / -2 got -5.-124 (bin frac=-511),	expected -5.-124 (bin frac=-511)
+For -10.25 /  2 got -5.-124 (bin frac=-511),	expected -5.-124 (bin frac=-511)
+For -10.25 / -2 got 5.124 (bin frac=511),	expected 5.124 (bin frac=511)
 
 Some general tests
-fxp test: Infinity == +INF
-fxp test: -Infinity == -INF
-fxp test: Undefined == UNDEF
-fxp test: zero == 0.0 (bin frac=0)
-fxp test: tiniest == 0.0 (bin frac=1)
-fxp test: -tiniest == 0.0 (bin frac=-1)
-fxp test: one == 1.0 (bin frac=0)
-fxp test: Largest == 2097151.999 (bin frac=1022)
-fxp test: Largest - tiniest == 2097151.998 (bin frac=1021)
-fxp test: Largest + tiniest safe == +INF
-fxp test: Largest + tiniest unsafe == +INF
-fxp test: Largest + one safe == +INF
-fxp test: Largest + one unsafe == -2097151.-1 (bin frac=-2)
-fxp test: Way Too Large whole part! == +INF
-fxp test: Almost most negative == -2097151.-998 (bin frac=-1021)
-fxp test: Most negative == -2097151.-999 (bin frac=-1022)
-fxp test: Safe Too negative substraction == -INF
-fxp test: Unsafe Too negative substraction == 2097151.1 (bin frac=2)
-fxp test: +inf + +inf == +INF
-fxp test: -inf - +inf == -INF
-fxp test: +inf + -inf == UNDEF
-fxp test: -inf + -inf == -INF
-fxp test: -inf - -inf == UNDEF
-fxp test: +inf * -inf == -INF
-fxp test: +num / zero == +INF
-fxp test: zero / zero == UNDEF
-fxp test: zero * zero == 0.0 (bin frac=0)
-fxp test: zero + zero == 0.0 (bin frac=0)
-fxp test: zero - zero == 0.0 (bin frac=0)
-fxp test: -num / zero == -INF
-fxp test: zero * +inf == UNDEF
-fxp test: zero * -inf == UNDEF
-fxp test: zero * undef == UNDEF
-fxp test: -inf * undef == UNDEF
-fxp test: +inf * undef == UNDEF
-fxp test: undef * undef == UNDEF
-fxp test: tiniest * inf == +INF
+For Infinity got +INF,	expected +INF
+For -Infinity got -INF,	expected -INF
+For Undefined got UNDEF,	expected UNDEF
+For zero got 0.0 (bin frac=0),	expected 0.0 (bin frac=0)
+For tiniest got 0.0 (bin frac=1),	expected 0.0 (bin frac=1)
+For -tiniest got 0.0 (bin frac=-1),	expected 0.0 (bin frac=-1)
+For one got 1.0 (bin frac=0),	expected 1.0 (bin frac=0)
+For Largest got 524287.999 (bin frac=4094),	expected 524287.999 (bin frac=4094)
+For Largest - tiniest got 524287.999 (bin frac=4093),	expected 524287.999 (bin frac=4093)
+For Largest + tiniest safe got +INF,	expected +INF
+For Largest + tiniest unsafe got +INF,	expected +INF
+For Largest + one safe got +INF,	expected +INF
+For Largest + one unsafe got -524287.0 (bin frac=-2),	expected -524287.0 (bin frac=-2)
+For Way Too Large whole part! got +INF,	expected +INF
+For Almost most negative got -524287.-999 (bin frac=-4093),	expected -524287.-999 (bin frac=-4094)
+For Most negative got -524287.-999 (bin frac=-4094),	expected -524287.-999 (bin frac=-4094)
+For Safe Too negative substraction got -INF,	expected -INF
+For Unsafe Too negative substraction got 524287.0 (bin frac=2),	expected 524287.0 (bin frac=2)
+For +inf + +inf got +INF,	expected +INF
+For -inf - +inf got -INF,	expected -INF
+For +inf + -inf got UNDEF,	expected UNDEF
+For -inf + -inf got -INF,	expected -INF
+For -inf - -inf got UNDEF,	expected UNDEF
+For +inf * -inf got -INF,	expected -INF
+For +num / zero got +INF,	expected +INF
+For zero / zero got UNDEF,	expected UNDEF
+For zero * zero got 0.0 (bin frac=0),	expected 0.0 (bin frac=0)
+For zero + zero got 0.0 (bin frac=0),	expected 0.0 (bin frac=0)
+For zero - zero got 0.0 (bin frac=0),	expected 0.0 (bin frac=0)
+For -num / zero got -INF,	expected -INF
+For zero * +inf got UNDEF,	expected UNDEF
+For zero * -inf got UNDEF,	expected UNDEF
+For zero * undef got UNDEF,	expected UNDEF
+For -inf * undef got UNDEF,	expected UNDEF
+For +inf * undef got UNDEF,	expected UNDEF
+For undef * undef got UNDEF,	expected UNDEF
+For tiniest * inf got +INF,	expected +INF
 
 Checking sign taken from frac when whole==0
-fxp test: -1.250 == -1.-249 (bin frac=-255)
-fxp test: -1.(-)250 == -1.-249 (bin frac=-255)
-fxp test: -1.250 + 1 == 0.-249 (bin frac=-255)
-fxp test:  0.500 == 0.499 (bin frac=511)
-fxp test: -0.(+)500 == 0.499 (bin frac=511)
-fxp test: -0.(-)500 == 0.-499 (bin frac=-511)
-fxp test:  0.(-)500 == 0.-499 (bin frac=-511)
+For tiniest - 1 got 0.-999 (bin frac=-4095),	expected 0.-999 (bin frac=-4094)
+For -0.(+)500 got 0.499 (bin frac=2047),	expected 0.499 (bin frac=2047)
+For -0.(-)500 got 0.-499 (bin frac=-2047),	expected 0.-499 (bin frac=-2047)
 
 Trimming of large frac decimal arguments
-fxp test: 1000.777777 == 1000.777 (bin frac=795)
-fxp test: 2000.222222 == 2000.221 (bin frac=227)
-fxp test: 9.991999 is: == 9.991 (bin frac=1014)
+1000.776 (bin frac=3181)
+1000.777 (bin frac=3185)
+For 1000.777777 got 1000.777 (bin frac=3185),	expected 1000.777 (bin frac=3185)
+For 2000.222222 got 2000.221 (bin frac=909),	expected 2000.221 (bin frac=909)
+For 9.991999 is: got 9.991 (bin frac=4062),	expected 9.991 (bin frac=4062)
 
 Further tests overflowing into infinities
-fxp test:  Max Fixed Point number == 2097151.999 (bin frac=1022)
-fxp test: ~Half Max == 1048575.999 (bin frac=1022)
-fxp test: Half Max + 1000 == 1049575.999 (bin frac=1022)
-fxp test: Half Max + Half Max == 2097151.997 (bin frac=1020)
-fxp test: FXP_MAX - Half Max == 1048576.0 (bin frac=0)
-fxp test: Half Max + FXP_MAX == +INF
-fxp test: -FXP_MAX - Half Max == -INF
-fxp test: Half Max * 2 == 2097151.997 (bin frac=1020)
-fxp test: Half Max * 2.001 == +INF
-fxp test: Half Max * 3 == +INF
-fxp test: -Half Max * 3 == -INF
-fxp test: Half Max / 0.25 == +INF
-fxp test: -Half Max / 0.25 == -INF
+For  Max Fixed Point number got 524287.999 (bin frac=4094),	expected 524287.999 (bin frac=4094)
+For ~Half Max got 262143.999 (bin frac=4094),	expected 262143.999 (bin frac=4094)
+For Half Max + 1000 got 263143.999 (bin frac=4094),	expected 263143.999 (bin frac=4094)
+For Half Max + Half Max got 524287.999 (bin frac=4092),	expected 524287.999 (bin frac=4093)
+For FXP_MAX - Half Max got 262144.0 (bin frac=0),	expected 262143.999 (bin frac=4095)
+For Half Max + FXP_MAX got +INF,	expected +INF
+For -FXP_MAX - Half Max got -INF,	expected -INF
+For Half Max * 2 got 524287.999 (bin frac=4092),	expected 524287.999 (bin frac=4092)
+For Half Max * 2.001 got +INF,	expected +INF
+For Half Max * 3 got +INF,	expected +INF
+For -Half Max * 3 got -INF,	expected -INF
+For Half Max / 0.25 got +INF,	expected +INF
+For -Half Max / 0.25 got -INF,	expected -INF
 
+All fxp tests passed for 12 frac bits!
