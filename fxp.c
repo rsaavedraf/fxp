@@ -65,7 +65,7 @@ int fxp_dec(int whole, int dec_frac)
                 dec_frac = -dec_frac;
         }
         int trimed_frac = dec_frac;
-        while (trimed_frac >= FXP_FRAC_DECS)
+        while (trimed_frac > FXP_FRAC_DECS)
                 trimed_frac = (trimed_frac + 5)/10;
         int bin_frac = (trimed_frac * FXP_FRAC_MAX) / FXP_FRAC_DECS;
         //printf("fxp_from_dec_frac: bin_frac is: %d\n", bin_frac);
@@ -96,10 +96,15 @@ int fxp_get_bin_frac(int fxp)
  */
 int fxp_get_dec_frac(int fxp)
 {
-        if (fxp < 0)
-                return -(((-fxp) & FXP_FRAC_MAX) * FXP_FRAC_DECS)/FXP_FRAC_MAX;
-        else
-                return ((fxp & FXP_FRAC_MAX) * FXP_FRAC_DECS)/FXP_FRAC_MAX;
+        if (fxp < 0) {
+                //return -(((-fxp) & FXP_FRAC_MAX) * FXP_FRAC_DECS)/FXP_FRAC_MAX;
+                int df = -(((-fxp) & FXP_FRAC_MAX) * FXP_FRAC_DECS)/FXP_FRAC_MAX;
+                return (df == -FXP_FRAC_DECS)? df+1: df;
+        } else {
+                //return ((fxp & FXP_FRAC_MAX) * FXP_FRAC_DECS)/FXP_FRAC_MAX;
+                int df = ((fxp & FXP_FRAC_MAX) * FXP_FRAC_DECS)/FXP_FRAC_MAX;
+                return (df == FXP_FRAC_DECS)? df-1: df;
+        }
 }
 
 /*
@@ -188,8 +193,8 @@ int fxp_mul(int fxp1, int fxp2)
                 return FXP_NEG_INF;
         }
         // Compute positive product
-        int v1 = (fxp1 >= 0? fxp1: -fxp1);
-        int v2 = (fxp2 >= 0? fxp2: -fxp2);
+        int v1 = (fxp1 >= 0)? fxp1: -fxp1;
+        int v2 = (fxp2 >= 0)? fxp2: -fxp2;
         long product = ((long) v1) * v2;
         if (product <= (((long) FXP_MAX) << FXP_FRAC_BITS)) {
                 // No overflow, return result as int with appropriate sign
@@ -214,8 +219,8 @@ int fxp_div(int fxp1, int fxp2)
                 return (fxp1 > 0)? FXP_POS_INF:
                                    (fxp1 < 0)? FXP_NEG_INF: FXP_UNDEF;
         // Compute positive division
-        int v1 = (fxp1 >= 0? fxp1: -fxp1);
-        int v2 = (fxp2 >= 0? fxp2: -fxp2);
+        int v1 = (fxp1 >= 0)? fxp1: -fxp1;
+        int v2 = (fxp2 >= 0)? fxp2: -fxp2;
         if (v2 == FXP_POS_INF)
                 return (v1 == FXP_POS_INF)? FXP_UNDEF: 0;
         if (v1 == FXP_POS_INF)
