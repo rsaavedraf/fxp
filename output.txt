@@ -77,7 +77,7 @@ For undef * undef got UNDEF,	expected UNDEF
 For tiniest * inf got +INF,	expected +INF
 
 Checking sign taken from frac when whole==0
-For tiniest - 1 got 0.-999 (bin frac=-4095),	expected 0.-999 (bin frac=-4094)
+For tiniest - 1 got 0.-999 (bin frac=-4095),	expected 0.-999 (bin frac=-4095)
 For -0.(+)500 got 0.499 (bin frac=2047),	expected 0.499 (bin frac=2047)
 For -0.(-)500 got 0.-499 (bin frac=-2047),	expected 0.-499 (bin frac=-2047)
 

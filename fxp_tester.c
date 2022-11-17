@@ -193,7 +193,7 @@ int main(void)
         printf("\nChecking sign taken from frac when whole==0\n");
         test_fxp("tiniest - 1",
                             fxp_sum(fxp_bin(0,1), fxp(-1)),
-                            fxp_bin(0, 1-FXP_FRAC_MAX));
+                            fxp_bin(0, -FXP_FRAC_MAX));
         test_fxp("-0.(+)500",
                             fxp_dec(-0, 500),
                             fxp_dec(0, 500));
