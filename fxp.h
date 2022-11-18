@@ -22,7 +22,8 @@
 #define FXP_NEG_INF -INT_MAX
 #define FXP_MAX (FXP_POS_INF - 1) // max whole + 1 bit short of max frac
 #define FXP_MIN (FXP_NEG_INF + 1) // min whole + 1 bit short of min frac
-#define FXP_MAX_LSHIFTED (((long) FXP_MAX) << FXP_FRAC_BITS)
+#define FXP_MAX_L ((long) FXP_MAX)
+#define FXP_MAX_LSHIFTED ((FXP_MAX_L) << FXP_FRAC_BITS)
 
 // Saving the true most negative int for "undefined"
 #define FXP_UNDEF INT_MIN

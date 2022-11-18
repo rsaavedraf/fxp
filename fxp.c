@@ -232,7 +232,7 @@ int fxp_div(int fxp1, int fxp2)
                             FXP_POS_INF: FXP_NEG_INF;
         long numerator = ((long) v1) << FXP_FRAC_BITS;
         long div = numerator / v2;
-        if (div <= (long) FXP_MAX)
+        if (div <= FXP_MAX_L)
                 // No overflow -> return result as int appropriately signed
                 return ((fxp1 >= 0 && fxp2 >= 0) || (fxp1 < 0 && fxp2 < 0))?
                             (int) div: -((int) div);
