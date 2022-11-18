@@ -37,7 +37,7 @@ int fxp_bin(int whole, int bin_frac)
                     whole = -whole;
                 }
                 if (bin_frac < 0)
-                    bin_frac = -frac;
+                    bin_frac = -bin_frac;
         }
         int positive_fxp = (whole << FXP_FRAC_BITS) | bin_frac;
         //printf("fxp_from_bin_frac: frac is: %d\n", frac);
@@ -199,7 +199,8 @@ int fxp_mul(int fxp1, int fxp2)
         int v1 = (fxp1 >= 0)? fxp1: -fxp1;
         int v2 = (fxp2 >= 0)? fxp2: -fxp2;
         long product = ((long) v1) * v2;
-        if (product <= (((long) FXP_MAX) << FXP_FRAC_BITS)) {
+        //if (product <= (((long) FXP_MAX) << FXP_FRAC_BITS)) {
+        if (product <= FXP_MAX_LSHIFTED) {
                 // No overflow, return result as int with appropriate sign
                 product = product >> FXP_FRAC_BITS;
                 return ((fxp1 >= 0 && fxp2 >= 0) || (fxp1 < 0 && fxp2 < 0))?
