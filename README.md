@@ -7,3 +7,6 @@ For more information about Fixed Point arithmetic:
 
 By Raul Saavedra
 Nov 15, 2022, Bonn
+
+Last updates:
+2023-01-04: bug fix in fxp_sum

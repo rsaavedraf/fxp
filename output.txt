@@ -99,6 +99,8 @@ Some general tests
 'Unsafe Too neg substraction', got 524287.  0 (bin frac=2),	expected 524287.  0 (bin frac=2)
 '+inf + +inf', got +INF,	expected +INF
 '-inf - +inf', got -INF,	expected -INF
+'+inf - 1', got +INF,	expected +INF
+'-inf + 1', got -INF,	expected -INF
 '+inf + -inf', got UNDEF,	expected UNDEF
 '-inf + -inf', got -INF,	expected -INF
 '-inf - -inf', got UNDEF,	expected UNDEF
