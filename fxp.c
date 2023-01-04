@@ -153,7 +153,7 @@ int fxp_sum(int fxp1, int fxp2)
         if (fxp1 == FXP_POS_INF || fxp2 == FXP_POS_INF)
                 return (fxp1 == FXP_NEG_INF || fxp2 == FXP_NEG_INF)?
                             FXP_UNDEF: FXP_POS_INF;
-        if (fxp2 == FXP_NEG_INF || fxp2 == FXP_NEG_INF)
+        if (fxp1 == FXP_NEG_INF || fxp2 == FXP_NEG_INF)
                 return FXP_NEG_INF;
         // Check if arguments have the same sign
         if ((fxp1 >= 0 && fxp2 >= 0) || (fxp1 < 0) && (fxp2 < 0)) {

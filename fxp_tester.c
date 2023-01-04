@@ -170,6 +170,12 @@ int main(void)
         test_fxp("-inf - +inf",
                             fxp_sub(FXP_NEG_INF, FXP_POS_INF),
                             FXP_NEG_INF);
+        test_fxp("+inf - 1",
+                            fxp_sub(FXP_POS_INF, fxp_one),
+                            FXP_POS_INF);
+        test_fxp("-inf + 1",
+                            fxp_sum(FXP_NEG_INF, fxp_one),
+                            FXP_NEG_INF);
         test_fxp("+inf + -inf",
                             fxp_sum(FXP_POS_INF, FXP_NEG_INF),
                             FXP_UNDEF);
