@@ -198,6 +198,7 @@ int fxp_mul(int fxp1, int fxp2)
         // Compute positive product
         int v1 = (fxp1 >= 0)? fxp1: -fxp1;
         int v2 = (fxp2 >= 0)? fxp2: -fxp2;
+        // This code only applicable for systems where sizeof(long) > sizeof(int)
         long product = ((long) v1) * v2;
         //if (product <= (((long) FXP_MAX) << FXP_FRAC_BITS)) {
         if (product <= FXP_MAX_LSHIFTED) {
@@ -230,6 +231,7 @@ int fxp_div(int fxp1, int fxp2)
         if (v1 == FXP_POS_INF)
                 return ((fxp1 >= 0 && fxp2 >=0) || (fxp1 < 0 && fxp2 < 0))?
                             FXP_POS_INF: FXP_NEG_INF;
+        // This code only applicable for systems where sizeof(long) > sizeof(int)
         long numerator = ((long) v1) << FXP_FRAC_BITS;
         long div = numerator / v2;
         if (div <= FXP_MAX_L)

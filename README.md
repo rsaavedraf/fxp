@@ -10,3 +10,6 @@ Nov 15, 2022, Bonn
 
 Last updates:
 2023-01-04: bug fix in fxp_sum
+
+To Do: write alternative implementations for multiplication and division
+for systems where sizeof(long) == sizeof(int)
