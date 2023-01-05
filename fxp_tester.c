@@ -74,6 +74,17 @@ int main(void)
         printf("neg infinity: %d\n", FXP_NEG_INF);
         printf("undefined   : %d\n", FXP_UNDEF);
 
+        printf("\nTesting function that counts number of bits used by numbers:");
+        int n = 1;
+        int nb = 1;
+        do {
+            printf("\n Number %u uses %u bits", n-1, nbits(n-1, FXP_INT_BITS));
+            printf("\n Number %u uses %u bits", n, nbits(n, FXP_INT_BITS));
+            n = (n << 1);
+            nb++;
+        } while (nb <= FXP_INT_BITS);
+        printf("\n");
+
         printf("\nChecking decimal<=>bin mappings of frac ranges:");
         for (int i=0; i<=10; i++) {
                 printf("\nShowing fxp for 10.%3d: ", i);

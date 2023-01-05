@@ -159,10 +159,10 @@ int fxp_sum(int fxp1, int fxp2)
         if ((fxp1 >= 0 && fxp2 >= 0) || (fxp1 < 0) && (fxp2 < 0)) {
                 // Same signs, check for possible overflow
                 if (fxp1 > 0)
-                        return (FXP_MAX-fxp1 <=  fxp2)?
+                        return (FXP_MAX - fxp1 <=  fxp2)?
                                     FXP_POS_INF: fxp1 + fxp2;
                 else
-                        return (FXP_MAX+fxp1 <= -fxp2)?
+                        return (FXP_MAX + fxp1 <= -fxp2)?
                                     FXP_NEG_INF: fxp1 + fxp2;
         };
         // Arguments with different signs, no overflow danger, simply sum
@@ -175,6 +175,51 @@ int fxp_sum(int fxp1, int fxp2)
 int fxp_sub(int fxp1, int fxp2)
 {
         return fxp_sum(fxp1, -fxp2);
+}
+
+/*
+Return number of bits used by the value in the argument
+(returned value is between 0 and FXP_INT_BITS)
+*/
+unsigned int nbits(unsigned int x, unsigned int max_bits)
+{
+    if (x == 0) return 0;
+    unsigned int nb = 1;
+    unsigned int chunksize = max_bits / 2;
+    while (chunksize > 0) {
+        unsigned int onebitnum = 1 << chunksize;
+        if (x >= onebitnum) {
+            nb += chunksize;
+            x = (x >> chunksize);
+        }
+        chunksize /= 2;
+    }
+    return nb;
+}
+
+
+/*
+Simpler code to count the # of bits, but slightly less efficient
+*/
+unsigned int nbits_v0(unsigned int x)
+{
+    if (x == 0) return 0;
+    int nb = FXP_INT_BITS - 1;
+    while (!(x & (1 << nb))) nb--;
+    return nb + 1;
+}
+
+unsigned int fxp_sub_mul(unsigned int v1,
+                        unsigned int bitsv1,
+                        unsigned int v2,
+                        unsigned int bitsv2)
+{
+    if (bitsv1 + bitsv2 < FXP_INT_BITS) {
+        return (v1 * v2);
+        }
+    else {
+        return FXP_POS_INF;
+    }
 }
 
 /*
@@ -195,9 +240,43 @@ int fxp_mul(int fxp1, int fxp2)
                         return FXP_UNDEF;
                 return FXP_NEG_INF;
         }
-        // Compute positive product
-        int v1 = (fxp1 >= 0)? fxp1: -fxp1;
-        int v2 = (fxp2 >= 0)? fxp2: -fxp2;
+
+        /* Implementation of multiplication supporting systems
+        for which sizeof(long) == sizeof(int) */
+        // Compute product v1*v2 == (w1 + f1) * (w2 + f2) as
+        // w1*w2 + w1*f2 + f1*w2 + f1*w2 (using only positive values)
+        unsigned int v1 = (fxp1 >= 0)? fxp1: -fxp1;
+        unsigned int v2 = (fxp2 >= 0)? fxp2: -fxp2;
+        // Whole and fraction parts
+        unsigned int w1 = fxp_get_whole_part(v1);
+        unsigned int f1 = fxp_get_bin_frac(v1);
+        unsigned int w2 = fxp_get_whole_part(v2);
+        unsigned int f2 = fxp_get_bin_frac(v2);
+        // Bits used in each of them
+        //unsigned int bw1 = nbits_v0(w1);
+        //unsigned int bw2 = nbits_v0(w2);
+        //unsigned int bf1 = nbits_v0(f1);
+        //unsigned int bf2 = nbits_v0(f2);
+        unsigned int bw1 = nbits(w1, FXP_WHOLE_BITS);
+        unsigned int bw2 = nbits(w2, FXP_WHOLE_BITS);
+        unsigned int bf1 = nbits(f1, FXP_FRAC_BITS);
+        unsigned int bf2 = nbits(f2, FXP_FRAC_BITS);
+        unsigned int m1 = fxp_sub_mul(w1, bw1, w2, bw2);
+        unsigned int m2 = fxp_sub_mul(w1, bw1, f2, bf2);
+        unsigned int m3 = fxp_sub_mul(f1, bf1, w2, bw2);
+        unsigned int m4 = fxp_sub_mul(f1, bf1, f2, bf2);
+        int product = fxp_sum(fxp(m1), fxp_sum(m2, fxp_sum(m3, m4)));
+        if (product == FXP_POS_INF) {
+            // Overflow. Return infinity with the appropriate sign
+            return ((fxp1 >= 0 && fxp2 >= 0) || (fxp1 < 0 && fxp2 < 0))?
+                        FXP_POS_INF: FXP_NEG_INF;
+        }
+        else {
+            return ((fxp1 >= 0 && fxp2 >= 0) || (fxp1 < 0 && fxp2 < 0))?
+                        product: -product;
+        }
+
+        /*
         // This code only applicable for systems where sizeof(long) > sizeof(int)
         long product = ((long) v1) * v2;
         //if (product <= (((long) FXP_MAX) << FXP_FRAC_BITS)) {
@@ -211,6 +290,7 @@ int fxp_mul(int fxp1, int fxp2)
                 return ((fxp1 >= 0 && fxp2 >= 0) || (fxp1 < 0 && fxp2 < 0))?
                             FXP_POS_INF: FXP_NEG_INF;
         }
+        */
 }
 
 /*

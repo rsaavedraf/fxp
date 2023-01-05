@@ -19,6 +19,72 @@ pos infinity: 2147483647
 neg infinity: -2147483647
 undefined   : -2147483648
 
+Testing function that counts number of bits used by numbers:
+ Number 0 uses 0 bits
+ Number 1 uses 1 bits
+ Number 1 uses 1 bits
+ Number 2 uses 2 bits
+ Number 3 uses 2 bits
+ Number 4 uses 3 bits
+ Number 7 uses 3 bits
+ Number 8 uses 4 bits
+ Number 15 uses 4 bits
+ Number 16 uses 5 bits
+ Number 31 uses 5 bits
+ Number 32 uses 6 bits
+ Number 63 uses 6 bits
+ Number 64 uses 7 bits
+ Number 127 uses 7 bits
+ Number 128 uses 8 bits
+ Number 255 uses 8 bits
+ Number 256 uses 9 bits
+ Number 511 uses 9 bits
+ Number 512 uses 10 bits
+ Number 1023 uses 10 bits
+ Number 1024 uses 11 bits
+ Number 2047 uses 11 bits
+ Number 2048 uses 12 bits
+ Number 4095 uses 12 bits
+ Number 4096 uses 13 bits
+ Number 8191 uses 13 bits
+ Number 8192 uses 14 bits
+ Number 16383 uses 14 bits
+ Number 16384 uses 15 bits
+ Number 32767 uses 15 bits
+ Number 32768 uses 16 bits
+ Number 65535 uses 16 bits
+ Number 65536 uses 17 bits
+ Number 131071 uses 17 bits
+ Number 131072 uses 18 bits
+ Number 262143 uses 18 bits
+ Number 262144 uses 19 bits
+ Number 524287 uses 19 bits
+ Number 524288 uses 20 bits
+ Number 1048575 uses 20 bits
+ Number 1048576 uses 21 bits
+ Number 2097151 uses 21 bits
+ Number 2097152 uses 22 bits
+ Number 4194303 uses 22 bits
+ Number 4194304 uses 23 bits
+ Number 8388607 uses 23 bits
+ Number 8388608 uses 24 bits
+ Number 16777215 uses 24 bits
+ Number 16777216 uses 25 bits
+ Number 33554431 uses 25 bits
+ Number 33554432 uses 26 bits
+ Number 67108863 uses 26 bits
+ Number 67108864 uses 27 bits
+ Number 134217727 uses 27 bits
+ Number 134217728 uses 28 bits
+ Number 268435455 uses 28 bits
+ Number 268435456 uses 29 bits
+ Number 536870911 uses 29 bits
+ Number 536870912 uses 30 bits
+ Number 1073741823 uses 30 bits
+ Number 1073741824 uses 31 bits
+ Number 2147483647 uses 31 bits
+ Number 2147483648 uses 32 bits
+
 Checking decimal<=>bin mappings of frac ranges:
 Showing fxp for 10.  0: 10.  0 (bin frac=0)
 Showing fxp for 10.  1: 10.  0 (bin frac=4)

@@ -7,8 +7,13 @@
 
 #include <limits.h>
 
+#define FXP_INT_BITS (sizeof(int) * 8)
+
 // Number of bits to use for the frac part
 #define FXP_FRAC_BITS 12
+
+// Number of bits for the whole part
+#define FXP_WHOLE_BITS (FXP_INT_BITS - FXP_FRAC_BITS)
 
 // FXP_FRAC_MAX should correspond to 2^FXP_FRAC_BITS - 1
 // Also used as mask for binary frac part of the int
@@ -44,6 +49,9 @@ int fxp_unsafe_sum(int fxp1, int fxp2);
 int fxp_unsafe_sub(int fxp1, int fxp2);
 int fxp_unsafe_mul(int fxp1, int fxp2);
 int fxp_unsafe_div(int fxp1, int fxp2);
+
+unsigned int nbits(unsigned int n, unsigned int maxbits);
+unsigned int nbits_v0(unsigned int n);
 
 int fxp_sum(int fxp1, int fxp2);
 int fxp_sub(int fxp1, int fxp2);
