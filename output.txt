@@ -211,5 +211,13 @@ Further tests overflowing into infinities
 'Half Max / 0.25', got +INF,	expected +INF
 '-Half Max / 0.25', got -INF,	expected -INF
 
+Further tests for the new multiplication
+'1.5 * 1.5', got 2.249 (bin frac=1024),	expected 2.249 (bin frac=1024)
+largest is 2147483646
+'largest * 1', got 524287.998 (bin frac=4094),	expected 524287.998 (bin frac=4094)
+'largest * -1', got -524287.-998 (bin frac=-4094),	expected -524287.-998 (bin frac=-4094)
+'723.5 * 723.5', got 523452.249 (bin frac=1024),	expected 523452.249 (bin frac=1024)
+'-720.5 * -730.5', got +INF,	expected +INF
+
 Total # of warnings: 4
 All tests passed using 12-bit and '999' decimal fracs.
