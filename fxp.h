@@ -24,7 +24,7 @@
 
 // Infinity constants and Max and min fxp valid values
 #define FXP_POS_INF INT_MAX
-#define FXP_NEG_INF -INT_MAX
+#define FXP_NEG_INF (-INT_MAX)
 #define FXP_MAX (FXP_POS_INF - 1) // max whole + 1 bit short of max frac
 #define FXP_MIN (FXP_NEG_INF + 1) // min whole + 1 bit short of min frac
 #define FXP_MAX_L ((long) FXP_MAX)

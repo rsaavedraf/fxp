@@ -33,11 +33,11 @@ int fxp_bin(int whole, int bin_frac)
         else {
                 // All other cases, fxp gets its sign from the whole part
                 if (whole < 0) {
-                    sign = -1;
-                    whole = -whole;
+                        sign = -1;
+                        whole = -whole;
                 }
                 if (bin_frac < 0)
-                    bin_frac = -bin_frac;
+                        bin_frac = -bin_frac;
         }
         int positive_fxp = (whole << FXP_FRAC_BITS) | bin_frac;
         //printf("fxp_from_bin_frac: frac is: %d\n", frac);
@@ -72,12 +72,12 @@ int fxp_dec(int whole, int dec_frac)
         //printf("   fxp_from_dec_frac: original frac: %d\n", dec_frac);
         while (trunc_frac > FXP_FRAC_MAX_DEC) {
                 //trimmed_frac = (trimmed_frac + 5)/10;
-                trunc_frac = trunc_frac/10;
+                trunc_frac = trunc_frac / 10;
                 //printf("   fxp_from_dec_frac: frac trimmed to: %d\n", trunc_frac);
         }
         int bin_frac = (trunc_frac * FXP_FRAC_MAX) / FXP_FRAC_MAX_DEC ;
         //printf("   fxp_from_dec_frac: bin_frac is: %d\n", bin_frac);
-        return fxp_bin(whole, (frac_sign==1)? bin_frac: -bin_frac);
+        return fxp_bin(whole, (frac_sign == 1)? bin_frac: -bin_frac);
 }
 
 int fxp_get_whole_part(int fxp)
@@ -105,9 +105,11 @@ int fxp_get_bin_frac(int fxp)
 int fxp_get_dec_frac(int fxp)
 {
         if (fxp < 0)
-                return -(((-fxp) & FXP_FRAC_MAX) * FXP_FRAC_MAX_DEC)/FXP_FRAC_MAX;
+                return -(((-fxp) & FXP_FRAC_MAX) * FXP_FRAC_MAX_DEC) \
+                            / FXP_FRAC_MAX;
         else
-                return ((fxp & FXP_FRAC_MAX) * FXP_FRAC_MAX_DEC)/FXP_FRAC_MAX;
+                return ((fxp & FXP_FRAC_MAX) * FXP_FRAC_MAX_DEC) \
+                            / FXP_FRAC_MAX;
 }
 
 /*
@@ -158,12 +160,14 @@ int fxp_sum(int fxp1, int fxp2)
         // Check if arguments have the same sign
         if ((fxp1 >= 0 && fxp2 >= 0) || (fxp1 < 0) && (fxp2 < 0)) {
                 // Same signs, check for possible overflow
-                if (fxp1 > 0)
-                        return (FXP_MAX - fxp1 <=  fxp2)?
+                if (fxp1 > 0) {
+                        return (FXP_MAX - fxp1 < fxp2)?
                                     FXP_POS_INF: fxp1 + fxp2;
-                else
-                        return (FXP_MAX + fxp1 <= -fxp2)?
+                }
+                else {
+                        return (FXP_MAX + fxp1 < -fxp2)?
                                     FXP_NEG_INF: fxp1 + fxp2;
+                }
         };
         // Arguments with different signs, no overflow danger, simply sum
         return fxp1 + fxp2;
@@ -187,12 +191,12 @@ unsigned int nbits(unsigned int x, unsigned int max_bits)
     unsigned int nb = 1;
     unsigned int chunksize = max_bits / 2;
     while (chunksize > 0) {
-        unsigned int onebitnum = 1 << chunksize;
-        if (x >= onebitnum) {
-            nb += chunksize;
-            x = (x >> chunksize);
-        }
-        chunksize /= 2;
+            unsigned int onebitnum = 1 << chunksize;
+            if (x >= onebitnum) {
+                    nb += chunksize;
+                    x = (x >> chunksize);
+            }
+            chunksize /= 2;
     }
     return nb;
 }
@@ -214,11 +218,11 @@ unsigned int fxp_sub_mul(unsigned int v1,
                         unsigned int v2,
                         unsigned int bitsv2)
 {
-    if (bitsv1 + bitsv2 < FXP_INT_BITS) {
-        return (v1 * v2);
-        }
+    if (bitsv1 + bitsv2 <= FXP_INT_BITS) {
+            return (v1 * v2);
+    }
     else {
-        return FXP_POS_INF;
+            return FXP_POS_INF;
     }
 }
 
@@ -264,8 +268,11 @@ int fxp_mul(int fxp1, int fxp2)
         unsigned int m1 = fxp_sub_mul(w1, bw1, w2, bw2);
         unsigned int m2 = fxp_sub_mul(w1, bw1, f2, bf2);
         unsigned int m3 = fxp_sub_mul(f1, bf1, w2, bw2);
-        unsigned int m4 = fxp_sub_mul(f1, bf1, f2, bf2);
-        int product = fxp_sum(fxp(m1), fxp_sum(m2, fxp_sum(m3, m4)));
+        unsigned int m4 = (fxp_sub_mul(f1, bf1, f2, bf2) >> FXP_FRAC_BITS);
+        //printf("w1=%x, f1=%x, w2=%x, f2=%x\n", w1, f1, w2, f2);
+        //printf("m1=%u, m2=%u, m3=%u, m4=%u\n", m1, m2, m3, m4);
+        int product = fxp_sum(fxp_sum(fxp(m1), fxp_sum(m2, m3)), m4);
+        //printf("product=%u\n", product);
         if (product == FXP_POS_INF) {
             // Overflow. Return infinity with the appropriate sign
             return ((fxp1 >= 0 && fxp2 >= 0) || (fxp1 < 0 && fxp2 < 0))?

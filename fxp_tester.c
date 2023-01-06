@@ -296,6 +296,15 @@ int main(void)
                             fxp_div(-halfmax, fxp_dec(0, 250)),
                             FXP_NEG_INF);
 
+        printf("\nFurther tests for the new multiplication\n");
+        int m1 = fxp_bin(1, 2048); // == 1.5
+        test_fxp("1.5 * 1.5", fxp_mul(m1, m1), fxp_dec(2, 250));
+        printf("largest is %u\n", fxp_largest);
+        test_fxp("largest * 1", fxp_mul(fxp_largest,  fxp(1)), fxp_largest);
+        test_fxp("largest * -1", fxp_mul(fxp_largest,  fxp(-1)), -fxp_largest);
+        test_fxp("723.5 * 723.5", fxp_mul(fxp_bin(723, 2048), fxp_bin(723, 2048)), fxp_bin(523452, 1024));
+        test_fxp("-720.5 * -730.5", fxp_mul(fxp_dec(-720, 500), fxp_dec(-730, 500)), FXP_POS_INF);
+
         printf("\nTotal # of warnings: %d\n", nwarnings);
         printf("All tests passed using %d-bit and '%d' decimal fracs.\n",
                 FXP_FRAC_BITS,
