@@ -14,8 +14,9 @@ By Raul Saavedra
 supporting systems where sizeof(long) == sizeof(int)
 - 2023-01-06: bugs fixed in new safe multiplication, also in the safe sum for a
 border case.
-- 2023-01-07: new version with runtime-modifiable number of bits to use for
-the frac part. This simplifies the inclusion of many more tricky border cases
-in one and the same tester program.
+- 2023-01-08: new version with runtime-modifiable number of bits to use for
+the frac part. Fine-tuned all code, now all tests run with 0 warnings for
+any chosen number of frac bits.
 
-To Do: write alternative implementations for division also using just ints, not longs.
+To Do: write alternative implementations for division also using just ints,
+not longs.

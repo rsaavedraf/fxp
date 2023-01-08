@@ -71,3 +71,5 @@ int fxp_sum(int fxp1, int fxp2);
 int fxp_sub(int fxp1, int fxp2);
 int fxp_mul(int fxp1, int fxp2);
 int fxp_div(int fxp1, int fxp2);
+int fxp_mul_using_long(int fxp1, int fxp2);
+int fxp_div_using_long(int fxp1, int fxp2);

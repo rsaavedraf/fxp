@@ -5,11 +5,13 @@
  * By Raul Saavedra, Bonn, Germany
  *
  * v1: 2022-11-13
- * v2: 2023-01-07: runtime-modifiable whole vs. frac bits.
+ * v2: 2023-01-08: runtime-modifiable whole vs. frac bits.
  */
 
 #include "fxp.h"
 #include <stdio.h>
+
+#define FXP_FRAC_MAX_DEC 9999999
 
 // Default number of bits to use for the frac part
 // (can be changed dynamically calling set_frac_bits)
@@ -69,17 +71,10 @@ int fxp_get_whole_min()
 }
 
 
-/*
- * Returns the max decimal value 99...9 to be used as
- * max posible decimal fraction value
- */
-int fxp_get_frac_max_dec()
-{
-    return fxp_frac_max_dec;
-}
-
 /* Dynamic/runtime setting of the bits to use for the frac part.
  * Returns the actual number of fracbits that get set to be used
+ * It can be a number between 0 and sizeof(int)-1 (1 bit always
+ * needed and reserved for the sign)
  */
 int fxp_set_frac_bits(int nfracbits)
 {
@@ -116,15 +111,29 @@ int fxp_set_frac_max_dec(int vfracmaxdec)
  */
 int fxp_set_auto_frac_max_dec()
 {
-        fxp_frac_max_dec = 9;
+        int current = 9;
         int next = 99;
         int maxnext = (FXP_MAX - 9) / 10;
         while (next <= fxp_frac_max) {
-                fxp_frac_max_dec = next;
+                current = next;
                 next = (next * 10) + 9;
                 if (next >= maxnext) break;
         }
+        // Too large a value here might overflow in the bin-to-dec
+        // conversion of fracs if using there only ints and not longs
+        // Just in case limit here up to FXP_FRAC_MAX_DEC
+        fxp_frac_max_dec = (current > FXP_FRAC_MAX_DEC?
+                                FXP_FRAC_MAX_DEC: current);
         return fxp_frac_max_dec;
+}
+
+/*
+ * Returns the max decimal value 99...9 to be used as
+ * max posible decimal fraction value
+ */
+int fxp_get_frac_max_dec()
+{
+    return fxp_frac_max_dec;
 }
 
 int fxp(int whole)
@@ -143,7 +152,7 @@ int fxp_bin(int whole, int bin_frac)
         if (whole < fxp_whole_min)
                 return FXP_NEG_INF;
         int sign = 1;
-        if ((whole==0) && (bin_frac < 0)) {
+        if ((whole == 0) && (bin_frac < 0)) {
                 // Special case for negative numbers when whole part is zero,
                 // then the fxp gets its sign from the frac
                 sign = -1;
@@ -158,6 +167,7 @@ int fxp_bin(int whole, int bin_frac)
                 if (bin_frac < 0)
                         bin_frac = -bin_frac;
         }
+        if (bin_frac > fxp_frac_max) bin_frac = fxp_frac_max;
         int positive_fxp = (whole << fxp_frac_bits) | bin_frac;
         return (sign == 1)? positive_fxp: -positive_fxp;
 }
@@ -188,12 +198,18 @@ int fxp_dec(int whole, int dec_frac)
         }
         int trunc_frac = dec_frac;
         while (trunc_frac > fxp_frac_max_dec) {
-                //trimmed_frac = (trimmed_frac + 5)/10;
                 trunc_frac = trunc_frac / 10;
                 //printf("   fxp_from_dec_frac: frac trimmed to: %d\n", trunc_frac);
         }
-        int bin_frac = (trunc_frac * fxp_frac_max) / fxp_frac_max_dec ;
-        return fxp_bin(whole, (frac_sign == 1)? bin_frac: -bin_frac);
+
+        // Watch out this conversion itself can overflow when frac_bits
+        // is large, and the frac_max_dec value is also large.
+        // Using longs here because of this
+        //int bin_frac = (trunc_frac * fxp_frac_max) / fxp_frac_max_dec ;
+        int bin_frac = (int) (((long) trunc_frac * (long) fxp_frac_max) / \
+                            (long) (fxp_frac_max_dec));
+
+        return fxp_bin(whole, ((frac_sign == 1)? bin_frac: -bin_frac));
 }
 
 int fxp_get_whole_part(int fxp)
@@ -216,17 +232,39 @@ int fxp_get_bin_frac(int fxp)
 }
 
 /*
- * Get the frac part as decimal between 0 and
-FXP_FRAC_MAX_DEC, e.g. 0 .. 999
+ * Get the frac part as decimal between 0 and FXP_FRAC_MAX_DEC,
+e.g. 0 .. 999
  */
 int fxp_get_dec_frac(int fxp)
 {
-        if (fxp < 0)
-                return -(((-fxp) & fxp_frac_mask) * fxp_frac_max_dec) \
-                            / fxp_frac_max;
-        else
-                return ((fxp & fxp_frac_mask) * fxp_frac_max_dec) \
-                            / fxp_frac_max;
+        // Watch out the bin to dec conversio itself can overflow when
+        // the chosen frac_bits is large, and the frac_max_dec
+        // value is also large. Using longs here because of this
+        long num, denom, ldivision;
+        denom = (long) fxp_frac_max;
+        int positive_frac;
+        if (fxp < 0) {
+                //return -(((-fxp) & fxp_frac_mask) * fxp_frac_max_dec) \
+                //            / fxp_frac_max;
+                positive_frac = (-fxp) & fxp_frac_mask;
+                num = -(((long) positive_frac) * \
+                                ((long) fxp_frac_max_dec));
+        }
+        else {
+                //return ((fxp & fxp_frac_mask) * fxp_frac_max_dec) \
+                //            / fxp_frac_max;
+                positive_frac = fxp & fxp_frac_mask;
+                num = ((long) positive_frac)
+                                * ((long) fxp_frac_max_dec);
+        }
+        ldivision = num / denom;
+        int idivision = (int) ldivision;
+        //printf("\n+frac is %d\n", pos_frac);
+        //printf("Num   is %ld\n", num);
+        //printf("Denom is %ld\n", denom);
+        //printf("LDiv  is %ld\n", ldivision);
+        //printf("iDiv  is %d\n", idivision);
+        return idivision;
 }
 
 /*
@@ -352,7 +390,7 @@ int fxp_mul(int fxp1, int fxp2)
         for which sizeof(long) == sizeof(int) */
         // Compute product v1*v2 == (w1 + f1) * (w2 + f2) as
         // w1*w2 + w1*f2 + f1*w2 + f1*w2 (using only positive values)
-        unsigned int v1, v2, w1, w2, bw1, bw2, product;
+        int v1, v2, w1, w2, bw1, bw2, product;
         v1 = (fxp1 >= 0)? fxp1: -fxp1;
         v2 = (fxp2 >= 0)? fxp2: -fxp2;
         // Whole parts for both operands
@@ -361,15 +399,15 @@ int fxp_mul(int fxp1, int fxp2)
         // Bits used in whole parts
         bw1 = fxp_nbits(w1, fxp_whole_bits);
         bw2 = fxp_nbits(w2, fxp_whole_bits);
-        printf("bw1=%d, bw2=%d\n", bw1, bw2);
-        if (bw1 + bw2 > fxp_whole_bits_m1) {
+        int m1 = w1 * w2;
+        //printf("w1=%d, w2=%d, bw1=%d, bw2=%d, m1=%d\n", \
+                w1, w2, bw1, bw2, m1);
+        if ((bw1 + bw2 > fxp_whole_bits) || (m1 < 0)) {
                 // Overflow just by multiplying the whole parts
-                printf("Overflow just from multiplying the whole parts\n");
                 product = FXP_POS_INF;
         }
         else {
-                unsigned int m1, m2, m3, m4, f1, f2, bf1, bf2;
-                m1 = w1 * w2;
+                int m2, m3, m4, f1, f2, bf1, bf2;
                 f1 = fxp_get_bin_frac(v1);
                 f2 = fxp_get_bin_frac(v2);
                 // Whole x frac parts cannot overflow, so simply multiply them
@@ -383,7 +421,7 @@ int fxp_mul(int fxp1, int fxp2)
                 // enough least-significant bits in the frac parts before
                 // multiplying them (at the inevitable cost of some precision)
                 // to avoid the overflow
-                unsigned int lostbits = 0;
+                int lostbits = 0;
                 while (bf1 + bf2 > FXP_INT_BITS_M1) {
                         if (f1 > f2) {
                                 f1 = (f1 >> 1);
@@ -398,7 +436,7 @@ int fxp_mul(int fxp1, int fxp2)
                 m4 = (f1 * f2) >> (fxp_frac_bits - lostbits);
                 //printf("w1=%x, f1=%x, w2=%x, f2=%x\n", w1, f1, w2, f2);
                 //printf("m1=%u, m2=%u, m3=%u, m4=%u\n", m1, m2, m3, m4);
-                // Now sum all multiplication components safely
+                // Now sum safely all multiplication components
                 product = fxp_sum(fxp_sum(fxp(m1), fxp_sum(m2, m3)), m4);
         }
         //printf("product=%u\n", product);
@@ -412,13 +450,34 @@ int fxp_mul(int fxp1, int fxp2)
                         product: -product;
         }
 
-        /*
-        // This code only applicable for systems where sizeof(long) > sizeof(int)
+}
+
+/* This code applicable for systems where sizeof(long) > sizeof(int)
+ */
+int fxp_mul_using_long(int fxp1, int fxp2)
+{
+        if (fxp1 == FXP_UNDEF || fxp2 == FXP_UNDEF)
+                return FXP_UNDEF;
+        if (fxp1 == FXP_POS_INF || fxp2 == FXP_POS_INF) {
+                if (fxp1 == 0 || fxp2 == 0)
+                        return FXP_UNDEF;
+                return (fxp1 == FXP_NEG_INF || fxp2 == FXP_NEG_INF)?
+                            FXP_NEG_INF: FXP_POS_INF;
+        }
+        if (fxp1 == FXP_NEG_INF || fxp2 == FXP_NEG_INF) {
+                if (fxp1 == 0 || fxp2 == 0)
+                        return FXP_UNDEF;
+                return FXP_NEG_INF;
+        }
+
+        int v1, v2, w1, w2, bw1, bw2;
+        v1 = (fxp1 >= 0)? fxp1: -fxp1;
+        v2 = (fxp2 >= 0)? fxp2: -fxp2;
         long product = ((long) v1) * v2;
         //if (product <= (((long) FXP_MAX) << FXP_FRAC_BITS)) {
-        if (product <= FXP_MAX_LSHIFTED) {
+        if ((product <= fxp_max_lshifted) && (product >= 0)) {
                 // No overflow, return result as int with appropriate sign
-                product = product >> FXP_FRAC_BITS;
+                product = product >> fxp_frac_bits;
                 return ((fxp1 >= 0 && fxp2 >= 0) || (fxp1 < 0 && fxp2 < 0))?
                             (int) product: -((int) product);
         } else {
@@ -426,7 +485,6 @@ int fxp_mul(int fxp1, int fxp2)
                 return ((fxp1 >= 0 && fxp2 >= 0) || (fxp1 < 0 && fxp2 < 0))?
                             FXP_POS_INF: FXP_NEG_INF;
         }
-        */
 }
 
 /*
