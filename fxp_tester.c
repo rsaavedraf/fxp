@@ -76,12 +76,14 @@ int main(void) {
         for (int nfracbits = -1 ; nfracbits <= 33; nfracbits++) {
                 fxp_set_frac_bits(nfracbits);
                 fxp_set_auto_frac_max_dec();
-                printf("\nFor %d frac bits, auto frac max dec is %u", \
-                        fxp_get_frac_bits(), \
-                        fxp_get_frac_max_dec());
+                printf("\nAttempted frac bits: %d, effective: %d, ", \
+                    nfracbits,
+                    fxp_get_frac_bits());
+                printf(" auto frac max dec: %d", fxp_get_frac_max_dec());
         }
+        printf("\n");
 
-        printf("\n\nTesting function that counts in O(log(n)) the # bits used by a number:");
+        printf("\nTesting function that counts in O(log(n)) the # bits used by a number:");
         unsigned int n = 1;
         int nb = 1;
         do {

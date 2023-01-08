@@ -78,9 +78,9 @@ int fxp_get_whole_min()
  */
 int fxp_set_frac_bits(int nfracbits)
 {
-        fxp_frac_bits = (nfracbits > FXP_INT_BITS - 1?
-                            FXP_INT_BITS - 1:
-                            (nfracbits < 0? 0: nfracbits));
+        fxp_frac_bits = (nfracbits < 0? 0:
+                            (nfracbits > (FXP_INT_BITS - 1))?
+                                (FXP_INT_BITS - 1): nfracbits);
         fxp_whole_bits = FXP_INT_BITS - fxp_frac_bits;
         fxp_whole_bits_m1 = fxp_whole_bits - 1;
 

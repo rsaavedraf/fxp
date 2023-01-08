@@ -11,41 +11,41 @@ double      has a size of 8 bytes.
 long double has a size of 16 bytes.
 
 Testing auto frac max dec:
-For 31 frac bits, auto frac max dec is 9999999
-For 0 frac bits, auto frac max dec is 9
-For 1 frac bits, auto frac max dec is 9
-For 2 frac bits, auto frac max dec is 9
-For 3 frac bits, auto frac max dec is 9
-For 4 frac bits, auto frac max dec is 9
-For 5 frac bits, auto frac max dec is 9
-For 6 frac bits, auto frac max dec is 9
-For 7 frac bits, auto frac max dec is 99
-For 8 frac bits, auto frac max dec is 99
-For 9 frac bits, auto frac max dec is 99
-For 10 frac bits, auto frac max dec is 999
-For 11 frac bits, auto frac max dec is 999
-For 12 frac bits, auto frac max dec is 999
-For 13 frac bits, auto frac max dec is 999
-For 14 frac bits, auto frac max dec is 9999
-For 15 frac bits, auto frac max dec is 9999
-For 16 frac bits, auto frac max dec is 9999
-For 17 frac bits, auto frac max dec is 99999
-For 18 frac bits, auto frac max dec is 99999
-For 19 frac bits, auto frac max dec is 99999
-For 20 frac bits, auto frac max dec is 999999
-For 21 frac bits, auto frac max dec is 999999
-For 22 frac bits, auto frac max dec is 999999
-For 23 frac bits, auto frac max dec is 999999
-For 24 frac bits, auto frac max dec is 9999999
-For 25 frac bits, auto frac max dec is 9999999
-For 26 frac bits, auto frac max dec is 9999999
-For 27 frac bits, auto frac max dec is 9999999
-For 28 frac bits, auto frac max dec is 9999999
-For 29 frac bits, auto frac max dec is 9999999
-For 30 frac bits, auto frac max dec is 9999999
-For 31 frac bits, auto frac max dec is 9999999
-For 31 frac bits, auto frac max dec is 9999999
-For 31 frac bits, auto frac max dec is 9999999
+Attempted frac bits: -1, effective: 0,  auto frac max dec: 9
+Attempted frac bits: 0, effective: 0,  auto frac max dec: 9
+Attempted frac bits: 1, effective: 1,  auto frac max dec: 9
+Attempted frac bits: 2, effective: 2,  auto frac max dec: 9
+Attempted frac bits: 3, effective: 3,  auto frac max dec: 9
+Attempted frac bits: 4, effective: 4,  auto frac max dec: 9
+Attempted frac bits: 5, effective: 5,  auto frac max dec: 9
+Attempted frac bits: 6, effective: 6,  auto frac max dec: 9
+Attempted frac bits: 7, effective: 7,  auto frac max dec: 99
+Attempted frac bits: 8, effective: 8,  auto frac max dec: 99
+Attempted frac bits: 9, effective: 9,  auto frac max dec: 99
+Attempted frac bits: 10, effective: 10,  auto frac max dec: 999
+Attempted frac bits: 11, effective: 11,  auto frac max dec: 999
+Attempted frac bits: 12, effective: 12,  auto frac max dec: 999
+Attempted frac bits: 13, effective: 13,  auto frac max dec: 999
+Attempted frac bits: 14, effective: 14,  auto frac max dec: 9999
+Attempted frac bits: 15, effective: 15,  auto frac max dec: 9999
+Attempted frac bits: 16, effective: 16,  auto frac max dec: 9999
+Attempted frac bits: 17, effective: 17,  auto frac max dec: 99999
+Attempted frac bits: 18, effective: 18,  auto frac max dec: 99999
+Attempted frac bits: 19, effective: 19,  auto frac max dec: 99999
+Attempted frac bits: 20, effective: 20,  auto frac max dec: 999999
+Attempted frac bits: 21, effective: 21,  auto frac max dec: 999999
+Attempted frac bits: 22, effective: 22,  auto frac max dec: 999999
+Attempted frac bits: 23, effective: 23,  auto frac max dec: 999999
+Attempted frac bits: 24, effective: 24,  auto frac max dec: 9999999
+Attempted frac bits: 25, effective: 25,  auto frac max dec: 9999999
+Attempted frac bits: 26, effective: 26,  auto frac max dec: 9999999
+Attempted frac bits: 27, effective: 27,  auto frac max dec: 9999999
+Attempted frac bits: 28, effective: 28,  auto frac max dec: 9999999
+Attempted frac bits: 29, effective: 29,  auto frac max dec: 9999999
+Attempted frac bits: 30, effective: 30,  auto frac max dec: 9999999
+Attempted frac bits: 31, effective: 31,  auto frac max dec: 9999999
+Attempted frac bits: 32, effective: 31,  auto frac max dec: 9999999
+Attempted frac bits: 33, effective: 31,  auto frac max dec: 9999999
 
 Testing function that counts in O(log(n)) the # bits used by a number:
 Unsigned number 0 uses 0 bits
