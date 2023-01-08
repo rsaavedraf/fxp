@@ -322,6 +322,138 @@ All tests passed using 1-bit fracs, and '9' as max decimal frac.
 ========================
 FXP configuration parameters:
 pos infinity: 2147483647
+whole bits  : 22
+frac bits   : 10
+whole max   : 2097151
+whole min   : -2097151
+neg infinity: -2147483647
+undefined   : -2147483648
+frac mask   : 1023
+frac max    : 1023 (->decimals: .999)
+
+Some general tests:
+'Infinity', got +INF,	expected same!
+'-Infinity', got -INF,	expected same!
+'Undefined', got UNDEF,	expected same!
+'zero', got 0.  0 (bin frac=0),	expected same!
+'tiniest', got 0.  0 (bin frac=1),	expected same!
+'-tiniest', got -0.  0 (bin frac=-1),	expected same!
+'Largest', got 2097151.998 (bin frac=1022),	expected same!
+'Largest - tiniest', got 2097151.997 (bin frac=1021),	expected same!
+'Largest + tiniest safe', got +INF,	expected same!
+'Largest + tiniest unsafe', got +INF,	expected same!
+'Most negative', got -2097151.-998 (bin frac=-1022),	expected same!
+'Almost most negative', got -2097151.-997 (bin frac=-1021),	expected same!
+'+inf + +inf', got +INF,	expected same!
+'-inf - +inf', got -INF,	expected same!
+'+inf + -inf', got UNDEF,	expected same!
+'-inf + -inf', got -INF,	expected same!
+'-inf - -inf', got UNDEF,	expected same!
+'+inf * -inf', got -INF,	expected same!
+'+num / zero', got +INF,	expected same!
+'zero / zero', got UNDEF,	expected same!
+'zero * zero', got 0.  0 (bin frac=0),	expected same!
+'zero + zero', got 0.  0 (bin frac=0),	expected same!
+'zero - zero', got 0.  0 (bin frac=0),	expected same!
+'-num / zero', got -INF,	expected same!
+'zero * +inf', got UNDEF,	expected same!
+'zero * -inf', got UNDEF,	expected same!
+'zero * undef', got UNDEF,	expected same!
+'-inf * undef', got UNDEF,	expected same!
+'+inf * undef', got UNDEF,	expected same!
+'undef * undef', got UNDEF,	expected same!
+'tiniest * inf', got +INF,	expected same!
+
+Tests that apply when using at least one frac bit
+
+Checking decimal <=> bin mappings of frac ranges:
+Max frac dec: 999 (bin 1023)
+Showing fxp for 0.  0: 0.  0 (bin frac=0)
+Showing fxp for 0.  1: 0.  0 (bin frac=1)
+Showing fxp for 0.  2: 0.  1 (bin frac=2)
+Showing fxp for 0.  3: 0.  2 (bin frac=3)
+Showing fxp for 0.  4: 0.  3 (bin frac=4)
+Showing fxp for 0.  5: 0.  4 (bin frac=5)
+
+Showing fxp for 0.498: 0.497 (bin frac=509)
+Showing fxp for 0.499: 0.498 (bin frac=510)
+Showing fxp for 0.500: 0.499 (bin frac=512)
+Showing fxp for 0.501: 0.500 (bin frac=513)
+Showing fxp for 0.502: 0.501 (bin frac=514)
+
+Showing fxp for 0.994: 0.993 (bin frac=1017)
+Showing fxp for 0.995: 0.994 (bin frac=1018)
+Showing fxp for 0.996: 0.995 (bin frac=1019)
+Showing fxp for 0.997: 0.996 (bin frac=1020)
+Showing fxp for 0.998: 0.997 (bin frac=1021)
+Showing fxp for 0.999: 0.999 (bin frac=1023)
+
+Checking sign taken from frac when whole==0
+'-0.(+)500', got 0.499 (bin frac=512),	expected same!
+'-0.(-)500', got -0.-499 (bin frac=-512),	expected same!
+
+Truncation of longer frac decimal arguments
+'0.222222', got 0.221 (bin frac=227),	expected same!
+'0.777777', got 0.776 (bin frac=795),	expected same!
+'0.991999', got 0.990 (bin frac=1014),	expected same!
+'0.999999', got 0.999 (bin frac=1023),	expected same!
+
+Tests that apply when using at least two bits for whole part (1-bit sign, 1-bit value):
+'Way Too Large whole part!', got +INF,	expected same!
+'Largest * 1', got 2097151.998 (bin frac=1022),	expected same!
+'Largest * -1', got -2097151.-998 (bin frac=-1022),	expected same!
+'one', got 1.  0 (bin frac=0),	expected same!
+'Largest + one safe', got +INF,	expected same!
+'Largest + one unsafe', got -2097151. -1 (bin frac=-2),	expected same!
+'Safe Too neg substraction', got -INF,	expected same!
+'Unsafe Too neg substraction', got 2097151.  1 (bin frac=2),	expected same!
+'+inf - 1', got +INF,	expected same!
+'-inf + 1', got -INF,	expected same!
+'Half Max + Half Max', got 2097151.998 (bin frac=1022),	expected same!
+'FXP_MAX - Half Max', got 1048575.999 (bin frac=1023),	expected same!
+'Half Max + FXP_MAX', got +INF,	expected same!
+'-FXP_MAX - Half Max', got -INF,	expected same!
+'Half Max * 2', got 2097151.998 (bin frac=1022),	expected same!
+'Half Max * 2 (long)', got 2097151.998 (bin frac=1022),	expected same!
+'Half Max * 3', got +INF,	expected same!
+'-Half Max * 3', got -INF,	expected same!
+'Half Max / 0.25', got +INF,	expected same!
+'-Half Max / 0.25', got -INF,	expected same!
+'(HalfMax+1)*2', got +INF,	expected same!
+'(HalfMax+1)*2 (long)', got +INF,	expected same!
+
+Tests when using both whole and fraction parts:
+
+Simple operations checking signs
+10.249 (bin frac=255)
+' num +  2', got 12.249 (bin frac=255),	expected same!
+' num + -2', got 8.249 (bin frac=255),	expected same!
+'-num +  2', got -8.-249 (bin frac=-255),	expected same!
+'-num + -2', got -12.-249 (bin frac=-255),	expected same!
+' num -  2', got 8.249 (bin frac=255),	expected same!
+' num - -2', got 12.249 (bin frac=255),	expected same!
+'-num -  2', got -12.-249 (bin frac=-255),	expected same!
+'-num - -2', got -8.-249 (bin frac=-255),	expected same!
+' num *  2', got 20.498 (bin frac=510),	expected same!
+' num * -2', got -20.-498 (bin frac=-510),	expected same!
+'-num *  2', got -20.-498 (bin frac=-510),	expected same!
+'-num * -2', got 20.498 (bin frac=510),	expected same!
+' num *  2 (long)', got 20.498 (bin frac=510),	expected same!
+' num * -2 (long)', got -20.-498 (bin frac=-510),	expected same!
+'-num *  2 (long)', got -20.-498 (bin frac=-510),	expected same!
+'-num * -2 (long)', got 20.498 (bin frac=510),	expected same!
+' num /  2', got 5.124 (bin frac=127),	expected same!
+' num / -2', got -5.-124 (bin frac=-127),	expected same!
+'-num /  2', got -5.-124 (bin frac=-127),	expected same!
+'-num / -2', got 5.124 (bin frac=127),	expected same!
+
+Total # of warnings: 0
+All tests passed using 10-bit fracs, and '999' as max decimal frac.
+
+
+========================
+FXP configuration parameters:
+pos infinity: 2147483647
 whole bits  : 20
 frac bits   : 12
 whole max   : 524287
@@ -459,14 +591,14 @@ All tests passed using 12-bit fracs, and '999' as max decimal frac.
 ========================
 FXP configuration parameters:
 pos infinity: 2147483647
-whole bits  : 16
-frac bits   : 16
-whole max   : 32767
-whole min   : -32767
+whole bits  : 17
+frac bits   : 15
+whole max   : 65535
+whole min   : -65535
 neg infinity: -2147483647
 undefined   : -2147483648
-frac mask   : 65535
-frac max    : 65535 (->decimals: .9999)
+frac mask   : 32767
+frac max    : 32767 (->decimals: .9999)
 
 Some general tests:
 'Infinity', got +INF,	expected same!
@@ -475,12 +607,12 @@ Some general tests:
 'zero', got 0.  0 (bin frac=0),	expected same!
 'tiniest', got 0.  0 (bin frac=1),	expected same!
 '-tiniest', got -0.  0 (bin frac=-1),	expected same!
-'Largest', got 32767.9998 (bin frac=65534),	expected same!
-'Largest - tiniest', got 32767.9998 (bin frac=65533),	expected same!
+'Largest', got 65535.9998 (bin frac=32766),	expected same!
+'Largest - tiniest', got 65535.9998 (bin frac=32765),	expected same!
 'Largest + tiniest safe', got +INF,	expected same!
 'Largest + tiniest unsafe', got +INF,	expected same!
-'Most negative', got -32767.-9998 (bin frac=-65534),	expected same!
-'Almost most negative', got -32767.-9998 (bin frac=-65533),	expected same!
+'Most negative', got -65535.-9998 (bin frac=-32766),	expected same!
+'Almost most negative', got -65535.-9998 (bin frac=-32765),	expected same!
 '+inf + +inf', got +INF,	expected same!
 '-inf - +inf', got -INF,	expected same!
 '+inf + -inf', got UNDEF,	expected same!
@@ -504,54 +636,54 @@ Some general tests:
 Tests that apply when using at least one frac bit
 
 Checking decimal <=> bin mappings of frac ranges:
-Max frac dec: 9999 (bin 65535)
+Max frac dec: 9999 (bin 32767)
 Showing fxp for 0.  0: 0.  0 (bin frac=0)
-Showing fxp for 0.  1: 0.  0 (bin frac=6)
-Showing fxp for 0.  2: 0.  1 (bin frac=13)
-Showing fxp for 0.  3: 0.  2 (bin frac=19)
-Showing fxp for 0.  4: 0.  3 (bin frac=26)
-Showing fxp for 0.  5: 0.  4 (bin frac=32)
+Showing fxp for 0.  1: 0.  0 (bin frac=3)
+Showing fxp for 0.  2: 0.  1 (bin frac=6)
+Showing fxp for 0.  3: 0.  2 (bin frac=9)
+Showing fxp for 0.  4: 0.  3 (bin frac=13)
+Showing fxp for 0.  5: 0.  4 (bin frac=16)
 
-Showing fxp for 0.4998: 0.4997 (bin frac=32757)
-Showing fxp for 0.4999: 0.4998 (bin frac=32764)
-Showing fxp for 0.5000: 0.4999 (bin frac=32770)
-Showing fxp for 0.5001: 0.5000 (bin frac=32777)
-Showing fxp for 0.5002: 0.5001 (bin frac=32783)
+Showing fxp for 0.4998: 0.4997 (bin frac=16378)
+Showing fxp for 0.4999: 0.4998 (bin frac=16381)
+Showing fxp for 0.5000: 0.4999 (bin frac=16385)
+Showing fxp for 0.5001: 0.5000 (bin frac=16388)
+Showing fxp for 0.5002: 0.5001 (bin frac=16391)
 
-Showing fxp for 0.9994: 0.9993 (bin frac=65502)
-Showing fxp for 0.9995: 0.9994 (bin frac=65508)
-Showing fxp for 0.9996: 0.9995 (bin frac=65515)
-Showing fxp for 0.9997: 0.9996 (bin frac=65521)
-Showing fxp for 0.9998: 0.9997 (bin frac=65528)
-Showing fxp for 0.9999: 0.9999 (bin frac=65535)
+Showing fxp for 0.9994: 0.9993 (bin frac=32750)
+Showing fxp for 0.9995: 0.9994 (bin frac=32753)
+Showing fxp for 0.9996: 0.9995 (bin frac=32757)
+Showing fxp for 0.9997: 0.9996 (bin frac=32760)
+Showing fxp for 0.9998: 0.9997 (bin frac=32763)
+Showing fxp for 0.9999: 0.9999 (bin frac=32767)
 
 Checking sign taken from frac when whole==0
-'-0.(+)500', got 0.499 (bin frac=32800),	expected same!
-'-0.(-)500', got -0.-499 (bin frac=-32800),	expected same!
+'-0.(+)500', got 0.499 (bin frac=16399),	expected same!
+'-0.(-)500', got -0.-499 (bin frac=-16399),	expected same!
 
 Truncation of longer frac decimal arguments
-'0.222222', got 0.221 (bin frac=14563),	expected same!
-'0.777777', got 0.776 (bin frac=50971),	expected same!
-'0.991999', got 0.990 (bin frac=65010),	expected same!
-'0.999999', got 0.999 (bin frac=65535),	expected same!
+'0.222222', got 0.221 (bin frac=7281),	expected same!
+'0.777777', got 0.776 (bin frac=25485),	expected same!
+'0.991999', got 0.990 (bin frac=32504),	expected same!
+'0.999999', got 0.999 (bin frac=32767),	expected same!
 
 Tests that apply when using at least two bits for whole part (1-bit sign, 1-bit value):
 'Way Too Large whole part!', got +INF,	expected same!
-'Largest * 1', got 32767.9998 (bin frac=65534),	expected same!
-'Largest * -1', got -32767.-9998 (bin frac=-65534),	expected same!
+'Largest * 1', got 65535.9998 (bin frac=32766),	expected same!
+'Largest * -1', got -65535.-9998 (bin frac=-32766),	expected same!
 'one', got 1.  0 (bin frac=0),	expected same!
 'Largest + one safe', got +INF,	expected same!
-'Largest + one unsafe', got -32767.  0 (bin frac=-2),	expected same!
+'Largest + one unsafe', got -65535.  0 (bin frac=-2),	expected same!
 'Safe Too neg substraction', got -INF,	expected same!
-'Unsafe Too neg substraction', got 32767.  0 (bin frac=2),	expected same!
+'Unsafe Too neg substraction', got 65535.  0 (bin frac=2),	expected same!
 '+inf - 1', got +INF,	expected same!
 '-inf + 1', got -INF,	expected same!
-'Half Max + Half Max', got 32767.9998 (bin frac=65534),	expected same!
-'FXP_MAX - Half Max', got 16383.9999 (bin frac=65535),	expected same!
+'Half Max + Half Max', got 65535.9998 (bin frac=32766),	expected same!
+'FXP_MAX - Half Max', got 32767.9999 (bin frac=32767),	expected same!
 'Half Max + FXP_MAX', got +INF,	expected same!
 '-FXP_MAX - Half Max', got -INF,	expected same!
-'Half Max * 2', got 32767.9998 (bin frac=65534),	expected same!
-'Half Max * 2 (long)', got 32767.9998 (bin frac=65534),	expected same!
+'Half Max * 2', got 65535.9998 (bin frac=32766),	expected same!
+'Half Max * 2 (long)', got 65535.9998 (bin frac=32766),	expected same!
 'Half Max * 3', got +INF,	expected same!
 '-Half Max * 3', got -INF,	expected same!
 'Half Max / 0.25', got +INF,	expected same!
@@ -562,30 +694,30 @@ Tests that apply when using at least two bits for whole part (1-bit sign, 1-bit 
 Tests when using both whole and fraction parts:
 
 Simple operations checking signs
-10.2499 (bin frac=16383)
-' num +  2', got 12.2499 (bin frac=16383),	expected same!
-' num + -2', got 8.2499 (bin frac=16383),	expected same!
-'-num +  2', got -8.-2499 (bin frac=-16383),	expected same!
-'-num + -2', got -12.-2499 (bin frac=-16383),	expected same!
-' num -  2', got 8.2499 (bin frac=16383),	expected same!
-' num - -2', got 12.2499 (bin frac=16383),	expected same!
-'-num -  2', got -12.-2499 (bin frac=-16383),	expected same!
-'-num - -2', got -8.-2499 (bin frac=-16383),	expected same!
-' num *  2', got 20.4999 (bin frac=32766),	expected same!
-' num * -2', got -20.-4999 (bin frac=-32766),	expected same!
-'-num *  2', got -20.-4999 (bin frac=-32766),	expected same!
-'-num * -2', got 20.4999 (bin frac=32766),	expected same!
-' num *  2 (long)', got 20.4999 (bin frac=32766),	expected same!
-' num * -2 (long)', got -20.-4999 (bin frac=-32766),	expected same!
-'-num *  2 (long)', got -20.-4999 (bin frac=-32766),	expected same!
-'-num * -2 (long)', got 20.4999 (bin frac=32766),	expected same!
-' num /  2', got 5.1249 (bin frac=8191),	expected same!
-' num / -2', got -5.-1249 (bin frac=-8191),	expected same!
-'-num /  2', got -5.-1249 (bin frac=-8191),	expected same!
-'-num / -2', got 5.1249 (bin frac=8191),	expected same!
+10.2499 (bin frac=8191)
+' num +  2', got 12.2499 (bin frac=8191),	expected same!
+' num + -2', got 8.2499 (bin frac=8191),	expected same!
+'-num +  2', got -8.-2499 (bin frac=-8191),	expected same!
+'-num + -2', got -12.-2499 (bin frac=-8191),	expected same!
+' num -  2', got 8.2499 (bin frac=8191),	expected same!
+' num - -2', got 12.2499 (bin frac=8191),	expected same!
+'-num -  2', got -12.-2499 (bin frac=-8191),	expected same!
+'-num - -2', got -8.-2499 (bin frac=-8191),	expected same!
+' num *  2', got 20.4999 (bin frac=16382),	expected same!
+' num * -2', got -20.-4999 (bin frac=-16382),	expected same!
+'-num *  2', got -20.-4999 (bin frac=-16382),	expected same!
+'-num * -2', got 20.4999 (bin frac=16382),	expected same!
+' num *  2 (long)', got 20.4999 (bin frac=16382),	expected same!
+' num * -2 (long)', got -20.-4999 (bin frac=-16382),	expected same!
+'-num *  2 (long)', got -20.-4999 (bin frac=-16382),	expected same!
+'-num * -2 (long)', got 20.4999 (bin frac=16382),	expected same!
+' num /  2', got 5.1249 (bin frac=4095),	expected same!
+' num / -2', got -5.-1249 (bin frac=-4095),	expected same!
+'-num /  2', got -5.-1249 (bin frac=-4095),	expected same!
+'-num / -2', got 5.1249 (bin frac=4095),	expected same!
 
 Total # of warnings: 0
-All tests passed using 16-bit fracs, and '9999' as max decimal frac.
+All tests passed using 15-bit fracs, and '9999' as max decimal frac.
 
 
 ========================
@@ -718,89 +850,6 @@ Simple operations checking signs
 
 Total # of warnings: 0
 All tests passed using 24-bit fracs, and '9999999' as max decimal frac.
-
-
-========================
-FXP configuration parameters:
-pos infinity: 2147483647
-whole bits  : 1
-frac bits   : 31
-whole max   : 0
-whole min   : 0
-neg infinity: -2147483647
-undefined   : -2147483648
-frac mask   : 2147483647
-frac max    : 2147483646 (->decimals: .9999999)
-
-Some general tests:
-'Infinity', got +INF,	expected same!
-'-Infinity', got -INF,	expected same!
-'Undefined', got UNDEF,	expected same!
-'zero', got 0.  0 (bin frac=0),	expected same!
-'tiniest', got 0.  0 (bin frac=1),	expected same!
-'-tiniest', got -0.  0 (bin frac=-1),	expected same!
-'Largest', got 0.9999999 (bin frac=2147483646),	expected same!
-'Largest - tiniest', got 0.9999998 (bin frac=2147483645),	expected same!
-'Largest + tiniest safe', got +INF,	expected same!
-'Largest + tiniest unsafe', got +INF,	expected same!
-'Most negative', got -0.-9999999 (bin frac=-2147483646),	expected same!
-'Almost most negative', got -0.-9999998 (bin frac=-2147483645),	expected same!
-'+inf + +inf', got +INF,	expected same!
-'-inf - +inf', got -INF,	expected same!
-'+inf + -inf', got UNDEF,	expected same!
-'-inf + -inf', got -INF,	expected same!
-'-inf - -inf', got UNDEF,	expected same!
-'+inf * -inf', got -INF,	expected same!
-'+num / zero', got +INF,	expected same!
-'zero / zero', got UNDEF,	expected same!
-'zero * zero', got 0.  0 (bin frac=0),	expected same!
-'zero + zero', got 0.  0 (bin frac=0),	expected same!
-'zero - zero', got 0.  0 (bin frac=0),	expected same!
-'-num / zero', got -INF,	expected same!
-'zero * +inf', got UNDEF,	expected same!
-'zero * -inf', got UNDEF,	expected same!
-'zero * undef', got UNDEF,	expected same!
-'-inf * undef', got UNDEF,	expected same!
-'+inf * undef', got UNDEF,	expected same!
-'undef * undef', got UNDEF,	expected same!
-'tiniest * inf', got +INF,	expected same!
-
-Tests that apply when using at least one frac bit
-
-Checking decimal <=> bin mappings of frac ranges:
-Max frac dec: 9999999 (bin 2147483646)
-Showing fxp for 0.  0: 0.  0 (bin frac=0)
-Showing fxp for 0.  1: 0.  0 (bin frac=214)
-Showing fxp for 0.  2: 0.  1 (bin frac=429)
-Showing fxp for 0.  3: 0.  2 (bin frac=644)
-Showing fxp for 0.  4: 0.  3 (bin frac=858)
-Showing fxp for 0.  5: 0.  4 (bin frac=1073)
-
-Showing fxp for 0.4999998: 0.4999997 (bin frac=1073741500)
-Showing fxp for 0.4999999: 0.4999998 (bin frac=1073741715)
-Showing fxp for 0.5000000: 0.4999999 (bin frac=1073741930)
-Showing fxp for 0.5000001: 0.5000000 (bin frac=1073742145)
-Showing fxp for 0.5000002: 0.5000001 (bin frac=1073742359)
-
-Showing fxp for 0.9999994: 0.9999993 (bin frac=2147482572)
-Showing fxp for 0.9999995: 0.9999994 (bin frac=2147482787)
-Showing fxp for 0.9999996: 0.9999995 (bin frac=2147483001)
-Showing fxp for 0.9999997: 0.9999996 (bin frac=2147483216)
-Showing fxp for 0.9999998: 0.9999997 (bin frac=2147483431)
-Showing fxp for 0.9999999: 0.9999999 (bin frac=2147483646)
-
-Checking sign taken from frac when whole==0
-'-0.(+)500', got 0.499 (bin frac=1074816639),	expected same!
-'-0.(-)500', got -0.-499 (bin frac=-1074816639),	expected same!
-
-Truncation of longer frac decimal arguments
-'0.222222', got 0.222 (bin frac=477218588),	expected same!
-'0.777777', got 0.777 (bin frac=1670265058),	expected same!
-'0.991999', got 0.990 (bin frac=2130286579),	expected same!
-'0.999999', got 0.999 (bin frac=2147483646),	expected same!
-
-Total # of warnings: 0
-All tests passed using 31-bit fracs, and '9999999' as max decimal frac.
 
 
 ========================

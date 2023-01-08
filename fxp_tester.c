@@ -98,7 +98,7 @@ int main(void) {
                 fxp_nbits(UINT_MAX, FXP_INT_BITS));
         printf("\n");
 
-        int afb[] = {0, 1, 12, 16, 24, 31};
+        int afb[] = {0, 1, 10, 12, 15, 24, 31};
         for (int fb = 0; fb < 7; fb++) {
 
             fxp_set_frac_bits(afb[fb]);
@@ -385,9 +385,8 @@ int main(void) {
             }
 
             printf("\nTotal # of warnings: %d\n", nwarnings);
-            printf("All tests passed using %d-bit fracs, and '%d' as max decimal frac.\n\n",
-                    frac_bits,
-                    frac_max_dec);
+            printf("All tests passed using %d-bit fracs, ", frac_bits);
+            printf("and '%d' as max decimal frac.\n\n", frac_max_dec);
         }
 
         return 0;
