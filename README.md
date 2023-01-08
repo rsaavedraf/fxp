@@ -16,7 +16,7 @@ supporting systems where sizeof(long) == sizeof(int)
 border case.
 - 2023-01-08: new version with runtime-modifiable number of bits to use for
 the frac part. Fine-tuned all code, now all tests run with 0 warnings for
-any chosen number of frac bits.
+any chosen number of frac bits (tester runs with 0, 1, 12, 16, 24, and 31)
 
 To Do: write alternative implementations for division also using just ints,
 not longs.
