@@ -11,33 +11,36 @@
 #include "fxp.h"
 #include <stdio.h>
 
+#define FXP_FRAC_BITS_MIN 4
+#define FXP_FRAC_BITS_DEF 14
+#define FXP_FRAC_BITS_MAX (FXP_INT_BITS - 4)
 #define FXP_FRAC_MAX_DEC 9999999
 
 // Default number of bits to use for the frac part
 // (can be changed dynamically calling set_frac_bits)
-static int fxp_frac_bits = 12;
+static int fxp_frac_bits = FXP_FRAC_BITS_DEF;
 
 // Default number of bits for the whole (and sign) part
-static int fxp_whole_bits = FXP_INT_BITS - 12;
-static int fxp_whole_bits_m1 = FXP_INT_BITS - 13;
+static int fxp_whole_bits = FXP_INT_BITS - FXP_FRAC_BITS_DEF;
+static int fxp_whole_bits_m1 = FXP_INT_BITS - FXP_FRAC_BITS_DEF - 1;
 
 // FXP_FRAC_MAX should correspond to 2^FXP_FRAC_BITS - 1
 // Also used as mask for binary frac part of the int
-static int fxp_frac_mask = ((1 << 12) - 1);
-static int fxp_frac_max = ((1 << 12) - 1);
+static int fxp_frac_mask = ((1 << FXP_FRAC_BITS_DEF) - 1);
+static int fxp_frac_max = ((1 << FXP_FRAC_BITS_DEF) - 1);
 
 // Default desired max frac decimal value
 // (can be changed dynamically calling set_[auto_]frac_max_dec
-static int fxp_frac_max_dec = 999;
+static int fxp_frac_max_dec = 9999;
 
 //#define FXP_MAX_LSHIFTED ((FXP_MAX_L) << FXP_FRAC_BITS)
-static long int fxp_max_lshifted = (FXP_MAX_L) << 12;
+static long int fxp_max_lshifted = (FXP_MAX_L) << FXP_FRAC_BITS_DEF;
 
 // Max and min valid values for the whole part of the fxp's
-static int fxp_whole_max = FXP_MAX >> 12;
+static int fxp_whole_max = FXP_MAX >> FXP_FRAC_BITS_DEF;
 
 //#define FXP_WHOLE_MIN (-FXP_WHOLE_MAX)
-static int fxp_whole_min = -(FXP_MAX >> 12);
+static int fxp_whole_min = -(FXP_MAX >> FXP_FRAC_BITS_DEF);
 
 
 int fxp_get_frac_bits()
@@ -71,23 +74,26 @@ int fxp_get_whole_min()
 }
 
 
-/* Dynamic/runtime setting of the bits to use for the frac part.
- * Returns the actual number of fracbits that get set to be used
- * It can be a number between 0 and sizeof(int)-1 (1 bit always
- * needed and reserved for the sign)
+/*
+ * Dynamic/runtime setting of the bits to use for the frac part.
+ * Restrict the usable range of frac bits from FXP_FRAC_BITS_MIN
+ * up to FXP_FRAC_MAX_BITS. So there will always be at least
+ * some bits for the fraction part, and some for the whole part.
+ * This eliminates the need to handle some additional special
+ * cases when frac bits = 0 or 31, which aren't likely
+ * use-cases anyway.
  */
 int fxp_set_frac_bits(int nfracbits)
 {
-        fxp_frac_bits = (nfracbits < 0? 0:
-                            (nfracbits > (FXP_INT_BITS - 1))?
-                                (FXP_INT_BITS - 1): nfracbits);
+        fxp_frac_bits = (nfracbits < FXP_FRAC_BITS_MIN? FXP_FRAC_BITS_MIN:
+                            (nfracbits > FXP_FRAC_BITS_MAX?
+                                FXP_FRAC_BITS_MAX: nfracbits));
         fxp_whole_bits = FXP_INT_BITS - fxp_frac_bits;
         fxp_whole_bits_m1 = fxp_whole_bits - 1;
 
         // fxp_frac_max should correspond to 2^FXP_FRAC_BITS - 1
         fxp_frac_mask = (1 << fxp_frac_bits) - 1;
-        fxp_frac_max = fxp_frac_mask - (fxp_whole_bits == 1? 1: 0);
-        if (fxp_frac_max == 0) fxp_frac_max = 1;
+        fxp_frac_max = fxp_frac_mask;
         fxp_max_lshifted = ((FXP_MAX_L) << fxp_frac_bits);
 
         // Max and min valid values for the whole part of the fxp's
@@ -99,7 +105,9 @@ int fxp_set_frac_bits(int nfracbits)
 
 int fxp_set_frac_max_dec(int vfracmaxdec)
 {
-    fxp_frac_max_dec = (vfracmaxdec > 9? vfracmaxdec: 9);
+    fxp_frac_max_dec = (vfracmaxdec < 9? 9:
+            (vfracmaxdec > FXP_FRAC_MAX_DEC?
+                    FXP_FRAC_MAX_DEC: vfracmaxdec));
     return fxp_frac_max_dec;
 }
 
@@ -301,17 +309,20 @@ int fxp_unsafe_div(int fxp1, int fxp2)
 
 /*
  * Safe implementation of fxp1 + fxp2
+ * Compliant with INT32-C. For further details:
+ * https://wiki.sei.cmu.edu/confluence/display/c/INT32-C.+Ensure+that+operations+on+signed+integers+do+not+result+in+overflow
  */
 int fxp_sum(int fxp1, int fxp2)
 {
-        // Check for any undef or infinity arguments
+        // Check for undef or infinity arguments
         if (fxp1 == FXP_UNDEF || fxp2 == FXP_UNDEF)
                 return FXP_UNDEF;
         if (fxp1 == FXP_POS_INF || fxp2 == FXP_POS_INF)
                 return (fxp1 == FXP_NEG_INF || fxp2 == FXP_NEG_INF)?
-                            FXP_UNDEF: FXP_POS_INF;
+                        FXP_UNDEF: FXP_POS_INF;
         if (fxp1 == FXP_NEG_INF || fxp2 == FXP_NEG_INF)
                 return FXP_NEG_INF;
+
         // Check if arguments have the same sign
         if ((fxp1 >= 0 && fxp2 >= 0) || (fxp1 < 0) && (fxp2 < 0)) {
                 // Same signs, check for possible overflow
@@ -324,9 +335,21 @@ int fxp_sum(int fxp1, int fxp2)
                                     FXP_NEG_INF: fxp1 + fxp2;
                 }
         };
-        // Arguments with different signs, no overflow danger, simply sum
+        // Arguments with different sign -> No overflow danger, do sum
         return fxp1 + fxp2;
+        /*
+        // Rewrite closer to the INT32-C version,
+        // equivalent to the above though, only shorter)
+        if (((fxp2 > 0) && (fxp1 > (FXP_MAX - fxp2))) || \
+            ((fxp2 < 0) && (fxp1 < (FXP_MIN - fxp2))))
+                // Sum of operands would overflow
+                // Return infinity of the appropriate sign
+                return (fxp2 > 0? FXP_POS_INF: FXP_NEG_INF);
+        // No overflow danger, do sum
+        return fxp1 + fxp2;
+        */
 }
+
 
 /*
  * Safe implementation of fxp1 - fxp2 (just using the safe sum :)
@@ -357,8 +380,7 @@ int fxp_nbits(unsigned int x, int max_bits)
 }
 
 /*
-Simpler code to count the # of bits, but slightly less efficient
-*/
+//Simpler code to count the # of bits, but less efficient
 int fxp_nbits_v0(unsigned int x)
 {
     if (x == 0) return 0;
@@ -366,6 +388,7 @@ int fxp_nbits_v0(unsigned int x)
     while (!(x & (1 << nb))) nb--;
     return nb + 1;
 }
+*/
 
 /*
  * Safe implementation of fxp1 * fxp2
@@ -386,8 +409,8 @@ int fxp_mul(int fxp1, int fxp2)
                 return FXP_NEG_INF;
         }
 
-        /* Implementation of multiplication supporting systems
-        for which sizeof(long) == sizeof(int) */
+        /* Implementation of multiplication for systems
+        for which sizeof(long) is not larger than sizeof(int) */
         // Compute product v1*v2 == (w1 + f1) * (w2 + f2) as
         // w1*w2 + w1*f2 + f1*w2 + f1*w2 (using only positive values)
         int v1, v2, w1, w2, bw1, bw2, product;
@@ -401,7 +424,7 @@ int fxp_mul(int fxp1, int fxp2)
         bw2 = fxp_nbits(w2, fxp_whole_bits);
         int m1 = w1 * w2;
         //printf("w1=%d, w2=%d, bw1=%d, bw2=%d, m1=%d\n", \
-                w1, w2, bw1, bw2, m1);
+        //        w1, w2, bw1, bw2, m1);
         if ((bw1 + bw2 > fxp_whole_bits) || (m1 < 0)) {
                 // Overflow just by multiplying the whole parts
                 product = FXP_POS_INF;
@@ -416,7 +439,7 @@ int fxp_mul(int fxp1, int fxp2)
                 // Bits used in frac parts
                 bf1 = fxp_nbits(f1, fxp_frac_bits);
                 bf2 = fxp_nbits(f2, fxp_frac_bits);
-                // Multiplying the frac parts together can overflow only if
+                // Multiplying the frac parts together could overflow only if
                 // FXP_FRAC_BITS > FXP_WHOLE_BITS, but we can always drop
                 // enough least-significant bits in the frac parts before
                 // multiplying them (at the inevitable cost of some precision)
@@ -488,9 +511,14 @@ int fxp_mul_using_long(int fxp1, int fxp2)
 }
 
 /*
- * Safe implementation of fxp1 / fxp2
+ * Safe implementations of fxp1 / fxp2
  */
 int fxp_div(int fxp1, int fxp2)
+{
+    return fxp_div_using_long(fxp1, fxp2);
+}
+
+int fxp_div_using_long(int fxp1, int fxp2)
 {
         if (fxp1 == FXP_UNDEF || fxp2 == FXP_UNDEF)
                 return FXP_UNDEF;

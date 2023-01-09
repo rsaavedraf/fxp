@@ -65,7 +65,7 @@ int fxp_unsafe_mul(int fxp1, int fxp2);
 int fxp_unsafe_div(int fxp1, int fxp2);
 
 int fxp_nbits(unsigned int n, int maxbits);
-int fxp_nbits_v0(unsigned int n);
+//int fxp_nbits_v0(unsigned int n);
 
 int fxp_sum(int fxp1, int fxp2);
 int fxp_sub(int fxp1, int fxp2);
