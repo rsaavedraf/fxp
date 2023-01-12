@@ -1,4 +1,4 @@
-========================
+[H[2J[3J========================
 FXP Tester run
 ========================
 Num type sizes in this system:
@@ -10,188 +10,89 @@ float       has a size of 4 bytes.
 double      has a size of 8 bytes.
 long double has a size of 16 bytes.
 
-Testing auto frac max dec:
-Attempted frac bits: -1, effective: 4,  auto frac max dec: 9
-Attempted frac bits: 0, effective: 4,  auto frac max dec: 9
-Attempted frac bits: 1, effective: 4,  auto frac max dec: 9
-Attempted frac bits: 2, effective: 4,  auto frac max dec: 9
-Attempted frac bits: 3, effective: 4,  auto frac max dec: 9
-Attempted frac bits: 4, effective: 4,  auto frac max dec: 9
-Attempted frac bits: 5, effective: 5,  auto frac max dec: 9
-Attempted frac bits: 6, effective: 6,  auto frac max dec: 9
-Attempted frac bits: 7, effective: 7,  auto frac max dec: 99
-Attempted frac bits: 8, effective: 8,  auto frac max dec: 99
-Attempted frac bits: 9, effective: 9,  auto frac max dec: 99
-Attempted frac bits: 10, effective: 10,  auto frac max dec: 999
-Attempted frac bits: 11, effective: 11,  auto frac max dec: 999
-Attempted frac bits: 12, effective: 12,  auto frac max dec: 999
-Attempted frac bits: 13, effective: 13,  auto frac max dec: 999
-Attempted frac bits: 14, effective: 14,  auto frac max dec: 9999
-Attempted frac bits: 15, effective: 15,  auto frac max dec: 9999
-Attempted frac bits: 16, effective: 16,  auto frac max dec: 9999
-Attempted frac bits: 17, effective: 17,  auto frac max dec: 99999
-Attempted frac bits: 18, effective: 18,  auto frac max dec: 99999
-Attempted frac bits: 19, effective: 19,  auto frac max dec: 99999
-Attempted frac bits: 20, effective: 20,  auto frac max dec: 999999
-Attempted frac bits: 21, effective: 21,  auto frac max dec: 999999
-Attempted frac bits: 22, effective: 22,  auto frac max dec: 999999
-Attempted frac bits: 23, effective: 23,  auto frac max dec: 999999
-Attempted frac bits: 24, effective: 24,  auto frac max dec: 9999999
-Attempted frac bits: 25, effective: 25,  auto frac max dec: 9999999
-Attempted frac bits: 26, effective: 26,  auto frac max dec: 9999999
-Attempted frac bits: 27, effective: 27,  auto frac max dec: 9999999
-Attempted frac bits: 28, effective: 28,  auto frac max dec: 9999999
-Attempted frac bits: 29, effective: 28,  auto frac max dec: 9999999
-Attempted frac bits: 30, effective: 28,  auto frac max dec: 9999999
-Attempted frac bits: 31, effective: 28,  auto frac max dec: 9999999
-Attempted frac bits: 32, effective: 28,  auto frac max dec: 9999999
-Attempted frac bits: 33, effective: 28,  auto frac max dec: 9999999
-
-Testing function that counts in O(log(n)) the # bits used by a number:
-Unsigned number 0 uses 0 bits
-Unsigned Number 1 uses 1 bits
-Unsigned number 1 uses 1 bits
-Unsigned Number 2 uses 2 bits
-Unsigned number 3 uses 2 bits
-Unsigned Number 4 uses 3 bits
-Unsigned number 7 uses 3 bits
-Unsigned Number 8 uses 4 bits
-Unsigned number 15 uses 4 bits
-Unsigned Number 16 uses 5 bits
-Unsigned number 31 uses 5 bits
-Unsigned Number 32 uses 6 bits
-Unsigned number 63 uses 6 bits
-Unsigned Number 64 uses 7 bits
-Unsigned number 127 uses 7 bits
-Unsigned Number 128 uses 8 bits
-Unsigned number 255 uses 8 bits
-Unsigned Number 256 uses 9 bits
-Unsigned number 511 uses 9 bits
-Unsigned Number 512 uses 10 bits
-Unsigned number 1023 uses 10 bits
-Unsigned Number 1024 uses 11 bits
-Unsigned number 2047 uses 11 bits
-Unsigned Number 2048 uses 12 bits
-Unsigned number 4095 uses 12 bits
-Unsigned Number 4096 uses 13 bits
-Unsigned number 8191 uses 13 bits
-Unsigned Number 8192 uses 14 bits
-Unsigned number 16383 uses 14 bits
-Unsigned Number 16384 uses 15 bits
-Unsigned number 32767 uses 15 bits
-Unsigned Number 32768 uses 16 bits
-Unsigned number 65535 uses 16 bits
-Unsigned Number 65536 uses 17 bits
-Unsigned number 131071 uses 17 bits
-Unsigned Number 131072 uses 18 bits
-Unsigned number 262143 uses 18 bits
-Unsigned Number 262144 uses 19 bits
-Unsigned number 524287 uses 19 bits
-Unsigned Number 524288 uses 20 bits
-Unsigned number 1048575 uses 20 bits
-Unsigned Number 1048576 uses 21 bits
-Unsigned number 2097151 uses 21 bits
-Unsigned Number 2097152 uses 22 bits
-Unsigned number 4194303 uses 22 bits
-Unsigned Number 4194304 uses 23 bits
-Unsigned number 8388607 uses 23 bits
-Unsigned Number 8388608 uses 24 bits
-Unsigned number 16777215 uses 24 bits
-Unsigned Number 16777216 uses 25 bits
-Unsigned number 33554431 uses 25 bits
-Unsigned Number 33554432 uses 26 bits
-Unsigned number 67108863 uses 26 bits
-Unsigned Number 67108864 uses 27 bits
-Unsigned number 134217727 uses 27 bits
-Unsigned Number 134217728 uses 28 bits
-Unsigned number 268435455 uses 28 bits
-Unsigned Number 268435456 uses 29 bits
-Unsigned number 536870911 uses 29 bits
-Unsigned Number 536870912 uses 30 bits
-Unsigned number 1073741823 uses 30 bits
-Unsigned Number 1073741824 uses 31 bits
-Unsigned number 2147483647 uses 31 bits
-Unsigned Number 2147483648 uses 32 bits
-Unsigned Number 4294967295 uses 32 bits
+Running tests for frac-bit sizes: 0, 11, 14, 16, 24, 31
 
 ========================
 FXP configuration parameters:
-pos infinity: 2147483647
-whole bits  : 28
 frac bits   : 4 (requested was 0)
+whole bits  : 28
+pos infinity: 2147483647 (Lf: 134217728.000000)
 whole max   : 134217727
 frac mask   : 15
 frac max    : 15 (->decimals: .9)
 whole min   : -134217727
-neg infinity: -2147483647
-undefined   : -2147483648
+neg infinity: -2147483647 (Lf: -134217728.000000)
+undefined   : -2147483648 (Lf: -134217728.000000)
+max_ok_delta: 2.666667E-01
+max_delta   : 4.666667E-01
 
 Checking extreme int values, part I:
-'Infinity', got +INF,	expected same!
-'Largest', got 134217727.  8 (bin frac=14),	expected same!
-'HalfMax', got 67108863.  9 (bin frac=15),	expected same!
-'Largest frac', got 0.  9 (bin frac=15),	expected same!
-'tiniest', got 0.  0 (bin frac=1),	expected same!
-'zero', got 0.  0 (bin frac=0),	expected same!
-'-tiniest', got -0.  0 (bin frac=-1),	expected same!
-'-Largest frac', got -0. -9 (bin frac=-15),	expected same!
-'Most negative', got -134217727. -8 (bin frac=-14),	expected same!
-'-Infinity', got -INF,	expected same!
-'Undefined', got UNDEF,	expected same!
+Infinity, got +INF,	expected 134217728.000000 (~same)
+Largest, got 134217727.  8 (bin frac=14),	expected 134217727.933333 (~same)
+HalfMax, got 67108863.  9 (bin frac=15),	expected 67108863.966667 (~same)
+Largest frac, got 0.  9 (bin frac=15),	expected 1.000000 (~same)
+tiniest, got 0.  0 (bin frac=1),	expected 0.066667 (~same)
+0.5, got 0.  4 (bin frac=8),	expected 0.500000 (~same)
+zero, got 0.  0 (bin frac=0),	expected 0.000000 (~same)
+-tiniest, got -0.  0 (bin frac=-1),	expected -0.066667 (~same)
+-Largest frac, got -0. -9 (bin frac=-15),	expected -1.000000 (~same)
+Most negative, got -134217727. -8 (bin frac=-14),	expected -134217727.933333 (~same)
+-Infinity, got -INF,	expected -134217728.000000 (~same)
+Undefined, got UNDEF,	expected -134217728.000000 (~same)
 
 Checking extreme int values, part II:
-'Almost most negative', got -134217727. -7 (bin frac=-13),	expected same!
-' Largest -Largest', got 0.  0 (bin frac=0),	expected same!
-'-Largest +Largest', got 0.  0 (bin frac=0),	expected same!
-'Largest +0', got 134217727.  8 (bin frac=14),	expected same!
-'-Largest -0', got -134217727. -8 (bin frac=-14),	expected same!
-'Largest - tiniest', got 134217727.  7 (bin frac=13),	expected same!
-'Largest + tiniest safe', got +INF,	expected same!
-'Largest + tiniest unsafe', got +INF,	expected same!
-'+inf + +inf', got +INF,	expected same!
-'-inf - +inf', got -INF,	expected same!
-'+inf + -inf', got UNDEF,	expected same!
-'-inf + -inf', got -INF,	expected same!
-'-inf - -inf', got UNDEF,	expected same!
-'+inf * -inf', got -INF,	expected same!
-'+inf - 1', got +INF,	expected same!
-'-inf + 1', got -INF,	expected same!
-'+num / zero', got +INF,	expected same!
-'zero / zero', got UNDEF,	expected same!
-'zero * zero', got 0.  0 (bin frac=0),	expected same!
-'zero + zero', got 0.  0 (bin frac=0),	expected same!
-'zero - zero', got 0.  0 (bin frac=0),	expected same!
-'-num / zero', got -INF,	expected same!
-'zero * +inf', got UNDEF,	expected same!
-'zero * -inf', got UNDEF,	expected same!
-'zero * undef', got UNDEF,	expected same!
-'-inf * undef', got UNDEF,	expected same!
-'+inf * undef', got UNDEF,	expected same!
-'undef * undef', got UNDEF,	expected same!
-'tiniest * inf', got +INF,	expected same!
+Almost most negative, got -134217727. -7 (bin frac=-13),	expected -134217727.866667 (~same)
+ Largest -Largest, got 0.  0 (bin frac=0),	expected 0.000000 (~same)
+-Largest +Largest, got 0.  0 (bin frac=0),	expected 0.000000 (~same)
+Largest + 0, got 134217727.  8 (bin frac=14),	expected 134217727.933333 (~same)
+-Largest - 0, got -134217727. -8 (bin frac=-14),	expected -134217727.933333 (~same)
+Largest - tiniest, got 134217727.  7 (bin frac=13),	expected 134217727.866667 (~same)
+Largest + tiniest safe, got +INF,	expected 134217728.000000 (~same)
+Largest + tiniest unsafe, got +INF,	expected 134217728.000000 (~same)
++inf + +inf, got +INF,	expected 134217728.000000 (~same)
+-inf - +inf, got -INF,	expected -134217728.000000 (~same)
++inf + -inf, got UNDEF,	expected -134217728.000000 (~same)
+-inf + -inf, got -INF,	expected -134217728.000000 (~same)
+-inf - -inf, got UNDEF,	expected -134217728.000000 (~same)
++inf * -inf, got -INF,	expected -134217728.000000 (~same)
++inf - 0.5, got +INF,	expected 134217728.000000 (~same)
+-inf + 0.5, got -INF,	expected -134217728.000000 (~same)
++num / zero, got +INF,	expected 134217728.000000 (~same)
+zero / zero, got UNDEF,	expected -134217728.000000 (~same)
+zero * zero, got 0.  0 (bin frac=0),	expected 0.000000 (~same)
+zero + zero, got 0.  0 (bin frac=0),	expected 0.000000 (~same)
+zero - zero, got 0.  0 (bin frac=0),	expected 0.000000 (~same)
+-num / zero, got -INF,	expected -134217728.000000 (~same)
+zero * +inf, got UNDEF,	expected -134217728.000000 (~same)
+zero * -inf, got UNDEF,	expected -134217728.000000 (~same)
+zero * undef, got UNDEF,	expected -134217728.000000 (~same)
+-inf * undef, got UNDEF,	expected -134217728.000000 (~same)
++inf * undef, got UNDEF,	expected -134217728.000000 (~same)
+undef * undef, got UNDEF,	expected -134217728.000000 (~same)
+tiniest * inf, got +INF,	expected 134217728.000000 (~same)
 
 Checking extreme int values, part III:
-'Way Too Large whole part!', got +INF,	expected same!
-'Largest * 1', got 134217727.  8 (bin frac=14),	expected same!
-'Largest * -1', got -134217727. -8 (bin frac=-14),	expected same!
-'Largest + two safe', got +INF,	expected same!
-'Largest + two unsafe', got -134217726. -1 (bin frac=-2),	expected same!
-'Safe Too neg substraction', got -INF,	expected same!
-'Unsafe Too neg substraction', got 134217727.  1 (bin frac=2),	expected same!
-'Largest +1', got +INF,	expected same!
-'-Largest -1', got -INF,	expected same!
-'+HalfMax +HMaxp2', got +INF,	expected same!
-'-HalfMax -HMaxp2', got -INF,	expected same!
-'HalfMax + HalfMax', got 134217727.  8 (bin frac=14),	expected same!
-'FXP_MAX - HalfMax', got 67108863.  9 (bin frac=15),	expected same!
-'HalfMax + FXP_MAX', got +INF,	expected same!
-'-FXP_MAX - HalfMax', got -INF,	expected same!
-'HalfMax * 2', got 134217727.  8 (bin frac=14),	expected same!
-'HalfMax * 2 (long)', got 134217727.  8 (bin frac=14),	expected same!
-'HalfMax * 3', got +INF,	expected same!
-'-HalfMax * 3', got -INF,	expected same!
-'(HalfMax+1)*2', got +INF,	expected same!
-'(HalfMax+1)*2 (long)', got +INF,	expected same!
+Way Too Large whole part!, got +INF,	expected 134217728.000000 (~same)
+Largest * 1, got 134217727.  8 (bin frac=14),	expected 134217727.933333 (~same)
+Largest * -1, got -134217727. -8 (bin frac=-14),	expected -134217727.933333 (~same)
+Largest + two safe, got +INF,	expected 134217728.000000 (~same)
+Largest + two unsafe, got -134217726. -1 (bin frac=-2),	expected -134217726.133333 (~same)
+Safe Too neg substraction, got -INF,	expected -134217728.000000 (~same)
+Unsafe Too neg substraction, got 134217727.  6 (bin frac=10),	expected 134217727.666667 (~same)
+Largest + 0.5, got +INF,	expected 134217728.000000 (~same)
+-Largest - 0.5, got -INF,	expected -134217728.000000 (~same)
++HalfMax + HMaxp2, got +INF,	expected 134217728.000000 (~same)
+-HalfMax - HMaxp2, got -INF,	expected -134217728.000000 (~same)
+HalfMax + HalfMax, got 134217727.  8 (bin frac=14),	expected 134217727.933333 (~same)
+FXP_MAX - HalfMax, got 67108863.  9 (bin frac=15),	expected 67108864.000000 (~same)
+HalfMax + FXP_MAX, got +INF,	expected 134217728.000000 (~same)
+-FXP_MAX - HalfMax, got -INF,	expected -134217728.000000 (~same)
+HalfMax * 2, got 134217727.  8 (bin frac=14),	expected 134217727.933333 (~same)
+HalfMax * 2 (long), got 134217727.  8 (bin frac=14),	expected 134217727.933333 (~same)
+HalfMax * 3, got +INF,	expected 134217728.000000 (~same)
+-HalfMax * 3, got -INF,	expected -134217728.000000 (~same)
+(HalfMax+0.5)*2, got +INF,	expected 134217728.000000 (~same)
+(HalfMax+0.5)*2 (long), got +INF,	expected 134217728.000000 (~same)
 
 Checking decimal <=> bin mappings of frac ranges:
 Max frac dec: 9 (bin 15)
@@ -216,135 +117,257 @@ Showing fxp for 0.  8: 0.  7 (bin frac=13)
 Showing fxp for 0.  9: 0.  9 (bin frac=15)
 
 Checking sign taken from frac when whole == 0:
-'-0.(+)500', got 0.466 (bin frac=7),	expected same!
-'-0.(-)500', got -0.-466 (bin frac=-7),	expected same!
+-0.(+)500, got 0.466 (bin frac=7),	expected 0.500000 (~same)
+-0.(-)500, got -0.-466 (bin frac=-7),	expected -0.500000 (~same)
 
 Truncation of longer frac decimal arguments:
-'0.222222', got 0.199 (bin frac=3),	expected same!
-'0.777777', got 0.732 (bin frac=11),	expected same!
-'0.991999', got 0.932 (bin frac=14),	expected same!
-'0.999999', got 0.999 (bin frac=15),	expected same!
+0.222222, got 0.199 (bin frac=3),	expected 0.222000 (~same)
+0.777777, got 0.732 (bin frac=11),	expected 0.777000 (~same)
+0.991999, got 0.932 (bin frac=14),	expected 0.991000 (~same)
+0.999999, got 0.999 (bin frac=15),	expected 0.999000 (~same)
 
 Checking extreme frac values:
-'maxfrac', got 0.  9 (bin frac=15),	expected same!
-'1+ maxfrac', got 1.  9 (bin frac=15),	expected same!
-'maxfrac +tiniest', got 1.  0 (bin frac=0),	expected same!
-'-maxfrac -tiniest', got -1.  0 (bin frac=0),	expected same!
-'maxfrac - maxfrac', got 0.  0 (bin frac=0),	expected same!
+maxfrac, got 0.  9 (bin frac=15),	expected 1.000000 (~same)
+0.5 + maxfrac, got 1.  4 (bin frac=7),	expected 1.500000 (~same)
+maxfrac +tiniest, got 1.  0 (bin frac=0),	expected 1.000000 (~same)
+-maxfrac -tiniest, got -1.  0 (bin frac=0),	expected -1.000000 (~same)
+maxfrac - maxfrac, got 0.  0 (bin frac=0),	expected 0.000000 (~same)
 
-Simple operations:
-' 1 + 1', got 2.  0 (bin frac=0),	expected same!
-'-1 - 1', got -2.  0 (bin frac=0),	expected same!
-'Ok sum == 2', got 2.  0 (bin frac=0),	expected same!
-'Ok sum == -2', got -2.  0 (bin frac=0),	expected same!
-' num', got 3.  4 (bin frac=7),	expected same!
-' num +  2', got 5.  4 (bin frac=7),	expected same!
-' num + -2', got 1.  4 (bin frac=7),	expected same!
-'-num +  2', got -1. -4 (bin frac=-7),	expected same!
-'-num + -2', got -5. -4 (bin frac=-7),	expected same!
-' num -  2', got 1.  4 (bin frac=7),	expected same!
-' num - -2', got 5.  4 (bin frac=7),	expected same!
-'-num -  2', got -5. -4 (bin frac=-7),	expected same!
-'-num - -2', got -1. -4 (bin frac=-7),	expected same!
-' num *  2', got 6.  8 (bin frac=14),	expected same!
-' num * -2', got -6. -8 (bin frac=-14),	expected same!
-'-num *  2', got -6. -8 (bin frac=-14),	expected same!
-'-num * -2', got 6.  8 (bin frac=14),	expected same!
-' num *  2 (long)', got 6.  8 (bin frac=14),	expected same!
-' num * -2 (long)', got -6. -8 (bin frac=-14),	expected same!
-'-num *  2 (long)', got -6. -8 (bin frac=-14),	expected same!
-'-num * -2 (long)', got 6.  8 (bin frac=14),	expected same!
-' num /  2', got 1.  6 (bin frac=11),	expected same!
-' num / -2', got -1. -6 (bin frac=-11),	expected same!
-'-num /  2', got -1. -6 (bin frac=-11),	expected same!
-'-num / -2', got 1.  6 (bin frac=11),	expected same!
-' num /  2 (long)', got 1.  6 (bin frac=11),	expected same!
-' num / -2 (long)', got -1. -6 (bin frac=-11),	expected same!
-'-num /  2 (long)', got -1. -6 (bin frac=-11),	expected same!
-'-num / -2 (long)', got 1.  6 (bin frac=11),	expected same!
+Simple ops when using 3 or more bits for the whole part:
+ 1 + 1, got 2.  0 (bin frac=0),	expected 2.000000 (~same)
+-1 - 1, got -2.  0 (bin frac=0),	expected -2.000000 (~same)
+Ok sum == 2, got 2.  0 (bin frac=0),	expected 2.000000 (~same)
+Ok sum == -2, got -2.  0 (bin frac=0),	expected -2.000000 (~same)
+ num, got 0.  4 (bin frac=7),	expected 0.466667 (~same)
+ num +  2, got 2.  4 (bin frac=7),	expected 2.466667 (~same)
+ num + -2, got -1. -5 (bin frac=-9),	expected -1.533333 (~same)
+-num +  2, got 1.  5 (bin frac=9),	expected 1.533333 (~same)
+-num + -2, got -2. -4 (bin frac=-7),	expected -2.466667 (~same)
+ num -  2, got -1. -5 (bin frac=-9),	expected -1.533333 (~same)
+ num - -2, got 2.  4 (bin frac=7),	expected 2.466667 (~same)
+-num -  2, got -2. -4 (bin frac=-7),	expected -2.466667 (~same)
+-num - -2, got 1.  5 (bin frac=9),	expected 1.533333 (~same)
+ num *  2, got 0.  8 (bin frac=14),	expected 0.933333 (~same)
+ num * -2, got -0. -8 (bin frac=-14),	expected -0.933333 (~same)
+-num *  2, got -0. -8 (bin frac=-14),	expected -0.933333 (~same)
+-num * -2, got 0.  8 (bin frac=14),	expected 0.933333 (~same)
+ num *  2 (long), got 0.  8 (bin frac=14),	expected 0.933333 (~same)
+ num * -2 (long), got -0. -8 (bin frac=-14),	expected -0.933333 (~same)
+-num *  2 (long), got -0. -8 (bin frac=-14),	expected -0.933333 (~same)
+-num * -2 (long), got 0.  8 (bin frac=14),	expected 0.933333 (~same)
+ num /  2, got 0.  1 (bin frac=3),	expected 0.233333 (~same)
+ num / -2, got -0. -1 (bin frac=-3),	expected -0.233333 (~same)
+-num /  2, got -0. -1 (bin frac=-3),	expected -0.233333 (~same)
+-num / -2, got 0.  1 (bin frac=3),	expected 0.233333 (~same)
+
+Verifying different op implementations using random numbers:
+n1 = 71151900.  5 (bin frac=9)
+n2 = -28790430. -1 (bin frac=-2)
+n3 = -0. -5 (bin frac=-9) (n3 always random between -1 and 1)
+a. sum vs. sum_l, got 42361470.  4 (bin frac=7),	expected 42361470.466667 (~same)
+b. sum vs. sum_l, got 71151900.  0 (bin frac=0),	expected 71151900.000000 (~same)
+c. mul vs. mul_l, got -INF,	expected -134217728.000000 (~same)
+d. mul vs. mul_d, got -INF,	expected -134217728.000000 (~same)
+e. mul_l vs. mul_d, got -INF,	expected -134217728.000000 (~same)
+f. mul vs. mul_l, got -40022944.  0 (bin frac=-1),	expected -40022944.066667 (~same)
+g. mul vs. mul_d, got -40022944.  0 (bin frac=-1),	expected -40022944.133333 (~same)
+h. mul_l vs. mul_d, got -40022944.  0 (bin frac=-1),	expected -40022944.133333 (~same)
+i. div vs. div_l, got -2. -4 (bin frac=-7),	expected -2.466667 (~same)
+n1 = -129485870. -6 (bin frac=-11)
+n2 = -75408899.  0 (bin frac=0)
+n3 = -0. -3 (bin frac=-6) (n3 always random between -1 and 1)
+a. sum vs. sum_l, got -INF,	expected -134217728.000000 (~same)
+b. sum vs. sum_l, got -129485871.  0 (bin frac=-1),	expected -129485871.066667 (~same)
+c. mul vs. mul_l, got +INF,	expected 134217728.000000 (~same)
+d. mul vs. mul_d, got +INF,	expected 134217728.000000 (~same)
+e. mul_l vs. mul_d, got +INF,	expected 134217728.000000 (~same)
+f. mul vs. mul_l, got 48557201.  4 (bin frac=8),	expected 48557201.533333 (~same)
+g. mul vs. mul_d, got 48557201.  4 (bin frac=8),	expected 48557201.533333 (~same)
+h. mul_l vs. mul_d, got 48557201.  4 (bin frac=8),	expected 48557201.533333 (~same)
+i. div vs. div_l, got 1.  6 (bin frac=11),	expected 1.733333 (~same)
+n1 = 51063403.  1 (bin frac=2)
+n2 = 41540205.  6 (bin frac=10)
+n3 = 0.  4 (bin frac=7) (n3 always random between -1 and 1)
+a. sum vs. sum_l, got 92603608.  7 (bin frac=12),	expected 92603608.800000 (~same)
+b. sum vs. sum_l, got 51063403.  5 (bin frac=9),	expected 51063403.600000 (~same)
+c. mul vs. mul_l, got +INF,	expected 134217728.000000 (~same)
+d. mul vs. mul_d, got +INF,	expected 134217728.000000 (~same)
+e. mul_l vs. mul_d, got +INF,	expected 134217728.000000 (~same)
+f. mul vs. mul_l, got 22340238.  7 (bin frac=13),	expected 22340238.866667 (~same)
+g. mul vs. mul_d, got 22340238.  7 (bin frac=13),	expected 22340238.866667 (~same)
+h. mul_l vs. mul_d, got 22340238.  7 (bin frac=13),	expected 22340238.866667 (~same)
+i. div vs. div_l, got 1.  1 (bin frac=3),	expected 1.200000 (~same)
+n1 = -37873219. -3 (bin frac=-5)
+n2 = 81125021.  8 (bin frac=14)
+n3 = 0.  0 (bin frac=0) (n3 always random between -1 and 1)
+a. sum vs. sum_l, got 43251802.  5 (bin frac=9),	expected 43251802.600000 (~same)
+b. sum vs. sum_l, got -37873219. -3 (bin frac=-5),	expected -37873219.333333 (~same)
+c. mul vs. mul_l, got -INF,	expected -134217728.000000 (~same)
+d. mul vs. mul_d, got -INF,	expected -134217728.000000 (~same)
+e. mul_l vs. mul_d, got -INF,	expected -134217728.000000 (~same)
+f. mul vs. mul_l, got 0.  0 (bin frac=0),	expected 0.000000 (~same)
+g. mul vs. mul_d, got 0.  0 (bin frac=0),	expected 0.000000 (~same)
+h. mul_l vs. mul_d, got 0.  0 (bin frac=0),	expected 0.000000 (~same)
+i. div vs. div_l, got -0. -4 (bin frac=-7),	expected -0.466667 (~same)
+n1 = -36448392. -4 (bin frac=-8)
+n2 = 94879982.  7 (bin frac=13)
+n3 = 0.  0 (bin frac=0) (n3 always random between -1 and 1)
+a. sum vs. sum_l, got 58431590.  3 (bin frac=5),	expected 58431590.333333 (~same)
+b. sum vs. sum_l, got -36448392. -4 (bin frac=-8),	expected -36448392.533333 (~same)
+c. mul vs. mul_l, got -INF,	expected -134217728.000000 (~same)
+d. mul vs. mul_d, got -INF,	expected -134217728.000000 (~same)
+e. mul_l vs. mul_d, got -INF,	expected -134217728.000000 (~same)
+f. mul vs. mul_l, got 0.  0 (bin frac=0),	expected 0.000000 (~same)
+g. mul vs. mul_d, got 0.  0 (bin frac=0),	expected 0.000000 (~same)
+h. mul_l vs. mul_d, got 0.  0 (bin frac=0),	expected 0.000000 (~same)
+i. div vs. div_l, got -0. -3 (bin frac=-6),	expected -0.400000 (~same)
+n1 = 89941952.  0 (bin frac=1)
+n2 = -103536914. -8 (bin frac=-14)
+n3 = 0.  4 (bin frac=7) (n3 always random between -1 and 1)
+a. sum vs. sum_l, got -13594962. -7 (bin frac=-13),	expected -13594962.866667 (~same)
+b. sum vs. sum_l, got 89941952.  4 (bin frac=8),	expected 89941952.533333 (~same)
+c. mul vs. mul_l, got -INF,	expected -134217728.000000 (~same)
+d. mul vs. mul_d, got -INF,	expected -134217728.000000 (~same)
+e. mul_l vs. mul_d, got -INF,	expected -134217728.000000 (~same)
+f. mul vs. mul_l, got 39349604.  0 (bin frac=0),	expected 39349604.000000 (~same)
+g. mul vs. mul_d, got 39349604.  0 (bin frac=0),	expected 39349604.000000 (~same)
+h. mul_l vs. mul_d, got 39349604.  0 (bin frac=0),	expected 39349604.000000 (~same)
+i. div vs. div_l, got -0. -7 (bin frac=-13),	expected -0.866667 (~same)
+n1 = 27274322.  0 (bin frac=1)
+n2 = 123041838.  9 (bin frac=15)
+n3 = 0.  4 (bin frac=8) (n3 always random between -1 and 1)
+a. sum vs. sum_l, got +INF,	expected 134217728.000000 (~same)
+b. sum vs. sum_l, got 27274322.  5 (bin frac=9),	expected 27274322.600000 (~same)
+c. mul vs. mul_l, got +INF,	expected 134217728.000000 (~same)
+d. mul vs. mul_d, got +INF,	expected 134217728.000000 (~same)
+e. mul_l vs. mul_d, got +INF,	expected 134217728.000000 (~same)
+f. mul vs. mul_l, got 13637161.  0 (bin frac=0),	expected 13637161.000000 (~same)
+g. mul vs. mul_d, got 13637161.  0 (bin frac=0),	expected 13637161.000000 (~same)
+h. mul_l vs. mul_d, got 13637161.  0 (bin frac=0),	expected 13637161.000000 (~same)
+i. div vs. div_l, got 0.  1 (bin frac=3),	expected 0.200000 (~same)
+n1 = 90359547.  4 (bin frac=8)
+n2 = -61595173.  0 (bin frac=0)
+n3 = 0.  1 (bin frac=3) (n3 always random between -1 and 1)
+a. sum vs. sum_l, got 28764374.  4 (bin frac=8),	expected 28764374.533333 (~same)
+b. sum vs. sum_l, got 90359547.  6 (bin frac=11),	expected 90359547.733333 (~same)
+c. mul vs. mul_l, got -INF,	expected -134217728.000000 (~same)
+d. mul vs. mul_d, got -INF,	expected -134217728.000000 (~same)
+e. mul_l vs. mul_d, got -INF,	expected -134217728.000000 (~same)
+f. mul vs. mul_l, got 16942415.  1 (bin frac=2),	expected 16942415.133333 (~same)
+g. mul vs. mul_d, got 16942415.  1 (bin frac=2),	expected 16942415.133333 (~same)
+h. mul_l vs. mul_d, got 16942415.  1 (bin frac=2),	expected 16942415.133333 (~same)
+i. div vs. div_l, got -1. -4 (bin frac=-7),	expected -1.466667 (~same)
+n1 = -9776942. -5 (bin frac=-9)
+n2 = -12492213. -6 (bin frac=-11)
+n3 = -0. -1 (bin frac=-2) (n3 always random between -1 and 1)
+a. sum vs. sum_l, got -22269156. -2 (bin frac=-4),	expected -22269156.266667 (~same)
+b. sum vs. sum_l, got -9776942. -6 (bin frac=-11),	expected -9776942.733333 (~same)
+c. mul vs. mul_l, got +INF,	expected 134217728.000000 (~same)
+d. mul vs. mul_d, got +INF,	expected 134217728.000000 (~same)
+e. mul_l vs. mul_d, got +INF,	expected 134217728.000000 (~same)
+f. mul vs. mul_l, got 1222117.  7 (bin frac=13),	expected 1222117.866667 (~same)
+g. mul vs. mul_d, got 1222117.  7 (bin frac=13),	expected 1222117.866667 (~same)
+h. mul_l vs. mul_d, got 1222117.  7 (bin frac=13),	expected 1222117.866667 (~same)
+i. div vs. div_l, got 0.  7 (bin frac=12),	expected 0.800000 (~same)
+n1 = 110265424.  2 (bin frac=4)
+n2 = 55580906.  0 (bin frac=0)
+n3 = -0. -4 (bin frac=-7) (n3 always random between -1 and 1)
+a. sum vs. sum_l, got +INF,	expected 134217728.000000 (~same)
+b. sum vs. sum_l, got 110265423.  7 (bin frac=13),	expected 110265423.866667 (~same)
+c. mul vs. mul_l, got +INF,	expected 134217728.000000 (~same)
+d. mul vs. mul_d, got +INF,	expected 134217728.000000 (~same)
+e. mul_l vs. mul_d, got +INF,	expected 134217728.000000 (~same)
+f. mul vs. mul_l, got -48241123.  0 (bin frac=-1),	expected -48241123.066667 (~same)
+g. mul vs. mul_d, got -48241123.  0 (bin frac=-1),	expected -48241123.133333 (~same)
+h. mul_l vs. mul_d, got -48241123.  0 (bin frac=-1),	expected -48241123.133333 (~same)
+i. div vs. div_l, got 1.  9 (bin frac=15),	expected 2.000000 (~same)
 
 Total # of warnings: 0
+Largest delta was: 6.666667E-02
 All tests passed using 4-bit fracs, and '9' as max decimal frac.
 
 
 ========================
 FXP configuration parameters:
-pos infinity: 2147483647
-whole bits  : 21
 frac bits   : 11 (requested was 11)
+whole bits  : 21
+pos infinity: 2147483647 (Lf: 1048576.000000)
 whole max   : 1048575
 frac mask   : 2047
 frac max    : 2047 (->decimals: .999)
 whole min   : -1048575
-neg infinity: -2147483647
-undefined   : -2147483648
+neg infinity: -2147483647 (Lf: -1048576.000000)
+undefined   : -2147483648 (Lf: -1048576.000000)
+max_ok_delta: 3.545258E-02
+max_delta   : 6.204201E-02
 
 Checking extreme int values, part I:
-'Infinity', got +INF,	expected same!
-'Largest', got 1048575.998 (bin frac=2046),	expected same!
-'HalfMax', got 524287.999 (bin frac=2047),	expected same!
-'Largest frac', got 0.999 (bin frac=2047),	expected same!
-'tiniest', got 0.  0 (bin frac=1),	expected same!
-'zero', got 0.  0 (bin frac=0),	expected same!
-'-tiniest', got -0.  0 (bin frac=-1),	expected same!
-'-Largest frac', got -0.-999 (bin frac=-2047),	expected same!
-'Most negative', got -1048575.-998 (bin frac=-2046),	expected same!
-'-Infinity', got -INF,	expected same!
-'Undefined', got UNDEF,	expected same!
+Infinity, got +INF,	expected 1048576.000000 (~same)
+Largest, got 1048575.998 (bin frac=2046),	expected 1048575.999511 (~same)
+HalfMax, got 524287.999 (bin frac=2047),	expected 524287.999756 (~same)
+Largest frac, got 0.999 (bin frac=2047),	expected 1.000000 (~same)
+tiniest, got 0.  0 (bin frac=1),	expected 0.000489 (~same)
+0.5, got 0.499 (bin frac=1024),	expected 0.500000 (~same)
+zero, got 0.  0 (bin frac=0),	expected 0.000000 (~same)
+-tiniest, got -0.  0 (bin frac=-1),	expected -0.000489 (~same)
+-Largest frac, got -0.-999 (bin frac=-2047),	expected -1.000000 (~same)
+Most negative, got -1048575.-998 (bin frac=-2046),	expected -1048575.999511 (~same)
+-Infinity, got -INF,	expected -1048576.000000 (~same)
+Undefined, got UNDEF,	expected -1048576.000000 (~same)
 
 Checking extreme int values, part II:
-'Almost most negative', got -1048575.-998 (bin frac=-2045),	expected same!
-' Largest -Largest', got 0.  0 (bin frac=0),	expected same!
-'-Largest +Largest', got 0.  0 (bin frac=0),	expected same!
-'Largest +0', got 1048575.998 (bin frac=2046),	expected same!
-'-Largest -0', got -1048575.-998 (bin frac=-2046),	expected same!
-'Largest - tiniest', got 1048575.998 (bin frac=2045),	expected same!
-'Largest + tiniest safe', got +INF,	expected same!
-'Largest + tiniest unsafe', got +INF,	expected same!
-'+inf + +inf', got +INF,	expected same!
-'-inf - +inf', got -INF,	expected same!
-'+inf + -inf', got UNDEF,	expected same!
-'-inf + -inf', got -INF,	expected same!
-'-inf - -inf', got UNDEF,	expected same!
-'+inf * -inf', got -INF,	expected same!
-'+inf - 1', got +INF,	expected same!
-'-inf + 1', got -INF,	expected same!
-'+num / zero', got +INF,	expected same!
-'zero / zero', got UNDEF,	expected same!
-'zero * zero', got 0.  0 (bin frac=0),	expected same!
-'zero + zero', got 0.  0 (bin frac=0),	expected same!
-'zero - zero', got 0.  0 (bin frac=0),	expected same!
-'-num / zero', got -INF,	expected same!
-'zero * +inf', got UNDEF,	expected same!
-'zero * -inf', got UNDEF,	expected same!
-'zero * undef', got UNDEF,	expected same!
-'-inf * undef', got UNDEF,	expected same!
-'+inf * undef', got UNDEF,	expected same!
-'undef * undef', got UNDEF,	expected same!
-'tiniest * inf', got +INF,	expected same!
+Almost most negative, got -1048575.-998 (bin frac=-2045),	expected -1048575.999023 (~same)
+ Largest -Largest, got 0.  0 (bin frac=0),	expected 0.000000 (~same)
+-Largest +Largest, got 0.  0 (bin frac=0),	expected 0.000000 (~same)
+Largest + 0, got 1048575.998 (bin frac=2046),	expected 1048575.999511 (~same)
+-Largest - 0, got -1048575.-998 (bin frac=-2046),	expected -1048575.999511 (~same)
+Largest - tiniest, got 1048575.998 (bin frac=2045),	expected 1048575.999023 (~same)
+Largest + tiniest safe, got +INF,	expected 1048576.000000 (~same)
+Largest + tiniest unsafe, got +INF,	expected 1048576.000000 (~same)
++inf + +inf, got +INF,	expected 1048576.000000 (~same)
+-inf - +inf, got -INF,	expected -1048576.000000 (~same)
++inf + -inf, got UNDEF,	expected -1048576.000000 (~same)
+-inf + -inf, got -INF,	expected -1048576.000000 (~same)
+-inf - -inf, got UNDEF,	expected -1048576.000000 (~same)
++inf * -inf, got -INF,	expected -1048576.000000 (~same)
++inf - 0.5, got +INF,	expected 1048576.000000 (~same)
+-inf + 0.5, got -INF,	expected -1048576.000000 (~same)
++num / zero, got +INF,	expected 1048576.000000 (~same)
+zero / zero, got UNDEF,	expected -1048576.000000 (~same)
+zero * zero, got 0.  0 (bin frac=0),	expected 0.000000 (~same)
+zero + zero, got 0.  0 (bin frac=0),	expected 0.000000 (~same)
+zero - zero, got 0.  0 (bin frac=0),	expected 0.000000 (~same)
+-num / zero, got -INF,	expected -1048576.000000 (~same)
+zero * +inf, got UNDEF,	expected -1048576.000000 (~same)
+zero * -inf, got UNDEF,	expected -1048576.000000 (~same)
+zero * undef, got UNDEF,	expected -1048576.000000 (~same)
+-inf * undef, got UNDEF,	expected -1048576.000000 (~same)
++inf * undef, got UNDEF,	expected -1048576.000000 (~same)
+undef * undef, got UNDEF,	expected -1048576.000000 (~same)
+tiniest * inf, got +INF,	expected 1048576.000000 (~same)
 
 Checking extreme int values, part III:
-'Way Too Large whole part!', got +INF,	expected same!
-'Largest * 1', got 1048575.998 (bin frac=2046),	expected same!
-'Largest * -1', got -1048575.-998 (bin frac=-2046),	expected same!
-'Largest + two safe', got +INF,	expected same!
-'Largest + two unsafe', got -1048574.  0 (bin frac=-2),	expected same!
-'Safe Too neg substraction', got -INF,	expected same!
-'Unsafe Too neg substraction', got 1048575.  0 (bin frac=2),	expected same!
-'Largest +1', got +INF,	expected same!
-'-Largest -1', got -INF,	expected same!
-'+HalfMax +HMaxp2', got +INF,	expected same!
-'-HalfMax -HMaxp2', got -INF,	expected same!
-'HalfMax + HalfMax', got 1048575.998 (bin frac=2046),	expected same!
-'FXP_MAX - HalfMax', got 524287.999 (bin frac=2047),	expected same!
-'HalfMax + FXP_MAX', got +INF,	expected same!
-'-FXP_MAX - HalfMax', got -INF,	expected same!
-'HalfMax * 2', got 1048575.998 (bin frac=2046),	expected same!
-'HalfMax * 2 (long)', got 1048575.998 (bin frac=2046),	expected same!
-'HalfMax * 3', got +INF,	expected same!
-'-HalfMax * 3', got -INF,	expected same!
-'(HalfMax+1)*2', got +INF,	expected same!
-'(HalfMax+1)*2 (long)', got +INF,	expected same!
+Way Too Large whole part!, got +INF,	expected 1048576.000000 (~same)
+Largest * 1, got 1048575.998 (bin frac=2046),	expected 1048575.999511 (~same)
+Largest * -1, got -1048575.-998 (bin frac=-2046),	expected -1048575.999511 (~same)
+Largest + two safe, got +INF,	expected 1048576.000000 (~same)
+Largest + two unsafe, got -1048574.  0 (bin frac=-2),	expected -1048574.000977 (~same)
+Safe Too neg substraction, got -INF,	expected -1048576.000000 (~same)
+Unsafe Too neg substraction, got 1048575.500 (bin frac=1026),	expected 1048575.501221 (~same)
+Largest + 0.5, got +INF,	expected 1048576.000000 (~same)
+-Largest - 0.5, got -INF,	expected -1048576.000000 (~same)
++HalfMax + HMaxp2, got +INF,	expected 1048576.000000 (~same)
+-HalfMax - HMaxp2, got -INF,	expected -1048576.000000 (~same)
+HalfMax + HalfMax, got 1048575.998 (bin frac=2046),	expected 1048575.999511 (~same)
+FXP_MAX - HalfMax, got 524287.999 (bin frac=2047),	expected 524288.000000 (~same)
+HalfMax + FXP_MAX, got +INF,	expected 1048576.000000 (~same)
+-FXP_MAX - HalfMax, got -INF,	expected -1048576.000000 (~same)
+HalfMax * 2, got 1048575.998 (bin frac=2046),	expected 1048575.999511 (~same)
+HalfMax * 2 (long), got 1048575.998 (bin frac=2046),	expected 1048575.999511 (~same)
+HalfMax * 3, got +INF,	expected 1048576.000000 (~same)
+-HalfMax * 3, got -INF,	expected -1048576.000000 (~same)
+(HalfMax+0.5)*2, got +INF,	expected 1048576.000000 (~same)
+(HalfMax+0.5)*2 (long), got +INF,	expected 1048576.000000 (~same)
 
 Checking decimal <=> bin mappings of frac ranges:
 Max frac dec: 999 (bin 2047)
@@ -369,594 +392,257 @@ Showing fxp for 0.998: 0.997 (bin frac=2044)
 Showing fxp for 0.999: 0.999 (bin frac=2047)
 
 Checking sign taken from frac when whole == 0:
-'-0.(+)500', got 0.499 (bin frac=1024),	expected same!
-'-0.(-)500', got -0.-499 (bin frac=-1024),	expected same!
+-0.(+)500, got 0.499 (bin frac=1024),	expected 0.500000 (~same)
+-0.(-)500, got -0.-499 (bin frac=-1024),	expected -0.500000 (~same)
 
 Truncation of longer frac decimal arguments:
-'0.222222', got 0.221 (bin frac=454),	expected same!
-'0.777777', got 0.776 (bin frac=1592),	expected same!
-'0.991999', got 0.990 (bin frac=2030),	expected same!
-'0.999999', got 0.999 (bin frac=2047),	expected same!
+0.222222, got 0.221 (bin frac=454),	expected 0.222000 (~same)
+0.777777, got 0.776 (bin frac=1592),	expected 0.777000 (~same)
+0.991999, got 0.990 (bin frac=2030),	expected 0.991000 (~same)
+0.999999, got 0.999 (bin frac=2047),	expected 0.999000 (~same)
 
 Checking extreme frac values:
-'maxfrac', got 0.999 (bin frac=2047),	expected same!
-'1+ maxfrac', got 1.999 (bin frac=2047),	expected same!
-'maxfrac +tiniest', got 1.  0 (bin frac=0),	expected same!
-'-maxfrac -tiniest', got -1.  0 (bin frac=0),	expected same!
-'maxfrac - maxfrac', got 0.  0 (bin frac=0),	expected same!
+maxfrac, got 0.999 (bin frac=2047),	expected 1.000000 (~same)
+0.5 + maxfrac, got 1.499 (bin frac=1023),	expected 1.500000 (~same)
+maxfrac +tiniest, got 1.  0 (bin frac=0),	expected 1.000000 (~same)
+-maxfrac -tiniest, got -1.  0 (bin frac=0),	expected -1.000000 (~same)
+maxfrac - maxfrac, got 0.  0 (bin frac=0),	expected 0.000000 (~same)
 
-Simple operations:
-' 1 + 1', got 2.  0 (bin frac=0),	expected same!
-'-1 - 1', got -2.  0 (bin frac=0),	expected same!
-'Ok sum == 2', got 2.  0 (bin frac=0),	expected same!
-'Ok sum == -2', got -2.  0 (bin frac=0),	expected same!
-' num', got 3.499 (bin frac=1023),	expected same!
-' num +  2', got 5.499 (bin frac=1023),	expected same!
-' num + -2', got 1.499 (bin frac=1023),	expected same!
-'-num +  2', got -1.-499 (bin frac=-1023),	expected same!
-'-num + -2', got -5.-499 (bin frac=-1023),	expected same!
-' num -  2', got 1.499 (bin frac=1023),	expected same!
-' num - -2', got 5.499 (bin frac=1023),	expected same!
-'-num -  2', got -5.-499 (bin frac=-1023),	expected same!
-'-num - -2', got -1.-499 (bin frac=-1023),	expected same!
-' num *  2', got 6.998 (bin frac=2046),	expected same!
-' num * -2', got -6.-998 (bin frac=-2046),	expected same!
-'-num *  2', got -6.-998 (bin frac=-2046),	expected same!
-'-num * -2', got 6.998 (bin frac=2046),	expected same!
-' num *  2 (long)', got 6.998 (bin frac=2046),	expected same!
-' num * -2 (long)', got -6.-998 (bin frac=-2046),	expected same!
-'-num *  2 (long)', got -6.-998 (bin frac=-2046),	expected same!
-'-num * -2 (long)', got 6.998 (bin frac=2046),	expected same!
-' num /  2', got 1.749 (bin frac=1535),	expected same!
-' num / -2', got -1.-749 (bin frac=-1535),	expected same!
-'-num /  2', got -1.-749 (bin frac=-1535),	expected same!
-'-num / -2', got 1.749 (bin frac=1535),	expected same!
-' num /  2 (long)', got 1.749 (bin frac=1535),	expected same!
-' num / -2 (long)', got -1.-749 (bin frac=-1535),	expected same!
-'-num /  2 (long)', got -1.-749 (bin frac=-1535),	expected same!
-'-num / -2 (long)', got 1.749 (bin frac=1535),	expected same!
+Simple ops when using 3 or more bits for the whole part:
+ 1 + 1, got 2.  0 (bin frac=0),	expected 2.000000 (~same)
+-1 - 1, got -2.  0 (bin frac=0),	expected -2.000000 (~same)
+Ok sum == 2, got 2.  0 (bin frac=0),	expected 2.000000 (~same)
+Ok sum == -2, got -2.  0 (bin frac=0),	expected -2.000000 (~same)
+ num, got 0.499 (bin frac=1023),	expected 0.499756 (~same)
+ num +  2, got 2.499 (bin frac=1023),	expected 2.499756 (~same)
+ num + -2, got -1.-500 (bin frac=-1025),	expected -1.500244 (~same)
+-num +  2, got 1.500 (bin frac=1025),	expected 1.500244 (~same)
+-num + -2, got -2.-499 (bin frac=-1023),	expected -2.499756 (~same)
+ num -  2, got -1.-500 (bin frac=-1025),	expected -1.500244 (~same)
+ num - -2, got 2.499 (bin frac=1023),	expected 2.499756 (~same)
+-num -  2, got -2.-499 (bin frac=-1023),	expected -2.499756 (~same)
+-num - -2, got 1.500 (bin frac=1025),	expected 1.500244 (~same)
+ num *  2, got 0.998 (bin frac=2046),	expected 0.999511 (~same)
+ num * -2, got -0.-998 (bin frac=-2046),	expected -0.999511 (~same)
+-num *  2, got -0.-998 (bin frac=-2046),	expected -0.999511 (~same)
+-num * -2, got 0.998 (bin frac=2046),	expected 0.999511 (~same)
+ num *  2 (long), got 0.998 (bin frac=2046),	expected 0.999511 (~same)
+ num * -2 (long), got -0.-998 (bin frac=-2046),	expected -0.999511 (~same)
+-num *  2 (long), got -0.-998 (bin frac=-2046),	expected -0.999511 (~same)
+-num * -2 (long), got 0.998 (bin frac=2046),	expected 0.999511 (~same)
+ num /  2, got 0.249 (bin frac=511),	expected 0.249878 (~same)
+ num / -2, got -0.-249 (bin frac=-511),	expected -0.249878 (~same)
+-num /  2, got -0.-249 (bin frac=-511),	expected -0.249878 (~same)
+-num / -2, got 0.249 (bin frac=511),	expected 0.249878 (~same)
+
+Verifying different op implementations using random numbers:
+n1 = -247649.-123 (bin frac=-253)
+n2 = 693319.246 (bin frac=505)
+n3 = -0.-335 (bin frac=-688) (n3 always random between -1 and 1)
+a. sum vs. sum_l, got 445670.122 (bin frac=252),	expected 445670.123107 (~same)
+b. sum vs. sum_l, got -247649.-459 (bin frac=-941),	expected -247649.459697 (~same)
+c. mul vs. mul_l, got -INF,	expected -1048576.000000 (~same)
+d. mul vs. mul_d, got -INF,	expected -1048576.000000 (~same)
+e. mul_l vs. mul_d, got -INF,	expected -1048576.000000 (~same)
+f. mul vs. mul_l, got 83194.626 (bin frac=1284),	expected 83194.627259 (~same)
+g. mul vs. mul_d, got 83194.626 (bin frac=1284),	expected 83194.627259 (~same)
+h. mul_l vs. mul_d, got 83194.626 (bin frac=1284),	expected 83194.627259 (~same)
+i. div vs. div_l, got -0.-356 (bin frac=-731),	expected -0.357108 (~same)
+n1 = 80213. 34 (bin frac=70)
+n2 = -1007146.-27 (bin frac=-56)
+n3 = 0.456 (bin frac=936) (n3 always random between -1 and 1)
+a. sum vs. sum_l, got -926932.-992 (bin frac=-2034),	expected -926932.993649 (~same)
+b. sum vs. sum_l, got 80213.490 (bin frac=1006),	expected 80213.491451 (~same)
+c. mul vs. mul_l, got -INF,	expected -1048576.000000 (~same)
+d. mul vs. mul_d, got -INF,	expected -1048576.000000 (~same)
+e. mul_l vs. mul_d, got -INF,	expected -1048576.000000 (~same)
+f. mul vs. mul_l, got 36659.862 (bin frac=1767),	expected 36659.863214 (~same)
+g. mul vs. mul_d, got 36659.862 (bin frac=1767),	expected 36659.863214 (~same)
+h. mul_l vs. mul_d, got 36659.862 (bin frac=1767),	expected 36659.863214 (~same)
+i. div vs. div_l, got -0.-79 (bin frac=-163),	expected -0.079629 (~same)
+n1 = 313861.519 (bin frac=1065)
+n2 = -631099.-571 (bin frac=-1171)
+n3 = 0.224 (bin frac=460) (n3 always random between -1 and 1)
+a. sum vs. sum_l, got -317238.-51 (bin frac=-106),	expected -317238.051783 (~same)
+b. sum vs. sum_l, got 313861.744 (bin frac=1525),	expected 313861.744993 (~same)
+c. mul vs. mul_l, got -INF,	expected -1048576.000000 (~same)
+d. mul vs. mul_d, got -INF,	expected -1048576.000000 (~same)
+e. mul_l vs. mul_d, got -INF,	expected -1048576.000000 (~same)
+f. mul vs. mul_l, got 70496.239 (bin frac=491),	expected 70496.239863 (~same)
+g. mul vs. mul_d, got 70496.239 (bin frac=491),	expected 70496.239863 (~same)
+h. mul_l vs. mul_d, got 70496.239 (bin frac=491),	expected 70496.239863 (~same)
+i. div vs. div_l, got -0.-496 (bin frac=-1018),	expected -0.497313 (~same)
+n1 = -441093.-304 (bin frac=-624)
+n2 = 893288.856 (bin frac=1756)
+n3 = 0.346 (bin frac=710) (n3 always random between -1 and 1)
+a. sum vs. sum_l, got 452195.552 (bin frac=1132),	expected 452195.553004 (~same)
+b. sum vs. sum_l, got -441092.-957 (bin frac=-1962),	expected -441092.958476 (~same)
+c. mul vs. mul_l, got -INF,	expected -1048576.000000 (~same)
+d. mul vs. mul_d, got -INF,	expected -1048576.000000 (~same)
+e. mul_l vs. mul_d, got -INF,	expected -1048576.000000 (~same)
+f. mul vs. mul_l, got -152918.-88 (bin frac=-182),	expected -152918.088911 (~same)
+g. mul vs. mul_d, got -152918.-88 (bin frac=-182),	expected -152918.089399 (~same)
+h. mul_l vs. mul_d, got -152918.-88 (bin frac=-182),	expected -152918.089399 (~same)
+i. div vs. div_l, got -0.-493 (bin frac=-1011),	expected -0.493894 (~same)
+n1 = 589575.679 (bin frac=1393)
+n2 = 881415.864 (bin frac=1772)
+n3 = -0.-85 (bin frac=-175) (n3 always random between -1 and 1)
+a. sum vs. sum_l, got +INF,	expected 1048576.000000 (~same)
+b. sum vs. sum_l, got 589575.594 (bin frac=1218),	expected 589575.595017 (~same)
+c. mul vs. mul_l, got +INF,	expected 1048576.000000 (~same)
+d. mul vs. mul_d, got +INF,	expected 1048576.000000 (~same)
+e. mul_l vs. mul_d, got +INF,	expected 1048576.000000 (~same)
+f. mul vs. mul_l, got -50378.-780 (bin frac=-1600),	expected -50378.781632 (~same)
+g. mul vs. mul_d, got -50378.-780 (bin frac=-1600),	expected -50378.782120 (~same)
+h. mul_l vs. mul_d, got -50378.-780 (bin frac=-1600),	expected -50378.782120 (~same)
+i. div vs. div_l, got 0.668 (bin frac=1369),	expected 0.668784 (~same)
+n1 = 502676.674 (bin frac=1383)
+n2 = -988213.-443 (bin frac=-908)
+n3 = 0.958 (bin frac=1965) (n3 always random between -1 and 1)
+a. sum vs. sum_l, got -485536.-767 (bin frac=-1573),	expected -485536.768442 (~same)
+b. sum vs. sum_l, got 502677.634 (bin frac=1300),	expected 502677.635076 (~same)
+c. mul vs. mul_l, got -INF,	expected -1048576.000000 (~same)
+d. mul vs. mul_d, got -INF,	expected -1048576.000000 (~same)
+e. mul_l vs. mul_d, got -INF,	expected -1048576.000000 (~same)
+f. mul vs. mul_l, got 482304.524 (bin frac=1074),	expected 482304.524670 (~same)
+g. mul vs. mul_d, got 482304.524 (bin frac=1074),	expected 482304.524670 (~same)
+h. mul_l vs. mul_d, got 482304.524 (bin frac=1074),	expected 482304.524670 (~same)
+i. div vs. div_l, got -0.-508 (bin frac=-1041),	expected -0.508549 (~same)
+n1 = -139053.-891 (bin frac=-1827)
+n2 = 880925.505 (bin frac=1036)
+n3 = -0.-800 (bin frac=-1640) (n3 always random between -1 and 1)
+a. sum vs. sum_l, got 741871.613 (bin frac=1257),	expected 741871.614069 (~same)
+b. sum vs. sum_l, got -139054.-692 (bin frac=-1419),	expected -139054.693210 (~same)
+c. mul vs. mul_l, got -INF,	expected -1048576.000000 (~same)
+d. mul vs. mul_d, got -INF,	expected -1048576.000000 (~same)
+e. mul_l vs. mul_d, got -INF,	expected -1048576.000000 (~same)
+f. mul vs. mul_l, got 111351.749 (bin frac=1535),	expected 111351.749878 (~same)
+g. mul vs. mul_d, got 111351.749 (bin frac=1535),	expected 111351.749878 (~same)
+h. mul_l vs. mul_d, got 111351.749 (bin frac=1535),	expected 111351.749878 (~same)
+i. div vs. div_l, got -0.-157 (bin frac=-323),	expected -0.157792 (~same)
+n1 = 681319.296 (bin frac=607)
+n2 = -34694.-89 (bin frac=-184)
+n3 = -0.-725 (bin frac=-1487) (n3 always random between -1 and 1)
+a. sum vs. sum_l, got 646625.206 (bin frac=423),	expected 646625.206644 (~same)
+b. sum vs. sum_l, got 681318.570 (bin frac=1168),	expected 681318.570591 (~same)
+c. mul vs. mul_l, got -INF,	expected -1048576.000000 (~same)
+d. mul vs. mul_d, got -INF,	expected -1048576.000000 (~same)
+e. mul_l vs. mul_d, got -INF,	expected -1048576.000000 (~same)
+f. mul vs. mul_l, got -494688.-375 (bin frac=-769),	expected -494688.375672 (~same)
+g. mul vs. mul_d, got -494688.-375 (bin frac=-769),	expected -494688.376160 (~same)
+h. mul_l vs. mul_d, got -494688.-375 (bin frac=-769),	expected -494688.376160 (~same)
+i. div vs. div_l, got -19.-637 (bin frac=-1306),	expected -19.638007 (~same)
+n1 = -1021423.-623 (bin frac=-1277)
+n2 = -490984.-227 (bin frac=-466)
+n3 = -0.-41 (bin frac=-85) (n3 always random between -1 and 1)
+a. sum vs. sum_l, got -INF,	expected -1048576.000000 (~same)
+b. sum vs. sum_l, got -1021423.-664 (bin frac=-1362),	expected -1021423.665364 (~same)
+c. mul vs. mul_l, got +INF,	expected 1048576.000000 (~same)
+d. mul vs. mul_d, got +INF,	expected 1048576.000000 (~same)
+e. mul_l vs. mul_d, got +INF,	expected 1048576.000000 (~same)
+f. mul vs. mul_l, got 42393. 70 (bin frac=144),	expected 42393.070347 (~same)
+g. mul vs. mul_d, got 42393. 70 (bin frac=144),	expected 42393.070347 (~same)
+h. mul_l vs. mul_d, got 42393. 70 (bin frac=144),	expected 42393.070347 (~same)
+i. div vs. div_l, got 2. 80 (bin frac=164),	expected 2.080117 (~same)
+n1 = 459326.445 (bin frac=912)
+n2 = 484186.917 (bin frac=1881)
+n3 = -0.-238 (bin frac=-488) (n3 always random between -1 and 1)
+a. sum vs. sum_l, got 943513.363 (bin frac=745),	expected 943513.363947 (~same)
+b. sum vs. sum_l, got 459326.206 (bin frac=424),	expected 459326.207132 (~same)
+c. mul vs. mul_l, got +INF,	expected 1048576.000000 (~same)
+d. mul vs. mul_d, got +INF,	expected 1048576.000000 (~same)
+e. mul_l vs. mul_d, got +INF,	expected 1048576.000000 (~same)
+f. mul vs. mul_l, got -109448.-878 (bin frac=-1801),	expected -109448.879824 (~same)
+g. mul vs. mul_d, got -109448.-878 (bin frac=-1801),	expected -109448.880313 (~same)
+h. mul_l vs. mul_d, got -109448.-878 (bin frac=-1801),	expected -109448.880313 (~same)
+i. div vs. div_l, got 0.947 (bin frac=1942),	expected 0.948705 (~same)
 
 Total # of warnings: 0
+Largest delta was: 4.885198E-04
 All tests passed using 11-bit fracs, and '999' as max decimal frac.
 
 
 ========================
 FXP configuration parameters:
-pos infinity: 2147483647
-whole bits  : 16
-frac bits   : 16 (requested was 16)
-whole max   : 32767
-frac mask   : 65535
-frac max    : 65535 (->decimals: .9999)
-whole min   : -32767
-neg infinity: -2147483647
-undefined   : -2147483648
-
-Checking extreme int values, part I:
-'Infinity', got +INF,	expected same!
-'Largest', got 32767.9998 (bin frac=65534),	expected same!
-'HalfMax', got 16383.9999 (bin frac=65535),	expected same!
-'Largest frac', got 0.9999 (bin frac=65535),	expected same!
-'tiniest', got 0.  0 (bin frac=1),	expected same!
-'zero', got 0.  0 (bin frac=0),	expected same!
-'-tiniest', got -0.  0 (bin frac=-1),	expected same!
-'-Largest frac', got -0.-9999 (bin frac=-65535),	expected same!
-'Most negative', got -32767.-9998 (bin frac=-65534),	expected same!
-'-Infinity', got -INF,	expected same!
-'Undefined', got UNDEF,	expected same!
-
-Checking extreme int values, part II:
-'Almost most negative', got -32767.-9998 (bin frac=-65533),	expected same!
-' Largest -Largest', got 0.  0 (bin frac=0),	expected same!
-'-Largest +Largest', got 0.  0 (bin frac=0),	expected same!
-'Largest +0', got 32767.9998 (bin frac=65534),	expected same!
-'-Largest -0', got -32767.-9998 (bin frac=-65534),	expected same!
-'Largest - tiniest', got 32767.9998 (bin frac=65533),	expected same!
-'Largest + tiniest safe', got +INF,	expected same!
-'Largest + tiniest unsafe', got +INF,	expected same!
-'+inf + +inf', got +INF,	expected same!
-'-inf - +inf', got -INF,	expected same!
-'+inf + -inf', got UNDEF,	expected same!
-'-inf + -inf', got -INF,	expected same!
-'-inf - -inf', got UNDEF,	expected same!
-'+inf * -inf', got -INF,	expected same!
-'+inf - 1', got +INF,	expected same!
-'-inf + 1', got -INF,	expected same!
-'+num / zero', got +INF,	expected same!
-'zero / zero', got UNDEF,	expected same!
-'zero * zero', got 0.  0 (bin frac=0),	expected same!
-'zero + zero', got 0.  0 (bin frac=0),	expected same!
-'zero - zero', got 0.  0 (bin frac=0),	expected same!
-'-num / zero', got -INF,	expected same!
-'zero * +inf', got UNDEF,	expected same!
-'zero * -inf', got UNDEF,	expected same!
-'zero * undef', got UNDEF,	expected same!
-'-inf * undef', got UNDEF,	expected same!
-'+inf * undef', got UNDEF,	expected same!
-'undef * undef', got UNDEF,	expected same!
-'tiniest * inf', got +INF,	expected same!
-
-Checking extreme int values, part III:
-'Way Too Large whole part!', got +INF,	expected same!
-'Largest * 1', got 32767.9998 (bin frac=65534),	expected same!
-'Largest * -1', got -32767.-9998 (bin frac=-65534),	expected same!
-'Largest + two safe', got +INF,	expected same!
-'Largest + two unsafe', got -32766.  0 (bin frac=-2),	expected same!
-'Safe Too neg substraction', got -INF,	expected same!
-'Unsafe Too neg substraction', got 32767.  0 (bin frac=2),	expected same!
-'Largest +1', got +INF,	expected same!
-'-Largest -1', got -INF,	expected same!
-'+HalfMax +HMaxp2', got +INF,	expected same!
-'-HalfMax -HMaxp2', got -INF,	expected same!
-'HalfMax + HalfMax', got 32767.9998 (bin frac=65534),	expected same!
-'FXP_MAX - HalfMax', got 16383.9999 (bin frac=65535),	expected same!
-'HalfMax + FXP_MAX', got +INF,	expected same!
-'-FXP_MAX - HalfMax', got -INF,	expected same!
-'HalfMax * 2', got 32767.9998 (bin frac=65534),	expected same!
-'HalfMax * 2 (long)', got 32767.9998 (bin frac=65534),	expected same!
-'HalfMax * 3', got +INF,	expected same!
-'-HalfMax * 3', got -INF,	expected same!
-'(HalfMax+1)*2', got +INF,	expected same!
-'(HalfMax+1)*2 (long)', got +INF,	expected same!
-
-Checking decimal <=> bin mappings of frac ranges:
-Max frac dec: 9999 (bin 65535)
-Showing fxp for 0.  0: 0.  0 (bin frac=0)
-Showing fxp for 0.  1: 0.  0 (bin frac=6)
-Showing fxp for 0.  2: 0.  1 (bin frac=13)
-Showing fxp for 0.  3: 0.  2 (bin frac=19)
-Showing fxp for 0.  4: 0.  3 (bin frac=26)
-Showing fxp for 0.  5: 0.  4 (bin frac=32)
-:
-Showing fxp for 0.4998: 0.4997 (bin frac=32757)
-Showing fxp for 0.4999: 0.4998 (bin frac=32764)
-Showing fxp for 0.5000: 0.4999 (bin frac=32770)
-Showing fxp for 0.5001: 0.5000 (bin frac=32777)
-Showing fxp for 0.5002: 0.5001 (bin frac=32783)
-:
-Showing fxp for 0.9994: 0.9993 (bin frac=65502)
-Showing fxp for 0.9995: 0.9994 (bin frac=65508)
-Showing fxp for 0.9996: 0.9995 (bin frac=65515)
-Showing fxp for 0.9997: 0.9996 (bin frac=65521)
-Showing fxp for 0.9998: 0.9997 (bin frac=65528)
-Showing fxp for 0.9999: 0.9999 (bin frac=65535)
-
-Checking sign taken from frac when whole == 0:
-'-0.(+)500', got 0.499 (bin frac=32800),	expected same!
-'-0.(-)500', got -0.-499 (bin frac=-32800),	expected same!
-
-Truncation of longer frac decimal arguments:
-'0.222222', got 0.221 (bin frac=14563),	expected same!
-'0.777777', got 0.776 (bin frac=50971),	expected same!
-'0.991999', got 0.990 (bin frac=65010),	expected same!
-'0.999999', got 0.999 (bin frac=65535),	expected same!
-
-Checking extreme frac values:
-'maxfrac', got 0.9999 (bin frac=65535),	expected same!
-'1+ maxfrac', got 1.9999 (bin frac=65535),	expected same!
-'maxfrac +tiniest', got 1.  0 (bin frac=0),	expected same!
-'-maxfrac -tiniest', got -1.  0 (bin frac=0),	expected same!
-'maxfrac - maxfrac', got 0.  0 (bin frac=0),	expected same!
-
-Simple operations:
-' 1 + 1', got 2.  0 (bin frac=0),	expected same!
-'-1 - 1', got -2.  0 (bin frac=0),	expected same!
-'Ok sum == 2', got 2.  0 (bin frac=0),	expected same!
-'Ok sum == -2', got -2.  0 (bin frac=0),	expected same!
-' num', got 3.4999 (bin frac=32767),	expected same!
-' num +  2', got 5.4999 (bin frac=32767),	expected same!
-' num + -2', got 1.4999 (bin frac=32767),	expected same!
-'-num +  2', got -1.-4999 (bin frac=-32767),	expected same!
-'-num + -2', got -5.-4999 (bin frac=-32767),	expected same!
-' num -  2', got 1.4999 (bin frac=32767),	expected same!
-' num - -2', got 5.4999 (bin frac=32767),	expected same!
-'-num -  2', got -5.-4999 (bin frac=-32767),	expected same!
-'-num - -2', got -1.-4999 (bin frac=-32767),	expected same!
-' num *  2', got 6.9998 (bin frac=65534),	expected same!
-' num * -2', got -6.-9998 (bin frac=-65534),	expected same!
-'-num *  2', got -6.-9998 (bin frac=-65534),	expected same!
-'-num * -2', got 6.9998 (bin frac=65534),	expected same!
-' num *  2 (long)', got 6.9998 (bin frac=65534),	expected same!
-' num * -2 (long)', got -6.-9998 (bin frac=-65534),	expected same!
-'-num *  2 (long)', got -6.-9998 (bin frac=-65534),	expected same!
-'-num * -2 (long)', got 6.9998 (bin frac=65534),	expected same!
-' num /  2', got 1.7499 (bin frac=49151),	expected same!
-' num / -2', got -1.-7499 (bin frac=-49151),	expected same!
-'-num /  2', got -1.-7499 (bin frac=-49151),	expected same!
-'-num / -2', got 1.7499 (bin frac=49151),	expected same!
-' num /  2 (long)', got 1.7499 (bin frac=49151),	expected same!
-' num / -2 (long)', got -1.-7499 (bin frac=-49151),	expected same!
-'-num /  2 (long)', got -1.-7499 (bin frac=-49151),	expected same!
-'-num / -2 (long)', got 1.7499 (bin frac=49151),	expected same!
-
-Total # of warnings: 0
-All tests passed using 16-bit fracs, and '9999' as max decimal frac.
-
-
-========================
-FXP configuration parameters:
-pos infinity: 2147483647
-whole bits  : 7
-frac bits   : 25 (requested was 25)
-whole max   : 63
-frac mask   : 33554431
-frac max    : 33554431 (->decimals: .9999999)
-whole min   : -63
-neg infinity: -2147483647
-undefined   : -2147483648
-
-Checking extreme int values, part I:
-'Infinity', got +INF,	expected same!
-'Largest', got 63.9999998 (bin frac=33554430),	expected same!
-'HalfMax', got 31.9999999 (bin frac=33554431),	expected same!
-'Largest frac', got 0.9999999 (bin frac=33554431),	expected same!
-'tiniest', got 0.  0 (bin frac=1),	expected same!
-'zero', got 0.  0 (bin frac=0),	expected same!
-'-tiniest', got -0.  0 (bin frac=-1),	expected same!
-'-Largest frac', got -0.-9999999 (bin frac=-33554431),	expected same!
-'Most negative', got -63.-9999998 (bin frac=-33554430),	expected same!
-'-Infinity', got -INF,	expected same!
-'Undefined', got UNDEF,	expected same!
-
-Checking extreme int values, part II:
-'Almost most negative', got -63.-9999998 (bin frac=-33554429),	expected same!
-' Largest -Largest', got 0.  0 (bin frac=0),	expected same!
-'-Largest +Largest', got 0.  0 (bin frac=0),	expected same!
-'Largest +0', got 63.9999998 (bin frac=33554430),	expected same!
-'-Largest -0', got -63.-9999998 (bin frac=-33554430),	expected same!
-'Largest - tiniest', got 63.9999998 (bin frac=33554429),	expected same!
-'Largest + tiniest safe', got +INF,	expected same!
-'Largest + tiniest unsafe', got +INF,	expected same!
-'+inf + +inf', got +INF,	expected same!
-'-inf - +inf', got -INF,	expected same!
-'+inf + -inf', got UNDEF,	expected same!
-'-inf + -inf', got -INF,	expected same!
-'-inf - -inf', got UNDEF,	expected same!
-'+inf * -inf', got -INF,	expected same!
-'+inf - 1', got +INF,	expected same!
-'-inf + 1', got -INF,	expected same!
-'+num / zero', got +INF,	expected same!
-'zero / zero', got UNDEF,	expected same!
-'zero * zero', got 0.  0 (bin frac=0),	expected same!
-'zero + zero', got 0.  0 (bin frac=0),	expected same!
-'zero - zero', got 0.  0 (bin frac=0),	expected same!
-'-num / zero', got -INF,	expected same!
-'zero * +inf', got UNDEF,	expected same!
-'zero * -inf', got UNDEF,	expected same!
-'zero * undef', got UNDEF,	expected same!
-'-inf * undef', got UNDEF,	expected same!
-'+inf * undef', got UNDEF,	expected same!
-'undef * undef', got UNDEF,	expected same!
-'tiniest * inf', got +INF,	expected same!
-
-Checking extreme int values, part III:
-'Way Too Large whole part!', got +INF,	expected same!
-'Largest * 1', got 63.9999998 (bin frac=33554430),	expected same!
-'Largest * -1', got -63.-9999998 (bin frac=-33554430),	expected same!
-'Largest + two safe', got +INF,	expected same!
-'Largest + two unsafe', got -62.  0 (bin frac=-2),	expected same!
-'Safe Too neg substraction', got -INF,	expected same!
-'Unsafe Too neg substraction', got 63.  0 (bin frac=2),	expected same!
-'Largest +1', got +INF,	expected same!
-'-Largest -1', got -INF,	expected same!
-'+HalfMax +HMaxp2', got +INF,	expected same!
-'-HalfMax -HMaxp2', got -INF,	expected same!
-'HalfMax + HalfMax', got 63.9999998 (bin frac=33554430),	expected same!
-'FXP_MAX - HalfMax', got 31.9999999 (bin frac=33554431),	expected same!
-'HalfMax + FXP_MAX', got +INF,	expected same!
-'-FXP_MAX - HalfMax', got -INF,	expected same!
-'HalfMax * 2', got 63.9999998 (bin frac=33554430),	expected same!
-'HalfMax * 2 (long)', got 63.9999998 (bin frac=33554430),	expected same!
-'HalfMax * 3', got +INF,	expected same!
-'-HalfMax * 3', got -INF,	expected same!
-'(HalfMax+1)*2', got +INF,	expected same!
-'(HalfMax+1)*2 (long)', got +INF,	expected same!
-
-Checking decimal <=> bin mappings of frac ranges:
-Max frac dec: 9999999 (bin 33554431)
-Showing fxp for 0.  0: 0.  0 (bin frac=0)
-Showing fxp for 0.  1: 0.  0 (bin frac=3)
-Showing fxp for 0.  2: 0.  1 (bin frac=6)
-Showing fxp for 0.  3: 0.  2 (bin frac=10)
-Showing fxp for 0.  4: 0.  3 (bin frac=13)
-Showing fxp for 0.  5: 0.  4 (bin frac=16)
-:
-Showing fxp for 0.4999998: 0.4999997 (bin frac=16777210)
-Showing fxp for 0.4999999: 0.4999998 (bin frac=16777213)
-Showing fxp for 0.5000000: 0.4999999 (bin frac=16777217)
-Showing fxp for 0.5000001: 0.5000000 (bin frac=16777220)
-Showing fxp for 0.5000002: 0.5000001 (bin frac=16777223)
-:
-Showing fxp for 0.9999994: 0.9999993 (bin frac=33554414)
-Showing fxp for 0.9999995: 0.9999994 (bin frac=33554417)
-Showing fxp for 0.9999996: 0.9999995 (bin frac=33554420)
-Showing fxp for 0.9999997: 0.9999996 (bin frac=33554424)
-Showing fxp for 0.9999998: 0.9999997 (bin frac=33554427)
-Showing fxp for 0.9999999: 0.9999999 (bin frac=33554431)
-
-Checking sign taken from frac when whole == 0:
-'-0.(+)500', got 0.499 (bin frac=16794009),	expected same!
-'-0.(-)500', got -0.-499 (bin frac=-16794009),	expected same!
-
-Truncation of longer frac decimal arguments:
-'0.222222', got 0.221 (bin frac=7456540),	expected same!
-'0.777777', got 0.776 (bin frac=26097890),	expected same!
-'0.991999', got 0.990 (bin frac=33285726),	expected same!
-'0.999999', got 0.999 (bin frac=33554431),	expected same!
-
-Checking extreme frac values:
-'maxfrac', got 0.9999999 (bin frac=33554431),	expected same!
-'1+ maxfrac', got 1.9999999 (bin frac=33554431),	expected same!
-'maxfrac +tiniest', got 1.  0 (bin frac=0),	expected same!
-'-maxfrac -tiniest', got -1.  0 (bin frac=0),	expected same!
-'maxfrac - maxfrac', got 0.  0 (bin frac=0),	expected same!
-
-Simple operations:
-' 1 + 1', got 2.  0 (bin frac=0),	expected same!
-'-1 - 1', got -2.  0 (bin frac=0),	expected same!
-'Ok sum == 2', got 2.  0 (bin frac=0),	expected same!
-'Ok sum == -2', got -2.  0 (bin frac=0),	expected same!
-' num', got 3.4999999 (bin frac=16777215),	expected same!
-' num +  2', got 5.4999999 (bin frac=16777215),	expected same!
-' num + -2', got 1.4999999 (bin frac=16777215),	expected same!
-'-num +  2', got -1.-4999999 (bin frac=-16777215),	expected same!
-'-num + -2', got -5.-4999999 (bin frac=-16777215),	expected same!
-' num -  2', got 1.4999999 (bin frac=16777215),	expected same!
-' num - -2', got 5.4999999 (bin frac=16777215),	expected same!
-'-num -  2', got -5.-4999999 (bin frac=-16777215),	expected same!
-'-num - -2', got -1.-4999999 (bin frac=-16777215),	expected same!
-' num *  2', got 6.9999998 (bin frac=33554430),	expected same!
-' num * -2', got -6.-9999998 (bin frac=-33554430),	expected same!
-'-num *  2', got -6.-9999998 (bin frac=-33554430),	expected same!
-'-num * -2', got 6.9999998 (bin frac=33554430),	expected same!
-' num *  2 (long)', got 6.9999998 (bin frac=33554430),	expected same!
-' num * -2 (long)', got -6.-9999998 (bin frac=-33554430),	expected same!
-'-num *  2 (long)', got -6.-9999998 (bin frac=-33554430),	expected same!
-'-num * -2 (long)', got 6.9999998 (bin frac=33554430),	expected same!
-' num /  2', got 1.7499999 (bin frac=25165823),	expected same!
-' num / -2', got -1.-7499999 (bin frac=-25165823),	expected same!
-'-num /  2', got -1.-7499999 (bin frac=-25165823),	expected same!
-'-num / -2', got 1.7499999 (bin frac=25165823),	expected same!
-' num /  2 (long)', got 1.7499999 (bin frac=25165823),	expected same!
-' num / -2 (long)', got -1.-7499999 (bin frac=-25165823),	expected same!
-'-num /  2 (long)', got -1.-7499999 (bin frac=-25165823),	expected same!
-'-num / -2 (long)', got 1.7499999 (bin frac=25165823),	expected same!
-
-Total # of warnings: 0
-All tests passed using 25-bit fracs, and '9999999' as max decimal frac.
-
-
-========================
-FXP configuration parameters:
-pos infinity: 2147483647
-whole bits  : 4
-frac bits   : 28 (requested was 30)
-whole max   : 7
-frac mask   : 268435455
-frac max    : 268435455 (->decimals: .9999999)
-whole min   : -7
-neg infinity: -2147483647
-undefined   : -2147483648
-
-Checking extreme int values, part I:
-'Infinity', got +INF,	expected same!
-'Largest', got 7.9999998 (bin frac=268435454),	expected same!
-'HalfMax', got 3.9999999 (bin frac=268435455),	expected same!
-'Largest frac', got 0.9999999 (bin frac=268435455),	expected same!
-'tiniest', got 0.  0 (bin frac=1),	expected same!
-'zero', got 0.  0 (bin frac=0),	expected same!
-'-tiniest', got -0.  0 (bin frac=-1),	expected same!
-'-Largest frac', got -0.-9999999 (bin frac=-268435455),	expected same!
-'Most negative', got -7.-9999998 (bin frac=-268435454),	expected same!
-'-Infinity', got -INF,	expected same!
-'Undefined', got UNDEF,	expected same!
-
-Checking extreme int values, part II:
-'Almost most negative', got -7.-9999998 (bin frac=-268435453),	expected same!
-' Largest -Largest', got 0.  0 (bin frac=0),	expected same!
-'-Largest +Largest', got 0.  0 (bin frac=0),	expected same!
-'Largest +0', got 7.9999998 (bin frac=268435454),	expected same!
-'-Largest -0', got -7.-9999998 (bin frac=-268435454),	expected same!
-'Largest - tiniest', got 7.9999998 (bin frac=268435453),	expected same!
-'Largest + tiniest safe', got +INF,	expected same!
-'Largest + tiniest unsafe', got +INF,	expected same!
-'+inf + +inf', got +INF,	expected same!
-'-inf - +inf', got -INF,	expected same!
-'+inf + -inf', got UNDEF,	expected same!
-'-inf + -inf', got -INF,	expected same!
-'-inf - -inf', got UNDEF,	expected same!
-'+inf * -inf', got -INF,	expected same!
-'+inf - 1', got +INF,	expected same!
-'-inf + 1', got -INF,	expected same!
-'+num / zero', got +INF,	expected same!
-'zero / zero', got UNDEF,	expected same!
-'zero * zero', got 0.  0 (bin frac=0),	expected same!
-'zero + zero', got 0.  0 (bin frac=0),	expected same!
-'zero - zero', got 0.  0 (bin frac=0),	expected same!
-'-num / zero', got -INF,	expected same!
-'zero * +inf', got UNDEF,	expected same!
-'zero * -inf', got UNDEF,	expected same!
-'zero * undef', got UNDEF,	expected same!
-'-inf * undef', got UNDEF,	expected same!
-'+inf * undef', got UNDEF,	expected same!
-'undef * undef', got UNDEF,	expected same!
-'tiniest * inf', got +INF,	expected same!
-
-Checking extreme int values, part III:
-'Way Too Large whole part!', got +INF,	expected same!
-'Largest * 1', got 7.9999998 (bin frac=268435454),	expected same!
-'Largest * -1', got -7.-9999998 (bin frac=-268435454),	expected same!
-'Largest + two safe', got +INF,	expected same!
-'Largest + two unsafe', got -6.  0 (bin frac=-2),	expected same!
-'Safe Too neg substraction', got -INF,	expected same!
-'Unsafe Too neg substraction', got 7.  0 (bin frac=2),	expected same!
-'Largest +1', got +INF,	expected same!
-'-Largest -1', got -INF,	expected same!
-'+HalfMax +HMaxp2', got +INF,	expected same!
-'-HalfMax -HMaxp2', got -INF,	expected same!
-'HalfMax + HalfMax', got 7.9999998 (bin frac=268435454),	expected same!
-'FXP_MAX - HalfMax', got 3.9999999 (bin frac=268435455),	expected same!
-'HalfMax + FXP_MAX', got +INF,	expected same!
-'-FXP_MAX - HalfMax', got -INF,	expected same!
-'HalfMax * 2', got 7.9999998 (bin frac=268435454),	expected same!
-'HalfMax * 2 (long)', got 7.9999998 (bin frac=268435454),	expected same!
-'HalfMax * 3', got +INF,	expected same!
-'-HalfMax * 3', got -INF,	expected same!
-'(HalfMax+1)*2', got +INF,	expected same!
-'(HalfMax+1)*2 (long)', got +INF,	expected same!
-
-Checking decimal <=> bin mappings of frac ranges:
-Max frac dec: 9999999 (bin 268435455)
-Showing fxp for 0.  0: 0.  0 (bin frac=0)
-Showing fxp for 0.  1: 0.  0 (bin frac=26)
-Showing fxp for 0.  2: 0.  1 (bin frac=53)
-Showing fxp for 0.  3: 0.  2 (bin frac=80)
-Showing fxp for 0.  4: 0.  3 (bin frac=107)
-Showing fxp for 0.  5: 0.  4 (bin frac=134)
-:
-Showing fxp for 0.4999998: 0.4999997 (bin frac=134217687)
-Showing fxp for 0.4999999: 0.4999998 (bin frac=134217714)
-Showing fxp for 0.5000000: 0.4999999 (bin frac=134217740)
-Showing fxp for 0.5000001: 0.5000000 (bin frac=134217767)
-Showing fxp for 0.5000002: 0.5000001 (bin frac=134217794)
-:
-Showing fxp for 0.9999994: 0.9999993 (bin frac=268435320)
-Showing fxp for 0.9999995: 0.9999994 (bin frac=268435347)
-Showing fxp for 0.9999996: 0.9999995 (bin frac=268435374)
-Showing fxp for 0.9999997: 0.9999996 (bin frac=268435401)
-Showing fxp for 0.9999998: 0.9999997 (bin frac=268435428)
-Showing fxp for 0.9999999: 0.9999999 (bin frac=268435455)
-
-Checking sign taken from frac when whole == 0:
-'-0.(+)500', got 0.499 (bin frac=134352079),	expected same!
-'-0.(-)500', got -0.-499 (bin frac=-134352079),	expected same!
-
-Truncation of longer frac decimal arguments:
-'0.222222', got 0.221 (bin frac=59652323),	expected same!
-'0.777777', got 0.776 (bin frac=208783131),	expected same!
-'0.991999', got 0.990 (bin frac=266285821),	expected same!
-'0.999999', got 0.999 (bin frac=268435455),	expected same!
-
-Checking extreme frac values:
-'maxfrac', got 0.9999999 (bin frac=268435455),	expected same!
-'1+ maxfrac', got 1.9999999 (bin frac=268435455),	expected same!
-'maxfrac +tiniest', got 1.  0 (bin frac=0),	expected same!
-'-maxfrac -tiniest', got -1.  0 (bin frac=0),	expected same!
-'maxfrac - maxfrac', got 0.  0 (bin frac=0),	expected same!
-
-Simple operations:
-' 1 + 1', got 2.  0 (bin frac=0),	expected same!
-'-1 - 1', got -2.  0 (bin frac=0),	expected same!
-'Ok sum == 2', got 2.  0 (bin frac=0),	expected same!
-'Ok sum == -2', got -2.  0 (bin frac=0),	expected same!
-' num', got 3.4999999 (bin frac=134217727),	expected same!
-' num +  2', got 5.4999999 (bin frac=134217727),	expected same!
-' num + -2', got 1.4999999 (bin frac=134217727),	expected same!
-'-num +  2', got -1.-4999999 (bin frac=-134217727),	expected same!
-'-num + -2', got -5.-4999999 (bin frac=-134217727),	expected same!
-' num -  2', got 1.4999999 (bin frac=134217727),	expected same!
-' num - -2', got 5.4999999 (bin frac=134217727),	expected same!
-'-num -  2', got -5.-4999999 (bin frac=-134217727),	expected same!
-'-num - -2', got -1.-4999999 (bin frac=-134217727),	expected same!
-' num *  2', got 6.9999998 (bin frac=268435454),	expected same!
-' num * -2', got -6.-9999998 (bin frac=-268435454),	expected same!
-'-num *  2', got -6.-9999998 (bin frac=-268435454),	expected same!
-'-num * -2', got 6.9999998 (bin frac=268435454),	expected same!
-' num *  2 (long)', got 6.9999998 (bin frac=268435454),	expected same!
-' num * -2 (long)', got -6.-9999998 (bin frac=-268435454),	expected same!
-'-num *  2 (long)', got -6.-9999998 (bin frac=-268435454),	expected same!
-'-num * -2 (long)', got 6.9999998 (bin frac=268435454),	expected same!
-' num /  2', got 1.7499999 (bin frac=201326591),	expected same!
-' num / -2', got -1.-7499999 (bin frac=-201326591),	expected same!
-'-num /  2', got -1.-7499999 (bin frac=-201326591),	expected same!
-'-num / -2', got 1.7499999 (bin frac=201326591),	expected same!
-' num /  2 (long)', got 1.7499999 (bin frac=201326591),	expected same!
-' num / -2 (long)', got -1.-7499999 (bin frac=-201326591),	expected same!
-'-num /  2 (long)', got -1.-7499999 (bin frac=-201326591),	expected same!
-'-num / -2 (long)', got 1.7499999 (bin frac=201326591),	expected same!
-
-Total # of warnings: 0
-All tests passed using 28-bit fracs, and '9999999' as max decimal frac.
-
-
-========================
-FXP configuration parameters:
-pos infinity: 2147483647
-whole bits  : 18
 frac bits   : 14 (requested was 14)
+whole bits  : 18
+pos infinity: 2147483647 (Lf: 131072.000000)
 whole max   : 131071
 frac mask   : 16383
 frac max    : 16383 (->decimals: .9999)
 whole min   : -131071
-neg infinity: -2147483647
-undefined   : -2147483648
+neg infinity: -2147483647 (Lf: -131072.000000)
+undefined   : -2147483648 (Lf: -131072.000000)
+max_ok_delta: 8.894237E-03
+max_delta   : 1.556491E-02
 
 Checking extreme int values, part I:
-'Infinity', got +INF,	expected same!
-'Largest', got 131071.9998 (bin frac=16382),	expected same!
-'HalfMax', got 65535.9999 (bin frac=16383),	expected same!
-'Largest frac', got 0.9999 (bin frac=16383),	expected same!
-'tiniest', got 0.  0 (bin frac=1),	expected same!
-'zero', got 0.  0 (bin frac=0),	expected same!
-'-tiniest', got -0.  0 (bin frac=-1),	expected same!
-'-Largest frac', got -0.-9999 (bin frac=-16383),	expected same!
-'Most negative', got -131071.-9998 (bin frac=-16382),	expected same!
-'-Infinity', got -INF,	expected same!
-'Undefined', got UNDEF,	expected same!
+Infinity, got +INF,	expected 131072.000000 (~same)
+Largest, got 131071.9998 (bin frac=16382),	expected 131071.999939 (~same)
+HalfMax, got 65535.9999 (bin frac=16383),	expected 65535.999969 (~same)
+Largest frac, got 0.9999 (bin frac=16383),	expected 1.000000 (~same)
+tiniest, got 0.  0 (bin frac=1),	expected 0.000061 (~same)
+0.5, got 0.4999 (bin frac=8192),	expected 0.500000 (~same)
+zero, got 0.  0 (bin frac=0),	expected 0.000000 (~same)
+-tiniest, got -0.  0 (bin frac=-1),	expected -0.000061 (~same)
+-Largest frac, got -0.-9999 (bin frac=-16383),	expected -1.000000 (~same)
+Most negative, got -131071.-9998 (bin frac=-16382),	expected -131071.999939 (~same)
+-Infinity, got -INF,	expected -131072.000000 (~same)
+Undefined, got UNDEF,	expected -131072.000000 (~same)
 
 Checking extreme int values, part II:
-'Almost most negative', got -131071.-9997 (bin frac=-16381),	expected same!
-' Largest -Largest', got 0.  0 (bin frac=0),	expected same!
-'-Largest +Largest', got 0.  0 (bin frac=0),	expected same!
-'Largest +0', got 131071.9998 (bin frac=16382),	expected same!
-'-Largest -0', got -131071.-9998 (bin frac=-16382),	expected same!
-'Largest - tiniest', got 131071.9997 (bin frac=16381),	expected same!
-'Largest + tiniest safe', got +INF,	expected same!
-'Largest + tiniest unsafe', got +INF,	expected same!
-'+inf + +inf', got +INF,	expected same!
-'-inf - +inf', got -INF,	expected same!
-'+inf + -inf', got UNDEF,	expected same!
-'-inf + -inf', got -INF,	expected same!
-'-inf - -inf', got UNDEF,	expected same!
-'+inf * -inf', got -INF,	expected same!
-'+inf - 1', got +INF,	expected same!
-'-inf + 1', got -INF,	expected same!
-'+num / zero', got +INF,	expected same!
-'zero / zero', got UNDEF,	expected same!
-'zero * zero', got 0.  0 (bin frac=0),	expected same!
-'zero + zero', got 0.  0 (bin frac=0),	expected same!
-'zero - zero', got 0.  0 (bin frac=0),	expected same!
-'-num / zero', got -INF,	expected same!
-'zero * +inf', got UNDEF,	expected same!
-'zero * -inf', got UNDEF,	expected same!
-'zero * undef', got UNDEF,	expected same!
-'-inf * undef', got UNDEF,	expected same!
-'+inf * undef', got UNDEF,	expected same!
-'undef * undef', got UNDEF,	expected same!
-'tiniest * inf', got +INF,	expected same!
+Almost most negative, got -131071.-9997 (bin frac=-16381),	expected -131071.999878 (~same)
+ Largest -Largest, got 0.  0 (bin frac=0),	expected 0.000000 (~same)
+-Largest +Largest, got 0.  0 (bin frac=0),	expected 0.000000 (~same)
+Largest + 0, got 131071.9998 (bin frac=16382),	expected 131071.999939 (~same)
+-Largest - 0, got -131071.-9998 (bin frac=-16382),	expected -131071.999939 (~same)
+Largest - tiniest, got 131071.9997 (bin frac=16381),	expected 131071.999878 (~same)
+Largest + tiniest safe, got +INF,	expected 131072.000000 (~same)
+Largest + tiniest unsafe, got +INF,	expected 131072.000000 (~same)
++inf + +inf, got +INF,	expected 131072.000000 (~same)
+-inf - +inf, got -INF,	expected -131072.000000 (~same)
++inf + -inf, got UNDEF,	expected -131072.000000 (~same)
+-inf + -inf, got -INF,	expected -131072.000000 (~same)
+-inf - -inf, got UNDEF,	expected -131072.000000 (~same)
++inf * -inf, got -INF,	expected -131072.000000 (~same)
++inf - 0.5, got +INF,	expected 131072.000000 (~same)
+-inf + 0.5, got -INF,	expected -131072.000000 (~same)
++num / zero, got +INF,	expected 131072.000000 (~same)
+zero / zero, got UNDEF,	expected -131072.000000 (~same)
+zero * zero, got 0.  0 (bin frac=0),	expected 0.000000 (~same)
+zero + zero, got 0.  0 (bin frac=0),	expected 0.000000 (~same)
+zero - zero, got 0.  0 (bin frac=0),	expected 0.000000 (~same)
+-num / zero, got -INF,	expected -131072.000000 (~same)
+zero * +inf, got UNDEF,	expected -131072.000000 (~same)
+zero * -inf, got UNDEF,	expected -131072.000000 (~same)
+zero * undef, got UNDEF,	expected -131072.000000 (~same)
+-inf * undef, got UNDEF,	expected -131072.000000 (~same)
++inf * undef, got UNDEF,	expected -131072.000000 (~same)
+undef * undef, got UNDEF,	expected -131072.000000 (~same)
+tiniest * inf, got +INF,	expected 131072.000000 (~same)
 
 Checking extreme int values, part III:
-'Way Too Large whole part!', got +INF,	expected same!
-'Largest * 1', got 131071.9998 (bin frac=16382),	expected same!
-'Largest * -1', got -131071.-9998 (bin frac=-16382),	expected same!
-'Largest + two safe', got +INF,	expected same!
-'Largest + two unsafe', got -131070. -1 (bin frac=-2),	expected same!
-'Safe Too neg substraction', got -INF,	expected same!
-'Unsafe Too neg substraction', got 131071.  1 (bin frac=2),	expected same!
-'Largest +1', got +INF,	expected same!
-'-Largest -1', got -INF,	expected same!
-'+HalfMax +HMaxp2', got +INF,	expected same!
-'-HalfMax -HMaxp2', got -INF,	expected same!
-'HalfMax + HalfMax', got 131071.9998 (bin frac=16382),	expected same!
-'FXP_MAX - HalfMax', got 65535.9999 (bin frac=16383),	expected same!
-'HalfMax + FXP_MAX', got +INF,	expected same!
-'-FXP_MAX - HalfMax', got -INF,	expected same!
-'HalfMax * 2', got 131071.9998 (bin frac=16382),	expected same!
-'HalfMax * 2 (long)', got 131071.9998 (bin frac=16382),	expected same!
-'HalfMax * 3', got +INF,	expected same!
-'-HalfMax * 3', got -INF,	expected same!
-'(HalfMax+1)*2', got +INF,	expected same!
-'(HalfMax+1)*2 (long)', got +INF,	expected same!
+Way Too Large whole part!, got +INF,	expected 131072.000000 (~same)
+Largest * 1, got 131071.9998 (bin frac=16382),	expected 131071.999939 (~same)
+Largest * -1, got -131071.-9998 (bin frac=-16382),	expected -131071.999939 (~same)
+Largest + two safe, got +INF,	expected 131072.000000 (~same)
+Largest + two unsafe, got -131070. -1 (bin frac=-2),	expected -131070.000122 (~same)
+Safe Too neg substraction, got -INF,	expected -131072.000000 (~same)
+Unsafe Too neg substraction, got 131071.5001 (bin frac=8194),	expected 131071.500153 (~same)
+Largest + 0.5, got +INF,	expected 131072.000000 (~same)
+-Largest - 0.5, got -INF,	expected -131072.000000 (~same)
++HalfMax + HMaxp2, got +INF,	expected 131072.000000 (~same)
+-HalfMax - HMaxp2, got -INF,	expected -131072.000000 (~same)
+HalfMax + HalfMax, got 131071.9998 (bin frac=16382),	expected 131071.999939 (~same)
+FXP_MAX - HalfMax, got 65535.9999 (bin frac=16383),	expected 65536.000000 (~same)
+HalfMax + FXP_MAX, got +INF,	expected 131072.000000 (~same)
+-FXP_MAX - HalfMax, got -INF,	expected -131072.000000 (~same)
+HalfMax * 2, got 131071.9998 (bin frac=16382),	expected 131071.999939 (~same)
+HalfMax * 2 (long), got 131071.9998 (bin frac=16382),	expected 131071.999939 (~same)
+HalfMax * 3, got +INF,	expected 131072.000000 (~same)
+-HalfMax * 3, got -INF,	expected -131072.000000 (~same)
+(HalfMax+0.5)*2, got +INF,	expected 131072.000000 (~same)
+(HalfMax+0.5)*2 (long), got +INF,	expected 131072.000000 (~same)
 
 Checking decimal <=> bin mappings of frac ranges:
 Max frac dec: 9999 (bin 16383)
@@ -981,53 +667,972 @@ Showing fxp for 0.9998: 0.9997 (bin frac=16381)
 Showing fxp for 0.9999: 0.9999 (bin frac=16383)
 
 Checking sign taken from frac when whole == 0:
-'-0.(+)500', got 0.499 (bin frac=8199),	expected same!
-'-0.(-)500', got -0.-499 (bin frac=-8199),	expected same!
+-0.(+)500, got 0.499 (bin frac=8199),	expected 0.500000 (~same)
+-0.(-)500, got -0.-499 (bin frac=-8199),	expected -0.500000 (~same)
 
 Truncation of longer frac decimal arguments:
-'0.222222', got 0.221 (bin frac=3640),	expected same!
-'0.777777', got 0.776 (bin frac=12742),	expected same!
-'0.991999', got 0.990 (bin frac=16251),	expected same!
-'0.999999', got 0.999 (bin frac=16383),	expected same!
+0.222222, got 0.221 (bin frac=3640),	expected 0.222000 (~same)
+0.777777, got 0.776 (bin frac=12742),	expected 0.777000 (~same)
+0.991999, got 0.990 (bin frac=16251),	expected 0.991000 (~same)
+0.999999, got 0.999 (bin frac=16383),	expected 0.999000 (~same)
 
 Checking extreme frac values:
-'maxfrac', got 0.9999 (bin frac=16383),	expected same!
-'1+ maxfrac', got 1.9999 (bin frac=16383),	expected same!
-'maxfrac +tiniest', got 1.  0 (bin frac=0),	expected same!
-'-maxfrac -tiniest', got -1.  0 (bin frac=0),	expected same!
-'maxfrac - maxfrac', got 0.  0 (bin frac=0),	expected same!
+maxfrac, got 0.9999 (bin frac=16383),	expected 1.000000 (~same)
+0.5 + maxfrac, got 1.4999 (bin frac=8191),	expected 1.500000 (~same)
+maxfrac +tiniest, got 1.  0 (bin frac=0),	expected 1.000000 (~same)
+-maxfrac -tiniest, got -1.  0 (bin frac=0),	expected -1.000000 (~same)
+maxfrac - maxfrac, got 0.  0 (bin frac=0),	expected 0.000000 (~same)
 
-Simple operations:
-' 1 + 1', got 2.  0 (bin frac=0),	expected same!
-'-1 - 1', got -2.  0 (bin frac=0),	expected same!
-'Ok sum == 2', got 2.  0 (bin frac=0),	expected same!
-'Ok sum == -2', got -2.  0 (bin frac=0),	expected same!
-' num', got 3.4999 (bin frac=8191),	expected same!
-' num +  2', got 5.4999 (bin frac=8191),	expected same!
-' num + -2', got 1.4999 (bin frac=8191),	expected same!
-'-num +  2', got -1.-4999 (bin frac=-8191),	expected same!
-'-num + -2', got -5.-4999 (bin frac=-8191),	expected same!
-' num -  2', got 1.4999 (bin frac=8191),	expected same!
-' num - -2', got 5.4999 (bin frac=8191),	expected same!
-'-num -  2', got -5.-4999 (bin frac=-8191),	expected same!
-'-num - -2', got -1.-4999 (bin frac=-8191),	expected same!
-' num *  2', got 6.9998 (bin frac=16382),	expected same!
-' num * -2', got -6.-9998 (bin frac=-16382),	expected same!
-'-num *  2', got -6.-9998 (bin frac=-16382),	expected same!
-'-num * -2', got 6.9998 (bin frac=16382),	expected same!
-' num *  2 (long)', got 6.9998 (bin frac=16382),	expected same!
-' num * -2 (long)', got -6.-9998 (bin frac=-16382),	expected same!
-'-num *  2 (long)', got -6.-9998 (bin frac=-16382),	expected same!
-'-num * -2 (long)', got 6.9998 (bin frac=16382),	expected same!
-' num /  2', got 1.7499 (bin frac=12287),	expected same!
-' num / -2', got -1.-7499 (bin frac=-12287),	expected same!
-'-num /  2', got -1.-7499 (bin frac=-12287),	expected same!
-'-num / -2', got 1.7499 (bin frac=12287),	expected same!
-' num /  2 (long)', got 1.7499 (bin frac=12287),	expected same!
-' num / -2 (long)', got -1.-7499 (bin frac=-12287),	expected same!
-'-num /  2 (long)', got -1.-7499 (bin frac=-12287),	expected same!
-'-num / -2 (long)', got 1.7499 (bin frac=12287),	expected same!
+Simple ops when using 3 or more bits for the whole part:
+ 1 + 1, got 2.  0 (bin frac=0),	expected 2.000000 (~same)
+-1 - 1, got -2.  0 (bin frac=0),	expected -2.000000 (~same)
+Ok sum == 2, got 2.  0 (bin frac=0),	expected 2.000000 (~same)
+Ok sum == -2, got -2.  0 (bin frac=0),	expected -2.000000 (~same)
+ num, got 0.4999 (bin frac=8191),	expected 0.499969 (~same)
+ num +  2, got 2.4999 (bin frac=8191),	expected 2.499969 (~same)
+ num + -2, got -1.-5000 (bin frac=-8193),	expected -1.500031 (~same)
+-num +  2, got 1.5000 (bin frac=8193),	expected 1.500031 (~same)
+-num + -2, got -2.-4999 (bin frac=-8191),	expected -2.499969 (~same)
+ num -  2, got -1.-5000 (bin frac=-8193),	expected -1.500031 (~same)
+ num - -2, got 2.4999 (bin frac=8191),	expected 2.499969 (~same)
+-num -  2, got -2.-4999 (bin frac=-8191),	expected -2.499969 (~same)
+-num - -2, got 1.5000 (bin frac=8193),	expected 1.500031 (~same)
+ num *  2, got 0.9998 (bin frac=16382),	expected 0.999939 (~same)
+ num * -2, got -0.-9998 (bin frac=-16382),	expected -0.999939 (~same)
+-num *  2, got -0.-9998 (bin frac=-16382),	expected -0.999939 (~same)
+-num * -2, got 0.9998 (bin frac=16382),	expected 0.999939 (~same)
+ num *  2 (long), got 0.9998 (bin frac=16382),	expected 0.999939 (~same)
+ num * -2 (long), got -0.-9998 (bin frac=-16382),	expected -0.999939 (~same)
+-num *  2 (long), got -0.-9998 (bin frac=-16382),	expected -0.999939 (~same)
+-num * -2 (long), got 0.9998 (bin frac=16382),	expected 0.999939 (~same)
+ num /  2, got 0.2499 (bin frac=4095),	expected 0.249985 (~same)
+ num / -2, got -0.-2499 (bin frac=-4095),	expected -0.249985 (~same)
+-num /  2, got -0.-2499 (bin frac=-4095),	expected -0.249985 (~same)
+-num / -2, got 0.2499 (bin frac=4095),	expected 0.249985 (~same)
+
+Verifying different op implementations using random numbers:
+n1 = 113225.1789 (bin frac=2932)
+n2 = -44738.-7262 (bin frac=-11899)
+n3 = 0.2358 (bin frac=3864) (n3 always random between -1 and 1)
+a. sum vs. sum_l, got 68486.4526 (bin frac=7417),	expected 68486.452725 (~same)
+b. sum vs. sum_l, got 113225.4147 (bin frac=6796),	expected 113225.414820 (~same)
+c. mul vs. mul_l, got -INF,	expected -131072.000000 (~same)
+d. mul vs. mul_d, got -INF,	expected -131072.000000 (~same)
+e. mul_l vs. mul_d, got -INF,	expected -131072.000000 (~same)
+f. mul vs. mul_l, got 26703. 84 (bin frac=139),	expected 26703.008484 (~same)
+g. mul vs. mul_d, got 26703. 84 (bin frac=139),	expected 26703.008484 (~same)
+h. mul_l vs. mul_d, got 26703. 84 (bin frac=139),	expected 26703.008484 (~same)
+i. div vs. div_l, got -2.-5307 (bin frac=-8696),	expected -2.530794 (~same)
+n1 = 47237.5055 (bin frac=8284)
+n2 = 105375.1231 (bin frac=2018)
+n3 = -0.-8127 (bin frac=-13316) (n3 always random between -1 and 1)
+a. sum vs. sum_l, got +INF,	expected 131072.000000 (~same)
+b. sum vs. sum_l, got 47236.6928 (bin frac=11352),	expected 47236.692913 (~same)
+c. mul vs. mul_l, got +INF,	expected 131072.000000 (~same)
+d. mul vs. mul_d, got +INF,	expected 131072.000000 (~same)
+e. mul_l vs. mul_d, got +INF,	expected 131072.000000 (~same)
+f. mul vs. mul_l, got -38392.-58 (bin frac=-96),	expected -38392.005860 (~same)
+g. mul vs. mul_d, got -38392.-58 (bin frac=-96),	expected -38392.005921 (~same)
+h. mul_l vs. mul_d, got -38392.-58 (bin frac=-96),	expected -38392.005921 (~same)
+i. div vs. div_l, got 0.4482 (bin frac=7344),	expected 0.448270 (~same)
+n1 = 60796.2133 (bin frac=3495)
+n2 = 40062.8937 (bin frac=14643)
+n3 = 0.7798 (bin frac=12778) (n3 always random between -1 and 1)
+a. sum vs. sum_l, got 100859.1070 (bin frac=1754),	expected 100859.107062 (~same)
+b. sum vs. sum_l, got 60796.9931 (bin frac=16273),	expected 60796.993286 (~same)
+c. mul vs. mul_l, got +INF,	expected 131072.000000 (~same)
+d. mul vs. mul_d, got +INF,	expected 131072.000000 (~same)
+e. mul_l vs. mul_d, got +INF,	expected 131072.000000 (~same)
+f. mul vs. mul_l, got 47415.4060 (bin frac=6653),	expected 47415.406092 (~same)
+g. mul vs. mul_d, got 47415.4060 (bin frac=6653),	expected 47415.406092 (~same)
+h. mul_l vs. mul_d, got 47415.4060 (bin frac=6653),	expected 47415.406092 (~same)
+i. div vs. div_l, got 1.5174 (bin frac=8479),	expected 1.517549 (~same)
+n1 = -62744.-8265 (bin frac=-13542)
+n2 = -24411.-3483 (bin frac=-5708)
+n3 = 0.3005 (bin frac=4924) (n3 always random between -1 and 1)
+a. sum vs. sum_l, got -87156.-1749 (bin frac=-2866),	expected -87156.174937 (~same)
+b. sum vs. sum_l, got -62744.-5259 (bin frac=-8618),	expected -62744.526033 (~same)
+c. mul vs. mul_l, got +INF,	expected 131072.000000 (~same)
+d. mul vs. mul_d, got +INF,	expected 131072.000000 (~same)
+e. mul_l vs. mul_d, got +INF,	expected 131072.000000 (~same)
+f. mul vs. mul_l, got -18857.-1487 (bin frac=-2437),	expected -18857.148752 (~same)
+g. mul vs. mul_d, got -18857.-1487 (bin frac=-2437),	expected -18857.148813 (~same)
+h. mul_l vs. mul_d, got -18857.-1487 (bin frac=-2437),	expected -18857.148813 (~same)
+i. div vs. div_l, got 2.5702 (bin frac=9344),	expected 2.570347 (~same)
+n1 = -130480.-8705 (bin frac=-14264)
+n2 = -99495.-9857 (bin frac=-16151)
+n3 = 0.9597 (bin frac=15725) (n3 always random between -1 and 1)
+a. sum vs. sum_l, got -INF,	expected -131072.000000 (~same)
+b. sum vs. sum_l, got -130479.-9107 (bin frac=-14923),	expected -130479.910883 (~same)
+c. mul vs. mul_l, got +INF,	expected 131072.000000 (~same)
+d. mul vs. mul_d, got +INF,	expected 131072.000000 (~same)
+e. mul_l vs. mul_d, got +INF,	expected 131072.000000 (~same)
+f. mul vs. mul_l, got -125232.-6470 (bin frac=-10602),	expected -125232.647134 (~same)
+g. mul vs. mul_d, got -125232.-6470 (bin frac=-10602),	expected -125232.647195 (~same)
+h. mul_l vs. mul_d, got -125232.-6470 (bin frac=-10602),	expected -125232.647195 (~same)
+i. div vs. div_l, got 1.3113 (bin frac=5102),	expected 1.311420 (~same)
+n1 = -120421.-3257 (bin frac=-5337)
+n2 = -102018.-1729 (bin frac=-2833)
+n3 = -0.-4541 (bin frac=-7441) (n3 always random between -1 and 1)
+a. sum vs. sum_l, got -INF,	expected -131072.000000 (~same)
+b. sum vs. sum_l, got -120421.-7798 (bin frac=-12778),	expected -120421.779955 (~same)
+c. mul vs. mul_l, got +INF,	expected 131072.000000 (~same)
+d. mul vs. mul_d, got +INF,	expected 131072.000000 (~same)
+e. mul_l vs. mul_d, got +INF,	expected 131072.000000 (~same)
+f. mul vs. mul_l, got 54690.8620 (bin frac=14124),	expected 54690.862113 (~same)
+g. mul vs. mul_d, got 54690.8620 (bin frac=14124),	expected 54690.862113 (~same)
+h. mul_l vs. mul_d, got 54690.8620 (bin frac=14124),	expected 54690.862113 (~same)
+i. div vs. div_l, got 1.1803 (bin frac=2955),	expected 1.180370 (~same)
+n1 = 25786.7407 (bin frac=12137)
+n2 = 48785.9341 (bin frac=15306)
+n3 = 0.7663 (bin frac=12557) (n3 always random between -1 and 1)
+a. sum vs. sum_l, got 74572.6749 (bin frac=11059),	expected 74572.675029 (~same)
+b. sum vs. sum_l, got 25787.5071 (bin frac=8310),	expected 25787.507233 (~same)
+c. mul vs. mul_l, got +INF,	expected 131072.000000 (~same)
+d. mul vs. mul_d, got +INF,	expected 131072.000000 (~same)
+e. mul_l vs. mul_d, got +INF,	expected 131072.000000 (~same)
+f. mul vs. mul_l, got 19763.4340 (bin frac=7112),	expected 19763.434109 (~same)
+g. mul vs. mul_d, got 19763.4340 (bin frac=7112),	expected 19763.434109 (~same)
+h. mul_l vs. mul_d, got 19763.4340 (bin frac=7112),	expected 19763.434109 (~same)
+i. div vs. div_l, got 0.5285 (bin frac=8660),	expected 0.528597 (~same)
+n1 = 85504.6625 (bin frac=10855)
+n2 = 37204.1565 (bin frac=2565)
+n3 = -0.-3343 (bin frac=-5478) (n3 always random between -1 and 1)
+a. sum vs. sum_l, got 122708.8190 (bin frac=13420),	expected 122708.819142 (~same)
+b. sum vs. sum_l, got 85504.3281 (bin frac=5377),	expected 85504.328206 (~same)
+c. mul vs. mul_l, got +INF,	expected 131072.000000 (~same)
+d. mul vs. mul_d, got +INF,	expected 131072.000000 (~same)
+e. mul_l vs. mul_d, got +INF,	expected 131072.000000 (~same)
+f. mul vs. mul_l, got -28588.-5339 (bin frac=-8749),	expected -28588.534029 (~same)
+g. mul vs. mul_d, got -28588.-5339 (bin frac=-8749),	expected -28588.534090 (~same)
+h. mul_l vs. mul_d, got -28588.-5339 (bin frac=-8749),	expected -28588.534090 (~same)
+i. div vs. div_l, got 2.2982 (bin frac=4886),	expected 2.298236 (~same)
+n1 = -125236.-5432 (bin frac=-8901)
+n2 = 110662.8471 (bin frac=13881)
+n3 = -0.-2650 (bin frac=-4342) (n3 always random between -1 and 1)
+a. sum vs. sum_l, got -14573.-6960 (bin frac=-11404),	expected -14573.696087 (~same)
+b. sum vs. sum_l, got -125236.-8082 (bin frac=-13243),	expected -125236.808338 (~same)
+c. mul vs. mul_l, got -INF,	expected -131072.000000 (~same)
+d. mul vs. mul_d, got -INF,	expected -131072.000000 (~same)
+e. mul_l vs. mul_d, got -INF,	expected -131072.000000 (~same)
+f. mul vs. mul_l, got 33189.5184 (bin frac=8494),	expected 33189.518464 (~same)
+g. mul vs. mul_d, got 33189.5184 (bin frac=8494),	expected 33189.518464 (~same)
+h. mul_l vs. mul_d, got 33189.5184 (bin frac=8494),	expected 33189.518464 (~same)
+i. div vs. div_l, got -1.-1316 (bin frac=-2157),	expected -1.131661 (~same)
+n1 = -18633.-2510 (bin frac=-4113)
+n2 = 74364.6140 (bin frac=10061)
+n3 = -0.-720 (bin frac=-1181) (n3 always random between -1 and 1)
+a. sum vs. sum_l, got 55731.3630 (bin frac=5948),	expected 55731.363059 (~same)
+b. sum vs. sum_l, got -18633.-3231 (bin frac=-5294),	expected -18633.323140 (~same)
+c. mul vs. mul_l, got -INF,	expected -131072.000000 (~same)
+d. mul vs. mul_d, got -INF,	expected -131072.000000 (~same)
+e. mul_l vs. mul_d, got -INF,	expected -131072.000000 (~same)
+f. mul vs. mul_l, got 1343.1316 (bin frac=2157),	expected 1343.131661 (~same)
+g. mul vs. mul_d, got 1343.1316 (bin frac=2157),	expected 1343.131661 (~same)
+h. mul_l vs. mul_d, got 1343.1316 (bin frac=2157),	expected 1343.131661 (~same)
+i. div vs. div_l, got -0.-2505 (bin frac=-4105),	expected -0.250565 (~same)
 
 Total # of warnings: 0
+Largest delta was: 6.103888E-05
 All tests passed using 14-bit fracs, and '9999' as max decimal frac.
 
+
+========================
+FXP configuration parameters:
+frac bits   : 16 (requested was 16)
+whole bits  : 16
+pos infinity: 2147483647 (Lf: 32768.000000)
+whole max   : 32767
+frac mask   : 65535
+frac max    : 65535 (->decimals: .9999)
+whole min   : -32767
+neg infinity: -2147483647 (Lf: -32768.000000)
+undefined   : -2147483648 (Lf: -32768.000000)
+max_ok_delta: 4.455634E-03
+max_delta   : 7.797360E-03
+
+Checking extreme int values, part I:
+Infinity, got +INF,	expected 32768.000000 (~same)
+Largest, got 32767.9998 (bin frac=65534),	expected 32767.999985 (~same)
+HalfMax, got 16383.9999 (bin frac=65535),	expected 16383.999992 (~same)
+Largest frac, got 0.9999 (bin frac=65535),	expected 1.000000 (~same)
+tiniest, got 0.  0 (bin frac=1),	expected 0.000015 (~same)
+0.5, got 0.4999 (bin frac=32768),	expected 0.500000 (~same)
+zero, got 0.  0 (bin frac=0),	expected 0.000000 (~same)
+-tiniest, got -0.  0 (bin frac=-1),	expected -0.000015 (~same)
+-Largest frac, got -0.-9999 (bin frac=-65535),	expected -1.000000 (~same)
+Most negative, got -32767.-9998 (bin frac=-65534),	expected -32767.999985 (~same)
+-Infinity, got -INF,	expected -32768.000000 (~same)
+Undefined, got UNDEF,	expected -32768.000000 (~same)
+
+Checking extreme int values, part II:
+Almost most negative, got -32767.-9998 (bin frac=-65533),	expected -32767.999969 (~same)
+ Largest -Largest, got 0.  0 (bin frac=0),	expected 0.000000 (~same)
+-Largest +Largest, got 0.  0 (bin frac=0),	expected 0.000000 (~same)
+Largest + 0, got 32767.9998 (bin frac=65534),	expected 32767.999985 (~same)
+-Largest - 0, got -32767.-9998 (bin frac=-65534),	expected -32767.999985 (~same)
+Largest - tiniest, got 32767.9998 (bin frac=65533),	expected 32767.999969 (~same)
+Largest + tiniest safe, got +INF,	expected 32768.000000 (~same)
+Largest + tiniest unsafe, got +INF,	expected 32768.000000 (~same)
++inf + +inf, got +INF,	expected 32768.000000 (~same)
+-inf - +inf, got -INF,	expected -32768.000000 (~same)
++inf + -inf, got UNDEF,	expected -32768.000000 (~same)
+-inf + -inf, got -INF,	expected -32768.000000 (~same)
+-inf - -inf, got UNDEF,	expected -32768.000000 (~same)
++inf * -inf, got -INF,	expected -32768.000000 (~same)
++inf - 0.5, got +INF,	expected 32768.000000 (~same)
+-inf + 0.5, got -INF,	expected -32768.000000 (~same)
++num / zero, got +INF,	expected 32768.000000 (~same)
+zero / zero, got UNDEF,	expected -32768.000000 (~same)
+zero * zero, got 0.  0 (bin frac=0),	expected 0.000000 (~same)
+zero + zero, got 0.  0 (bin frac=0),	expected 0.000000 (~same)
+zero - zero, got 0.  0 (bin frac=0),	expected 0.000000 (~same)
+-num / zero, got -INF,	expected -32768.000000 (~same)
+zero * +inf, got UNDEF,	expected -32768.000000 (~same)
+zero * -inf, got UNDEF,	expected -32768.000000 (~same)
+zero * undef, got UNDEF,	expected -32768.000000 (~same)
+-inf * undef, got UNDEF,	expected -32768.000000 (~same)
++inf * undef, got UNDEF,	expected -32768.000000 (~same)
+undef * undef, got UNDEF,	expected -32768.000000 (~same)
+tiniest * inf, got +INF,	expected 32768.000000 (~same)
+
+Checking extreme int values, part III:
+Way Too Large whole part!, got +INF,	expected 32768.000000 (~same)
+Largest * 1, got 32767.9998 (bin frac=65534),	expected 32767.999985 (~same)
+Largest * -1, got -32767.-9998 (bin frac=-65534),	expected -32767.999985 (~same)
+Largest + two safe, got +INF,	expected 32768.000000 (~same)
+Largest + two unsafe, got -32766.  0 (bin frac=-2),	expected -32766.000031 (~same)
+Safe Too neg substraction, got -INF,	expected -32768.000000 (~same)
+Unsafe Too neg substraction, got 32767.4999 (bin frac=32770),	expected 32767.500038 (~same)
+Largest + 0.5, got +INF,	expected 32768.000000 (~same)
+-Largest - 0.5, got -INF,	expected -32768.000000 (~same)
++HalfMax + HMaxp2, got +INF,	expected 32768.000000 (~same)
+-HalfMax - HMaxp2, got -INF,	expected -32768.000000 (~same)
+HalfMax + HalfMax, got 32767.9998 (bin frac=65534),	expected 32767.999985 (~same)
+FXP_MAX - HalfMax, got 16383.9999 (bin frac=65535),	expected 16384.000000 (~same)
+HalfMax + FXP_MAX, got +INF,	expected 32768.000000 (~same)
+-FXP_MAX - HalfMax, got -INF,	expected -32768.000000 (~same)
+HalfMax * 2, got 32767.9998 (bin frac=65534),	expected 32767.999985 (~same)
+HalfMax * 2 (long), got 32767.9998 (bin frac=65534),	expected 32767.999985 (~same)
+HalfMax * 3, got +INF,	expected 32768.000000 (~same)
+-HalfMax * 3, got -INF,	expected -32768.000000 (~same)
+(HalfMax+0.5)*2, got +INF,	expected 32768.000000 (~same)
+(HalfMax+0.5)*2 (long), got +INF,	expected 32768.000000 (~same)
+
+Checking decimal <=> bin mappings of frac ranges:
+Max frac dec: 9999 (bin 65535)
+Showing fxp for 0.  0: 0.  0 (bin frac=0)
+Showing fxp for 0.  1: 0.  0 (bin frac=6)
+Showing fxp for 0.  2: 0.  1 (bin frac=13)
+Showing fxp for 0.  3: 0.  2 (bin frac=19)
+Showing fxp for 0.  4: 0.  3 (bin frac=26)
+Showing fxp for 0.  5: 0.  4 (bin frac=32)
+:
+Showing fxp for 0.4998: 0.4997 (bin frac=32757)
+Showing fxp for 0.4999: 0.4998 (bin frac=32764)
+Showing fxp for 0.5000: 0.4999 (bin frac=32770)
+Showing fxp for 0.5001: 0.5000 (bin frac=32777)
+Showing fxp for 0.5002: 0.5001 (bin frac=32783)
+:
+Showing fxp for 0.9994: 0.9993 (bin frac=65502)
+Showing fxp for 0.9995: 0.9994 (bin frac=65508)
+Showing fxp for 0.9996: 0.9995 (bin frac=65515)
+Showing fxp for 0.9997: 0.9996 (bin frac=65521)
+Showing fxp for 0.9998: 0.9997 (bin frac=65528)
+Showing fxp for 0.9999: 0.9999 (bin frac=65535)
+
+Checking sign taken from frac when whole == 0:
+-0.(+)500, got 0.499 (bin frac=32800),	expected 0.500000 (~same)
+-0.(-)500, got -0.-499 (bin frac=-32800),	expected -0.500000 (~same)
+
+Truncation of longer frac decimal arguments:
+0.222222, got 0.221 (bin frac=14563),	expected 0.222000 (~same)
+0.777777, got 0.776 (bin frac=50971),	expected 0.777000 (~same)
+0.991999, got 0.990 (bin frac=65010),	expected 0.991000 (~same)
+0.999999, got 0.999 (bin frac=65535),	expected 0.999000 (~same)
+
+Checking extreme frac values:
+maxfrac, got 0.9999 (bin frac=65535),	expected 1.000000 (~same)
+0.5 + maxfrac, got 1.4999 (bin frac=32767),	expected 1.500000 (~same)
+maxfrac +tiniest, got 1.  0 (bin frac=0),	expected 1.000000 (~same)
+-maxfrac -tiniest, got -1.  0 (bin frac=0),	expected -1.000000 (~same)
+maxfrac - maxfrac, got 0.  0 (bin frac=0),	expected 0.000000 (~same)
+
+Simple ops when using 3 or more bits for the whole part:
+ 1 + 1, got 2.  0 (bin frac=0),	expected 2.000000 (~same)
+-1 - 1, got -2.  0 (bin frac=0),	expected -2.000000 (~same)
+Ok sum == 2, got 2.  0 (bin frac=0),	expected 2.000000 (~same)
+Ok sum == -2, got -2.  0 (bin frac=0),	expected -2.000000 (~same)
+ num, got 0.4999 (bin frac=32767),	expected 0.499992 (~same)
+ num +  2, got 2.4999 (bin frac=32767),	expected 2.499992 (~same)
+ num + -2, got -1.-4999 (bin frac=-32769),	expected -1.500008 (~same)
+-num +  2, got 1.4999 (bin frac=32769),	expected 1.500008 (~same)
+-num + -2, got -2.-4999 (bin frac=-32767),	expected -2.499992 (~same)
+ num -  2, got -1.-4999 (bin frac=-32769),	expected -1.500008 (~same)
+ num - -2, got 2.4999 (bin frac=32767),	expected 2.499992 (~same)
+-num -  2, got -2.-4999 (bin frac=-32767),	expected -2.499992 (~same)
+-num - -2, got 1.4999 (bin frac=32769),	expected 1.500008 (~same)
+ num *  2, got 0.9998 (bin frac=65534),	expected 0.999985 (~same)
+ num * -2, got -0.-9998 (bin frac=-65534),	expected -0.999985 (~same)
+-num *  2, got -0.-9998 (bin frac=-65534),	expected -0.999985 (~same)
+-num * -2, got 0.9998 (bin frac=65534),	expected 0.999985 (~same)
+ num *  2 (long), got 0.9998 (bin frac=65534),	expected 0.999985 (~same)
+ num * -2 (long), got -0.-9998 (bin frac=-65534),	expected -0.999985 (~same)
+-num *  2 (long), got -0.-9998 (bin frac=-65534),	expected -0.999985 (~same)
+-num * -2 (long), got 0.9998 (bin frac=65534),	expected 0.999985 (~same)
+ num /  2, got 0.2499 (bin frac=16383),	expected 0.249996 (~same)
+ num / -2, got -0.-2499 (bin frac=-16383),	expected -0.249996 (~same)
+-num /  2, got -0.-2499 (bin frac=-16383),	expected -0.249996 (~same)
+-num / -2, got 0.2499 (bin frac=16383),	expected 0.249996 (~same)
+
+Verifying different op implementations using random numbers:
+n1 = -451.-8087 (bin frac=-53004)
+n2 = 19335.9419 (bin frac=61736)
+n3 = -0.-2209 (bin frac=-14479) (n3 always random between -1 and 1)
+a. sum vs. sum_l, got 18884.1332 (bin frac=8732),	expected 18884.133242 (~same)
+b. sum vs. sum_l, got -452.-297 (bin frac=-1947),	expected -452.029709 (~same)
+c. mul vs. mul_l, got -INF,	expected -32768.000000 (~same)
+d. mul vs. mul_d, got -INF,	expected -32768.000000 (~same)
+e. mul_l vs. mul_d, got -INF,	expected -32768.000000 (~same)
+f. mul vs. mul_l, got 99.8189 (bin frac=53675),	expected 99.819028 (~same)
+g. mul vs. mul_d, got 99.8189 (bin frac=53675),	expected 99.819028 (~same)
+h. mul_l vs. mul_d, got 99.8189 (bin frac=53675),	expected 99.819028 (~same)
+i. div vs. div_l, got -0.-233 (bin frac=-1531),	expected -0.023362 (~same)
+n1 = 3321.500 (bin frac=3278)
+n2 = 15163.5031 (bin frac=32975)
+n3 = 0.5035 (bin frac=33006) (n3 always random between -1 and 1)
+a. sum vs. sum_l, got 18484.5531 (bin frac=36253),	expected 18484.553185 (~same)
+b. sum vs. sum_l, got 3321.5536 (bin frac=36284),	expected 3321.553658 (~same)
+c. mul vs. mul_l, got +INF,	expected 32768.000000 (~same)
+d. mul vs. mul_d, got +INF,	expected 32768.000000 (~same)
+e. mul_l vs. mul_d, got +INF,	expected 32768.000000 (~same)
+f. mul vs. mul_l, got 1672.5856 (bin frac=38384),	expected 1672.585702 (~same)
+g. mul vs. mul_d, got 1672.5856 (bin frac=38384),	expected 1672.585702 (~same)
+h. mul_l vs. mul_d, got 1672.5856 (bin frac=38384),	expected 1672.585702 (~same)
+i. div vs. div_l, got 0.2189 (bin frac=14353),	expected 0.219013 (~same)
+n1 = -4064.-6948 (bin frac=-45544)
+n2 = -22045.-852 (bin frac=-5590)
+n3 = 0.5804 (bin frac=38044) (n3 always random between -1 and 1)
+a. sum vs. sum_l, got -26109.-7801 (bin frac=-51134),	expected -26109.780255 (~same)
+b. sum vs. sum_l, got -4064.-1144 (bin frac=-7500),	expected -4064.114443 (~same)
+c. mul vs. mul_l, got +INF,	expected 32768.000000 (~same)
+d. mul vs. mul_d, got +INF,	expected 32768.000000 (~same)
+e. mul_l vs. mul_d, got +INF,	expected 32768.000000 (~same)
+f. mul vs. mul_l, got -2359.-5771 (bin frac=-37830),	expected -2359.577249 (~same)
+g. mul vs. mul_d, got -2359.-5771 (bin frac=-37830),	expected -2359.577264 (~same)
+h. mul_l vs. mul_d, got -2359.-5771 (bin frac=-37830),	expected -2359.577264 (~same)
+i. div vs. div_l, got 0.1843 (bin frac=12083),	expected 0.184375 (~same)
+n1 = 20515.6309 (bin frac=41356)
+n2 = 13381.3261 (bin frac=21377)
+n3 = 0.9023 (bin frac=59141) (n3 always random between -1 and 1)
+a. sum vs. sum_l, got +INF,	expected 32768.000000 (~same)
+b. sum vs. sum_l, got 20516.5334 (bin frac=34961),	expected 20516.533471 (~same)
+c. mul vs. mul_l, got +INF,	expected 32768.000000 (~same)
+d. mul vs. mul_d, got +INF,	expected 32768.000000 (~same)
+e. mul_l vs. mul_d, got +INF,	expected 32768.000000 (~same)
+f. mul vs. mul_l, got 18513.7165 (bin frac=46966),	expected 18513.716670 (~same)
+g. mul vs. mul_d, got 18513.7165 (bin frac=46966),	expected 18513.716670 (~same)
+h. mul_l vs. mul_d, got 18513.7165 (bin frac=46967),	expected 18513.716670 (~same)
+i. div vs. div_l, got 1.5330 (bin frac=34940),	expected 1.533150 (~same)
+n1 = 1107.6351 (bin frac=41631)
+n2 = -4902.-626 (bin frac=-4106)
+n3 = -0.-614 (bin frac=-4025) (n3 always random between -1 and 1)
+a. sum vs. sum_l, got -3794.-4273 (bin frac=-28011),	expected -3794.427420 (~same)
+b. sum vs. sum_l, got 1107.5737 (bin frac=37606),	expected 1107.573831 (~same)
+c. mul vs. mul_l, got -INF,	expected -32768.000000 (~same)
+d. mul vs. mul_d, got -INF,	expected -32768.000000 (~same)
+e. mul_l vs. mul_d, got -INF,	expected -32768.000000 (~same)
+f. mul vs. mul_l, got -68.-272 (bin frac=-1783),	expected -68.027207 (~same)
+g. mul vs. mul_d, got -68.-272 (bin frac=-1783),	expected -68.027222 (~same)
+h. mul_l vs. mul_d, got -68.-272 (bin frac=-1783),	expected -68.027222 (~same)
+i. div vs. div_l, got -0.-2259 (bin frac=-14808),	expected -0.225956 (~same)
+n1 = -6397.-9257 (bin frac=-60676)
+n2 = -10170.-9143 (bin frac=-59931)
+n3 = -0.-7446 (bin frac=-48806) (n3 always random between -1 and 1)
+a. sum vs. sum_l, got -16568.-8402 (bin frac=-55071),	expected -16568.840330 (~same)
+b. sum vs. sum_l, got -6398.-6705 (bin frac=-43946),	expected -6398.670573 (~same)
+c. mul vs. mul_l, got +INF,	expected 32768.000000 (~same)
+d. mul vs. mul_d, got +INF,	expected 32768.000000 (~same)
+e. mul_l vs. mul_d, got +INF,	expected 32768.000000 (~same)
+f. mul vs. mul_l, got 4764.6662 (bin frac=43664),	expected 4764.666270 (~same)
+g. mul vs. mul_d, got 4764.6662 (bin frac=43664),	expected 4764.666270 (~same)
+h. mul_l vs. mul_d, got 4764.6662 (bin frac=43664),	expected 4764.666270 (~same)
+i. div vs. div_l, got 0.6289 (bin frac=41224),	expected 0.629038 (~same)
+n1 = 27514.6584 (bin frac=43159)
+n2 = -20763.-2205 (bin frac=-14456)
+n3 = -0.-9301 (bin frac=-60963) (n3 always random between -1 and 1)
+a. sum vs. sum_l, got 6751.4379 (bin frac=28703),	expected 6751.437980 (~same)
+b. sum vs. sum_l, got 27513.7282 (bin frac=47732),	expected 27513.728344 (~same)
+c. mul vs. mul_l, got -INF,	expected -32768.000000 (~same)
+d. mul vs. mul_d, got -INF,	expected -32768.000000 (~same)
+e. mul_l vs. mul_d, got -INF,	expected -32768.000000 (~same)
+f. mul vs. mul_l, got -25594.-7284 (bin frac=-47744),	expected -25594.728542 (~same)
+g. mul vs. mul_d, got -25594.-7284 (bin frac=-47744),	expected -25594.728557 (~same)
+h. mul_l vs. mul_d, got -25594.-7284 (bin frac=-47745),	expected -25594.728557 (~same)
+i. div vs. div_l, got -1.-3251 (bin frac=-21309),	expected -1.325154 (~same)
+n1 = -1977.-4512 (bin frac=-29578)
+n2 = -17774.-5402 (bin frac=-35409)
+n3 = -0.-7817 (bin frac=-51235) (n3 always random between -1 and 1)
+a. sum vs. sum_l, got -19751.-9915 (bin frac=-64987),	expected -19751.991638 (~same)
+b. sum vs. sum_l, got -1978.-2330 (bin frac=-15277),	expected -1978.233112 (~same)
+c. mul vs. mul_l, got +INF,	expected 32768.000000 (~same)
+d. mul vs. mul_d, got +INF,	expected 32768.000000 (~same)
+e. mul_l vs. mul_d, got +INF,	expected 32768.000000 (~same)
+f. mul vs. mul_l, got 1545.9398 (bin frac=61598),	expected 1545.939925 (~same)
+g. mul vs. mul_d, got 1545.9398 (bin frac=61598),	expected 1545.939925 (~same)
+h. mul_l vs. mul_d, got 1545.9398 (bin frac=61598),	expected 1545.939925 (~same)
+i. div vs. div_l, got 0.1112 (bin frac=7291),	expected 0.111254 (~same)
+n1 = -1123.-8132 (bin frac=-53303)
+n2 = -30720.-6598 (bin frac=-43247)
+n3 = 0.2289 (bin frac=15006) (n3 always random between -1 and 1)
+a. sum vs. sum_l, got -31844.-4731 (bin frac=-31014),	expected -31844.473243 (~same)
+b. sum vs. sum_l, got -1123.-5843 (bin frac=-38297),	expected -1123.584375 (~same)
+c. mul vs. mul_l, got +INF,	expected 32768.000000 (~same)
+d. mul vs. mul_d, got +INF,	expected 32768.000000 (~same)
+e. mul_l vs. mul_d, got +INF,	expected 32768.000000 (~same)
+f. mul vs. mul_l, got -257.-3233 (bin frac=-21190),	expected -257.323339 (~same)
+g. mul vs. mul_d, got -257.-3233 (bin frac=-21190),	expected -257.323354 (~same)
+h. mul_l vs. mul_d, got -257.-3233 (bin frac=-21190),	expected -257.323354 (~same)
+i. div vs. div_l, got 0.365 (bin frac=2397),	expected 0.036576 (~same)
+n1 = 20784.400 (bin frac=2622)
+n2 = -20995.-9056 (bin frac=-59360)
+n3 = 0.1200 (bin frac=7868) (n3 always random between -1 and 1)
+a. sum vs. sum_l, got -211.-8656 (bin frac=-56738),	expected -211.865766 (~same)
+b. sum vs. sum_l, got 20784.1600 (bin frac=10490),	expected 20784.160067 (~same)
+c. mul vs. mul_l, got -INF,	expected -32768.000000 (~same)
+d. mul vs. mul_d, got -INF,	expected -32768.000000 (~same)
+e. mul_l vs. mul_d, got -INF,	expected -32768.000000 (~same)
+f. mul vs. mul_l, got 2495.2518 (bin frac=16506),	expected 2495.251865 (~same)
+g. mul vs. mul_d, got 2495.2518 (bin frac=16506),	expected 2495.251865 (~same)
+h. mul_l vs. mul_d, got 2495.2518 (bin frac=16506),	expected 2495.251865 (~same)
+i. div vs. div_l, got -0.-9898 (bin frac=-64874),	expected -0.989914 (~same)
+
+Total # of warnings: 0
+Largest delta was: 3.051804E-05
+All tests passed using 16-bit fracs, and '9999' as max decimal frac.
+
+
+========================
+FXP configuration parameters:
+frac bits   : 24 (requested was 24)
+whole bits  : 8
+pos infinity: 2147483647 (Lf: 128.000000)
+whole max   : 127
+frac mask   : 16777215
+frac max    : 16777215 (->decimals: .9999999)
+whole min   : -127
+neg infinity: -2147483647 (Lf: -128.000000)
+undefined   : -2147483648 (Lf: -128.000000)
+max_ok_delta: 5.580017E-04
+max_delta   : 9.765030E-04
+
+Checking extreme int values, part I:
+Infinity, got +INF,	expected 128.000000 (~same)
+Largest, got 127.9999998 (bin frac=16777214),	expected 128.000000 (~same)
+HalfMax, got 63.9999999 (bin frac=16777215),	expected 64.000000 (~same)
+Largest frac, got 0.9999999 (bin frac=16777215),	expected 1.000000 (~same)
+tiniest, got 0.  0 (bin frac=1),	expected 0.000000 (~same)
+0.5, got 0.4999999 (bin frac=8388608),	expected 0.500000 (~same)
+zero, got 0.  0 (bin frac=0),	expected 0.000000 (~same)
+-tiniest, got -0.  0 (bin frac=-1),	expected -0.000000 (~same)
+-Largest frac, got -0.-9999999 (bin frac=-16777215),	expected -1.000000 (~same)
+Most negative, got -127.-9999998 (bin frac=-16777214),	expected -128.000000 (~same)
+-Infinity, got -INF,	expected -128.000000 (~same)
+Undefined, got UNDEF,	expected -128.000000 (~same)
+
+Checking extreme int values, part II:
+Almost most negative, got -127.-9999997 (bin frac=-16777213),	expected -128.000000 (~same)
+ Largest -Largest, got 0.  0 (bin frac=0),	expected 0.000000 (~same)
+-Largest +Largest, got 0.  0 (bin frac=0),	expected 0.000000 (~same)
+Largest + 0, got 127.9999998 (bin frac=16777214),	expected 128.000000 (~same)
+-Largest - 0, got -127.-9999998 (bin frac=-16777214),	expected -128.000000 (~same)
+Largest - tiniest, got 127.9999997 (bin frac=16777213),	expected 128.000000 (~same)
+Largest + tiniest safe, got +INF,	expected 128.000000 (~same)
+Largest + tiniest unsafe, got +INF,	expected 128.000000 (~same)
++inf + +inf, got +INF,	expected 128.000000 (~same)
+-inf - +inf, got -INF,	expected -128.000000 (~same)
++inf + -inf, got UNDEF,	expected -128.000000 (~same)
+-inf + -inf, got -INF,	expected -128.000000 (~same)
+-inf - -inf, got UNDEF,	expected -128.000000 (~same)
++inf * -inf, got -INF,	expected -128.000000 (~same)
++inf - 0.5, got +INF,	expected 128.000000 (~same)
+-inf + 0.5, got -INF,	expected -128.000000 (~same)
++num / zero, got +INF,	expected 128.000000 (~same)
+zero / zero, got UNDEF,	expected -128.000000 (~same)
+zero * zero, got 0.  0 (bin frac=0),	expected 0.000000 (~same)
+zero + zero, got 0.  0 (bin frac=0),	expected 0.000000 (~same)
+zero - zero, got 0.  0 (bin frac=0),	expected 0.000000 (~same)
+-num / zero, got -INF,	expected -128.000000 (~same)
+zero * +inf, got UNDEF,	expected -128.000000 (~same)
+zero * -inf, got UNDEF,	expected -128.000000 (~same)
+zero * undef, got UNDEF,	expected -128.000000 (~same)
+-inf * undef, got UNDEF,	expected -128.000000 (~same)
++inf * undef, got UNDEF,	expected -128.000000 (~same)
+undef * undef, got UNDEF,	expected -128.000000 (~same)
+tiniest * inf, got +INF,	expected 128.000000 (~same)
+
+Checking extreme int values, part III:
+Way Too Large whole part!, got +INF,	expected 128.000000 (~same)
+Largest * 1, got 127.9999998 (bin frac=16777214),	expected 128.000000 (~same)
+Largest * -1, got -127.-9999998 (bin frac=-16777214),	expected -128.000000 (~same)
+Largest + two safe, got +INF,	expected 128.000000 (~same)
+Largest + two unsafe, got -126. -1 (bin frac=-2),	expected -126.000000 (~same)
+Safe Too neg substraction, got -INF,	expected -128.000000 (~same)
+Unsafe Too neg substraction, got 127.5000000 (bin frac=8388610),	expected 127.500000 (~same)
+Largest + 0.5, got +INF,	expected 128.000000 (~same)
+-Largest - 0.5, got -INF,	expected -128.000000 (~same)
++HalfMax + HMaxp2, got +INF,	expected 128.000000 (~same)
+-HalfMax - HMaxp2, got -INF,	expected -128.000000 (~same)
+HalfMax + HalfMax, got 127.9999998 (bin frac=16777214),	expected 128.000000 (~same)
+FXP_MAX - HalfMax, got 63.9999999 (bin frac=16777215),	expected 64.000000 (~same)
+HalfMax + FXP_MAX, got +INF,	expected 128.000000 (~same)
+-FXP_MAX - HalfMax, got -INF,	expected -128.000000 (~same)
+HalfMax * 2, got 127.9999998 (bin frac=16777214),	expected 128.000000 (~same)
+HalfMax * 2 (long), got 127.9999998 (bin frac=16777214),	expected 128.000000 (~same)
+HalfMax * 3, got +INF,	expected 128.000000 (~same)
+-HalfMax * 3, got -INF,	expected -128.000000 (~same)
+(HalfMax+0.5)*2, got +INF,	expected 128.000000 (~same)
+(HalfMax+0.5)*2 (long), got +INF,	expected 128.000000 (~same)
+
+Checking decimal <=> bin mappings of frac ranges:
+Max frac dec: 9999999 (bin 16777215)
+Showing fxp for 0.  0: 0.  0 (bin frac=0)
+Showing fxp for 0.  1: 0.  0 (bin frac=1)
+Showing fxp for 0.  2: 0.  1 (bin frac=3)
+Showing fxp for 0.  3: 0.  2 (bin frac=5)
+Showing fxp for 0.  4: 0.  3 (bin frac=6)
+Showing fxp for 0.  5: 0.  4 (bin frac=8)
+:
+Showing fxp for 0.4999998: 0.4999997 (bin frac=8388604)
+Showing fxp for 0.4999999: 0.4999998 (bin frac=8388606)
+Showing fxp for 0.5000000: 0.4999999 (bin frac=8388608)
+Showing fxp for 0.5000001: 0.5000000 (bin frac=8388610)
+Showing fxp for 0.5000002: 0.5000001 (bin frac=8388611)
+:
+Showing fxp for 0.9999994: 0.9999993 (bin frac=16777206)
+Showing fxp for 0.9999995: 0.9999994 (bin frac=16777208)
+Showing fxp for 0.9999996: 0.9999995 (bin frac=16777209)
+Showing fxp for 0.9999997: 0.9999996 (bin frac=16777211)
+Showing fxp for 0.9999998: 0.9999997 (bin frac=16777213)
+Showing fxp for 0.9999999: 0.9999999 (bin frac=16777215)
+
+Checking sign taken from frac when whole == 0:
+-0.(+)500, got 0.499 (bin frac=8397004),	expected 0.500000 (~same)
+-0.(-)500, got -0.-499 (bin frac=-8397004),	expected -0.500000 (~same)
+
+Truncation of longer frac decimal arguments:
+0.222222, got 0.222 (bin frac=3728270),	expected 0.222000 (~same)
+0.777777, got 0.777 (bin frac=13048945),	expected 0.777000 (~same)
+0.991999, got 0.990 (bin frac=16642862),	expected 0.991000 (~same)
+0.999999, got 0.999 (bin frac=16777215),	expected 0.999000 (~same)
+
+Checking extreme frac values:
+maxfrac, got 0.9999999 (bin frac=16777215),	expected 1.000000 (~same)
+0.5 + maxfrac, got 1.4999999 (bin frac=8388607),	expected 1.500000 (~same)
+maxfrac +tiniest, got 1.  0 (bin frac=0),	expected 1.000000 (~same)
+-maxfrac -tiniest, got -1.  0 (bin frac=0),	expected -1.000000 (~same)
+maxfrac - maxfrac, got 0.  0 (bin frac=0),	expected 0.000000 (~same)
+
+Simple ops when using 3 or more bits for the whole part:
+ 1 + 1, got 2.  0 (bin frac=0),	expected 2.000000 (~same)
+-1 - 1, got -2.  0 (bin frac=0),	expected -2.000000 (~same)
+Ok sum == 2, got 2.  0 (bin frac=0),	expected 2.000000 (~same)
+Ok sum == -2, got -2.  0 (bin frac=0),	expected -2.000000 (~same)
+ num, got 0.4999999 (bin frac=8388607),	expected 0.500000 (~same)
+ num +  2, got 2.4999999 (bin frac=8388607),	expected 2.500000 (~same)
+ num + -2, got -1.-5000000 (bin frac=-8388609),	expected -1.500000 (~same)
+-num +  2, got 1.5000000 (bin frac=8388609),	expected 1.500000 (~same)
+-num + -2, got -2.-4999999 (bin frac=-8388607),	expected -2.500000 (~same)
+ num -  2, got -1.-5000000 (bin frac=-8388609),	expected -1.500000 (~same)
+ num - -2, got 2.4999999 (bin frac=8388607),	expected 2.500000 (~same)
+-num -  2, got -2.-4999999 (bin frac=-8388607),	expected -2.500000 (~same)
+-num - -2, got 1.5000000 (bin frac=8388609),	expected 1.500000 (~same)
+ num *  2, got 0.9999998 (bin frac=16777214),	expected 1.000000 (~same)
+ num * -2, got -0.-9999998 (bin frac=-16777214),	expected -1.000000 (~same)
+-num *  2, got -0.-9999998 (bin frac=-16777214),	expected -1.000000 (~same)
+-num * -2, got 0.9999998 (bin frac=16777214),	expected 1.000000 (~same)
+ num *  2 (long), got 0.9999998 (bin frac=16777214),	expected 1.000000 (~same)
+ num * -2 (long), got -0.-9999998 (bin frac=-16777214),	expected -1.000000 (~same)
+-num *  2 (long), got -0.-9999998 (bin frac=-16777214),	expected -1.000000 (~same)
+-num * -2 (long), got 0.9999998 (bin frac=16777214),	expected 1.000000 (~same)
+ num /  2, got 0.2499999 (bin frac=4194303),	expected 0.250000 (~same)
+ num / -2, got -0.-2499999 (bin frac=-4194303),	expected -0.250000 (~same)
+-num /  2, got -0.-2499999 (bin frac=-4194303),	expected -0.250000 (~same)
+-num / -2, got 0.2499999 (bin frac=4194303),	expected 0.250000 (~same)
+
+Verifying different op implementations using random numbers:
+n1 = 78.3598442 (bin frac=6037185)
+n2 = -127.-1386246 (bin frac=-2325735)
+n3 = 0.1287681 (bin frac=2160371) (n3 always random between -1 and 1)
+a. sum vs. sum_l, got -48.-7787803 (bin frac=-13065766),	expected -48.778780 (~same)
+b. sum vs. sum_l, got 78.4886123 (bin frac=8197556),	expected 78.488612 (~same)
+c. mul vs. mul_l, got -INF,	expected -128.000000 (~same)
+d. mul vs. mul_d, got -INF,	expected -128.000000 (~same)
+e. mul_l vs. mul_d, got -INF,	expected -128.000000 (~same)
+f. mul vs. mul_l, got 10.902492 (bin frac=1514131),	expected 10.090252 (~same)
+g. mul vs. mul_d, got 10.902492 (bin frac=1514131),	expected 10.090252 (~same)
+h. mul_l vs. mul_d, got 10.902518 (bin frac=1514175),	expected 10.090252 (~same)
+i. div vs. div_l, got -0.-6163338 (bin frac=-10340366),	expected -0.616334 (~same)
+n1 = 90.5762219 (bin frac=9667401)
+n2 = 108.972073 (bin frac=1630869)
+n3 = -0.-3685708 (bin frac=-6183593) (n3 always random between -1 and 1)
+a. sum vs. sum_l, got +INF,	expected 128.000000 (~same)
+b. sum vs. sum_l, got 90.2076511 (bin frac=3483808),	expected 90.207651 (~same)
+c. mul vs. mul_l, got +INF,	expected 128.000000 (~same)
+d. mul vs. mul_d, got +INF,	expected 128.000000 (~same)
+e. mul_l vs. mul_d, got +INF,	expected 128.000000 (~same)
+f. mul vs. mul_l, got -33.-3837489 (bin frac=-6438240),	expected -33.383756 (~same)
+g. mul vs. mul_d, got -33.-3837489 (bin frac=-6438240),	expected -33.383756 (~same)
+h. mul_l vs. mul_d, got -33.-3837563 (bin frac=-6438364),	expected -33.383756 (~same)
+i. div vs. div_l, got 0.8379144 (bin frac=14057873),	expected 0.837915 (~same)
+n1 = -1.-9205057 (bin frac=-15443525)
+n2 = 120.9429626 (bin frac=15820288)
+n3 = 0.3544519 (bin frac=5946718) (n3 always random between -1 and 1)
+a. sum vs. sum_l, got 119.224568 (bin frac=376763),	expected 119.022457 (~same)
+b. sum vs. sum_l, got -1.-5660537 (bin frac=-9496807),	expected -1.566054 (~same)
+c. mul vs. mul_l, got -INF,	expected -128.000000 (~same)
+d. mul vs. mul_d, got -INF,	expected -128.000000 (~same)
+e. mul_l vs. mul_d, got -INF,	expected -128.000000 (~same)
+f. mul vs. mul_l, got -0.-6807204 (bin frac=-11420595),	expected -0.680727 (~same)
+g. mul vs. mul_d, got -0.-6807204 (bin frac=-11420595),	expected -0.680727 (~same)
+h. mul_l vs. mul_d, got -0.-6807270 (bin frac=-11420706),	expected -0.680727 (~same)
+i. div vs. div_l, got -0.-158793 (bin frac=-266412),	expected -0.015879 (~same)
+n1 = -18.-744796 (bin frac=-1249561)
+n2 = 43.9925450 (bin frac=16652143)
+n3 = -0.-2204256 (bin frac=-3698129) (n3 always random between -1 and 1)
+a. sum vs. sum_l, got 25.9180653 (bin frac=15402582),	expected 25.918065 (~same)
+b. sum vs. sum_l, got -18.-2949052 (bin frac=-4947690),	expected -18.294905 (~same)
+c. mul vs. mul_l, got -INF,	expected -128.000000 (~same)
+d. mul vs. mul_d, got -INF,	expected -128.000000 (~same)
+e. mul_l vs. mul_d, got -INF,	expected -128.000000 (~same)
+f. mul vs. mul_l, got 3.9840784 (bin frac=16510097),	expected 3.984079 (~same)
+g. mul vs. mul_d, got 3.9840784 (bin frac=16510097),	expected 3.984079 (~same)
+h. mul_l vs. mul_d, got 3.9840791 (bin frac=16510109),	expected 3.984079 (~same)
+i. div vs. div_l, got -0.-4108531 (bin frac=-6892973),	expected -0.410853 (~same)
+n1 = 69.6917059 (bin frac=11604901)
+n2 = 67.3694933 (bin frac=6199070)
+n3 = 0.9242411 (bin frac=15506194) (n3 always random between -1 and 1)
+a. sum vs. sum_l, got +INF,	expected 128.000000 (~same)
+b. sum vs. sum_l, got 70.6159471 (bin frac=10333879),	expected 70.615947 (~same)
+c. mul vs. mul_l, got +INF,	expected 128.000000 (~same)
+d. mul vs. mul_d, got +INF,	expected 128.000000 (~same)
+e. mul_l vs. mul_d, got +INF,	expected 128.000000 (~same)
+f. mul vs. mul_l, got 64.4119245 (bin frac=6910947),	expected 64.411945 (~same)
+g. mul vs. mul_d, got 64.4119245 (bin frac=6910947),	expected 64.411945 (~same)
+h. mul_l vs. mul_d, got 64.4119449 (bin frac=6911289),	expected 64.411945 (~same)
+i. div vs. div_l, got 1.344697 (bin frac=578307),	expected 1.034470 (~same)
+n1 = 70.5237015 (bin frac=8786254)
+n2 = 54.5370516 (bin frac=9010232)
+n3 = 0.2095910 (bin frac=3516355) (n3 always random between -1 and 1)
+a. sum vs. sum_l, got 125.607532 (bin frac=1019270),	expected 125.060753 (~same)
+b. sum vs. sum_l, got 70.7332926 (bin frac=12302609),	expected 70.733293 (~same)
+c. mul vs. mul_l, got +INF,	expected 128.000000 (~same)
+d. mul vs. mul_d, got +INF,	expected 128.000000 (~same)
+e. mul_l vs. mul_d, got +INF,	expected 128.000000 (~same)
+f. mul vs. mul_l, got 14.7811364 (bin frac=13105295),	expected 14.781140 (~same)
+g. mul vs. mul_d, got 14.7811364 (bin frac=13105295),	expected 14.781140 (~same)
+h. mul_l vs. mul_d, got 14.7811394 (bin frac=13105346),	expected 14.781140 (~same)
+i. div vs. div_l, got 1.2931337 (bin frac=4917968),	expected 1.293134 (~same)
+n1 = 0.9147019 (bin frac=15346152)
+n2 = 84.5562717 (bin frac=9332692)
+n3 = -0.-9248696 (bin frac=-15516738) (n3 always random between -1 and 1)
+a. sum vs. sum_l, got 85.4709737 (bin frac=7901628),	expected 85.470974 (~same)
+b. sum vs. sum_l, got -0.-101677 (bin frac=-170586),	expected -0.010168 (~same)
+c. mul vs. mul_l, got 77.3437579 (bin frac=5767302),	expected 77.343786 (~same)
+d. mul vs. mul_d, got 77.3437579 (bin frac=5767302),	expected 77.343786 (~same)
+e. mul_l vs. mul_d, got 77.3437856 (bin frac=5767767),	expected 77.343786 (~same)
+f. mul vs. mul_l, got -0.-8459636 (bin frac=-14192915),	expected -0.845980 (~same)
+g. mul vs. mul_d, got -0.-8459636 (bin frac=-14192915),	expected -0.845980 (~same)
+h. mul_l vs. mul_d, got -0.-8459800 (bin frac=-14193190),	expected -0.845980 (~same)
+i. div vs. div_l, got 0.108176 (bin frac=181490),	expected 0.010818 (~same)
+n1 = -87.-2059252 (bin frac=-3454852)
+n2 = -3.-4186577 (bin frac=-7023912)
+n3 = -0.-863745 (bin frac=-1449124) (n3 always random between -1 and 1)
+a. sum vs. sum_l, got -90.-6245829 (bin frac=-10478764),	expected -90.624583 (~same)
+b. sum vs. sum_l, got -87.-2922997 (bin frac=-4903976),	expected -87.292300 (~same)
+c. mul vs. mul_l, got +INF,	expected 128.000000 (~same)
+d. mul vs. mul_d, got +INF,	expected 128.000000 (~same)
+e. mul_l vs. mul_d, got +INF,	expected 128.000000 (~same)
+f. mul vs. mul_l, got 7.5323699 (bin frac=8931686),	expected 7.532370 (~same)
+g. mul vs. mul_d, got 7.5323699 (bin frac=8931686),	expected 7.532370 (~same)
+h. mul_l vs. mul_d, got 7.5323700 (bin frac=8931687),	expected 7.532370 (~same)
+i. div vs. div_l, got 25.5088197 (bin frac=8536579),	expected 25.508820 (~same)
+n1 = -21.-7782219 (bin frac=-13056398)
+n2 = -66.-5058833 (bin frac=-8487314)
+n3 = -0.-6815737 (bin frac=-11434911) (n3 always random between -1 and 1)
+a. sum vs. sum_l, got -88.-2841052 (bin frac=-4766496),	expected -88.284105 (~same)
+b. sum vs. sum_l, got -22.-4597957 (bin frac=-7714093),	expected -22.459796 (~same)
+c. mul vs. mul_l, got +INF,	expected 128.000000 (~same)
+d. mul vs. mul_d, got +INF,	expected 128.000000 (~same)
+e. mul_l vs. mul_d, got +INF,	expected 128.000000 (~same)
+f. mul vs. mul_l, got 14.8434420 (bin frac=14150610),	expected 14.843466 (~same)
+g. mul vs. mul_d, got 14.8434420 (bin frac=14150610),	expected 14.843466 (~same)
+h. mul_l vs. mul_d, got 14.8434655 (bin frac=14151005),	expected 14.843466 (~same)
+i. div vs. div_l, got 0.3274630 (bin frac=5493918),	expected 0.327463 (~same)
+n1 = -57.-9076249 (bin frac=-15227421)
+n2 = -51.-6046081 (bin frac=-10143642)
+n3 = -0.-2328998 (bin frac=-3907411) (n3 always random between -1 and 1)
+a. sum vs. sum_l, got -109.-5122331 (bin frac=-8593847),	expected -109.512233 (~same)
+b. sum vs. sum_l, got -58.-1405248 (bin frac=-2357616),	expected -58.140525 (~same)
+c. mul vs. mul_l, got +INF,	expected 128.000000 (~same)
+d. mul vs. mul_d, got +INF,	expected 128.000000 (~same)
+e. mul_l vs. mul_d, got +INF,	expected 128.000000 (~same)
+f. mul vs. mul_l, got 13.4866719 (bin frac=8165000),	expected 13.486677 (~same)
+g. mul vs. mul_d, got 13.4866719 (bin frac=8165000),	expected 13.486677 (~same)
+h. mul_l vs. mul_d, got 13.4866767 (bin frac=8165082),	expected 13.486677 (~same)
+i. div vs. div_l, got 1.1221405 (bin frac=2049178),	expected 1.122141 (~same)
+
+Total # of warnings: 0
+Largest delta was: 2.771616E-05
+All tests passed using 24-bit fracs, and '9999999' as max decimal frac.
+
+
+========================
+FXP configuration parameters:
+frac bits   : 31 (requested was 31)
+whole bits  : 1
+pos infinity: 2147483647 (Lf: 1.000000)
+whole max   : 0
+frac mask   : 2147483647
+frac max    : 2147483646 (->decimals: .9999999)
+whole min   : 0
+neg infinity: -2147483647 (Lf: -1.000000)
+undefined   : -2147483648 (Lf: -1.000000)
+max_ok_delta: 6.975420E-05
+max_delta   : 1.220698E-04
+
+Checking extreme int values, part I:
+Infinity, got +INF,	expected 1.000000 (~same)
+Largest, got 0.9999999 (bin frac=2147483646),	expected 1.000000 (~same)
+HalfMax, got 0.4999999 (bin frac=1073741823),	expected 0.500000 (~same)
+Largest frac, got 0.9999999 (bin frac=2147483646),	expected 1.000000 (~same)
+tiniest, got 0.  0 (bin frac=1),	expected 0.000000 (~same)
+0.5, got 0.4999999 (bin frac=1073741824),	expected 0.500000 (~same)
+zero, got 0.  0 (bin frac=0),	expected 0.000000 (~same)
+-tiniest, got -0.  0 (bin frac=-1),	expected -0.000000 (~same)
+-Largest frac, got -0.-9999999 (bin frac=-2147483646),	expected -1.000000 (~same)
+Most negative, got -0.-9999999 (bin frac=-2147483646),	expected -1.000000 (~same)
+-Infinity, got -INF,	expected -1.000000 (~same)
+Undefined, got UNDEF,	expected -1.000000 (~same)
+
+Checking extreme int values, part II:
+Almost most negative, got -0.-9999998 (bin frac=-2147483645),	expected -1.000000 (~same)
+ Largest -Largest, got 0.  0 (bin frac=0),	expected 0.000000 (~same)
+-Largest +Largest, got 0.  0 (bin frac=0),	expected 0.000000 (~same)
+Largest + 0, got 0.9999999 (bin frac=2147483646),	expected 1.000000 (~same)
+-Largest - 0, got -0.-9999999 (bin frac=-2147483646),	expected -1.000000 (~same)
+Largest - tiniest, got 0.9999998 (bin frac=2147483645),	expected 1.000000 (~same)
+Largest + tiniest safe, got +INF,	expected 1.000000 (~same)
+Largest + tiniest unsafe, got +INF,	expected 1.000000 (~same)
++inf + +inf, got +INF,	expected 1.000000 (~same)
+-inf - +inf, got -INF,	expected -1.000000 (~same)
++inf + -inf, got UNDEF,	expected -1.000000 (~same)
+-inf + -inf, got -INF,	expected -1.000000 (~same)
+-inf - -inf, got UNDEF,	expected -1.000000 (~same)
++inf * -inf, got -INF,	expected -1.000000 (~same)
++inf - 0.5, got +INF,	expected 1.000000 (~same)
+-inf + 0.5, got -INF,	expected -1.000000 (~same)
++num / zero, got +INF,	expected 1.000000 (~same)
+zero / zero, got UNDEF,	expected -1.000000 (~same)
+zero * zero, got 0.  0 (bin frac=0),	expected 0.000000 (~same)
+zero + zero, got 0.  0 (bin frac=0),	expected 0.000000 (~same)
+zero - zero, got 0.  0 (bin frac=0),	expected 0.000000 (~same)
+-num / zero, got -INF,	expected -1.000000 (~same)
+zero * +inf, got UNDEF,	expected -1.000000 (~same)
+zero * -inf, got UNDEF,	expected -1.000000 (~same)
+zero * undef, got UNDEF,	expected -1.000000 (~same)
+-inf * undef, got UNDEF,	expected -1.000000 (~same)
++inf * undef, got UNDEF,	expected -1.000000 (~same)
+undef * undef, got UNDEF,	expected -1.000000 (~same)
+tiniest * inf, got +INF,	expected 1.000000 (~same)
+
+Checking extreme int values, part III:
+Way Too Large whole part!, got +INF,	expected 1.000000 (~same)
+Largest * 1, got +INF,	expected 1.000000 (~same)
+Largest * -1, got -INF,	expected -1.000000 (~same)
+Largest + two safe, got +INF,	expected 1.000000 (~same)
+Largest + two unsafe, got -0.  0 (bin frac=-3),	expected -0.000000 (~same)
+Safe Too neg substraction, got -INF,	expected -1.000000 (~same)
+Unsafe Too neg substraction, got 0.4999999 (bin frac=1073741826),	expected 0.500000 (~same)
+Largest + 0.5, got +INF,	expected 1.000000 (~same)
+-Largest - 0.5, got -INF,	expected -1.000000 (~same)
++HalfMax + HMaxp2, got +INF,	expected 1.000000 (~same)
+-HalfMax - HMaxp2, got -INF,	expected -1.000000 (~same)
+HalfMax + HalfMax, got 0.9999999 (bin frac=2147483646),	expected 1.000000 (~same)
+FXP_MAX - HalfMax, got 0.4999999 (bin frac=1073741823),	expected 0.500000 (~same)
+HalfMax + FXP_MAX, got +INF,	expected 1.000000 (~same)
+-FXP_MAX - HalfMax, got -INF,	expected -1.000000 (~same)
+HalfMax * 2, got +INF,	expected 1.000000 (~same)
+HalfMax * 2 (long), got +INF,	expected 1.000000 (~same)
+HalfMax * 3, got +INF,	expected 1.000000 (~same)
+-HalfMax * 3, got -INF,	expected -1.000000 (~same)
+(HalfMax+0.5)*2, got +INF,	expected 1.000000 (~same)
+(HalfMax+0.5)*2 (long), got +INF,	expected 1.000000 (~same)
+
+Checking decimal <=> bin mappings of frac ranges:
+Max frac dec: 9999999 (bin 2147483646)
+Showing fxp for 0.  0: 0.  0 (bin frac=0)
+Showing fxp for 0.  1: 0.  0 (bin frac=214)
+Showing fxp for 0.  2: 0.  1 (bin frac=429)
+Showing fxp for 0.  3: 0.  2 (bin frac=644)
+Showing fxp for 0.  4: 0.  3 (bin frac=858)
+Showing fxp for 0.  5: 0.  4 (bin frac=1073)
+:
+Showing fxp for 0.4999998: 0.4999997 (bin frac=1073741500)
+Showing fxp for 0.4999999: 0.4999998 (bin frac=1073741715)
+Showing fxp for 0.5000000: 0.4999999 (bin frac=1073741930)
+Showing fxp for 0.5000001: 0.5000000 (bin frac=1073742145)
+Showing fxp for 0.5000002: 0.5000001 (bin frac=1073742359)
+:
+Showing fxp for 0.9999994: 0.9999993 (bin frac=2147482572)
+Showing fxp for 0.9999995: 0.9999994 (bin frac=2147482787)
+Showing fxp for 0.9999996: 0.9999995 (bin frac=2147483001)
+Showing fxp for 0.9999997: 0.9999996 (bin frac=2147483216)
+Showing fxp for 0.9999998: 0.9999997 (bin frac=2147483431)
+Showing fxp for 0.9999999: 0.9999999 (bin frac=2147483646)
+
+Checking sign taken from frac when whole == 0:
+-0.(+)500, got 0.499 (bin frac=1074816639),	expected 0.500000 (~same)
+-0.(-)500, got -0.-499 (bin frac=-1074816639),	expected -0.500000 (~same)
+
+Truncation of longer frac decimal arguments:
+0.222222, got 0.222 (bin frac=477218588),	expected 0.222000 (~same)
+0.777777, got 0.777 (bin frac=1670265058),	expected 0.777000 (~same)
+0.991999, got 0.990 (bin frac=2130286579),	expected 0.991000 (~same)
+0.999999, got 0.999 (bin frac=2147483646),	expected 0.999000 (~same)
+
+Checking extreme frac values:
+maxfrac, got 0.9999999 (bin frac=2147483646),	expected 1.000000 (~same)
+0.5 + maxfrac, got +INF,	expected 1.000000 (~same)
+maxfrac +tiniest, got +INF,	expected 1.000000 (~same)
+-maxfrac -tiniest, got -INF,	expected -1.000000 (~same)
+maxfrac - maxfrac, got 0.  0 (bin frac=0),	expected 0.000000 (~same)
+
+Verifying different op implementations using random numbers:
+n1 = -0.-4211157 (bin frac=-904339345)
+n2 = 0.8535419 (bin frac=1832967642)
+n3 = -0.-3667746 (bin frac=-787642609) (n3 always random between -1 and 1)
+a. sum vs. sum_l, got 0.4324262 (bin frac=928628297),	expected 0.432426 (~same)
+b. sum vs. sum_l, got -0.-7878904 (bin frac=-1691981954),	expected -0.787890 (~same)
+c. mul vs. mul_l, got -0.-3594256 (bin frac=-771860864),	expected -0.359440 (~same)
+d. mul vs. mul_d, got -0.-3594256 (bin frac=-771860864),	expected -0.359440 (~same)
+e. mul_l vs. mul_d, got -0.-3594400 (bin frac=-771891678),	expected -0.359440 (~same)
+f. mul vs. mul_l, got 0.1544503 (bin frac=331679663),	expected 0.154455 (~same)
+g. mul vs. mul_d, got 0.1544503 (bin frac=331679663),	expected 0.154455 (~same)
+h. mul_l vs. mul_d, got 0.1544546 (bin frac=331688765),	expected 0.154455 (~same)
+i. div vs. div_l, got -0.-4933743 (bin frac=-1059513496),	expected -0.493374 (~same)
+n1 = -0.-1792193 (bin frac=-384870582)
+n2 = -0.-3735980 (bin frac=-802295689)
+n3 = 0.9803395 (bin frac=2105263440) (n3 always random between -1 and 1)
+a. sum vs. sum_l, got -0.-5528173 (bin frac=-1187166271),	expected -0.552817 (~same)
+b. sum vs. sum_l, got 0.8011202 (bin frac=1720392858),	expected 0.801120 (~same)
+c. mul vs. mul_l, got 0.669552 (bin frac=143785350),	expected 0.066956 (~same)
+d. mul vs. mul_d, got 0.669552 (bin frac=143785350),	expected 0.066956 (~same)
+e. mul_l vs. mul_d, got 0.669559 (bin frac=143786896),	expected 0.066956 (~same)
+f. mul vs. mul_l, got -0.-1756905 (bin frac=-377292665),	expected -0.175696 (~same)
+g. mul vs. mul_d, got -0.-1756905 (bin frac=-377292665),	expected -0.175696 (~same)
+h. mul_l vs. mul_d, got -0.-1756958 (bin frac=-377303904),	expected -0.175696 (~same)
+i. div vs. div_l, got 0.4797115 (bin frac=1030172906),	expected 0.479712 (~same)
+n1 = -0.-5156902 (bin frac=-1107436410)
+n2 = 0.1899198 (bin frac=407849870)
+n3 = -0.-187522 (bin frac=-40270172) (n3 always random between -1 and 1)
+a. sum vs. sum_l, got -0.-3257703 (bin frac=-699586540),	expected -0.325770 (~same)
+b. sum vs. sum_l, got -0.-5344424 (bin frac=-1147706582),	expected -0.534443 (~same)
+c. mul vs. mul_l, got -0.-979383 (bin frac=-210320957),	expected -0.097940 (~same)
+d. mul vs. mul_d, got -0.-979383 (bin frac=-210320957),	expected -0.097940 (~same)
+e. mul_l vs. mul_d, got -0.-979398 (bin frac=-210324207),	expected -0.097940 (~same)
+f. mul vs. mul_l, got 0.96701 (bin frac=20766585),	expected 0.009670 (~same)
+g. mul vs. mul_d, got 0.96701 (bin frac=20766585),	expected 0.009670 (~same)
+h. mul_l vs. mul_d, got 0.96703 (bin frac=20766935),	expected 0.009670 (~same)
+i. div vs. div_l, got -INF,	expected -1.000000 (~same)
+n1 = -0.-9358104 (bin frac=-2009637869)
+n2 = 0.1300651 (bin frac=279312884)
+n3 = -0.-9166997 (bin frac=-1968597864) (n3 always random between -1 and 1)
+a. sum vs. sum_l, got -0.-8057452 (bin frac=-1730324985),	expected -0.805745 (~same)
+b. sum vs. sum_l, got -INF,	expected -1.000000 (~same)
+c. mul vs. mul_l, got -0.-1217109 (bin frac=-261372270),	expected -0.121716 (~same)
+d. mul vs. mul_d, got -0.-1217109 (bin frac=-261372270),	expected -0.121716 (~same)
+e. mul_l vs. mul_d, got -0.-1217163 (bin frac=-261383945),	expected -0.121716 (~same)
+f. mul vs. mul_l, got 0.8578273 (bin frac=1842170464),	expected 0.857857 (~same)
+g. mul vs. mul_d, got 0.8578273 (bin frac=1842170464),	expected 0.857857 (~same)
+h. mul_l vs. mul_d, got 0.8578572 (bin frac=1842234663),	expected 0.857857 (~same)
+i. div vs. div_l, got -INF,	expected -1.000000 (~same)
+n1 = 0.2447556 (bin frac=525608791)
+n2 = -0.-902704 (bin frac=-193854278)
+n3 = -0.-1785553 (bin frac=-383444727) (n3 always random between -1 and 1)
+a. sum vs. sum_l, got 0.1544852 (bin frac=331754513),	expected 0.154485 (~same)
+b. sum vs. sum_l, got 0.662002 (bin frac=142164064),	expected 0.066200 (~same)
+c. mul vs. mul_l, got -0.-220934 (bin frac=-47445317),	expected -0.022094 (~same)
+d. mul vs. mul_d, got -0.-220934 (bin frac=-47445317),	expected -0.022094 (~same)
+e. mul_l vs. mul_d, got -0.-220941 (bin frac=-47446932),	expected -0.022094 (~same)
+f. mul vs. mul_l, got -0.-437013 (bin frac=-93848035),	expected -0.043702 (~same)
+g. mul vs. mul_d, got -0.-437013 (bin frac=-93848035),	expected -0.043702 (~same)
+h. mul_l vs. mul_d, got -0.-437024 (bin frac=-93850269),	expected -0.043702 (~same)
+i. div vs. div_l, got -INF,	expected -1.000000 (~same)
+n1 = 0.3122791 (bin frac=670614355)
+n2 = 0.5491351 (bin frac=1179258813)
+n3 = -0.-3346730 (bin frac=-718704989) (n3 always random between -1 and 1)
+a. sum vs. sum_l, got 0.8614142 (bin frac=1849873168),	expected 0.861414 (~same)
+b. sum vs. sum_l, got -0.-223939 (bin frac=-48090634),	expected -0.022394 (~same)
+c. mul vs. mul_l, got 0.1714784 (bin frac=368247210),	expected 0.171483 (~same)
+d. mul vs. mul_d, got 0.1714784 (bin frac=368247210),	expected 0.171483 (~same)
+e. mul_l vs. mul_d, got 0.1714834 (bin frac=368257932),	expected 0.171483 (~same)
+f. mul vs. mul_l, got -0.-1045106 (bin frac=-224434905),	expected -0.104511 (~same)
+g. mul vs. mul_d, got -0.-1045106 (bin frac=-224434905),	expected -0.104511 (~same)
+h. mul_l vs. mul_d, got -0.-1045114 (bin frac=-224436578),	expected -0.104511 (~same)
+i. div vs. div_l, got 0.5686743 (bin frac=1221219078),	expected 0.568674 (~same)
+n1 = -0.-9987975 (bin frac=-2144901569)
+n2 = 0.5261076 (bin frac=1129807769)
+n3 = 0.747230 (bin frac=160466567) (n3 always random between -1 and 1)
+a. sum vs. sum_l, got -0.-4726898 (bin frac=-1015093800),	expected -0.472690 (~same)
+b. sum vs. sum_l, got -0.-9240744 (bin frac=-1984435002),	expected -0.924075 (~same)
+c. mul vs. mul_l, got -0.-5254502 (bin frac=-1128395984),	expected -0.525475 (~same)
+d. mul vs. mul_d, got -0.-5254502 (bin frac=-1128395984),	expected -0.525475 (~same)
+e. mul_l vs. mul_d, got -0.-5254751 (bin frac=-1128449317),	expected -0.525475 (~same)
+f. mul vs. mul_l, got -0.-746310 (bin frac=-160269016),	expected -0.074633 (~same)
+g. mul vs. mul_d, got -0.-746310 (bin frac=-160269016),	expected -0.074633 (~same)
+h. mul_l vs. mul_d, got -0.-746332 (bin frac=-160273626),	expected -0.074633 (~same)
+i. div vs. div_l, got -INF,	expected -1.000000 (~same)
+n1 = -0.-9711812 (bin frac=-2085595972)
+n2 = 0.4469928 (bin frac=959909872)
+n3 = 0.7732664 (bin frac=1660577312) (n3 always random between -1 and 1)
+a. sum vs. sum_l, got -0.-5241883 (bin frac=-1125686100),	expected -0.524188 (~same)
+b. sum vs. sum_l, got -0.-1979147 (bin frac=-425018660),	expected -0.197915 (~same)
+c. mul vs. mul_l, got -0.-4341001 (bin frac=-932222962),	expected -0.434111 (~same)
+d. mul vs. mul_d, got -0.-4341001 (bin frac=-932222962),	expected -0.434111 (~same)
+e. mul_l vs. mul_d, got -0.-4341110 (bin frac=-932246522),	expected -0.434111 (~same)
+f. mul vs. mul_l, got -0.-7509543 (bin frac=-1612662348),	expected -0.750982 (~same)
+g. mul vs. mul_d, got -0.-7509543 (bin frac=-1612662348),	expected -0.750982 (~same)
+h. mul_l vs. mul_d, got -0.-7509819 (bin frac=-1612721641),	expected -0.750982 (~same)
+i. div vs. div_l, got -INF,	expected -1.000000 (~same)
+n1 = 0.3870561 (bin frac=831196790)
+n2 = -0.-9538558 (bin frac=-2048390132)
+n3 = 0.8632545 (bin frac=1853825147) (n3 always random between -1 and 1)
+a. sum vs. sum_l, got -0.-5667997 (bin frac=-1217193342),	expected -0.566800 (~same)
+b. sum vs. sum_l, got +INF,	expected 1.000000 (~same)
+c. mul vs. mul_l, got -0.-3691829 (bin frac=-792814330),	expected -0.369196 (~same)
+d. mul vs. mul_d, got -0.-3691829 (bin frac=-792814330),	expected -0.369196 (~same)
+e. mul_l vs. mul_d, got -0.-3691958 (bin frac=-792842033),	expected -0.369196 (~same)
+f. mul vs. mul_l, got 0.3341249 (bin frac=717528042),	expected 0.334128 (~same)
+g. mul vs. mul_d, got 0.3341249 (bin frac=717528042),	expected 0.334128 (~same)
+h. mul_l vs. mul_d, got 0.3341279 (bin frac=717534456),	expected 0.334128 (~same)
+i. div vs. div_l, got -0.-4057804 (bin frac=-871407007),	expected -0.405781 (~same)
+n1 = 0.791503 (bin frac=169974075)
+n2 = 0.8428718 (bin frac=1810053757)
+n3 = 0.5913920 (bin frac=1270004971) (n3 always random between -1 and 1)
+a. sum vs. sum_l, got 0.9220222 (bin frac=1980027832),	expected 0.922022 (~same)
+b. sum vs. sum_l, got 0.6705424 (bin frac=1439979046),	expected 0.670542 (~same)
+c. mul vs. mul_l, got 0.667121 (bin frac=143263205),	expected 0.066714 (~same)
+d. mul vs. mul_d, got 0.667121 (bin frac=143263205),	expected 0.066714 (~same)
+e. mul_l vs. mul_d, got 0.667136 (bin frac=143266382),	expected 0.066714 (~same)
+f. mul vs. mul_l, got 0.468065 (bin frac=100516279),	expected 0.046809 (~same)
+g. mul vs. mul_d, got 0.468065 (bin frac=100516279),	expected 0.046809 (~same)
+h. mul_l vs. mul_d, got 0.468088 (bin frac=100521333),	expected 0.046809 (~same)
+i. div vs. div_l, got 0.939055 (bin frac=201660611),	expected 0.093906 (~same)
+
+Total # of warnings: 0
+Largest delta was: 2.989499E-05
+All tests passed using 31-bit fracs, and '9999999' as max decimal frac.
+
+Grand total 0 warnings checking 6 frac-bit configurations.
+Largest delta of all: 6.666667E-02 (using 4 frac bits)

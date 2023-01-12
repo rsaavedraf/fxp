@@ -10,8 +10,9 @@
 
 #include <limits.h>
 
-#define FXP_INT_BITS (sizeof(int) * 8)
+#define FXP_INT_BITS ((int) (sizeof(int) * 8))
 #define FXP_INT_BITS_M1 (FXP_INT_BITS - 1)
+//#define FXP_INT_BITS_HALF (FXP_INT_BITS / 2)
 
 // Infinity constants and Max and min fxp valid values
 #define FXP_POS_INF INT_MAX
@@ -59,17 +60,26 @@ int fxp_get_whole_part(int fxp);
 int fxp_get_bin_frac(int fxp);
 int fxp_get_dec_frac(int fxp);
 
-int fxp_unsafe_sum(int fxp1, int fxp2);
+int fxp_unsafe_add(int fxp1, int fxp2);
 int fxp_unsafe_sub(int fxp1, int fxp2);
 int fxp_unsafe_mul(int fxp1, int fxp2);
 int fxp_unsafe_div(int fxp1, int fxp2);
 
-int fxp_nbits(unsigned int n, int maxbits);
-//int fxp_nbits_v0(unsigned int n);
+int fxp_nbits(unsigned int n);
+int fxp_nbits_v0(unsigned int n, int maxbits);
 
-int fxp_sum(int fxp1, int fxp2);
+// Safe implementations using only ints
+int fxp_add(int fxp1, int fxp2);
 int fxp_sub(int fxp1, int fxp2);
 int fxp_mul(int fxp1, int fxp2);
 int fxp_div(int fxp1, int fxp2);
-int fxp_mul_using_long(int fxp1, int fxp2);
-int fxp_div_using_long(int fxp1, int fxp2);
+// An alternative (but expensive) safe
+// implementations of mul using a distributive approach
+int fxp_mul_d(int fxp1, int fxp2);
+
+// Safe implementations using longs
+int fxp_add_l(int fxp1, int fxp2);
+int fxp_sub_l(int fxp1, int fxp2);
+int fxp_mul_l(int fxp1, int fxp2);
+int fxp_div_l(int fxp1, int fxp2);
+
