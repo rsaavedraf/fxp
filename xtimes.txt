@@ -13,8 +13,8 @@ Relative Execution Times of FXP operations
  90 %
 100 %
 add:	1.000000
-add_l:	1.075579
-mul:	1.714335
-mul_l:	1.482315
-mul_d:	3.469716
-div_l:	3.817640
+add_l:	0.947725
+mul:	1.079520
+mul_l:	1.369801
+mul_d:	2.505577
+div_l:	2.931388

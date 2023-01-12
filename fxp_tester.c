@@ -515,17 +515,19 @@ int main(void) {
                         test_fxp("i. div vs. div_l", fxp1, dfxp(fxp2));
                 }
 
-                printf("\nTotal # of warnings: %d\n", nwarnings);
+                printf("\n%d Warnings for %d frac bits.\n", \
+                            nwarnings, frac_bits);
                 printf("Largest delta was: %LE\n", larger_delta);
                 printf("All tests passed using %d-bit fracs, ", frac_bits);
                 printf("and '%d' as max decimal frac.\n\n", frac_max_dec);
                 twarnings += nwarnings;
+
                 if (larger_delta > largest_delta) {
                         largest_delta = larger_delta;
                         largest_delta_fbits = frac_bits;
                 }
         }
-        printf("Grand total %d warnings checking %d frac-bit configurations.\n",
+        printf("Grand total of %d warnings checking %d configurations.\n", \
                     twarnings, nconfigs);
         printf("Largest delta of all: %LE (using %d frac bits)\n", \
                     largest_delta, largest_delta_fbits);

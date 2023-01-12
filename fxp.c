@@ -15,6 +15,7 @@
 
 #include "fxp.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include <assert.h>
 
 #define FXP_FRAC_BITS_MIN 4
@@ -187,15 +188,15 @@ int fxp_bin(int whole, int bin_frac)
                 // then the fxp gets its sign from the frac
                 sign = -1;
                 bin_frac = -bin_frac;
-        }
-        else {
+        } else {
                 // All other cases, fxp gets its sign from the whole part
                 if (whole < 0) {
                         sign = -1;
                         whole = -whole;
                 }
-                if (bin_frac < 0)
+                if (bin_frac < 0) {
                         bin_frac = -bin_frac;
+                }
         }
         if (bin_frac > fxp_frac_max) bin_frac = fxp_frac_max;
         int positive_fxp = (whole << fxp_frac_bits) | bin_frac;
@@ -484,8 +485,8 @@ int fxp_mul_l(int fxp1, int fxp2)
         int v1, v2;
         v1 = (fxp1 >= 0)? fxp1: -fxp1;
         v2 = (fxp2 >= 0)? fxp2: -fxp2;
-        long product = ((long) v1) * v2;
-        if ((product > fxp_max_lshifted) || (product < 0)) {
+        unsigned long product = ((unsigned long) v1) * v2;
+        if (product > fxp_max_lshifted) {
                 // Overflow, return infinity with the appropriate sign
                 return ((fxp1 >= 0 && fxp2 >= 0) || (fxp1 < 0 && fxp2 < 0))?
                                 FXP_POS_INF: FXP_NEG_INF;
@@ -572,64 +573,70 @@ int fxp_mul(int fxp1, int fxp2)
         // Bits used in whole parts
         bw1 = fxp_nbits(w1);
         bw2 = fxp_nbits(w2);
-        int m1 = w1 * w2;
         //printf("\nfxp1=%d  \tfxp2=%d\n", fxp1, fxp2);
         //printf("fxp1=%x    \tfxp2=%x\n", fxp1, fxp2);
-        //printf("w1=%d, w2=%d, m1=%d\n", \
-                w1, w2, m1);
+        //printf("w1=%d, w2=%d, m1=%d\n", w1, w2, m1);
         //printf("w1=%x, w2=%x, m1=%x\n", \
         //        w1, w2, m1);
-        if ((bw1 + bw2 > fxp_whole_bits) || \
-                (m1 > fxp_whole_max) || (m1 < 0)) {
-                // Overflow just by multiplying the whole parts
-                product = FXP_POS_INF;
-        }
-        else {
-                int m2, m3, m4, f1, f2, bf1, bf2, bf1v0, bf2v0;
-                f1 = fxp_get_bin_frac(v1);
-                f2 = fxp_get_bin_frac(v2);
-                // Whole x frac parts cannot overflow, so simply multiply them
-                m2 = w1 * f2;
-                m3 = f1 * w2;
-                // Bits used in frac parts
-                bf1 = fxp_nbits(f1);
-                bf2 = fxp_nbits(f2);
-                //printf("f1=%d, f2=%d, bf1=%d, bf2=%d\n", f1, f2, bf1, bf2);
-                // Multiplying the frac parts together could overflow only if
-                // FXP_FRAC_BITS > FXP_WHOLE_BITS, but we can always drop
-                // enough least-significant bits in the frac parts before
-                // multiplying them (at the inevitable cost of some precision)
-                // to avoid the overflow
-                int lostbits = 0;
-                while (bf1 + bf2 > FXP_INT_BITS_M1) {
-                        if (f1 > f2) {
-                                f1 = (f1 >> 1);
-                                bf1--;
-                        }
-                        else {
-                                f2 = (f2 >> 1);
-                                bf2--;
-                        }
-                        lostbits++;
-                }
-                m4 = (f1 * f2) >> (fxp_frac_bits - lostbits);
-                //printf("f1=%d, f2=%d, bf1=%d, bf2=%d\n", f1, f2, bf1, bf2);
-                //printf("f1=%x, f2=%x\n", f1, f2);
-                //printf("m1=%d, m2=%d, m3=%d, m4=%d\n", m1, m2, m3, m4);
-
-                // Even if none of the components overflowed, their sum
-                // could overflow. So sum them all safely
-                product = fxp_add(
-                                fxp_add((m1 << fxp_frac_bits),
-                                        fxp_add(m2, m3)),
-                                m4);
-        }
-        //printf("product=%u\n", product);
-        if (product == FXP_POS_INF) {
-                // Overflow. Return infinity with the appropriate sign
+        if (bw1 + bw2 > fxp_whole_bits) {
+                // The product will for sure overflow just by multiplying
+                // the whole parts.
+                // Return appropriately signed infinity
                 return ((fxp1 >= 0 && fxp2 >= 0) || (fxp1 < 0 && fxp2 < 0))?
                             FXP_POS_INF: FXP_NEG_INF;
         }
+        unsigned int m1 = (unsigned int) (w1 * w2);
+        if (m1 > fxp_whole_max) {
+                // Overflow just by multiplying the whole parts
+                // Return appropriately signed infinity
+                return ((fxp1 >= 0 && fxp2 >= 0) || (fxp1 < 0 && fxp2 < 0))?
+                            FXP_POS_INF: FXP_NEG_INF;
+        }
+        int m2, m3, m4, f1, f2, bf1, bf2, bf1v0, bf2v0;
+        f1 = fxp_get_bin_frac(v1);
+        f2 = fxp_get_bin_frac(v2);
+        // Whole x frac parts cannot overflow, so simply multiply them
+        m2 = w1 * f2;
+        m3 = f1 * w2;
+        // Bits used in frac parts
+        bf1 = fxp_nbits(f1);
+        bf2 = fxp_nbits(f2);
+        //printf("f1=%d, f2=%d, bf1=%d, bf2=%d\n", f1, f2, bf1, bf2);
+        // Multiplying the frac parts together could overflow only if
+        // FXP_FRAC_BITS > FXP_WHOLE_BITS, but we can always drop
+        // enough least-significant bits in the frac parts before
+        // multiplying them (at the inevitable cost of some precision)
+        // to avoid the overflow
+        int lostbits = 0;
+        while (bf1 + bf2 > FXP_INT_BITS_M1) {
+                if (f1 > f2) {
+                        f1 = (f1 >> 1);
+                        bf1--;
+                } else {
+                        f2 = (f2 >> 1);
+                        bf2--;
+                }
+                lostbits++;
+        }
+        m4 = (f1 * f2) >> (fxp_frac_bits - lostbits);
+        //printf("f1=%d, f2=%d, bf1=%d, bf2=%d\n", f1, f2, bf1, bf2);
+        //printf("f1=%x, f2=%x\n", f1, f2);
+        //printf("m1=%d, m2=%d, m3=%d, m4=%d\n", m1, m2, m3, m4);
+
+        // Even if none of the components overflowed, their sum
+        // could overflow. So sum them all safely
+        product = fxp_add(
+                        fxp_add((m1 << fxp_frac_bits),
+                                fxp_add(m2, m3)),
+                        m4);
+        //printf("product=%u\n", product);
+        if (product == FXP_POS_INF) {
+                // Overflow.
+                // Return appropriately signed infinity
+                return ((fxp1 >= 0 && fxp2 >= 0) || (fxp1 < 0 && fxp2 < 0))?
+                            FXP_POS_INF: FXP_NEG_INF;
+        }
+        // No overflow, return the appropriately signed product
         return ((fxp1 >= 0 && fxp2 >= 0) || (fxp1 < 0 && fxp2 < 0))?
                     product: -product;
 }
