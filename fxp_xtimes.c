@@ -4,15 +4,15 @@
  *
  * Shows relavite execution times (smaller is better)
  * for the different fxp arithmetic operations.
- * Example end of the ouput, fo a system with an
+ * Example end of the ouput, for a system with an
  * Intel i7-6700K cpu:
  *
- *       add:    1.000000
- *       add_l:  1.074096
- *       mul:    1.707995
- *       mul_l:  1.475198
- *       mul_d:  3.487832
- *       div_l:  3.810410
+ *      add:    1.000000
+ *      add_l:  0.941151
+ *      mul:    1.070435
+ *      mul_l:  1.377086
+ *      mul_d:  2.481537
+ *      div_l:  2.927354
  *
  */
 
@@ -22,14 +22,19 @@
 #include "fxp.h"
 
 #define DASHES "================================================\n"
-#define MAX_NUMS 1000
-#define MAX_OPS  200000
+#define MAX_NUMS 5000
+#define MAX_OPS  5000
 
 int main(void) {
 
         int s1, s2, s3, n1, n2, n3, x, y, n, lastp;
         double tadd, tadd_l, tmul, tmul_l, tmul_d, tdiv_l;
         clock_t t0, t1;
+        int val[] = {FXP_UNDEF, FXP_MIN, \
+                        -300000, -30000, -3000, -300, -30, \
+                        -3, -1, 0, 1, 3, \
+                        30, 300, 3000, 30000, 300000, FXP_MAX};
+        int nvals = (int) (sizeof(val) / sizeof(val[0]));
 
         printf("%sRelative Execution Times of FXP operations\n%s", DASHES, DASHES);
         srand((unsigned int) time(0));  // randomize seed
@@ -58,6 +63,12 @@ int main(void) {
                 for (int i = 0; i < MAX_OPS; i++) {
                         x = fxp_add(n1, n2);
                         x = fxp_add(n3, n2);
+                        for (int j = 0; j < nvals; j++) {
+                            y = val[j];
+                            x = fxp_add(n1, y);
+                            x = fxp_add(n2, y);
+                            x = fxp_add(n3, y);
+                        }
                 }
                 t1 = clock();
                 tadd += ((double) t1 - t0);
@@ -66,6 +77,12 @@ int main(void) {
                 for (int i = 0; i < MAX_OPS; i++) {
                         x = fxp_add_l(n1, n2);
                         x = fxp_add_l(n3, n2);
+                        for (int j = 0; j < nvals; j++) {
+                            y = val[j];
+                            x = fxp_add_l(n1, y);
+                            x = fxp_add_l(n2, y);
+                            x = fxp_add_l(n3, y);
+                        }
                 }
                 t1 = clock();
                 tadd_l += ((double) t1 - t0);
@@ -73,6 +90,13 @@ int main(void) {
                 t0 = clock();
                 for (int i = 0; i < MAX_OPS; i++) {
                         x = fxp_mul(n1, n2);
+                        x = fxp_mul(n3, n2);
+                        for (int j = 0; j < nvals; j++) {
+                            y = val[j];
+                            x = fxp_add_l(n1, y);
+                            x = fxp_add_l(n2, y);
+                            x = fxp_add_l(n3, y);
+                        }
                 }
                 t1 = clock();
                 tmul += ((double) t1 - t0);
@@ -81,6 +105,12 @@ int main(void) {
                 for (int i = 0; i < MAX_OPS; i++) {
                         x = fxp_mul_l(n1, n2);
                         x = fxp_mul_l(n3, n2);
+                        for (int j = 0; j < nvals; j++) {
+                            y = val[j];
+                            x = fxp_mul_l(n1, y);
+                            x = fxp_mul_l(n2, y);
+                            x = fxp_mul_l(n3, y);
+                        }
                 }
                 t1 = clock();
                 tmul_l += ((double) t1 - t0);
@@ -89,6 +119,12 @@ int main(void) {
                 for (int i = 0; i < MAX_OPS; i++) {
                         x = fxp_mul_d(n1, n2);
                         x = fxp_mul_d(n3, n2);
+                        for (int j = 0; j < nvals; j++) {
+                            y = val[j];
+                            x = fxp_mul_d(n1, y);
+                            x = fxp_mul_d(n2, y);
+                            x = fxp_mul_d(n3, y);
+                        }
                 }
                 t1 = clock();
                 tmul_d += ((double) t1 - t0);
@@ -97,6 +133,12 @@ int main(void) {
                 for (int i = 0; i < MAX_OPS; i++) {
                         x = fxp_div_l(n1, n2);
                         x = fxp_div_l(n3, n2);
+                        for (int j = 0; j < nvals; j++) {
+                            y = val[j];
+                            x = fxp_div_l(n1, y);
+                            x = fxp_div_l(n2, y);
+                            x = fxp_div_l(n3, y);
+                        }
                 }
                 t1= clock();
                 tdiv_l += ((double) t1 - t0);
