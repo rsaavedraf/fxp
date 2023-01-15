@@ -32,5 +32,5 @@ exposed and fixed along the way.
 Basically a software-based implementation of binary division
 (tailored to fxp's.) Because of this, it is significantly slower:
 average execution time of first version is ~6x that of fxp_div_l.
-However it will work for systems where sizeof(long) is not larger
+However it will work for systems in which sizeof(long) is not larger
 than sizeof(int).
