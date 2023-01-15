@@ -84,7 +84,6 @@ int fxp_get_whole_min()
         return fxp_whole_min;
 }
 
-
 /*
  * Dynamic/runtime setting of the bits to use for the frac part.
  * Restricting the usable range of frac bits from FXP_FRAC_BITS_MIN
@@ -230,7 +229,8 @@ int fxp_dec(int whole, int dec_frac)
         int trunc_frac = dec_frac;
         while (trunc_frac > fxp_frac_max_dec) {
                 trunc_frac = trunc_frac / 10;
-                //printf("   fxp_from_dec_frac: frac trimmed to: %d\n", trunc_frac);
+                //printf("   fxp_from_dec_frac: frac trimmed to: %d\n", \
+                //    trunc_frac);
         }
 
         // Watch out this conversion itself can overflow when frac_bits
@@ -333,6 +333,9 @@ int fxp_unsafe_div(int fxp1, int fxp2)
 
 /*
  * Default safe implementations of fxp1 + fxp2
+ * using only ints.
+ * Works for systems in which sizeof(long) is not
+ * larger than sizeof(int).
  */
 int fxp_add(int fxp1, int fxp2)
 {
@@ -372,8 +375,8 @@ int fxp_add(int fxp1, int fxp2)
 }
 
 /*
- * Safe implementation of fxp1 + fxp2 using longs
- * Only applicable for systems where sizeof(long) > sizeof(int)
+ * Safe implementation of fxp1 + fxp2 using longs.
+ * Only applicable for systems in which sizeof(long) > sizeof(int)
  */
 int fxp_add_l(int fxp1, int fxp2)
 {
@@ -409,7 +412,9 @@ int fxp_sub_l(int fxp1, int fxp2)
 
 /*
  * Safe implementation of multiplication checking for
- * overflows using divisions
+ * overflows using divisions.
+ * It uses longs, so only applicable for systems in which
+ * sizeof(long) > sizeof(int)
  */
 int fxp_mul_d(int fxp1, int fxp2)
 {
@@ -458,12 +463,14 @@ int fxp_mul_d(int fxp1, int fxp2)
                         }
                 }
         }
-        return fxp_unsafe_mul(fxp1, fxp2);
+        long prod = ((long) fxp1) * fxp2;
+        return (int) (prod >> fxp_frac_bits);
 }
 
 /*
- * Safe implementation of multiplication using longs, and no divisions
- * Only applicable for systems where sizeof(long) > sizeof(int).
+ * Safe implementation of multiplication using longs, and
+ * no divisions.
+ * Only applicable for systems in which sizeof(long) > sizeof(int)
  */
 int fxp_mul_l(int fxp1, int fxp2)
 {
@@ -536,14 +543,15 @@ int fxp_nbits_v0(unsigned int x, int max_bits)
 }
 
 /*
- * Safe implementation of fxp1 * fxp2
- * using a distributive approach: computing n1 * n2 as
+ * Safe implementation of fxp1 * fxp2 using only ints.
+ * Uses a distributive approach: computing n1 * n2 as
  * (w1 + f1)*(w2 + f2) == w1*w2 + w1*f2 + f1*w2 + f1*f2,
  * with n1 = w1 + f1, and n2 = w2 + f2
  * (their corresponding whole and frac parts added)
  *
- * Works for systems where sizeof(long) is not larger
- * than sizeof(int), and does not use divisions.
+ * Works for systems in which sizeof(long) is not larger
+ * than sizeof(int).
+ * Also it does not use divisions to check for overflows.
  */
 int fxp_mul(int fxp1, int fxp2)
 {
@@ -641,18 +649,114 @@ int fxp_mul(int fxp1, int fxp2)
                     product: -product;
 }
 
+
 /*
- * Default safe implementation of division
+ * Safe implementation of division using only integers.
+ * This is software-based binary division, so takes about 6x
+ * the time compared to fxp_div_l (at least this 1st version.)
+ * But it works for systems in which sizeof(long) is not larger
+ * than sizeof(int).
  */
 int fxp_div(int fxp1, int fxp2)
 {
-    // To-do: implement without longs
-    return fxp_div_l(fxp1, fxp2);
+        if (fxp1 == FXP_UNDEF || fxp2 == FXP_UNDEF)
+                return FXP_UNDEF;
+        if (fxp2 == 0)
+                return (fxp1 > 0)? FXP_POS_INF:
+                                (fxp1 < 0)? FXP_NEG_INF: FXP_UNDEF;
+        // Positive values of the arguments
+        int dividend = (fxp1 >= 0)? fxp1: -fxp1;
+        int divisor = (fxp2 >  0)? fxp2: -fxp2;
+        if (divisor == FXP_POS_INF)
+                return (dividend == FXP_POS_INF)? FXP_UNDEF: 0;
+        if (dividend == FXP_POS_INF)
+                return ((fxp1 > 0 && fxp2 > 0) || (fxp1 < 0 && fxp2 < 0))?
+                                FXP_POS_INF: FXP_NEG_INF;
+        if ((divisor <= fxp_frac_mask) &&
+                (dividend > fxp_mul(FXP_MAX, divisor))) {
+                return ((fxp1 > 0 && fxp2 > 0) || (fxp1 < 0 && fxp2 < 0))?
+                                FXP_POS_INF: FXP_NEG_INF;
+        }
+
+        // Calculation of division of fixed-point nums
+        // using only ints
+
+        int bits_dividend = fxp_nbits(dividend);
+        int bits_divisor = fxp_nbits(divisor);
+
+        int size_diff = bits_dividend - bits_divisor;
+        int shift = size_diff - 1;
+        int minuend, next_bit_mask;
+        int bidx;
+        // Initialize starting minuend
+        if (size_diff > 0) {
+                int mmask = FXP_POS_INF >> (FXP_INT_BITS - bits_divisor - 1);
+                minuend = (dividend & (mmask << size_diff)) >> size_diff;
+                next_bit_mask = 1 << shift;
+                bidx = bits_divisor;
+        } else {
+                minuend = dividend;
+                next_bit_mask = 0;
+                bidx = bits_dividend;
+        }
+        int quotient = 0;
+        int qbits = 0;
+        int newbit = 0;
+        int bmax = bits_dividend + fxp_frac_bits;
+        int bminuend;
+        while (bidx <= bmax) {
+                if (minuend >= divisor) {
+                        // Append a 1 to the right of the quotient, and
+                        // from now on start to count bits in the quotient
+                        quotient = (quotient << 1) | 1;
+                        newbit = 1;
+                        // Update minuend
+                        minuend = minuend - divisor;
+                } else {
+                        // Append a 0 to the right of the quotient...
+                        quotient = (quotient << 1);
+                }
+                qbits += newbit;
+                bidx++;
+                if (qbits == FXP_INT_BITS_M1) break;
+                bminuend = fxp_nbits(minuend);
+                if (bminuend == FXP_INT_BITS_M1) {
+                        if (divisor > 1) {
+                                divisor = (divisor >> 1);
+                        } else {
+                                // Overflow -> Return properly signed infinity
+                                return ((fxp1 >= 0 && fxp2 > 0) || \
+                                        (fxp1 < 0 && fxp2 < 0))? \
+                                                FXP_POS_INF: FXP_NEG_INF;
+                        }
+                } else {
+                        if (next_bit_mask > 0) {
+                                // Pull down next bit from the dividend,
+                                // and append it to the right of the minuend
+                                minuend = (minuend << 1) | \
+                                            ((dividend & next_bit_mask) \
+                                                >> shift);
+                                next_bit_mask = (next_bit_mask >> 1);
+                                shift--;
+                        } else {
+                                // Pull down a 0 bit and append it to minuend
+                                minuend = (minuend << 1);
+                        }
+                }
+        }
+        if (bidx <= bmax) {
+                // Overflow -> Return properly signed infinity
+                return ((fxp1 >= 0 && fxp2 > 0) || (fxp1 < 0 && fxp2 < 0))?
+                                FXP_POS_INF: FXP_NEG_INF;
+        }
+        // No overflow -> return properly signed quotient
+        return ((fxp1 >= 0 && fxp2 > 0) || (fxp1 < 0 && fxp2 < 0))?
+                        quotient: -quotient;
 }
 
 /*
  * Safe implementation of division using longs
- * Only applicable for systems where sizeof(long) > sizeof(int)
+ * Only applicable for systems in which sizeof(long) > sizeof(int)
  */
 int fxp_div_l(int fxp1, int fxp2)
 {

@@ -70,8 +70,8 @@ void test_fxp(char *s, int fxp, long double d_assert_val)
             printf(" (~same)\n");
         } else {
             nwarnings++;
-            printf("\n***** Warning %d: delta=%LE\n\n",
-                        nwarnings, delta);
+            printf("\n***** Warning %d: delta=%LE (max allowed %LE)\n\n",
+                        nwarnings, delta, max_delta);
         }
         if (delta > larger_delta)
             larger_delta = delta;
@@ -195,6 +195,9 @@ int main(void) {
                 test_fxp("Most negative", -fxp_largest, dfxp(FXP_MIN));
                 test_fxp("-Infinity", FXP_NEG_INF, dfxp(FXP_NEG_INF));
                 test_fxp("Undefined", FXP_UNDEF,   dfxp(FXP_UNDEF));
+
+                //test_fxp("-0.9", fxp_dec(0, -9), ((long double) -0.9));
+                //return 0;
 
                 printf("\nChecking extreme int values, part II:\n");
                 test_fxp("Almost most negative",
@@ -485,10 +488,13 @@ int main(void) {
                         n2 = sign2 * rand();
                         n3 = sign3 * rand();
                         if (frac_bits < FXP_INT_BITS_M1) n3 %= fxp_get_frac_max();
-                        printf("n1 = "); print_fxp(n1); printf("\n");
-                        printf("n2 = "); print_fxp(n2); printf("\n");
+                        printf("\nn1 = "); print_fxp(n1);
+                        printf("  (fxp int is %d)\n", n1);
+                        printf("n2 = "); print_fxp(n2);
+                        printf("  (fxp int is %d)\n", n2);
                         printf("n3 = "); print_fxp(n3);
-                        printf(" (n3 always random between -1 and 1)\n");
+                        printf("  (fxp int is %d,", n3);
+                        printf(" always in (-1,1) )\n");
 
                         fxp1 = fxp_add(n1, n2);
                         fxp2 = fxp_add_l(n1, n2);
@@ -513,6 +519,9 @@ int main(void) {
                         fxp1 = fxp_div(n1, n2);
                         fxp2 = fxp_div_l(n1, n2);
                         test_fxp("i. div vs. div_l", fxp1, dfxp(fxp2));
+                        fxp3 = fxp_div(n1, n3);
+                        fxp4 = fxp_div_l(n1, n3);
+                        test_fxp("j. div vs. div_l", fxp3, dfxp(fxp4));
                 }
 
                 printf("\n%d Warnings for %d frac bits.\n", \

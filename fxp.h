@@ -77,6 +77,8 @@ int fxp_div(int fxp1, int fxp2);
 // implementations of mul using a distributive approach
 int fxp_mul_d(int fxp1, int fxp2);
 
+int normal_div(int x, int y);
+
 // Safe implementations using longs
 int fxp_add_l(int fxp1, int fxp2);
 int fxp_sub_l(int fxp1, int fxp2);

@@ -8,11 +8,12 @@
  * Intel i7-6700K cpu:
  *
  *      add:    1.000000
- *      add_l:  0.950173
- *      mul:    1.082994
- *      mul_l:  1.375334
- *      mul_d:  2.504294
- *      div_l:  2.932951
+ *      add_l:  0.940618
+ *      mul:    1.062370
+ *      mul_l:  1.339314
+ *      mul_d:  2.194048
+ *      div:    17.705100
+ *      div_l:  2.906419
  *
  */
 
@@ -22,13 +23,13 @@
 #include "fxp.h"
 
 #define DASHES "================================================\n"
-#define MAX_NUMS 5000
-#define MAX_OPS  5000
+#define MAX_NUMS 2000
+#define MAX_OPS  2000
 
 int main(void) {
 
         int s1, s2, s3, n1, n2, n3, x, y, n, lastp;
-        double tadd, tadd_l, tmul, tmul_l, tmul_d, tdiv_l;
+        double tadd, tadd_l, tmul, tmul_l, tmul_d, tdiv, tdiv_l;
         clock_t t0, t1;
         int val[] = {FXP_UNDEF, FXP_MIN, \
                         -300000, -30000, -3000, -300, -30, \
@@ -44,6 +45,7 @@ int main(void) {
         tmul = 0;
         tmul_l = 0;
         tmul_d = 0;
+        tdiv = 0;
         tdiv_l = 0;
         lastp = -1;
         for (int n = 0; n < MAX_NUMS; n++) {
@@ -131,6 +133,20 @@ int main(void) {
 
                 t0 = clock();
                 for (int i = 0; i < MAX_OPS; i++) {
+                        x = fxp_div(n1, n2);
+                        x = fxp_div(n3, n2);
+                        for (int j = 0; j < nvals; j++) {
+                            y = val[j];
+                            x = fxp_div(n1, y);
+                            x = fxp_div(n2, y);
+                            x = fxp_div(n3, y);
+                        }
+                }
+                t1= clock();
+                tdiv += ((double) t1 - t0);
+
+                t0 = clock();
+                for (int i = 0; i < MAX_OPS; i++) {
                         x = fxp_div_l(n1, n2);
                         x = fxp_div_l(n3, n2);
                         for (int j = 0; j < nvals; j++) {
@@ -144,12 +160,13 @@ int main(void) {
                 tdiv_l += ((double) t1 - t0);
         }
 
-        printf("add:\t%lf\n",      1.0);
-        printf("add_l:\t%lf\n",    tadd_l / tadd);
-        printf("mul:\t%lf\n",      tmul   / tadd);
-        printf("mul_l:\t%lf\n",    tmul_l / tadd);
-        printf("mul_d:\t%lf\n",    tmul_d / tadd);
-        printf("div_l:\t%lf\n",    tdiv_l / tadd);
+        printf("add:\t%lf\n", 1.0);
+        printf("add_l:\t%lf\n", tadd_l / tadd);
+        printf("mul:\t%lf\n", tmul / tadd);
+        printf("mul_l:\t%lf\n", tmul_l / tadd);
+        printf("mul_d:\t%lf\n", tmul_d / tadd);
+        printf("div:\t%lf\n", tdiv / tadd);
+        printf("div_l:\t%lf\n", tdiv_l / tadd);
 
         return 0;
 }
