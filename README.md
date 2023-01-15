@@ -22,8 +22,8 @@ border case.
 - 2023-01-08: new version with runtime-modifiable number of bits to use for
 the frac part. Fine-tuned all code, now all tests run with 0 warnings for
 any chosen number of frac bits. Tester checks different nums of frac bits.
-- 2023-01-09: Default number of frac bits is set to 14, which the tester
-runs last. Beautified tester output organization.
+- 2023-01-09: Default number of frac bits is set to 14.
+Beautified tester output organization.
 - 2023-01-11: Using gcc's own built in to count leading zeros.
 Tester program now using long-doubles to better compare
 different implementations of the operations. Thanks to that, a few bugs
