@@ -6818,7 +6818,7 @@ mul_l (n1*n2)
 mul   (n1*n3)
 	got: 0.5035658 (=Lf:0.503566 = 1081399518 = x4074d8de = b.1000000011101001101100011011110, 31 bits)
 	exp. 0.503586
-***** Warning 1: delta=2.039410E-05 (max allowed 1.525879E-05)
+***** Warning 1: delta=2.039410E-05 (above:1.525879E-05, max allowed 2.288818E-05)
 
 Updating largest delta: 0.000020
 mul_l (n1*n3)
@@ -7020,7 +7020,7 @@ add_l (n1+n3)
 mul   (n1*n2)
 	got: 0.4058368 (=Lf:0.405837 = 871528080 = x33f27690 = b.0110011111100100111011010010000, 30 bits)
 	exp. 0.405852
-***** Warning 2: delta=1.529232E-05 (max allowed 1.525879E-05)
+***** Warning 2: delta=1.529232E-05 (above:1.525879E-05, max allowed 2.288818E-05)
 
 mul_l (n1*n2)
 	got: 0.4058521 (=Lf:0.405852 = 871560920 = x33f2f6d8 = b.0110011111100101111011011011000, 30 bits)
@@ -7186,7 +7186,7 @@ add_l (n1+n3)
 mul   (n1*n2)
 	got: 0.-3238943 (=Lf:-0.323894 = -695557928 = x(-)29755f28 = b(-).0101001011101010101111100101000, 30 bits)
 	exp. -0.323916
-***** Warning 3: delta=2.174592E-05 (max allowed 1.525879E-05)
+***** Warning 3: delta=2.174592E-05 (above:1.525879E-05, max allowed 2.288818E-05)
 
 Updating largest delta: 0.000022
 mul_l (n1*n2)
@@ -7212,8 +7212,8 @@ div   (n1/n3)
 	exp. +INF (~same)
 
 3 Warnings for 31 frac bits.
-Largest delta was: 2.174592E-05
+Largest delta was: 2.174592E-05 (max allowed: 2.288818E-05)
 All tests passed using 31-bit fracs, and '9999999' as max decimal frac.
 
 Grand total of 3 warnings checking 6 configurations.
-Largest warning delta: 2.174592E-05 (using 31 frac bits)
+Largest warning delta: 2.174592E-05 (max allowed:2.288818E-05, using 31 frac bits)

@@ -23,6 +23,7 @@ static int fracbit_configs[] = {0, 11, 14, 16, 24, 31};
 static long double max_warn_delta = 0.0;
 static long double larger_delta = 0.0;
 static long double largest_delta = 0.0;
+static long double largest_madelta = 0.0;
 static int largest_delta_fbits = 0;
 static long double warn_delta = 0.0;
 static int twarnings = 0;
@@ -60,8 +61,8 @@ void test_fxp(char *s, int fxp1, long double d_assert_val)
             printf(" (~same)\n");
         } else {
             nwarnings++;
-            printf("\n***** Warning %d: delta=%LE (max allowed %LE)\n\n",
-                        nwarnings, delta, warn_delta);
+            printf("\n***** Warning %d: delta=%LE (above:%LE, max allowed %LE)\n\n",
+                        nwarnings, delta, warn_delta, max_warn_delta);
             if (delta > larger_delta) {
                 larger_delta = delta;
                 printf("Updating largest delta: %Lf\n", larger_delta);
@@ -196,8 +197,15 @@ int main(void) {
                 int whole_max = fxp_get_whole_max();
                 int whole_min = fxp_get_whole_min();
 
-                warn_delta = ((long double) (1 << MAX(1, (frac_bits / 2)))) / frac_max;
+                // Because of the precision loss in fxp_mul, let's
+                // allow errors up to half the frac bits in use, but
+                // start warning about calculation differences from target
+                // when the error exceeds half the frac_bits
+                warn_delta = ((long double) (1 << MAX(1, (frac_bits / 2)))) \
+                                             / frac_max;
                 warn_delta = lim_frac(warn_delta, frac_bits);
+                // And assert/halt the tester if the error ever exceeds
+                // 3/4 of the frac bits in use
                 max_warn_delta = lim_frac(warn_delta * 1.5, frac_bits);
 
                 nwarnings = 0;
@@ -631,21 +639,23 @@ int main(void) {
                 printf("\n%d Warnings for %d frac bits.\n", \
                             nwarnings, frac_bits);
                 if (nwarnings > 0) {
-                    printf("Largest delta was: %LE\n", larger_delta);
+                    printf("Largest delta was: %LE (max allowed: %LE)\n", \
+                            larger_delta, max_warn_delta);
                 }
                 printf("All tests passed using %d-bit fracs, ", frac_bits);
                 printf("and '%d' as max decimal frac.\n\n", frac_max_dec);
                 twarnings += nwarnings;
                 if (larger_delta > largest_delta) {
                         largest_delta = larger_delta;
+                        largest_madelta = max_warn_delta;
                         largest_delta_fbits = frac_bits;
                 }
         }
         printf("Grand total of %d warnings checking %d configurations.\n", \
                     twarnings, nconfigs);
         if (twarnings > 0) {
-            printf("Largest warning delta: %LE (using %d frac bits)\n", \
-                        largest_delta, largest_delta_fbits);
+            printf("Largest warning delta: %LE (max allowed:%LE, using %d frac bits)\n", \
+                        largest_delta, largest_madelta, largest_delta_fbits);
         }
         return 0;
 }
