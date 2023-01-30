@@ -7,13 +7,12 @@
  * Example end of the ouput, for a system with an
  * Intel i7-6700K cpu:
  *
- *      add:    1.000000
- *      add_l:  0.940618
- *      mul:    1.062370
- *      mul_l:  1.339314
- *      mul_d:  2.194048
- *      div:    17.705100
- *      div_l:  2.906419
+ * add:    1.000000
+ * add_l:  1.035662
+ * mul:    1.084973
+ * mul_l:  1.523480
+ * div:    18.625531
+ * div_l:  3.268179
  *
  */
 
