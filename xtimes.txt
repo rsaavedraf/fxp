@@ -1,6 +1,7 @@
 ================================================
 Relative Execution Times of FXP operations
 ================================================
+MAX INT is 2147483646
   0 %
  10 %
  20 %
@@ -13,9 +14,8 @@ Relative Execution Times of FXP operations
  90 %
 100 %
 add:	1.000000
-add_l:	0.940312
-mul:	1.059980
-mul_l:	1.337907
-mul_d:	2.190426
-div:	17.690555
-div_l:	2.900246
+add_l:	1.030268
+mul:	1.082621
+mul_l:	1.512258
+div:	18.761412
+div_l:	3.276016

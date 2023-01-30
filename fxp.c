@@ -1,7 +1,8 @@
 /*
  * fxp.c
  * An implementation of Binary Fixed Point numbers
- * encoding them into integers.
+ * encoding them into integers, together with
+ * arithmetic operations +, -, *, and / for them.
  *
  * Safe arithmetic operations for the fxp's compliant
  * with INT32-C, as in:
@@ -10,7 +11,7 @@
  * By Raul Saavedra, Bonn, Germany
  *
  * v1: 2022-11-13
- * v2: 2023-01-08: runtime-modifiable whole vs. frac bits.
+ * v2: 2023-01-08: runtime-modifiable number of frac bits to use.
  */
 
 #include "fxp.h"
@@ -18,13 +19,17 @@
 #include <stdlib.h>
 #include <assert.h>
 
+//Used when testing and debugging when trying to optimize division
+//#include "fxp_aux.h"
+//#define VERBOSE 0
+
 #define FXP_FRAC_BITS_MIN 4
-#define FXP_FRAC_BITS_DEF 14
+#define FXP_FRAC_BITS_DEF 12
 // Allowing for no whole part, so other than the sign bit,
 // all bits used for fraction part. This use case represents
 // the range [-0.999..., 0.999...], or equivalently: (-1, 1)
 // (so actual bits -1 and 1 not included)
-#define FXP_FRAC_BITS_MAX (FXP_INT_BITS - 1)
+#define FXP_FRAC_BITS_MAX FXP_INT_BITS_M1
 #define FXP_FRAC_MAX_DEC 9999999
 
 // Default number of bits to use for the frac part
@@ -42,7 +47,7 @@ static int fxp_frac_max = ((1 << FXP_FRAC_BITS_DEF) - 1);
 
 // Default desired max frac decimal value
 // (can be changed dynamically calling set_[auto_]frac_max_dec
-static int fxp_frac_max_dec = 9999;
+static int fxp_frac_max_dec = 999;
 
 //#define FXP_MAX_LSHIFTED ((FXP_MAX_L) << FXP_FRAC_BITS)
 static long int fxp_max_lshifted = (FXP_MAX_L) << FXP_FRAC_BITS_DEF;
@@ -120,13 +125,17 @@ int fxp_set_frac_bits(int nfracbits)
 }
 
 /*
- * Automatically set the fractional max decimal to use. It's value
- * will be the integer containing only nines that is > 0 and <
- * fxp_frac_max. I.e., for fxp_frac_max = 4095 (frac with 12 bits,)
- * the fxp_frac_max_dec value will set to 999
+ * Automatically set the fractional max decimal to use.
+ * It's value will be the integer containing only nines
+ * that is > 0 and < fxp_frac_max.
+ * I.e., for fxp_frac_max = 4095 (frac with 12 bits,)
+ * the fxp_frac_max_dec value will set to 999.
+ * The number of nines in fxp_frac_max_dec will be
+ * floor(fxp_frac_bits / 4), e.g. a nine for every 4 bits
  */
 int fxp_set_auto_frac_max_dec()
 {
+        /*
         int current = 9;
         int next = 99;
         int maxnext = (FXP_MAX - 9) / 10;
@@ -140,6 +149,12 @@ int fxp_set_auto_frac_max_dec()
         // Just in case limit here up to FXP_FRAC_MAX_DEC
         fxp_frac_max_dec = (current > FXP_FRAC_MAX_DEC?
                                 FXP_FRAC_MAX_DEC: current);
+        */
+        int nnines = fxp_frac_bits / 4;
+        fxp_frac_max_dec = 9;
+        for (int i=1; i < nnines; i++) {
+            fxp_frac_max_dec = (fxp_frac_max_dec * 10) + 9;
+        }
         return fxp_frac_max_dec;
 }
 
@@ -284,19 +299,22 @@ int fxp_get_dec_frac(int fxp)
                 //return -(((-fxp) & fxp_frac_mask) * fxp_frac_max_dec) \
                 //            / fxp_frac_max;
                 positive_frac = (-fxp) & fxp_frac_mask;
-                num = -(((long) positive_frac) * \
+                if (positive_frac == 0) return 0;
+                num = -(((long) positive_frac + 1) * \
                                 ((long) fxp_frac_max_dec));
         }
         else {
                 //return ((fxp & fxp_frac_mask) * fxp_frac_max_dec) \
                 //            / fxp_frac_max;
                 positive_frac = fxp & fxp_frac_mask;
-                num = ((long) positive_frac)
+                if (positive_frac == 0) return 0;
+                num = ((long) positive_frac + 1)
                                 * ((long) fxp_frac_max_dec);
         }
         ldivision = num / denom;
+        if (ldivision > fxp_frac_max_dec) ldivision = fxp_frac_max_dec;
         int idivision = (int) ldivision;
-        //printf("\n+frac is %d\n", pos_frac);
+        //printf("\n+frac is %d\n", positive_frac);
         //printf("Num   is %ld\n", num);
         //printf("Denom is %ld\n", denom);
         //printf("LDiv  is %ld\n", ldivision);
@@ -411,11 +429,53 @@ int fxp_sub_l(int fxp1, int fxp2)
 }
 
 /*
- * Safe implementation of multiplication checking for
- * overflows using divisions.
- * It uses longs, so only applicable for systems in which
- * sizeof(long) > sizeof(int)
+ * Safe implementation of fxp multiplication using longs,
+ * and no divisions.
+ * Only applicable for systems in which sizeof(long) > sizeof(int)
  */
+int fxp_mul_l(int fxp1, int fxp2)
+{
+        if (fxp1 == FXP_UNDEF || fxp2 == FXP_UNDEF)
+                return FXP_UNDEF;
+        if (fxp1 == FXP_POS_INF || fxp2 == FXP_POS_INF) {
+                if (fxp1 == 0 || fxp2 == 0)
+                        return FXP_UNDEF;
+                else
+                        return (fxp1 < 0 || fxp2 < 0)?
+                                FXP_NEG_INF: FXP_POS_INF;
+        }
+        if (fxp1 == FXP_NEG_INF || fxp2 == FXP_NEG_INF) {
+                if (fxp1 == 0 || fxp2 == 0)
+                        return FXP_UNDEF;
+                return (fxp1 > 0 || fxp2 > 0)?
+                                FXP_NEG_INF: FXP_POS_INF;
+        }
+        int v1, v2;
+        v1 = (fxp1 >= 0)? fxp1: -fxp1;
+        v2 = (fxp2 >= 0)? fxp2: -fxp2;
+        unsigned long product = ((unsigned long) v1) * v2;
+        if (product > fxp_max_lshifted) {
+                // Overflow, return infinity with the appropriate sign
+                return ((fxp1 >= 0 && fxp2 >= 0) || (fxp1 < 0 && fxp2 < 0))?
+                                FXP_POS_INF: FXP_NEG_INF;
+        }
+        // No overflow, return result as int with appropriate sign
+        product = product >> fxp_frac_bits;
+        return ((fxp1 >= 0 && fxp2 >= 0) || (fxp1 < 0 && fxp2 < 0))?
+                        (int) product: -((int) product);
+}
+
+
+// Note: both fxp_mul_l and fxp_mul_d use longs,
+// but fxp_mul_l is clearly more efficient.
+// No reason to choose fxp_mul_d over it.
+
+/*
+ * Safe implementation of fxp multiplication checking for
+ * overflows using divisions, and using longs.
+ * Only applicable for systems in which
+ * sizeof(long) > sizeof(int)
+ *
 int fxp_mul_d(int fxp1, int fxp2)
 {
         if (fxp1 == FXP_UNDEF || fxp2 == FXP_UNDEF)
@@ -466,43 +526,7 @@ int fxp_mul_d(int fxp1, int fxp2)
         long prod = ((long) fxp1) * fxp2;
         return (int) (prod >> fxp_frac_bits);
 }
-
-/*
- * Safe implementation of multiplication using longs, and
- * no divisions.
- * Only applicable for systems in which sizeof(long) > sizeof(int)
- */
-int fxp_mul_l(int fxp1, int fxp2)
-{
-        if (fxp1 == FXP_UNDEF || fxp2 == FXP_UNDEF)
-                return FXP_UNDEF;
-        if (fxp1 == FXP_POS_INF || fxp2 == FXP_POS_INF) {
-                if (fxp1 == 0 || fxp2 == 0)
-                        return FXP_UNDEF;
-                else
-                        return (fxp1 < 0 || fxp2 < 0)?
-                                FXP_NEG_INF: FXP_POS_INF;
-        }
-        if (fxp1 == FXP_NEG_INF || fxp2 == FXP_NEG_INF) {
-                if (fxp1 == 0 || fxp2 == 0)
-                        return FXP_UNDEF;
-                return (fxp1 > 0 || fxp2 > 0)?
-                                FXP_NEG_INF: FXP_POS_INF;
-        }
-        int v1, v2;
-        v1 = (fxp1 >= 0)? fxp1: -fxp1;
-        v2 = (fxp2 >= 0)? fxp2: -fxp2;
-        unsigned long product = ((unsigned long) v1) * v2;
-        if (product > fxp_max_lshifted) {
-                // Overflow, return infinity with the appropriate sign
-                return ((fxp1 >= 0 && fxp2 >= 0) || (fxp1 < 0 && fxp2 < 0))?
-                                FXP_POS_INF: FXP_NEG_INF;
-        }
-        // No overflow, return result as int with appropriate sign
-        product = product >> fxp_frac_bits;
-        return ((fxp1 >= 0 && fxp2 >= 0) || (fxp1 < 0 && fxp2 < 0))?
-                        (int) product: -((int) product);
-}
+*/
 
 /*
 Return number of bits used by x, that is,
@@ -533,6 +557,7 @@ int fxp_nbits(unsigned int x)
     */
 }
 
+/*
 //Simpler code to count the # of bits, but less efficient
 int fxp_nbits_v0(unsigned int x, int max_bits)
 {
@@ -541,10 +566,12 @@ int fxp_nbits_v0(unsigned int x, int max_bits)
     while (!(x & (1 << nb))) nb--;
     return nb + 1;
 }
+*/
 
 /*
- * Safe implementation of fxp1 * fxp2 using only ints.
- * Uses a distributive approach: computing n1 * n2 as
+ * Safe implementation of fxp multiplication using only ints.
+ *
+ * A distributive approach: computes n1 * n2 as
  * (w1 + f1)*(w2 + f2) == w1*w2 + w1*f2 + f1*w2 + f1*f2,
  * with n1 = w1 + f1, and n2 = w2 + f2
  * (their corresponding whole and frac parts added)
@@ -651,10 +678,11 @@ int fxp_mul(int fxp1, int fxp2)
 
 
 /*
- * Safe implementation of division using only integers.
- * This is software-based binary division, so takes about 6x
- * the time compared to fxp_div_l (at least this 1st version.)
- * But it works for systems in which sizeof(long) is not larger
+ * Safe implementation of fxp division using only integers.
+ * This is software-based binary fxp division.
+ * After 1st minuend it continues processing the dividend
+ * bit by bit.
+ * It works for systems in which sizeof(long) is not larger
  * than sizeof(int).
  */
 int fxp_div(int fxp1, int fxp2)
@@ -662,8 +690,9 @@ int fxp_div(int fxp1, int fxp2)
         if (fxp1 == FXP_UNDEF || fxp2 == FXP_UNDEF)
                 return FXP_UNDEF;
         if (fxp2 == 0)
-                return (fxp1 > 0)? FXP_POS_INF:
-                                (fxp1 < 0)? FXP_NEG_INF: FXP_UNDEF;
+                return (fxp1 == 0)? FXP_UNDEF:
+                            (fxp1 > 0)? FXP_POS_INF: FXP_NEG_INF;
+
         // Positive values of the arguments
         int dividend = (fxp1 >= 0)? fxp1: -fxp1;
         int divisor = (fxp2 >  0)? fxp2: -fxp2;
@@ -677,52 +706,76 @@ int fxp_div(int fxp1, int fxp2)
                 return ((fxp1 > 0 && fxp2 > 0) || (fxp1 < 0 && fxp2 < 0))?
                                 FXP_POS_INF: FXP_NEG_INF;
         }
-
         // Calculation of division of fixed-point nums
         // using only ints
 
         int bits_dividend = fxp_nbits(dividend);
         int bits_divisor = fxp_nbits(divisor);
 
+        //if (VERBOSE) printf("d: x = %d (hex: %x, %d bits)\n   y = %d (hex: %x, %d bits)\n", \
+        //            dividend, dividend, bits_dividend, \
+        //            divisor, divisor, bits_divisor);
         int size_diff = bits_dividend - bits_divisor;
         int shift = size_diff - 1;
-        int minuend, next_bit_mask;
+        int minuend, next_bit_mask, bminuend, ba;
+        int difference = 0;
         int bidx;
+        //int qbits = 0;
         // Initialize starting minuend
         if (size_diff > 0) {
                 int mmask = FXP_POS_INF >> (FXP_INT_BITS - bits_divisor - 1);
                 minuend = (dividend & (mmask << size_diff)) >> size_diff;
                 next_bit_mask = 1 << shift;
                 bidx = bits_divisor;
+                bminuend = bits_divisor;
         } else {
-                minuend = dividend;
+                // Minor speedup, making the first minuend have as
+                // many bits as the divisor
+                minuend = dividend << -size_diff;
                 next_bit_mask = 0;
-                bidx = bits_dividend;
+                bidx = bits_dividend - size_diff;
+                bminuend = bits_dividend - size_diff;
+                //qbits = -size_diff;
         }
+        //if (VERBOSE) printf("\td: starting m: %d (%d bits)\n", minuend, bidx);
         int quotient = 0;
-        int qbits = 0;
-        int newbit = 0;
         int bmax = bits_dividend + fxp_frac_bits;
-        int bminuend;
+        //printf("bidx processed while <= bmax: %d\n", bmax);
+        //int loops = 0;
+        // bidx is (from left to right) the highest bit # we are currently
+        // processing, so we loop till bidx exceeds the right-most bit
+        // in the full (left-shifted) dividend
         while (bidx <= bmax) {
+                //if (VERBOSE) printf("\tm: %d (hex:%x, %d bits) bidx:%d\n", minuend, minuend, bminuend, bidx);
                 if (minuend >= divisor) {
-                        // Append a 1 to the right of the quotient, and
-                        // from now on start to count bits in the quotient
+                        // Append a 1 to the right of the quotient
                         quotient = (quotient << 1) | 1;
-                        newbit = 1;
-                        // Update minuend
+                        ba = 1;
+                        //difference = minuend - divisor;
                         minuend = minuend - divisor;
+                        bminuend = fxp_nbits(minuend);
                 } else {
-                        // Append a 0 to the right of the quotient...
+                        // Append a 0 to the right of the quotient
                         quotient = (quotient << 1);
+                        ba = 0;
+                        //difference = minuend;
                 }
-                qbits += newbit;
+                //qbits = fxp_nbits(quotient);
+                //if (VERBOSE) {
+                //    trace_fxp_div("div:", loops, fxp_frac_bits, bidx, \
+                //        dividend, divisor, \
+                //        quotient, ba, qbits, \
+                //        minuend, \
+                //        ba, \
+                //        difference );
+                //}
                 bidx++;
-                if (qbits == FXP_INT_BITS_M1) break;
-                bminuend = fxp_nbits(minuend);
+                //minuend = difference;
+                //bminuend = fxp_nbits(minuend);
                 if (bminuend == FXP_INT_BITS_M1) {
                         if (divisor > 1) {
                                 divisor = (divisor >> 1);
+                                //if (VERBOSE) printf("\t\tnew shrinked divisor %d\n\n", divisor);
                         } else {
                                 // Overflow -> Return properly signed infinity
                                 return ((fxp1 >= 0 && fxp2 > 0) || \
@@ -742,20 +795,17 @@ int fxp_div(int fxp1, int fxp2)
                                 // Pull down a 0 bit and append it to minuend
                                 minuend = (minuend << 1);
                         }
+                        bminuend = fxp_nbits(minuend);
                 }
+                //loops++;
         }
-        if (bidx <= bmax) {
-                // Overflow -> Return properly signed infinity
-                return ((fxp1 >= 0 && fxp2 > 0) || (fxp1 < 0 && fxp2 < 0))?
-                                FXP_POS_INF: FXP_NEG_INF;
-        }
-        // No overflow -> return properly signed quotient
+        // Return properly signed quotient
         return ((fxp1 >= 0 && fxp2 > 0) || (fxp1 < 0 && fxp2 < 0))?
                         quotient: -quotient;
 }
 
 /*
- * Safe implementation of division using longs
+ * Safe implementation of fxp division using longs.
  * Only applicable for systems in which sizeof(long) > sizeof(int)
  */
 int fxp_div_l(int fxp1, int fxp2)
@@ -776,6 +826,7 @@ int fxp_div_l(int fxp1, int fxp2)
         // Compute positive division
         long numerator = ((long) v1) << fxp_frac_bits;
         long division = numerator / v2;
+
         if (division > FXP_MAX_L) {
                 // Overflow -> Return properly signed infinity
                 return ((fxp1 >= 0 && fxp2 > 0) || (fxp1 < 0 && fxp2 < 0))?

@@ -34,3 +34,6 @@ Basically a software-based implementation of binary division
 average execution time of first version is ~6x that of fxp_div_l.
 However it will work for systems in which sizeof(long) is not larger
 than sizeof(int).
+- 2023-01-29: improved testing framework using long doubles, and
+refactored some utility functions related to testing in a 
+separate fxp_aux.c program.

@@ -73,15 +73,14 @@ int fxp_add(int fxp1, int fxp2);
 int fxp_sub(int fxp1, int fxp2);
 int fxp_mul(int fxp1, int fxp2);
 int fxp_div(int fxp1, int fxp2);
-// An alternative (but expensive) safe
-// implementations of mul using a distributive approach
-int fxp_mul_d(int fxp1, int fxp2);
+int fxp_div2(int fxp1, int fxp2);
 
-int normal_div(int x, int y);
+// An alternative (but expensive) safe implementations
+// of fxp mul using longs and divisions
+// int fxp_mul_d(int fxp1, int fxp2);
 
 // Safe implementations using longs
 int fxp_add_l(int fxp1, int fxp2);
 int fxp_sub_l(int fxp1, int fxp2);
 int fxp_mul_l(int fxp1, int fxp2);
 int fxp_div_l(int fxp1, int fxp2);
-

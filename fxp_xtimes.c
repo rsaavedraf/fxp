@@ -32,13 +32,18 @@ int main(void) {
         double tadd, tadd_l, tmul, tmul_l, tmul_d, tdiv, tdiv_l;
         clock_t t0, t1;
         int val[] = {FXP_UNDEF, FXP_MIN, \
-                        -300000, -30000, -3000, -300, -30, \
-                        -3, -1, 0, 1, 3, \
-                        30, 300, 3000, 30000, 300000, FXP_MAX};
-        int nvals = (int) (sizeof(val) / sizeof(val[0]));
+                        FXP_MIN/3, -3333333, -300000, -30000, -3000, -300,
+                        -200, -100, -50, -30, \
+                        -20, -15, -10, -5, -3, -1,
+                        0,
+                        1, 3, 5, 10, 15, 20,
+                        30, 50, 100, 200,
+                        300, 3000, 30000, 300000, 3333333, FXP_MAX/3, FXP_MAX};
+        int nvals = (int) (sizeof(val) / sizeof(int));
 
         printf("%sRelative Execution Times of FXP operations\n%s", DASHES, DASHES);
         srand((unsigned int) time(0));  // randomize seed
+        printf("MAX INT is %d\n", FXP_MAX);
 
         tadd = 0;
         tadd_l = 0;
@@ -117,6 +122,7 @@ int main(void) {
                 t1 = clock();
                 tmul_l += ((double) t1 - t0);
 
+                /*
                 t0 = clock();
                 for (int i = 0; i < MAX_OPS; i++) {
                         x = fxp_mul_d(n1, n2);
@@ -130,6 +136,7 @@ int main(void) {
                 }
                 t1 = clock();
                 tmul_d += ((double) t1 - t0);
+                */
 
                 t0 = clock();
                 for (int i = 0; i < MAX_OPS; i++) {
@@ -164,7 +171,7 @@ int main(void) {
         printf("add_l:\t%lf\n", tadd_l / tadd);
         printf("mul:\t%lf\n", tmul / tadd);
         printf("mul_l:\t%lf\n", tmul_l / tadd);
-        printf("mul_d:\t%lf\n", tmul_d / tadd);
+        //printf("mul_d:\t%lf\n", tmul_d / tadd);
         printf("div:\t%lf\n", tdiv / tadd);
         printf("div_l:\t%lf\n", tdiv_l / tadd);
 
