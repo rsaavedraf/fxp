@@ -579,6 +579,9 @@ int fxp_nbits_v0(unsigned int x, int max_bits)
  * Works for systems in which sizeof(long) is not larger
  * than sizeof(int).
  * Also it does not use divisions to check for overflows.
+ * It's main disadvantage is lost precision compared to
+ * fxp_mul_l: the lower half of the frac bits can
+ * be lost to error here in fxp_mul
  */
 int fxp_mul(int fxp1, int fxp2)
 {
@@ -750,14 +753,14 @@ int fxp_div(int fxp1, int fxp2)
                 if (minuend >= divisor) {
                         // Append a 1 to the right of the quotient
                         quotient = (quotient << 1) | 1;
-                        ba = 1;
+                        //ba = 1;
                         //difference = minuend - divisor;
                         minuend = minuend - divisor;
                         bminuend = fxp_nbits(minuend);
                 } else {
                         // Append a 0 to the right of the quotient
                         quotient = (quotient << 1);
-                        ba = 0;
+                        //ba = 0;
                         //difference = minuend;
                 }
                 //qbits = fxp_nbits(quotient);
