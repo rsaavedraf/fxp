@@ -65,8 +65,8 @@ long double lim_frac(long double x, int fbp)
  * Returns a double value corresponding to a given fxp.
  * Watch out this code returns the same long double
  * value for FXP_UNDEF and FXP_NEG_INF
- * (but see the implementation of get_Lf_fxp_undef()
- * vs. get_Lf_fxp_neg_inf() below, precisely to
+ * (but see the implementation of dfxp_undef()
+ * vs. dfxp_neg_inf() below, precisely to
  * get around this using those functions)
  */
 long double dfxp(int fxp)
@@ -94,7 +94,7 @@ long double dfxp_neg_inf()
 long double dfxp_undef()
 {
     // Substracting an additional small value to force it to have
-    // a different long double value from get_Lf_fxp_neg_inf()
+    // a different long double value from dfxp_neg_inf()
     return lim_frac(dfxp(FXP_UNDEF) - 0.1, fxp_get_frac_bits());
 }
 
