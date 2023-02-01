@@ -17,7 +17,7 @@ By Raul Saavedra
 - 2023-01-04: bug fix in fxp_sum
 - 2023-01-05: multiplication now done not using longs, entirely with ints, so
 supporting systems where sizeof(long) == sizeof(int), but for now at the
-cost of precision loss of up to ~half the frac bits in use.
+cost of performance, and precision loss of up to ~half the frac bits in use.
 - 2023-01-06: bugs fixed in new safe multiplication, also in the safe sum for a
 border case.
 - 2023-01-08: new version with runtime-modifiable number of bits to use for
@@ -36,8 +36,8 @@ average execution time of first version is ~6x that of fxp_div_l.
 However it will work for systems in which sizeof(long) is not larger
 than sizeof(int).
 - 2023-01-29: improved testing framework using long doubles, and
-refactored some utility functions related to testing in a 
-separate fxp_aux.c program.
+refactored some utility functions related to testing and tracing
+in a separate file: fxp_aux.c.
 - 2023-01-31: significant precision improvement in fxp_mul(),
 now offering pretty much the same precision as fxp_mul_l() while
 still only using ints, no longs. The calculation uses the
@@ -46,6 +46,6 @@ part only.
 - 2023-02-01: bug fixed in fxp_xtimes.c. After this fix,
 the true relative execution time of fxp_mul() is shown to be
 effectively ~6x that of fxp_mul_l(). This makes a lot of sense,
-and a similar ratio stands between fxp_div() and fxp_div_l().
+as a similar ratio stands between fxp_div() and fxp_div_l().
 Both * and / operations implemented using longs are then
 significantly faster (~6x) than the int-only implementations.
