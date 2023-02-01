@@ -38,8 +38,8 @@ than sizeof(int).
 - 2023-01-29: improved testing framework using long doubles, and
 refactored some utility functions related to testing in a 
 separate fxp_aux.c program.
-- 2023-01-31: significant precision improvement in the fxp_mul,
-now offering pretty much the same precision as fxp_mul_l while
+- 2023-01-31: significant precision improvement in fxp_mul(),
+now offering pretty much the same precision as fxp_mul_l() while
 still only using ints (not longs,) and still being faster!
-The approach uses the distributive approach twice, now the second
+The calculation uses the distributive approach twice, now the second
 time within the frac part only.
