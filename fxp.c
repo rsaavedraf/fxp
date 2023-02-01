@@ -12,6 +12,7 @@
  *
  * v1: 2022-11-13
  * v2: 2023-01-08: runtime-modifiable number of frac bits to use.
+ * v3: 2023-01-30: fxp_mul avoiding precision loss!
  */
 
 #include "fxp.h"
@@ -20,8 +21,8 @@
 #include <assert.h>
 
 //Used when testing and debugging when trying to optimize division
-//#include "fxp_aux.h"
-//#define VERBOSE 0
+#include "fxp_aux.h"
+#define VERBOSE 0
 
 #define FXP_FRAC_BITS_MIN 4
 #define FXP_FRAC_BITS_DEF 12
@@ -35,6 +36,11 @@
 // Default number of bits to use for the frac part
 // (can be changed dynamically calling set_frac_bits)
 static int fxp_frac_bits = FXP_FRAC_BITS_DEF;
+
+// For improved-precision version of fxp_mul
+static int fxp_frac_mshift = FXP_FRAC_BITS_DEF / 2;
+static int fxp_frac_maskl = 4032;
+static int fxp_frac_maskr = 63;
 
 // Default number of bits for the whole (and sign) part
 static int fxp_whole_bits = FXP_INT_BITS - FXP_FRAC_BITS_DEF;
@@ -57,7 +63,6 @@ static int fxp_whole_max = FXP_MAX >> FXP_FRAC_BITS_DEF;
 
 //#define FXP_WHOLE_MIN (-FXP_WHOLE_MAX)
 static int fxp_whole_min = -(FXP_MAX >> FXP_FRAC_BITS_DEF);
-
 
 int fxp_get_frac_bits()
 {
@@ -102,11 +107,23 @@ int fxp_set_frac_bits(int nfracbits)
         fxp_frac_bits = (nfracbits < FXP_FRAC_BITS_MIN? FXP_FRAC_BITS_MIN:
                             (nfracbits > FXP_FRAC_BITS_MAX?
                                 FXP_FRAC_BITS_MAX: nfracbits));
+
         fxp_whole_bits = FXP_INT_BITS - fxp_frac_bits;
         fxp_whole_bits_m1 = fxp_whole_bits - 1;
 
         // fxp_frac_mask should correspond to 2^FXP_FRAC_BITS - 1
         fxp_frac_mask = (1 << fxp_frac_bits) - 1;
+
+        // Variables used in fxp_mul to process the
+        // full multiplication of the frac parts avoiding
+        // precision loss
+        if (fxp_frac_bits == FXP_INT_BITS_M1) {
+            fxp_frac_mshift = (FXP_INT_BITS_M1 - 1) / 2;
+        } else {
+            fxp_frac_mshift = (fxp_frac_bits / 2) + (fxp_frac_bits % 2);
+        }
+        fxp_frac_maskr = (1 << fxp_frac_mshift) - 1;
+        fxp_frac_maskl = fxp_frac_maskr << fxp_frac_mshift;
 
         // When using all bits for frac (except for the sign bit),
         // then our max valid frac cannot be equal to frac_mask
@@ -571,17 +588,51 @@ int fxp_nbits_v0(unsigned int x, int max_bits)
 /*
  * Safe implementation of fxp multiplication using only ints.
  *
- * A distributive approach: computes n1 * n2 as
- * (w1 + f1)*(w2 + f2) == w1*w2 + w1*f2 + f1*w2 + f1*f2,
- * with n1 = w1 + f1, and n2 = w2 + f2
- * (their corresponding whole and frac parts added)
+ * Description of the distributive multiplication approach:
+ * As in (a + x) * (b + y) = ab + ay + bx + xy,
+ * for arguments fxp1 and fxp2 equal to the following:
+ * fxp1 = (a << fxp_frac_bits) + x, and
+ * fxp2 = (b << fxp_frac_bits) + y
+ *
+ * a, b their corresponding positive whole bits, and x, y their
+ * positive frac bits, the product is calculated as:
+ *
+ * Frac part: frac_part(pfsum);
+ *          where:
+ *          pfsum = pf1 + pf2 + pf3
+ *          pf1 = frac_part(a * y)
+ *          pf2 = frac_part(b * x)
+ *          pf3 = ((x' * y') >> frac_bits)
+ *
+ * Notice that a*y and b*x can each never overflow the number of
+ * bits in an int. Yet when frac_bits >= half the size of an int,
+ * pf3 alone could overflow. But we process the calculation of pf3
+ * itself with a distributive approach as well, not using whole vs.
+ * frac parts, but left vs. right chunks.
+ *
+ * Notice that pfsum is just the frac part of the sum of the pfi's,
+ * because any carry over into the whole part becomes pw4
+ * (one of the components to build up the whole part, see below).
+ * Notice also, when all bits (except sign one) are used for
+ * the frac part, the entire multiplication is effectively just
+ * pf3, since everything else will be zero.
+ *
+ * Whole part: pwsum = pw1 + pw2 + pw3 + pw4
+ *          where:
+ *          pw1: (a * b)
+ *          pw2: whole_part(a * y)
+ *          pw3: whole_part(b * x)
+ *          pw4: whole_part( pfsum )
+ *
+ * Notice that regardless of frac_bits, pw2 and pw3 can never
+ * overflow, similarly to pf1 and pf2. However if pw1 > whole_max,
+ * that already means the multiplication is an overflow.
+ * Also of course, if the sum pw1 + pw2 + pw3 + pw4 > whole_max,
+ * then the multiplication is an overflow as well.
  *
  * Works for systems in which sizeof(long) is not larger
  * than sizeof(int).
  * Also it does not use divisions to check for overflows.
- * It's main disadvantage is lost precision compared to
- * fxp_mul_l: the lower half of the frac bits can
- * be lost to error here in fxp_mul
  */
 int fxp_mul(int fxp1, int fxp2)
 {
@@ -600,83 +651,145 @@ int fxp_mul(int fxp1, int fxp2)
                 return (fxp1 > 0 || fxp2 > 0)?
                                 FXP_NEG_INF: FXP_POS_INF;
         }
-        // Compute product v1*v2 == (w1 + f1) * (w2 + f2) as
-        // w1*w2 + w1*f2 + f1*w2 + f1*w2 (using only positive values)
-        int v1, v2, w1, w2, bw1, bw2, product;
+        int v1, v2, a, b, nba, nbb;
+        int x, y, nbx, nby;
+        int ab, ay, bx, xy;
+        // Positive values of the arguments
         v1 = (fxp1 >= 0)? fxp1: -fxp1;
         v2 = (fxp2 >= 0)? fxp2: -fxp2;
-        // Whole parts for both operands
-        w1 = fxp_get_whole_part(v1);
-        w2 = fxp_get_whole_part(v2);
-        // Bits used in whole parts
-        bw1 = fxp_nbits(w1);
-        bw2 = fxp_nbits(w2);
-        //printf("\nfxp1=%d  \tfxp2=%d\n", fxp1, fxp2);
-        //printf("fxp1=%x    \tfxp2=%x\n", fxp1, fxp2);
-        //printf("w1=%d, w2=%d, m1=%d\n", w1, w2, m1);
-        //printf("w1=%x, w2=%x, m1=%x\n", \
-        //        w1, w2, m1);
-        if (bw1 + bw2 > fxp_whole_bits) {
-                // The product will for sure overflow just by multiplying
-                // the whole parts.
-                // Return appropriately signed infinity
-                return ((fxp1 >= 0 && fxp2 >= 0) || (fxp1 < 0 && fxp2 < 0))?
-                            FXP_POS_INF: FXP_NEG_INF;
-        }
-        unsigned int m1 = (unsigned int) (w1 * w2);
-        if (m1 > fxp_whole_max) {
-                // Overflow just by multiplying the whole parts
-                // Return appropriately signed infinity
-                return ((fxp1 >= 0 && fxp2 >= 0) || (fxp1 < 0 && fxp2 < 0))?
-                            FXP_POS_INF: FXP_NEG_INF;
-        }
-        int m2, m3, m4, f1, f2, bf1, bf2, bf1v0, bf2v0;
-        f1 = fxp_get_bin_frac(v1);
-        f2 = fxp_get_bin_frac(v2);
-        // Whole x frac parts cannot overflow, so simply multiply them
-        m2 = w1 * f2;
-        m3 = f1 * w2;
-        // Bits used in frac parts
-        bf1 = fxp_nbits(f1);
-        bf2 = fxp_nbits(f2);
-        //printf("f1=%d, f2=%d, bf1=%d, bf2=%d\n", f1, f2, bf1, bf2);
-        // Multiplying the frac parts together could overflow only if
-        // FXP_FRAC_BITS > FXP_WHOLE_BITS, but we can always drop
-        // enough least-significant bits in the frac parts before
-        // multiplying them (at the inevitable cost of some precision)
-        // to avoid the overflow
-        int lostbits = 0;
-        while (bf1 + bf2 > FXP_INT_BITS_M1) {
-                if (f1 > f2) {
-                        f1 = (f1 >> 1);
-                        bf1--;
-                } else {
-                        f2 = (f2 >> 1);
-                        bf2--;
-                }
-                lostbits++;
-        }
-        m4 = (f1 * f2) >> (fxp_frac_bits - lostbits);
-        //printf("f1=%d, f2=%d, bf1=%d, bf2=%d\n", f1, f2, bf1, bf2);
-        //printf("f1=%x, f2=%x\n", f1, f2);
-        //printf("m1=%d, m2=%d, m3=%d, m4=%d\n", m1, m2, m3, m4);
 
-        // Even if none of the components overflowed, their sum
-        // could overflow. So sum them all safely
-        product = fxp_add(
-                        fxp_add((m1 << fxp_frac_bits),
-                                fxp_add(m2, m3)),
-                        m4);
-        //printf("product=%u\n", product);
-        if (product == FXP_POS_INF) {
+        // Whole parts, and nbits in them
+        a = fxp_get_whole_part(v1);
+        b = fxp_get_whole_part(v2);
+        nba = fxp_nbits(a);
+        nbb = fxp_nbits(b);
+
+        int pw1 = a * b;
+        if ((nba + nbb > fxp_whole_bits) || (pw1 > fxp_whole_max)) {
+                // The product will for sure overflow just by
+                // multiplying the whole parts.
+                // Return appropriately signed infinity
+                return ((fxp1 >= 0 && fxp2 >= 0) || (fxp1 < 0 && fxp2 < 0))?
+                            FXP_POS_INF: FXP_NEG_INF;
+        }
+
+        // Frac parts, and nbits in them
+        x = fxp_get_bin_frac(v1);
+        y = fxp_get_bin_frac(v2);
+        nbx = fxp_nbits(x);
+        nby = fxp_nbits(y);
+        // Compute pf1, pf2, pf3, and pfsum
+        ay = a * y;
+        bx = b * x;
+        int pf1 = fxp_get_bin_frac(ay);
+        int pf2 = fxp_get_bin_frac(bx);
+        int pf3;
+        if (nbx + nby > FXP_INT_BITS_M1) {
+            /*
+            // To calculate pf3, lose least significant bits if
+            // necessary to be able to safely multiply the
+            // shortened x and y within a positive int
+            int lostbits = 0;
+            while (nbx + nby > FXP_INT_BITS_M1) {
+                    if (x > y) {
+                            x = (x >> 1);
+                            nbx--;
+                    } else {
+                            y = (y >> 1);
+                            nby--;
+                    }
+                    lostbits++;
+            }
+            pf3 = (x * y) >> (fxp_frac_bits - lostbits);
+            */
+            /*
+             * Improved method to compute pf3, using again a
+             * distributive scheme, not with whole vs. frac parts
+             * (we are here all within fraction parts after all)
+             * but with left and right chunks of the frac parts:
+             * x = (xl << subshift) + xr
+             * y = (yl << subshift) + yr
+             *
+             * rchunk = R part of qrsum
+             *      where:
+             *          qrsum = qr1 + qr2 + qr3
+             *          qr1 = R part of (xl * yr)
+             *          qr2 = R part of (yl * xr)
+             *          qr3 = (xr * yr) >> subshift
+             * lchunk: qlsum = ql1 + ql2 + ql3 + ql4
+             *      where:
+             *          ql1: (xl * yl)
+             *          ql2: L part of (xl * yr)
+             *          ql3: L part of (yl * xr)
+             *          ql4: L part of qrsum
+             *
+             * Final pf3 will then  lchunk == qlsum, the most
+             * significant part of the product of the frac parts
+             */
+            int flen, submaskl, submaskr, subshift;
+            int oddnfb = fxp_frac_bits % 2;
+            if (fxp_frac_bits == FXP_INT_BITS_M1) {
+                // Eliminate the very lowest significant bit of each
+                // operand to make sure none of the subchunk products
+                // ever exceed FXP_INT_BITS_M1 bits.
+                // (We must shift back this lost bit in the final pf3)
+                x = x >> 1;
+                y = y >> 1;
+                oddnfb = -1;
+            } else {
+                x = x << oddnfb;
+                y = y << oddnfb;
+            }
+            int xl = (x & fxp_frac_maskl) >> fxp_frac_mshift;
+            int xr = (x & fxp_frac_maskr);
+            int yl = (y & fxp_frac_maskl) >> fxp_frac_mshift;
+            int yr = (y & fxp_frac_maskr);
+            int xlyr = xl * yr;
+            int ylxr = yl * xr;
+            int qr1 = xlyr & fxp_frac_maskr;
+            int qr2 = ylxr & fxp_frac_maskr;
+            int qr3 = (xr * yr) >> fxp_frac_mshift;
+            int qrsum = qr1 + qr2 + qr3;
+            int ql1 = xl * yl;
+            int ql2 = (xlyr & fxp_frac_maskl) >> fxp_frac_mshift;
+            int ql3 = (ylxr & fxp_frac_maskl) >> fxp_frac_mshift;
+            int ql4 = (qrsum & fxp_frac_maskl) >> fxp_frac_mshift;
+            pf3 = ql1 + ql2 + ql3 + ql4;
+            // Now adjust depending on value of oddnfb
+            if (oddnfb > 0) {
+                pf3 = pf3 >> 1;
+            } else if (oddnfb < 0) {
+                pf3 = pf3 << 1;
+            }
+        } else {
+            pf3 = (x * y) >> fxp_frac_bits;
+        }
+        // We must sum safely since there might not be enough whole
+        // bits to hold the carry on from just the sum of these three
+        // frac pieces
+        int pfsum = fxp_add(pf1, fxp_add(pf2, pf3));
+        if (pfsum == FXP_POS_INF) {
+                // Overflow. Return appropriately signed infinity
+                return ((fxp1 >= 0 && fxp2 >= 0) || (fxp1 < 0 && fxp2 < 0))?
+                            FXP_POS_INF: FXP_NEG_INF;
+        }
+
+        // Compute remaining whole parts (pw2, pw3, pw4)
+        int pw2 = fxp_get_whole_part(ay);
+        int pw3 = fxp_get_whole_part(bx);
+        int pw4 = fxp_get_whole_part(pfsum);
+        // Sum all whole parts safely
+        int pwsum = pw1 + pw2 + pw3 + pw4;
+        if (pwsum > fxp_whole_max) {
                 // Overflow.
                 // Return appropriately signed infinity
                 return ((fxp1 >= 0 && fxp2 >= 0) || (fxp1 < 0 && fxp2 < 0))?
                             FXP_POS_INF: FXP_NEG_INF;
         }
+        int pproduct = fxp_bin(pwsum, fxp_get_bin_frac(pfsum));
         // No overflow, return the appropriately signed product
         return ((fxp1 >= 0 && fxp2 >= 0) || (fxp1 < 0 && fxp2 < 0))?
-                    product: -product;
+                    pproduct: -pproduct;
 }
 
 

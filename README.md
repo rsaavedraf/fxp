@@ -16,8 +16,8 @@ By Raul Saavedra
 - 2022-11-15: first version
 - 2023-01-04: bug fix in fxp_sum
 - 2023-01-05: multiplication now done not using longs, entirely with ints, so
-supporting systems where sizeof(long) == sizeof(int), at the inevitable cost
-of precision loss of up to ~half the frac bits in use.
+supporting systems where sizeof(long) == sizeof(int), but for now at the
+cost of precision loss of up to ~half the frac bits in use.
 - 2023-01-06: bugs fixed in new safe multiplication, also in the safe sum for a
 border case.
 - 2023-01-08: new version with runtime-modifiable number of bits to use for
@@ -38,3 +38,8 @@ than sizeof(int).
 - 2023-01-29: improved testing framework using long doubles, and
 refactored some utility functions related to testing in a 
 separate fxp_aux.c program.
+- 2023-01-31: significant precision improvement in the fxp_mul,
+now offering pretty much the same precision as fxp_mul_l while
+still only using ints (not longs,) and still being faster!
+The approach uses the distributive approach twice, now the second
+time within the frac part only.
