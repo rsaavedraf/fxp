@@ -40,6 +40,12 @@ refactored some utility functions related to testing in a
 separate fxp_aux.c program.
 - 2023-01-31: significant precision improvement in fxp_mul(),
 now offering pretty much the same precision as fxp_mul_l() while
-still only using ints (not longs,) and still being faster!
-The calculation uses the distributive approach twice, now the second
-time within the frac part only.
+still only using ints, no longs. The calculation uses the
+distributive approach twice, now the second time within the frac
+part only.
+- 2023-02-01: bug fixed in fxp_xtimes.c. After this fix,
+the true relative execution time of fxp_mul() is shown to be
+effectively ~6x that of fxp_mul_l(). This makes a lot of sense,
+and a similar ratio stands between fxp_div() and fxp_div_l().
+Both * and / operations implemented using longs are then
+significantly faster (~6x) than the int-only implementations.
