@@ -470,6 +470,7 @@ int fxp_mul_l(int fxp1, int fxp2)
         int v1, v2;
         v1 = (fxp1 >= 0)? fxp1: -fxp1;
         v2 = (fxp2 >= 0)? fxp2: -fxp2;
+
         unsigned long product = ((unsigned long) v1) * v2;
         if (product > fxp_max_lshifted) {
                 // Overflow, return infinity with the appropriate sign
@@ -786,8 +787,8 @@ int fxp_mul(int fxp1, int fxp2)
                 return ((fxp1 >= 0 && fxp2 >= 0) || (fxp1 < 0 && fxp2 < 0))?
                             FXP_POS_INF: FXP_NEG_INF;
         }
-        int pproduct = fxp_bin(pwsum, fxp_get_bin_frac(pfsum));
         // No overflow, return the appropriately signed product
+        int pproduct = fxp_bin(pwsum, fxp_get_bin_frac(pfsum));
         return ((fxp1 >= 0 && fxp2 >= 0) || (fxp1 < 0 && fxp2 < 0))?
                     pproduct: -pproduct;
 }

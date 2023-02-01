@@ -7,12 +7,12 @@
  * Example end of the ouput, for a system with an
  * Intel i7-6700K cpu, run on 2023-01-31:
  *
- *      add:    1.000000
- *      add_l:  1.006725
- *      mul:    1.104400
- *      mul_l:  1.481076
- *      div:    20.389730
- *      div_l:  3.252299
+ * add:    1.000000
+ * add_l:  1.009193
+ * mul:    8.523299
+ * mul_l:  1.487134
+ * div:    20.434878
+ * div_l:  3.249009
  *
  */
 
@@ -22,8 +22,8 @@
 #include "fxp.h"
 
 #define DASHES "================================================\n"
-#define MAX_NUMS 2000
-#define MAX_OPS  2000
+#define MAX_NUMS 10000
+#define MAX_OPS  500
 
 int main(void) {
 
@@ -99,9 +99,9 @@ int main(void) {
                         x = fxp_mul(n3, n2);
                         for (int j = 0; j < nvals; j++) {
                             y = val[j];
-                            x = fxp_add_l(n1, y);
-                            x = fxp_add_l(n2, y);
-                            x = fxp_add_l(n3, y);
+                            x = fxp_mul(n1, y);
+                            x = fxp_mul(n2, y);
+                            x = fxp_mul(n3, y);
                         }
                 }
                 t1 = clock();
