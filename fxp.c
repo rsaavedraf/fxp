@@ -17,12 +17,12 @@
 
 #include "fxp.h"
 #include <stdio.h>
-//#include <stdlib.h>
+#include <stdlib.h>
 //#include <assert.h>
 
 //Used when testing and debugging when trying to optimize division
-//#include "fxp_aux.h"
-//#define VERBOSE 1
+#include "fxp_aux.h"
+#define VERBOSE 1
 
 #define FXP_FRAC_BITS_MIN 4
 #define FXP_FRAC_BITS_DEF 12
@@ -143,30 +143,11 @@ int fxp_set_frac_bits(int nfracbits)
 
 /*
  * Automatically set the fractional max decimal to use.
- * It's value will be the integer containing only nines
- * that is > 0 and < fxp_frac_max.
- * I.e., for fxp_frac_max = 4095 (frac with 12 bits,)
- * the fxp_frac_max_dec value will set to 999.
  * The number of nines in fxp_frac_max_dec will be
- * floor(fxp_frac_bits / 4), e.g. a nine for every 4 bits
+ * floor(fxp_frac_bits / 4), e.g. one nine for every 4 bits
  */
 int fxp_set_auto_frac_max_dec()
 {
-        /*
-        int current = 9;
-        int next = 99;
-        int maxnext = (FXP_MAX - 9) / 10;
-        while (next <= fxp_frac_mask) {
-                current = next;
-                next = (next * 10) + 9;
-                if (next >= maxnext) break;
-        }
-        // Too large a value here might overflow in the bin-to-dec
-        // conversion of fracs if using there only ints and not longs
-        // Just in case limit here up to FXP_FRAC_MAX_DEC
-        fxp_frac_max_dec = (current > FXP_FRAC_MAX_DEC?
-                                FXP_FRAC_MAX_DEC: current);
-        */
         int nnines = fxp_frac_bits / 4;
         fxp_frac_max_dec = 9;
         for (int i=1; i < nnines; i++) {
@@ -391,22 +372,6 @@ int fxp_add(int fxp1, int fxp2)
                 return (fxp2 > 0? FXP_POS_INF: FXP_NEG_INF);
         // No overflow danger, do sum
         return fxp1 + fxp2;
-
-        /*
-        // Equivalent to the code above, but checking first
-        // if arguments have the same signs or not
-        if ((fxp1 >= 0 && fxp2 >= 0) || (fxp1 < 0) && (fxp2 < 0)) {
-                // Same signs, check for possible overflow
-                if (fxp1 > 0)
-                        return (FXP_MAX - fxp1 < fxp2)?
-                                    FXP_POS_INF: fxp1 + fxp2;
-                else
-                        return (FXP_MAX + fxp1 < -fxp2)?
-                                    FXP_NEG_INF: fxp1 + fxp2;
-        };
-        // Arguments with different sign -> No overflow danger, do sum
-        return fxp1 + fxp2;
-        */
 }
 
 /*
@@ -437,11 +402,17 @@ int fxp_add_l(int fxp1, int fxp2)
  */
 int fxp_sub(int fxp1, int fxp2)
 {
+        // Conservative check to never attempt to change sign
+        // to the true most negative int (aka. FXP_UNDEF)
+        if (fxp2 == FXP_UNDEF) return FXP_UNDEF;
         return fxp_add(fxp1, -fxp2);
 }
 
 int fxp_sub_l(int fxp1, int fxp2)
 {
+        // Conservative check to never attempt to change sign
+        // to the true most negative int (aka. FXP_UNDEF)
+        if (fxp2 == FXP_UNDEF) return FXP_UNDEF;
         return fxp_add_l(fxp1, -fxp2);
 }
 
@@ -483,69 +454,6 @@ int fxp_mul_l(int fxp1, int fxp2)
                         (int) product: -((int) product);
 }
 
-
-// Note: both fxp_mul_l and fxp_mul_d use longs,
-// but fxp_mul_l is clearly more efficient.
-// No reason to choose fxp_mul_d over it.
-
-/*
- * Safe implementation of fxp multiplication checking for
- * overflows using divisions, and using longs.
- * Only applicable for systems in which
- * sizeof(long) > sizeof(int)
- *
-int fxp_mul_d(int fxp1, int fxp2)
-{
-        if (fxp1 == FXP_UNDEF || fxp2 == FXP_UNDEF)
-                return FXP_UNDEF;
-        if (fxp1 == FXP_POS_INF || fxp2 == FXP_POS_INF) {
-                if (fxp1 == 0 || fxp2 == 0)
-                        return FXP_UNDEF;
-                else
-                        return (fxp1 < 0 || fxp2 < 0)?
-                                FXP_NEG_INF: FXP_POS_INF;
-        }
-        if (fxp1 == FXP_NEG_INF || fxp2 == FXP_NEG_INF) {
-                if (fxp1 == 0 || fxp2 == 0)
-                        return FXP_UNDEF;
-                return (fxp1 > 0 || fxp2 > 0)?
-                                FXP_NEG_INF: FXP_POS_INF;
-        }
-        if (fxp1 > 0) {
-                if (fxp2 > 0) {
-                        // both positive
-                        if ((fxp2 > fxp_frac_mask) &&
-                                (fxp1 > fxp_unsafe_div(FXP_MAX, fxp2))) {
-                                return FXP_POS_INF;
-                        }
-                } else {
-                        // fxp2 non-positive
-                        if ((fxp1 > fxp_frac_mask) &&
-                                (fxp2 < fxp_unsafe_div(FXP_MIN, fxp1))) {
-                                return FXP_NEG_INF;
-                        }
-                }
-        } else {
-                // fxp1 non-positive
-                if (fxp2 > 0) {
-                        // fxp2 positive
-                        if ((fxp2 > fxp_frac_mask) &&
-                                (fxp1 < fxp_unsafe_div(FXP_MIN, fxp2))) {
-                                return FXP_NEG_INF;
-                        }
-                } else {
-                        // both non-positive
-                        if ((-fxp1 > fxp_frac_mask) &&
-                                (fxp2 < fxp_unsafe_div(FXP_MAX, fxp1))) {
-                                return FXP_POS_INF;
-                        }
-                }
-        }
-        long prod = ((long) fxp1) * fxp2;
-        return (int) (prod >> fxp_frac_bits);
-}
-*/
-
 /*
 Return number of bits used by x, that is,
 most significant bit in x that is a 1
@@ -556,35 +464,7 @@ int fxp_nbits(unsigned int x)
     if (x == 0) return 0;
     // Replacing with gcc builtin function that counts leading zeros
     return FXP_INT_BITS - __builtin_clz(x);
-    /*
-    int onebitnum, nb = 1;
-    //printf("max_bits: %d\n", max_bits);
-    int chunksize = FXP_INT_BITS_HALF;
-    while (chunksize > 0) {
-            //printf("\tchunksize: %d\n", chunksize);
-            onebitnum = 1 << chunksize;
-            if (x >= onebitnum) {
-                    nb += chunksize;
-                    x = (x >> chunksize);
-                    //printf("\t\tnb:%d, x:%d\n", nb, x);
-            }
-            chunksize /= 2;
-    }
-    //printf("\tFinal nb:%d\n\n", nb);
-    return nb;
-    */
 }
-
-/*
-//Simpler code to count the # of bits, but less efficient
-int fxp_nbits_v0(unsigned int x, int max_bits)
-{
-    if (x == 0) return 0;
-    int nb = FXP_INT_BITS - 1;
-    while (!(x & (1 << nb))) nb--;
-    return nb + 1;
-}
-*/
 
 /*
  * Safe implementation of fxp multiplication using only ints.
@@ -666,7 +546,8 @@ int fxp_mul(int fxp1, int fxp2)
         nbb = fxp_nbits(b);
 
         int pw1 = a * b;
-        if ((nba + nbb > fxp_whole_bits) || (pw1 > fxp_whole_max)) {
+        //if ((nba + nbb > fxp_whole_bits) || (pw1 > fxp_whole_max)) {
+        if (nba + nbb > fxp_whole_bits) {
                 // The product will for sure overflow just by
                 // multiplying the whole parts.
                 // Return appropriately signed infinity
@@ -685,29 +566,17 @@ int fxp_mul(int fxp1, int fxp2)
         int pf1 = fxp_get_bin_frac(ay);
         int pf2 = fxp_get_bin_frac(bx);
         int pf3;
-        if (nbx + nby > FXP_INT_BITS_M1) {
+        if (nbx + nby <= FXP_INT_BITS_M1) {
+            // We have room to simply multiply x * y, then shift
+            pf3 = (x * y) >> fxp_frac_bits;
+        } else {
             /*
-            // To calculate pf3, lose least significant bits if
-            // necessary to be able to safely multiply the
-            // shortened x and y within a positive int
-            int lostbits = 0;
-            while (nbx + nby > FXP_INT_BITS_M1) {
-                    if (x > y) {
-                            x = (x >> 1);
-                            nbx--;
-                    } else {
-                            y = (y >> 1);
-                            nby--;
-                    }
-                    lostbits++;
-            }
-            pf3 = (x * y) >> (fxp_frac_bits - lostbits);
-            */
-            /*
-             * Below an improved method to compute pf3, using again a
-             * distributive scheme, not with whole vs. frac parts
-             * (we are here all within fraction parts after all,)
-             * but with left and right chunks of the frac parts:
+             * Below an improved method to compute pf3 when we do not
+             * have enough room in an int to multiply x * y.
+             * This method uses again a distributive scheme, not with
+             * whole vs. frac parts (we are here all within fraction
+             * parts after all,) but with left and right chunks of the
+             * frac parts:
              * x = (xl << subshift) | xr
              * y = (yl << subshift) | yr
              *
@@ -727,7 +596,7 @@ int fxp_mul(int fxp1, int fxp2)
              * Final pf3 will then  lchunk == qlsum, the most
              * significant part of the product of the frac parts
              */
-            int flen, submaskl, submaskr, subshift;
+            int submaskl, submaskr, subshift;
             int oddnfb = fxp_frac_bits % 2;
             if (fxp_frac_bits == FXP_INT_BITS_M1) {
                 // Eliminate the very lowest significant bit of each
@@ -756,14 +625,12 @@ int fxp_mul(int fxp1, int fxp2)
             int ql3 = (ylxr & fxp_frac_maskl) >> fxp_frac_mshift;
             int ql4 = (qrsum & fxp_frac_maskl) >> fxp_frac_mshift;
             pf3 = ql1 + ql2 + ql3 + ql4;
-            // Now adjust depending on value of oddnfb
+            // Now final adjustment shift depending on value of oddnfb
             if (oddnfb > 0) {
                 pf3 = pf3 >> 1;
             } else if (oddnfb < 0) {
                 pf3 = pf3 << 1;
             }
-        } else {
-            pf3 = (x * y) >> fxp_frac_bits;
         }
         // We must sum safely since there might not be enough whole
         // bits to hold the carry on from just the sum of these three
@@ -792,7 +659,6 @@ int fxp_mul(int fxp1, int fxp2)
         return ((fxp1 >= 0 && fxp2 >= 0) || (fxp1 < 0 && fxp2 < 0))?
                     pproduct: -pproduct;
 }
-
 
 /*
  * Safe implementation of fxp division using only integers.
@@ -832,7 +698,8 @@ int fxp_div(int fxp1, int fxp2)
         //int ba, difference = 0, qbits = 0;
         if (by == FXP_INT_BITS_M1) {
                 // Border case, we need to shrink the divisor so that
-                // the minuend can still have 1 more bit
+                // the minuend can still have 1 more bit for the cases
+                // when m < y
                 y = (y >> 1);
                 by--;
                 //if (VERBOSE) printf("\n\t\tNew shrinked divisor %d\n\n", y);

@@ -89,6 +89,12 @@ Largest + tiniest safe
 Largest + tiniest unsafe
 	got: +INF
 	exp. +INF (~same)
+-(+inf)
+	got: -INF
+	exp. -INF (~same)
+-(-inf)
+	got: +INF
+	exp. +INF (~same)
 +inf + +inf
 	got: +INF
 	exp. +INF (~same)
@@ -128,6 +134,9 @@ zero + zero
 zero - zero
 	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
 	exp. 0.000000 (~same)
+zero - undef
+	got: UNDEF
+	exp. UNDEF (~same)
 -num / zero
 	got: -INF
 	exp. -INF (~same)
@@ -1326,6 +1335,12 @@ Largest + tiniest safe
 Largest + tiniest unsafe
 	got: +INF
 	exp. +INF (~same)
+-(+inf)
+	got: -INF
+	exp. -INF (~same)
+-(-inf)
+	got: +INF
+	exp. +INF (~same)
 +inf + +inf
 	got: +INF
 	exp. +INF (~same)
@@ -1365,6 +1380,9 @@ zero + zero
 zero - zero
 	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
 	exp. 0.000000 (~same)
+zero - undef
+	got: UNDEF
+	exp. UNDEF (~same)
 -num / zero
 	got: -INF
 	exp. -INF (~same)
@@ -2563,6 +2581,12 @@ Largest + tiniest safe
 Largest + tiniest unsafe
 	got: +INF
 	exp. +INF (~same)
+-(+inf)
+	got: -INF
+	exp. -INF (~same)
+-(-inf)
+	got: +INF
+	exp. +INF (~same)
 +inf + +inf
 	got: +INF
 	exp. +INF (~same)
@@ -2602,6 +2626,9 @@ zero + zero
 zero - zero
 	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
 	exp. 0.000000 (~same)
+zero - undef
+	got: UNDEF
+	exp. UNDEF (~same)
 -num / zero
 	got: -INF
 	exp. -INF (~same)
@@ -3800,6 +3827,12 @@ Largest + tiniest safe
 Largest + tiniest unsafe
 	got: +INF
 	exp. +INF (~same)
+-(+inf)
+	got: -INF
+	exp. -INF (~same)
+-(-inf)
+	got: +INF
+	exp. +INF (~same)
 +inf + +inf
 	got: +INF
 	exp. +INF (~same)
@@ -3839,6 +3872,9 @@ zero + zero
 zero - zero
 	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
 	exp. 0.000000 (~same)
+zero - undef
+	got: UNDEF
+	exp. UNDEF (~same)
 -num / zero
 	got: -INF
 	exp. -INF (~same)
@@ -5037,6 +5073,12 @@ Largest + tiniest safe
 Largest + tiniest unsafe
 	got: +INF
 	exp. +INF (~same)
+-(+inf)
+	got: -INF
+	exp. -INF (~same)
+-(-inf)
+	got: +INF
+	exp. +INF (~same)
 +inf + +inf
 	got: +INF
 	exp. +INF (~same)
@@ -5076,6 +5118,9 @@ zero + zero
 zero - zero
 	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
 	exp. 0.000000 (~same)
+zero - undef
+	got: UNDEF
+	exp. UNDEF (~same)
 -num / zero
 	got: -INF
 	exp. -INF (~same)
@@ -6274,6 +6319,12 @@ Largest + tiniest safe
 Largest + tiniest unsafe
 	got: +INF
 	exp. +INF (~same)
+-(+inf)
+	got: -INF
+	exp. -INF (~same)
+-(-inf)
+	got: +INF
+	exp. +INF (~same)
 +inf + +inf
 	got: +INF
 	exp. +INF (~same)
@@ -6313,6 +6364,9 @@ zero + zero
 zero - zero
 	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000000000000000000, 0 bits)
 	exp. 0.000000 (~same)
+zero - undef
+	got: UNDEF
+	exp. UNDEF (~same)
 -num / zero
 	got: -INF
 	exp. -INF (~same)

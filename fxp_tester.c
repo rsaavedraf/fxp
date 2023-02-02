@@ -127,9 +127,8 @@ static long double get_div_target(int x, int y)
     return target;
 }
 
-
-
-int main(void) {
+int main(void)
+{
         printf("%sFXP Tester run\n%s", DASHES, DASHES);
 
         printf("Num type sizes in this system:\n");
@@ -284,6 +283,12 @@ int main(void) {
                 test_fxp("Largest + tiniest unsafe",
                                 fxp_unsafe_add(fxp_largest, fxp_tiniest),
                                 dfxp_pos_inf());
+                test_fxp("-(+inf)",
+                                -FXP_POS_INF,
+                                dfxp_neg_inf());
+                test_fxp("-(-inf)",
+                                -FXP_NEG_INF,
+                                dfxp_pos_inf());
                 test_fxp("+inf + +inf",
                                 fxp_add(FXP_POS_INF, FXP_POS_INF),
                                 dfxp_pos_inf());
@@ -323,6 +328,9 @@ int main(void) {
                 test_fxp("zero - zero",
                                 fxp_sub(fxp(0), fxp(0)),
                                 0.0);
+                test_fxp("zero - undef",
+                                fxp_sub(fxp(0), FXP_UNDEF),
+                                dfxp_undef());
                 test_fxp("-num / zero",
                                 fxp_div(-fxp_largest, fxp(0)),
                                 dfxp_neg_inf());
@@ -366,7 +374,7 @@ int main(void) {
                                 fxp_unsafe_add(fxp_largest, fxp_two),
                                 dfxp(fxp_largest + fxp_two));
                 test_fxp("Safe Too neg substraction",
-                                fxp_sub( -fxp_largest, fxp_one),
+                                fxp_sub( -fxp_largest, fxp_p5),
                                 dfxp_neg_inf());
                 test_fxp("Unsafe Too neg substraction",
                                 fxp_unsafe_sub( -fxp_largest, fxp_p5),
