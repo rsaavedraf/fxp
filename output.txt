@@ -356,480 +356,480 @@ Ok sum == -2
 	got: 0.  2 (=Lf:0.187500 = 3 = x3 = b.0011, 2 bits)
 	exp. 0.187500 (~same)
 
-Verifying multiplication with values of interest:
+Verifying divisions with values of interest:
 x: UNDEF
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: UNDEF
 y: +INF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: UNDEF
 y: -INF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: UNDEF
 y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: UNDEF
 y: 1.  0 (=Lf:1.000000 = 16 = x10 = b1.0000, 5 bits)
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: +INF
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: +INF
 y: +INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
 x: +INF
 y: -INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
 x: +INF
 y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
-mul  (x*y)
-	got: UNDEF
-	exp. -INF (~same)
+div  (x/y)
+	got: +INF
+	exp. +INF (~same)
 x: +INF
 y: 1.  0 (=Lf:1.000000 = 16 = x10 = b1.0000, 5 bits)
-mul  (x*y)
+div  (x/y)
 	got: +INF
 	exp. +INF (~same)
 x: 134217727.  9 (=Lf:134217727.875000 = 2147483646 = x7ffffffe = b111111111111111111111111111.1110, 31 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: 134217727.  9 (=Lf:134217727.875000 = 2147483646 = x7ffffffe = b111111111111111111111111111.1110, 31 bits)
 y: +INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: 134217727.  9 (=Lf:134217727.875000 = 2147483646 = x7ffffffe = b111111111111111111111111111.1110, 31 bits)
-y: -INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: 134217727.  9 (=Lf:134217727.875000 = 2147483646 = x7ffffffe = b111111111111111111111111111.1110, 31 bits)
-y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
 	exp. 0.000000 (~same)
 x: 134217727.  9 (=Lf:134217727.875000 = 2147483646 = x7ffffffe = b111111111111111111111111111.1110, 31 bits)
+y: -INF
+div  (x/y)
+	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
+	exp. 0.000000 (~same)
+x: 134217727.  9 (=Lf:134217727.875000 = 2147483646 = x7ffffffe = b111111111111111111111111111.1110, 31 bits)
+y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
+div  (x/y)
+	got: +INF
+	exp. +INF (~same)
+x: 134217727.  9 (=Lf:134217727.875000 = 2147483646 = x7ffffffe = b111111111111111111111111111.1110, 31 bits)
 y: 1.  0 (=Lf:1.000000 = 16 = x10 = b1.0000, 5 bits)
-mul  (x*y)
+div  (x/y)
 	got: 134217727.  9 (=Lf:134217727.875000 = 2147483646 = x7ffffffe = b111111111111111111111111111.1110, 31 bits)
 	exp. 134217727.875000 (~same)
 x: 300000.  0 (=Lf:300000.000000 = 4800000 = x493e00 = b1001001001111100000.0000, 23 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: 300000.  0 (=Lf:300000.000000 = 4800000 = x493e00 = b1001001001111100000.0000, 23 bits)
 y: +INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: 300000.  0 (=Lf:300000.000000 = 4800000 = x493e00 = b1001001001111100000.0000, 23 bits)
-y: -INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: 300000.  0 (=Lf:300000.000000 = 4800000 = x493e00 = b1001001001111100000.0000, 23 bits)
-y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
 	exp. 0.000000 (~same)
 x: 300000.  0 (=Lf:300000.000000 = 4800000 = x493e00 = b1001001001111100000.0000, 23 bits)
+y: -INF
+div  (x/y)
+	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
+	exp. 0.000000 (~same)
+x: 300000.  0 (=Lf:300000.000000 = 4800000 = x493e00 = b1001001001111100000.0000, 23 bits)
+y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
+div  (x/y)
+	got: +INF
+	exp. +INF (~same)
+x: 300000.  0 (=Lf:300000.000000 = 4800000 = x493e00 = b1001001001111100000.0000, 23 bits)
 y: 1.  0 (=Lf:1.000000 = 16 = x10 = b1.0000, 5 bits)
-mul  (x*y)
+div  (x/y)
 	got: 300000.  0 (=Lf:300000.000000 = 4800000 = x493e00 = b1001001001111100000.0000, 23 bits)
 	exp. 300000.000000 (~same)
 x: 3000.  5 (=Lf:3000.500000 = 48008 = xbb88 = b101110111000.1000, 16 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: 3000.  5 (=Lf:3000.500000 = 48008 = xbb88 = b101110111000.1000, 16 bits)
 y: +INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: 3000.  5 (=Lf:3000.500000 = 48008 = xbb88 = b101110111000.1000, 16 bits)
-y: -INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: 3000.  5 (=Lf:3000.500000 = 48008 = xbb88 = b101110111000.1000, 16 bits)
-y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
 	exp. 0.000000 (~same)
 x: 3000.  5 (=Lf:3000.500000 = 48008 = xbb88 = b101110111000.1000, 16 bits)
+y: -INF
+div  (x/y)
+	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
+	exp. 0.000000 (~same)
+x: 3000.  5 (=Lf:3000.500000 = 48008 = xbb88 = b101110111000.1000, 16 bits)
+y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
+div  (x/y)
+	got: +INF
+	exp. +INF (~same)
+x: 3000.  5 (=Lf:3000.500000 = 48008 = xbb88 = b101110111000.1000, 16 bits)
 y: 1.  0 (=Lf:1.000000 = 16 = x10 = b1.0000, 5 bits)
-mul  (x*y)
+div  (x/y)
 	got: 3000.  5 (=Lf:3000.500000 = 48008 = xbb88 = b101110111000.1000, 16 bits)
 	exp. 3000.500000 (~same)
 x: 300.  0 (=Lf:300.000000 = 4800 = x12c0 = b100101100.0000, 13 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: 300.  0 (=Lf:300.000000 = 4800 = x12c0 = b100101100.0000, 13 bits)
 y: +INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: 300.  0 (=Lf:300.000000 = 4800 = x12c0 = b100101100.0000, 13 bits)
-y: -INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: 300.  0 (=Lf:300.000000 = 4800 = x12c0 = b100101100.0000, 13 bits)
-y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
 	exp. 0.000000 (~same)
 x: 300.  0 (=Lf:300.000000 = 4800 = x12c0 = b100101100.0000, 13 bits)
+y: -INF
+div  (x/y)
+	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
+	exp. 0.000000 (~same)
+x: 300.  0 (=Lf:300.000000 = 4800 = x12c0 = b100101100.0000, 13 bits)
+y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
+div  (x/y)
+	got: +INF
+	exp. +INF (~same)
+x: 300.  0 (=Lf:300.000000 = 4800 = x12c0 = b100101100.0000, 13 bits)
 y: 1.  0 (=Lf:1.000000 = 16 = x10 = b1.0000, 5 bits)
-mul  (x*y)
+div  (x/y)
 	got: 300.  0 (=Lf:300.000000 = 4800 = x12c0 = b100101100.0000, 13 bits)
 	exp. 300.000000 (~same)
 x: 30.  0 (=Lf:30.000000 = 480 = x1e0 = b11110.0000, 9 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: 30.  0 (=Lf:30.000000 = 480 = x1e0 = b11110.0000, 9 bits)
 y: +INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: 30.  0 (=Lf:30.000000 = 480 = x1e0 = b11110.0000, 9 bits)
-y: -INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: 30.  0 (=Lf:30.000000 = 480 = x1e0 = b11110.0000, 9 bits)
-y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
 	exp. 0.000000 (~same)
 x: 30.  0 (=Lf:30.000000 = 480 = x1e0 = b11110.0000, 9 bits)
+y: -INF
+div  (x/y)
+	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
+	exp. 0.000000 (~same)
+x: 30.  0 (=Lf:30.000000 = 480 = x1e0 = b11110.0000, 9 bits)
+y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
+div  (x/y)
+	got: +INF
+	exp. +INF (~same)
+x: 30.  0 (=Lf:30.000000 = 480 = x1e0 = b11110.0000, 9 bits)
 y: 1.  0 (=Lf:1.000000 = 16 = x10 = b1.0000, 5 bits)
-mul  (x*y)
+div  (x/y)
 	got: 30.  0 (=Lf:30.000000 = 480 = x1e0 = b11110.0000, 9 bits)
 	exp. 30.000000 (~same)
 x: 3.  0 (=Lf:3.000000 = 48 = x30 = b11.0000, 6 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: 3.  0 (=Lf:3.000000 = 48 = x30 = b11.0000, 6 bits)
 y: +INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: 3.  0 (=Lf:3.000000 = 48 = x30 = b11.0000, 6 bits)
-y: -INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: 3.  0 (=Lf:3.000000 = 48 = x30 = b11.0000, 6 bits)
-y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
 	exp. 0.000000 (~same)
 x: 3.  0 (=Lf:3.000000 = 48 = x30 = b11.0000, 6 bits)
+y: -INF
+div  (x/y)
+	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
+	exp. 0.000000 (~same)
+x: 3.  0 (=Lf:3.000000 = 48 = x30 = b11.0000, 6 bits)
+y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
+div  (x/y)
+	got: +INF
+	exp. +INF (~same)
+x: 3.  0 (=Lf:3.000000 = 48 = x30 = b11.0000, 6 bits)
 y: 1.  0 (=Lf:1.000000 = 16 = x10 = b1.0000, 5 bits)
-mul  (x*y)
+div  (x/y)
 	got: 3.  0 (=Lf:3.000000 = 48 = x30 = b11.0000, 6 bits)
 	exp. 3.000000 (~same)
 x: 2.  0 (=Lf:2.000000 = 32 = x20 = b10.0000, 6 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: 2.  0 (=Lf:2.000000 = 32 = x20 = b10.0000, 6 bits)
 y: +INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: 2.  0 (=Lf:2.000000 = 32 = x20 = b10.0000, 6 bits)
-y: -INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: 2.  0 (=Lf:2.000000 = 32 = x20 = b10.0000, 6 bits)
-y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
 	exp. 0.000000 (~same)
 x: 2.  0 (=Lf:2.000000 = 32 = x20 = b10.0000, 6 bits)
+y: -INF
+div  (x/y)
+	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
+	exp. 0.000000 (~same)
+x: 2.  0 (=Lf:2.000000 = 32 = x20 = b10.0000, 6 bits)
+y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
+div  (x/y)
+	got: +INF
+	exp. +INF (~same)
+x: 2.  0 (=Lf:2.000000 = 32 = x20 = b10.0000, 6 bits)
 y: 1.  0 (=Lf:1.000000 = 16 = x10 = b1.0000, 5 bits)
-mul  (x*y)
+div  (x/y)
 	got: 2.  0 (=Lf:2.000000 = 32 = x20 = b10.0000, 6 bits)
 	exp. 2.000000 (~same)
 x: 1.  0 (=Lf:1.000000 = 16 = x10 = b1.0000, 5 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: 1.  0 (=Lf:1.000000 = 16 = x10 = b1.0000, 5 bits)
 y: +INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: 1.  0 (=Lf:1.000000 = 16 = x10 = b1.0000, 5 bits)
-y: -INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: 1.  0 (=Lf:1.000000 = 16 = x10 = b1.0000, 5 bits)
-y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
 	exp. 0.000000 (~same)
 x: 1.  0 (=Lf:1.000000 = 16 = x10 = b1.0000, 5 bits)
+y: -INF
+div  (x/y)
+	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
+	exp. 0.000000 (~same)
+x: 1.  0 (=Lf:1.000000 = 16 = x10 = b1.0000, 5 bits)
+y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
+div  (x/y)
+	got: +INF
+	exp. +INF (~same)
+x: 1.  0 (=Lf:1.000000 = 16 = x10 = b1.0000, 5 bits)
 y: 1.  0 (=Lf:1.000000 = 16 = x10 = b1.0000, 5 bits)
-mul  (x*y)
+div  (x/y)
 	got: 1.  0 (=Lf:1.000000 = 16 = x10 = b1.0000, 5 bits)
 	exp. 1.000000 (~same)
 x: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
 y: +INF
-mul  (x*y)
-	got: UNDEF
-	exp. -INF (~same)
-x: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
-y: -INF
-mul  (x*y)
-	got: UNDEF
-	exp. -INF (~same)
-x: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
-y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
 	exp. 0.000000 (~same)
 x: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
+y: -INF
+div  (x/y)
+	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
+	exp. 0.000000 (~same)
+x: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
+y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
+x: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
 y: 1.  0 (=Lf:1.000000 = 16 = x10 = b1.0000, 5 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
 	exp. 0.000000 (~same)
 x: -1.  0 (=Lf:-1.000000 = -16 = x(-)10 = b(-)1.0000, 5 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: -1.  0 (=Lf:-1.000000 = -16 = x(-)10 = b(-)1.0000, 5 bits)
 y: +INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: -1.  0 (=Lf:-1.000000 = -16 = x(-)10 = b(-)1.0000, 5 bits)
-y: -INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: -1.  0 (=Lf:-1.000000 = -16 = x(-)10 = b(-)1.0000, 5 bits)
-y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
 	exp. 0.000000 (~same)
 x: -1.  0 (=Lf:-1.000000 = -16 = x(-)10 = b(-)1.0000, 5 bits)
+y: -INF
+div  (x/y)
+	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
+	exp. 0.000000 (~same)
+x: -1.  0 (=Lf:-1.000000 = -16 = x(-)10 = b(-)1.0000, 5 bits)
+y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
+div  (x/y)
+	got: -INF
+	exp. -INF (~same)
+x: -1.  0 (=Lf:-1.000000 = -16 = x(-)10 = b(-)1.0000, 5 bits)
 y: 1.  0 (=Lf:1.000000 = 16 = x10 = b1.0000, 5 bits)
-mul  (x*y)
+div  (x/y)
 	got: -1.  0 (=Lf:-1.000000 = -16 = x(-)10 = b(-)1.0000, 5 bits)
 	exp. -1.000000 (~same)
 x: -2.  0 (=Lf:-2.000000 = -32 = x(-)20 = b(-)10.0000, 6 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: -2.  0 (=Lf:-2.000000 = -32 = x(-)20 = b(-)10.0000, 6 bits)
 y: +INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: -2.  0 (=Lf:-2.000000 = -32 = x(-)20 = b(-)10.0000, 6 bits)
-y: -INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: -2.  0 (=Lf:-2.000000 = -32 = x(-)20 = b(-)10.0000, 6 bits)
-y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
 	exp. 0.000000 (~same)
 x: -2.  0 (=Lf:-2.000000 = -32 = x(-)20 = b(-)10.0000, 6 bits)
+y: -INF
+div  (x/y)
+	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
+	exp. 0.000000 (~same)
+x: -2.  0 (=Lf:-2.000000 = -32 = x(-)20 = b(-)10.0000, 6 bits)
+y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
+div  (x/y)
+	got: -INF
+	exp. -INF (~same)
+x: -2.  0 (=Lf:-2.000000 = -32 = x(-)20 = b(-)10.0000, 6 bits)
 y: 1.  0 (=Lf:1.000000 = 16 = x10 = b1.0000, 5 bits)
-mul  (x*y)
+div  (x/y)
 	got: -2.  0 (=Lf:-2.000000 = -32 = x(-)20 = b(-)10.0000, 6 bits)
 	exp. -2.000000 (~same)
 x: -3.  0 (=Lf:-3.000000 = -48 = x(-)30 = b(-)11.0000, 6 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: -3.  0 (=Lf:-3.000000 = -48 = x(-)30 = b(-)11.0000, 6 bits)
 y: +INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: -3.  0 (=Lf:-3.000000 = -48 = x(-)30 = b(-)11.0000, 6 bits)
-y: -INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: -3.  0 (=Lf:-3.000000 = -48 = x(-)30 = b(-)11.0000, 6 bits)
-y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
 	exp. 0.000000 (~same)
 x: -3.  0 (=Lf:-3.000000 = -48 = x(-)30 = b(-)11.0000, 6 bits)
+y: -INF
+div  (x/y)
+	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
+	exp. 0.000000 (~same)
+x: -3.  0 (=Lf:-3.000000 = -48 = x(-)30 = b(-)11.0000, 6 bits)
+y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
+div  (x/y)
+	got: -INF
+	exp. -INF (~same)
+x: -3.  0 (=Lf:-3.000000 = -48 = x(-)30 = b(-)11.0000, 6 bits)
 y: 1.  0 (=Lf:1.000000 = 16 = x10 = b1.0000, 5 bits)
-mul  (x*y)
+div  (x/y)
 	got: -3.  0 (=Lf:-3.000000 = -48 = x(-)30 = b(-)11.0000, 6 bits)
 	exp. -3.000000 (~same)
 x: -30.  0 (=Lf:-30.000000 = -480 = x(-)1e0 = b(-)11110.0000, 9 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: -30.  0 (=Lf:-30.000000 = -480 = x(-)1e0 = b(-)11110.0000, 9 bits)
 y: +INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: -30.  0 (=Lf:-30.000000 = -480 = x(-)1e0 = b(-)11110.0000, 9 bits)
-y: -INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: -30.  0 (=Lf:-30.000000 = -480 = x(-)1e0 = b(-)11110.0000, 9 bits)
-y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
 	exp. 0.000000 (~same)
 x: -30.  0 (=Lf:-30.000000 = -480 = x(-)1e0 = b(-)11110.0000, 9 bits)
+y: -INF
+div  (x/y)
+	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
+	exp. 0.000000 (~same)
+x: -30.  0 (=Lf:-30.000000 = -480 = x(-)1e0 = b(-)11110.0000, 9 bits)
+y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
+div  (x/y)
+	got: -INF
+	exp. -INF (~same)
+x: -30.  0 (=Lf:-30.000000 = -480 = x(-)1e0 = b(-)11110.0000, 9 bits)
 y: 1.  0 (=Lf:1.000000 = 16 = x10 = b1.0000, 5 bits)
-mul  (x*y)
+div  (x/y)
 	got: -30.  0 (=Lf:-30.000000 = -480 = x(-)1e0 = b(-)11110.0000, 9 bits)
 	exp. -30.000000 (~same)
 x: -300.  0 (=Lf:-300.000000 = -4800 = x(-)12c0 = b(-)100101100.0000, 13 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: -300.  0 (=Lf:-300.000000 = -4800 = x(-)12c0 = b(-)100101100.0000, 13 bits)
 y: +INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: -300.  0 (=Lf:-300.000000 = -4800 = x(-)12c0 = b(-)100101100.0000, 13 bits)
-y: -INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: -300.  0 (=Lf:-300.000000 = -4800 = x(-)12c0 = b(-)100101100.0000, 13 bits)
-y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
 	exp. 0.000000 (~same)
 x: -300.  0 (=Lf:-300.000000 = -4800 = x(-)12c0 = b(-)100101100.0000, 13 bits)
+y: -INF
+div  (x/y)
+	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
+	exp. 0.000000 (~same)
+x: -300.  0 (=Lf:-300.000000 = -4800 = x(-)12c0 = b(-)100101100.0000, 13 bits)
+y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
+div  (x/y)
+	got: -INF
+	exp. -INF (~same)
+x: -300.  0 (=Lf:-300.000000 = -4800 = x(-)12c0 = b(-)100101100.0000, 13 bits)
 y: 1.  0 (=Lf:1.000000 = 16 = x10 = b1.0000, 5 bits)
-mul  (x*y)
+div  (x/y)
 	got: -300.  0 (=Lf:-300.000000 = -4800 = x(-)12c0 = b(-)100101100.0000, 13 bits)
 	exp. -300.000000 (~same)
 x: -3000. -5 (=Lf:-3000.500000 = -48008 = x(-)bb88 = b(-)101110111000.1000, 16 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: -3000. -5 (=Lf:-3000.500000 = -48008 = x(-)bb88 = b(-)101110111000.1000, 16 bits)
 y: +INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: -3000. -5 (=Lf:-3000.500000 = -48008 = x(-)bb88 = b(-)101110111000.1000, 16 bits)
-y: -INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: -3000. -5 (=Lf:-3000.500000 = -48008 = x(-)bb88 = b(-)101110111000.1000, 16 bits)
-y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
 	exp. 0.000000 (~same)
 x: -3000. -5 (=Lf:-3000.500000 = -48008 = x(-)bb88 = b(-)101110111000.1000, 16 bits)
+y: -INF
+div  (x/y)
+	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
+	exp. 0.000000 (~same)
+x: -3000. -5 (=Lf:-3000.500000 = -48008 = x(-)bb88 = b(-)101110111000.1000, 16 bits)
+y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
+div  (x/y)
+	got: -INF
+	exp. -INF (~same)
+x: -3000. -5 (=Lf:-3000.500000 = -48008 = x(-)bb88 = b(-)101110111000.1000, 16 bits)
 y: 1.  0 (=Lf:1.000000 = 16 = x10 = b1.0000, 5 bits)
-mul  (x*y)
+div  (x/y)
 	got: -3000. -5 (=Lf:-3000.500000 = -48008 = x(-)bb88 = b(-)101110111000.1000, 16 bits)
 	exp. -3000.500000 (~same)
 x: -300000.  0 (=Lf:-300000.000000 = -4800000 = x(-)493e00 = b(-)1001001001111100000.0000, 23 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: -300000.  0 (=Lf:-300000.000000 = -4800000 = x(-)493e00 = b(-)1001001001111100000.0000, 23 bits)
 y: +INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: -300000.  0 (=Lf:-300000.000000 = -4800000 = x(-)493e00 = b(-)1001001001111100000.0000, 23 bits)
-y: -INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: -300000.  0 (=Lf:-300000.000000 = -4800000 = x(-)493e00 = b(-)1001001001111100000.0000, 23 bits)
-y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
 	exp. 0.000000 (~same)
 x: -300000.  0 (=Lf:-300000.000000 = -4800000 = x(-)493e00 = b(-)1001001001111100000.0000, 23 bits)
+y: -INF
+div  (x/y)
+	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
+	exp. 0.000000 (~same)
+x: -300000.  0 (=Lf:-300000.000000 = -4800000 = x(-)493e00 = b(-)1001001001111100000.0000, 23 bits)
+y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
+div  (x/y)
+	got: -INF
+	exp. -INF (~same)
+x: -300000.  0 (=Lf:-300000.000000 = -4800000 = x(-)493e00 = b(-)1001001001111100000.0000, 23 bits)
 y: 1.  0 (=Lf:1.000000 = 16 = x10 = b1.0000, 5 bits)
-mul  (x*y)
+div  (x/y)
 	got: -300000.  0 (=Lf:-300000.000000 = -4800000 = x(-)493e00 = b(-)1001001001111100000.0000, 23 bits)
 	exp. -300000.000000 (~same)
 x: -134217727. -9 (=Lf:-134217727.875000 = -2147483646 = x(-)7ffffffe = b(-)111111111111111111111111111.1110, 31 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: -134217727. -9 (=Lf:-134217727.875000 = -2147483646 = x(-)7ffffffe = b(-)111111111111111111111111111.1110, 31 bits)
 y: +INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: -134217727. -9 (=Lf:-134217727.875000 = -2147483646 = x(-)7ffffffe = b(-)111111111111111111111111111.1110, 31 bits)
-y: -INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: -134217727. -9 (=Lf:-134217727.875000 = -2147483646 = x(-)7ffffffe = b(-)111111111111111111111111111.1110, 31 bits)
-y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
 	exp. 0.000000 (~same)
 x: -134217727. -9 (=Lf:-134217727.875000 = -2147483646 = x(-)7ffffffe = b(-)111111111111111111111111111.1110, 31 bits)
+y: -INF
+div  (x/y)
+	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
+	exp. 0.000000 (~same)
+x: -134217727. -9 (=Lf:-134217727.875000 = -2147483646 = x(-)7ffffffe = b(-)111111111111111111111111111.1110, 31 bits)
+y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
+div  (x/y)
+	got: -INF
+	exp. -INF (~same)
+x: -134217727. -9 (=Lf:-134217727.875000 = -2147483646 = x(-)7ffffffe = b(-)111111111111111111111111111.1110, 31 bits)
 y: 1.  0 (=Lf:1.000000 = 16 = x10 = b1.0000, 5 bits)
-mul  (x*y)
+div  (x/y)
 	got: -134217727. -9 (=Lf:-134217727.875000 = -2147483646 = x(-)7ffffffe = b(-)111111111111111111111111111.1110, 31 bits)
 	exp. -134217727.875000 (~same)
 
@@ -1593,480 +1593,480 @@ Ok sum == -2
 	got: 0. 24 (=Lf:0.249512 = 511 = x1ff = b.00111111111, 9 bits)
 	exp. 0.249512 (~same)
 
-Verifying multiplication with values of interest:
+Verifying divisions with values of interest:
 x: UNDEF
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: UNDEF
 y: +INF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: UNDEF
 y: -INF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: UNDEF
 y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: UNDEF
 y: 1.  0 (=Lf:1.000000 = 2048 = x800 = b1.00000000000, 12 bits)
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: +INF
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: +INF
 y: +INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
 x: +INF
 y: -INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
 x: +INF
 y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
-mul  (x*y)
-	got: UNDEF
-	exp. -INF (~same)
+div  (x/y)
+	got: +INF
+	exp. +INF (~same)
 x: +INF
 y: 1.  0 (=Lf:1.000000 = 2048 = x800 = b1.00000000000, 12 bits)
-mul  (x*y)
+div  (x/y)
 	got: +INF
 	exp. +INF (~same)
 x: 1048575. 99 (=Lf:1048575.999023 = 2147483646 = x7ffffffe = b11111111111111111111.11111111110, 31 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: 1048575. 99 (=Lf:1048575.999023 = 2147483646 = x7ffffffe = b11111111111111111111.11111111110, 31 bits)
 y: +INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: 1048575. 99 (=Lf:1048575.999023 = 2147483646 = x7ffffffe = b11111111111111111111.11111111110, 31 bits)
-y: -INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: 1048575. 99 (=Lf:1048575.999023 = 2147483646 = x7ffffffe = b11111111111111111111.11111111110, 31 bits)
-y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: 1048575. 99 (=Lf:1048575.999023 = 2147483646 = x7ffffffe = b11111111111111111111.11111111110, 31 bits)
+y: -INF
+div  (x/y)
+	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: 1048575. 99 (=Lf:1048575.999023 = 2147483646 = x7ffffffe = b11111111111111111111.11111111110, 31 bits)
+y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
+div  (x/y)
+	got: +INF
+	exp. +INF (~same)
+x: 1048575. 99 (=Lf:1048575.999023 = 2147483646 = x7ffffffe = b11111111111111111111.11111111110, 31 bits)
 y: 1.  0 (=Lf:1.000000 = 2048 = x800 = b1.00000000000, 12 bits)
-mul  (x*y)
+div  (x/y)
 	got: 1048575. 99 (=Lf:1048575.999023 = 2147483646 = x7ffffffe = b11111111111111111111.11111111110, 31 bits)
 	exp. 1048575.999023 (~same)
 x: 300000.  0 (=Lf:300000.000000 = 614400000 = x249f0000 = b1001001001111100000.00000000000, 30 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: 300000.  0 (=Lf:300000.000000 = 614400000 = x249f0000 = b1001001001111100000.00000000000, 30 bits)
 y: +INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: 300000.  0 (=Lf:300000.000000 = 614400000 = x249f0000 = b1001001001111100000.00000000000, 30 bits)
-y: -INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: 300000.  0 (=Lf:300000.000000 = 614400000 = x249f0000 = b1001001001111100000.00000000000, 30 bits)
-y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: 300000.  0 (=Lf:300000.000000 = 614400000 = x249f0000 = b1001001001111100000.00000000000, 30 bits)
+y: -INF
+div  (x/y)
+	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: 300000.  0 (=Lf:300000.000000 = 614400000 = x249f0000 = b1001001001111100000.00000000000, 30 bits)
+y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
+div  (x/y)
+	got: +INF
+	exp. +INF (~same)
+x: 300000.  0 (=Lf:300000.000000 = 614400000 = x249f0000 = b1001001001111100000.00000000000, 30 bits)
 y: 1.  0 (=Lf:1.000000 = 2048 = x800 = b1.00000000000, 12 bits)
-mul  (x*y)
+div  (x/y)
 	got: 300000.  0 (=Lf:300000.000000 = 614400000 = x249f0000 = b1001001001111100000.00000000000, 30 bits)
 	exp. 300000.000000 (~same)
 x: 3000.  5 (=Lf:3000.050293 = 6144103 = x5dc067 = b101110111000.00001100111, 23 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: 3000.  5 (=Lf:3000.050293 = 6144103 = x5dc067 = b101110111000.00001100111, 23 bits)
 y: +INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: 3000.  5 (=Lf:3000.050293 = 6144103 = x5dc067 = b101110111000.00001100111, 23 bits)
-y: -INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: 3000.  5 (=Lf:3000.050293 = 6144103 = x5dc067 = b101110111000.00001100111, 23 bits)
-y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: 3000.  5 (=Lf:3000.050293 = 6144103 = x5dc067 = b101110111000.00001100111, 23 bits)
+y: -INF
+div  (x/y)
+	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: 3000.  5 (=Lf:3000.050293 = 6144103 = x5dc067 = b101110111000.00001100111, 23 bits)
+y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
+div  (x/y)
+	got: +INF
+	exp. +INF (~same)
+x: 3000.  5 (=Lf:3000.050293 = 6144103 = x5dc067 = b101110111000.00001100111, 23 bits)
 y: 1.  0 (=Lf:1.000000 = 2048 = x800 = b1.00000000000, 12 bits)
-mul  (x*y)
+div  (x/y)
 	got: 3000.  5 (=Lf:3000.050293 = 6144103 = x5dc067 = b101110111000.00001100111, 23 bits)
 	exp. 3000.050293 (~same)
 x: 300.  0 (=Lf:300.000000 = 614400 = x96000 = b100101100.00000000000, 20 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: 300.  0 (=Lf:300.000000 = 614400 = x96000 = b100101100.00000000000, 20 bits)
 y: +INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: 300.  0 (=Lf:300.000000 = 614400 = x96000 = b100101100.00000000000, 20 bits)
-y: -INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: 300.  0 (=Lf:300.000000 = 614400 = x96000 = b100101100.00000000000, 20 bits)
-y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: 300.  0 (=Lf:300.000000 = 614400 = x96000 = b100101100.00000000000, 20 bits)
+y: -INF
+div  (x/y)
+	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: 300.  0 (=Lf:300.000000 = 614400 = x96000 = b100101100.00000000000, 20 bits)
+y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
+div  (x/y)
+	got: +INF
+	exp. +INF (~same)
+x: 300.  0 (=Lf:300.000000 = 614400 = x96000 = b100101100.00000000000, 20 bits)
 y: 1.  0 (=Lf:1.000000 = 2048 = x800 = b1.00000000000, 12 bits)
-mul  (x*y)
+div  (x/y)
 	got: 300.  0 (=Lf:300.000000 = 614400 = x96000 = b100101100.00000000000, 20 bits)
 	exp. 300.000000 (~same)
 x: 30.  0 (=Lf:30.000000 = 61440 = xf000 = b11110.00000000000, 16 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: 30.  0 (=Lf:30.000000 = 61440 = xf000 = b11110.00000000000, 16 bits)
 y: +INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: 30.  0 (=Lf:30.000000 = 61440 = xf000 = b11110.00000000000, 16 bits)
-y: -INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: 30.  0 (=Lf:30.000000 = 61440 = xf000 = b11110.00000000000, 16 bits)
-y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: 30.  0 (=Lf:30.000000 = 61440 = xf000 = b11110.00000000000, 16 bits)
+y: -INF
+div  (x/y)
+	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: 30.  0 (=Lf:30.000000 = 61440 = xf000 = b11110.00000000000, 16 bits)
+y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
+div  (x/y)
+	got: +INF
+	exp. +INF (~same)
+x: 30.  0 (=Lf:30.000000 = 61440 = xf000 = b11110.00000000000, 16 bits)
 y: 1.  0 (=Lf:1.000000 = 2048 = x800 = b1.00000000000, 12 bits)
-mul  (x*y)
+div  (x/y)
 	got: 30.  0 (=Lf:30.000000 = 61440 = xf000 = b11110.00000000000, 16 bits)
 	exp. 30.000000 (~same)
 x: 3.  0 (=Lf:3.000000 = 6144 = x1800 = b11.00000000000, 13 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: 3.  0 (=Lf:3.000000 = 6144 = x1800 = b11.00000000000, 13 bits)
 y: +INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: 3.  0 (=Lf:3.000000 = 6144 = x1800 = b11.00000000000, 13 bits)
-y: -INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: 3.  0 (=Lf:3.000000 = 6144 = x1800 = b11.00000000000, 13 bits)
-y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: 3.  0 (=Lf:3.000000 = 6144 = x1800 = b11.00000000000, 13 bits)
+y: -INF
+div  (x/y)
+	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: 3.  0 (=Lf:3.000000 = 6144 = x1800 = b11.00000000000, 13 bits)
+y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
+div  (x/y)
+	got: +INF
+	exp. +INF (~same)
+x: 3.  0 (=Lf:3.000000 = 6144 = x1800 = b11.00000000000, 13 bits)
 y: 1.  0 (=Lf:1.000000 = 2048 = x800 = b1.00000000000, 12 bits)
-mul  (x*y)
+div  (x/y)
 	got: 3.  0 (=Lf:3.000000 = 6144 = x1800 = b11.00000000000, 13 bits)
 	exp. 3.000000 (~same)
 x: 2.  0 (=Lf:2.000000 = 4096 = x1000 = b10.00000000000, 13 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: 2.  0 (=Lf:2.000000 = 4096 = x1000 = b10.00000000000, 13 bits)
 y: +INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: 2.  0 (=Lf:2.000000 = 4096 = x1000 = b10.00000000000, 13 bits)
-y: -INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: 2.  0 (=Lf:2.000000 = 4096 = x1000 = b10.00000000000, 13 bits)
-y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: 2.  0 (=Lf:2.000000 = 4096 = x1000 = b10.00000000000, 13 bits)
+y: -INF
+div  (x/y)
+	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: 2.  0 (=Lf:2.000000 = 4096 = x1000 = b10.00000000000, 13 bits)
+y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
+div  (x/y)
+	got: +INF
+	exp. +INF (~same)
+x: 2.  0 (=Lf:2.000000 = 4096 = x1000 = b10.00000000000, 13 bits)
 y: 1.  0 (=Lf:1.000000 = 2048 = x800 = b1.00000000000, 12 bits)
-mul  (x*y)
+div  (x/y)
 	got: 2.  0 (=Lf:2.000000 = 4096 = x1000 = b10.00000000000, 13 bits)
 	exp. 2.000000 (~same)
 x: 1.  0 (=Lf:1.000000 = 2048 = x800 = b1.00000000000, 12 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: 1.  0 (=Lf:1.000000 = 2048 = x800 = b1.00000000000, 12 bits)
 y: +INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: 1.  0 (=Lf:1.000000 = 2048 = x800 = b1.00000000000, 12 bits)
-y: -INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: 1.  0 (=Lf:1.000000 = 2048 = x800 = b1.00000000000, 12 bits)
-y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: 1.  0 (=Lf:1.000000 = 2048 = x800 = b1.00000000000, 12 bits)
+y: -INF
+div  (x/y)
+	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: 1.  0 (=Lf:1.000000 = 2048 = x800 = b1.00000000000, 12 bits)
+y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
+div  (x/y)
+	got: +INF
+	exp. +INF (~same)
+x: 1.  0 (=Lf:1.000000 = 2048 = x800 = b1.00000000000, 12 bits)
 y: 1.  0 (=Lf:1.000000 = 2048 = x800 = b1.00000000000, 12 bits)
-mul  (x*y)
+div  (x/y)
 	got: 1.  0 (=Lf:1.000000 = 2048 = x800 = b1.00000000000, 12 bits)
 	exp. 1.000000 (~same)
 x: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
 y: +INF
-mul  (x*y)
-	got: UNDEF
-	exp. -INF (~same)
-x: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
-y: -INF
-mul  (x*y)
-	got: UNDEF
-	exp. -INF (~same)
-x: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
-y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
+y: -INF
+div  (x/y)
+	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
+y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
+x: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
 y: 1.  0 (=Lf:1.000000 = 2048 = x800 = b1.00000000000, 12 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: -1.  0 (=Lf:-1.000000 = -2048 = x(-)800 = b(-)1.00000000000, 12 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: -1.  0 (=Lf:-1.000000 = -2048 = x(-)800 = b(-)1.00000000000, 12 bits)
 y: +INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: -1.  0 (=Lf:-1.000000 = -2048 = x(-)800 = b(-)1.00000000000, 12 bits)
-y: -INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: -1.  0 (=Lf:-1.000000 = -2048 = x(-)800 = b(-)1.00000000000, 12 bits)
-y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: -1.  0 (=Lf:-1.000000 = -2048 = x(-)800 = b(-)1.00000000000, 12 bits)
+y: -INF
+div  (x/y)
+	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: -1.  0 (=Lf:-1.000000 = -2048 = x(-)800 = b(-)1.00000000000, 12 bits)
+y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
+div  (x/y)
+	got: -INF
+	exp. -INF (~same)
+x: -1.  0 (=Lf:-1.000000 = -2048 = x(-)800 = b(-)1.00000000000, 12 bits)
 y: 1.  0 (=Lf:1.000000 = 2048 = x800 = b1.00000000000, 12 bits)
-mul  (x*y)
+div  (x/y)
 	got: -1.  0 (=Lf:-1.000000 = -2048 = x(-)800 = b(-)1.00000000000, 12 bits)
 	exp. -1.000000 (~same)
 x: -2.  0 (=Lf:-2.000000 = -4096 = x(-)1000 = b(-)10.00000000000, 13 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: -2.  0 (=Lf:-2.000000 = -4096 = x(-)1000 = b(-)10.00000000000, 13 bits)
 y: +INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: -2.  0 (=Lf:-2.000000 = -4096 = x(-)1000 = b(-)10.00000000000, 13 bits)
-y: -INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: -2.  0 (=Lf:-2.000000 = -4096 = x(-)1000 = b(-)10.00000000000, 13 bits)
-y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: -2.  0 (=Lf:-2.000000 = -4096 = x(-)1000 = b(-)10.00000000000, 13 bits)
+y: -INF
+div  (x/y)
+	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: -2.  0 (=Lf:-2.000000 = -4096 = x(-)1000 = b(-)10.00000000000, 13 bits)
+y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
+div  (x/y)
+	got: -INF
+	exp. -INF (~same)
+x: -2.  0 (=Lf:-2.000000 = -4096 = x(-)1000 = b(-)10.00000000000, 13 bits)
 y: 1.  0 (=Lf:1.000000 = 2048 = x800 = b1.00000000000, 12 bits)
-mul  (x*y)
+div  (x/y)
 	got: -2.  0 (=Lf:-2.000000 = -4096 = x(-)1000 = b(-)10.00000000000, 13 bits)
 	exp. -2.000000 (~same)
 x: -3.  0 (=Lf:-3.000000 = -6144 = x(-)1800 = b(-)11.00000000000, 13 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: -3.  0 (=Lf:-3.000000 = -6144 = x(-)1800 = b(-)11.00000000000, 13 bits)
 y: +INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: -3.  0 (=Lf:-3.000000 = -6144 = x(-)1800 = b(-)11.00000000000, 13 bits)
-y: -INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: -3.  0 (=Lf:-3.000000 = -6144 = x(-)1800 = b(-)11.00000000000, 13 bits)
-y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: -3.  0 (=Lf:-3.000000 = -6144 = x(-)1800 = b(-)11.00000000000, 13 bits)
+y: -INF
+div  (x/y)
+	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: -3.  0 (=Lf:-3.000000 = -6144 = x(-)1800 = b(-)11.00000000000, 13 bits)
+y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
+div  (x/y)
+	got: -INF
+	exp. -INF (~same)
+x: -3.  0 (=Lf:-3.000000 = -6144 = x(-)1800 = b(-)11.00000000000, 13 bits)
 y: 1.  0 (=Lf:1.000000 = 2048 = x800 = b1.00000000000, 12 bits)
-mul  (x*y)
+div  (x/y)
 	got: -3.  0 (=Lf:-3.000000 = -6144 = x(-)1800 = b(-)11.00000000000, 13 bits)
 	exp. -3.000000 (~same)
 x: -30.  0 (=Lf:-30.000000 = -61440 = x(-)f000 = b(-)11110.00000000000, 16 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: -30.  0 (=Lf:-30.000000 = -61440 = x(-)f000 = b(-)11110.00000000000, 16 bits)
 y: +INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: -30.  0 (=Lf:-30.000000 = -61440 = x(-)f000 = b(-)11110.00000000000, 16 bits)
-y: -INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: -30.  0 (=Lf:-30.000000 = -61440 = x(-)f000 = b(-)11110.00000000000, 16 bits)
-y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: -30.  0 (=Lf:-30.000000 = -61440 = x(-)f000 = b(-)11110.00000000000, 16 bits)
+y: -INF
+div  (x/y)
+	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: -30.  0 (=Lf:-30.000000 = -61440 = x(-)f000 = b(-)11110.00000000000, 16 bits)
+y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
+div  (x/y)
+	got: -INF
+	exp. -INF (~same)
+x: -30.  0 (=Lf:-30.000000 = -61440 = x(-)f000 = b(-)11110.00000000000, 16 bits)
 y: 1.  0 (=Lf:1.000000 = 2048 = x800 = b1.00000000000, 12 bits)
-mul  (x*y)
+div  (x/y)
 	got: -30.  0 (=Lf:-30.000000 = -61440 = x(-)f000 = b(-)11110.00000000000, 16 bits)
 	exp. -30.000000 (~same)
 x: -300.  0 (=Lf:-300.000000 = -614400 = x(-)96000 = b(-)100101100.00000000000, 20 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: -300.  0 (=Lf:-300.000000 = -614400 = x(-)96000 = b(-)100101100.00000000000, 20 bits)
 y: +INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: -300.  0 (=Lf:-300.000000 = -614400 = x(-)96000 = b(-)100101100.00000000000, 20 bits)
-y: -INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: -300.  0 (=Lf:-300.000000 = -614400 = x(-)96000 = b(-)100101100.00000000000, 20 bits)
-y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: -300.  0 (=Lf:-300.000000 = -614400 = x(-)96000 = b(-)100101100.00000000000, 20 bits)
+y: -INF
+div  (x/y)
+	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: -300.  0 (=Lf:-300.000000 = -614400 = x(-)96000 = b(-)100101100.00000000000, 20 bits)
+y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
+div  (x/y)
+	got: -INF
+	exp. -INF (~same)
+x: -300.  0 (=Lf:-300.000000 = -614400 = x(-)96000 = b(-)100101100.00000000000, 20 bits)
 y: 1.  0 (=Lf:1.000000 = 2048 = x800 = b1.00000000000, 12 bits)
-mul  (x*y)
+div  (x/y)
 	got: -300.  0 (=Lf:-300.000000 = -614400 = x(-)96000 = b(-)100101100.00000000000, 20 bits)
 	exp. -300.000000 (~same)
 x: -3000. -5 (=Lf:-3000.050293 = -6144103 = x(-)5dc067 = b(-)101110111000.00001100111, 23 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: -3000. -5 (=Lf:-3000.050293 = -6144103 = x(-)5dc067 = b(-)101110111000.00001100111, 23 bits)
 y: +INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: -3000. -5 (=Lf:-3000.050293 = -6144103 = x(-)5dc067 = b(-)101110111000.00001100111, 23 bits)
-y: -INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: -3000. -5 (=Lf:-3000.050293 = -6144103 = x(-)5dc067 = b(-)101110111000.00001100111, 23 bits)
-y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: -3000. -5 (=Lf:-3000.050293 = -6144103 = x(-)5dc067 = b(-)101110111000.00001100111, 23 bits)
+y: -INF
+div  (x/y)
+	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: -3000. -5 (=Lf:-3000.050293 = -6144103 = x(-)5dc067 = b(-)101110111000.00001100111, 23 bits)
+y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
+div  (x/y)
+	got: -INF
+	exp. -INF (~same)
+x: -3000. -5 (=Lf:-3000.050293 = -6144103 = x(-)5dc067 = b(-)101110111000.00001100111, 23 bits)
 y: 1.  0 (=Lf:1.000000 = 2048 = x800 = b1.00000000000, 12 bits)
-mul  (x*y)
+div  (x/y)
 	got: -3000. -5 (=Lf:-3000.050293 = -6144103 = x(-)5dc067 = b(-)101110111000.00001100111, 23 bits)
 	exp. -3000.050293 (~same)
 x: -300000.  0 (=Lf:-300000.000000 = -614400000 = x(-)249f0000 = b(-)1001001001111100000.00000000000, 30 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: -300000.  0 (=Lf:-300000.000000 = -614400000 = x(-)249f0000 = b(-)1001001001111100000.00000000000, 30 bits)
 y: +INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: -300000.  0 (=Lf:-300000.000000 = -614400000 = x(-)249f0000 = b(-)1001001001111100000.00000000000, 30 bits)
-y: -INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: -300000.  0 (=Lf:-300000.000000 = -614400000 = x(-)249f0000 = b(-)1001001001111100000.00000000000, 30 bits)
-y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: -300000.  0 (=Lf:-300000.000000 = -614400000 = x(-)249f0000 = b(-)1001001001111100000.00000000000, 30 bits)
+y: -INF
+div  (x/y)
+	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: -300000.  0 (=Lf:-300000.000000 = -614400000 = x(-)249f0000 = b(-)1001001001111100000.00000000000, 30 bits)
+y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
+div  (x/y)
+	got: -INF
+	exp. -INF (~same)
+x: -300000.  0 (=Lf:-300000.000000 = -614400000 = x(-)249f0000 = b(-)1001001001111100000.00000000000, 30 bits)
 y: 1.  0 (=Lf:1.000000 = 2048 = x800 = b1.00000000000, 12 bits)
-mul  (x*y)
+div  (x/y)
 	got: -300000.  0 (=Lf:-300000.000000 = -614400000 = x(-)249f0000 = b(-)1001001001111100000.00000000000, 30 bits)
 	exp. -300000.000000 (~same)
 x: -1048575.-99 (=Lf:-1048575.999023 = -2147483646 = x(-)7ffffffe = b(-)11111111111111111111.11111111110, 31 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: -1048575.-99 (=Lf:-1048575.999023 = -2147483646 = x(-)7ffffffe = b(-)11111111111111111111.11111111110, 31 bits)
 y: +INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: -1048575.-99 (=Lf:-1048575.999023 = -2147483646 = x(-)7ffffffe = b(-)11111111111111111111.11111111110, 31 bits)
-y: -INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: -1048575.-99 (=Lf:-1048575.999023 = -2147483646 = x(-)7ffffffe = b(-)11111111111111111111.11111111110, 31 bits)
-y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: -1048575.-99 (=Lf:-1048575.999023 = -2147483646 = x(-)7ffffffe = b(-)11111111111111111111.11111111110, 31 bits)
+y: -INF
+div  (x/y)
+	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: -1048575.-99 (=Lf:-1048575.999023 = -2147483646 = x(-)7ffffffe = b(-)11111111111111111111.11111111110, 31 bits)
+y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
+div  (x/y)
+	got: -INF
+	exp. -INF (~same)
+x: -1048575.-99 (=Lf:-1048575.999023 = -2147483646 = x(-)7ffffffe = b(-)11111111111111111111.11111111110, 31 bits)
 y: 1.  0 (=Lf:1.000000 = 2048 = x800 = b1.00000000000, 12 bits)
-mul  (x*y)
+div  (x/y)
 	got: -1048575.-99 (=Lf:-1048575.999023 = -2147483646 = x(-)7ffffffe = b(-)11111111111111111111.11111111110, 31 bits)
 	exp. -1048575.999023 (~same)
 
@@ -2830,480 +2830,480 @@ Ok sum == -2
 	got: 0.249 (=Lf:0.249939 = 4095 = xfff = b.00111111111111, 12 bits)
 	exp. 0.249939 (~same)
 
-Verifying multiplication with values of interest:
+Verifying divisions with values of interest:
 x: UNDEF
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: UNDEF
 y: +INF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: UNDEF
 y: -INF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: UNDEF
 y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: UNDEF
 y: 1.  0 (=Lf:1.000000 = 16384 = x4000 = b1.00000000000000, 15 bits)
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: +INF
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: +INF
 y: +INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
 x: +INF
 y: -INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
 x: +INF
 y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
-mul  (x*y)
-	got: UNDEF
-	exp. -INF (~same)
+div  (x/y)
+	got: +INF
+	exp. +INF (~same)
 x: +INF
 y: 1.  0 (=Lf:1.000000 = 16384 = x4000 = b1.00000000000000, 15 bits)
-mul  (x*y)
+div  (x/y)
 	got: +INF
 	exp. +INF (~same)
 x: 131071.999 (=Lf:131071.999878 = 2147483646 = x7ffffffe = b11111111111111111.11111111111110, 31 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: 131071.999 (=Lf:131071.999878 = 2147483646 = x7ffffffe = b11111111111111111.11111111111110, 31 bits)
 y: +INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: 131071.999 (=Lf:131071.999878 = 2147483646 = x7ffffffe = b11111111111111111.11111111111110, 31 bits)
-y: -INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: 131071.999 (=Lf:131071.999878 = 2147483646 = x7ffffffe = b11111111111111111.11111111111110, 31 bits)
-y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: 131071.999 (=Lf:131071.999878 = 2147483646 = x7ffffffe = b11111111111111111.11111111111110, 31 bits)
+y: -INF
+div  (x/y)
+	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: 131071.999 (=Lf:131071.999878 = 2147483646 = x7ffffffe = b11111111111111111.11111111111110, 31 bits)
+y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
+div  (x/y)
+	got: +INF
+	exp. +INF (~same)
+x: 131071.999 (=Lf:131071.999878 = 2147483646 = x7ffffffe = b11111111111111111.11111111111110, 31 bits)
 y: 1.  0 (=Lf:1.000000 = 16384 = x4000 = b1.00000000000000, 15 bits)
-mul  (x*y)
+div  (x/y)
 	got: 131071.999 (=Lf:131071.999878 = 2147483646 = x7ffffffe = b11111111111111111.11111111111110, 31 bits)
 	exp. 131071.999878 (~same)
 x: +INF
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: +INF
 y: +INF
-mul  (x*y)
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
+x: +INF
+y: -INF
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
+x: +INF
+y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
+div  (x/y)
 	got: +INF
 	exp. +INF (~same)
 x: +INF
-y: -INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: +INF
-y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
-mul  (x*y)
-	got: UNDEF
-	exp. -INF (~same)
-x: +INF
 y: 1.  0 (=Lf:1.000000 = 16384 = x4000 = b1.00000000000000, 15 bits)
-mul  (x*y)
+div  (x/y)
 	got: +INF
 	exp. +INF (~same)
 x: 3000.  5 (=Lf:3000.004944 = 49152081 = x2ee0051 = b101110111000.00000001010001, 26 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: 3000.  5 (=Lf:3000.004944 = 49152081 = x2ee0051 = b101110111000.00000001010001, 26 bits)
 y: +INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: 3000.  5 (=Lf:3000.004944 = 49152081 = x2ee0051 = b101110111000.00000001010001, 26 bits)
-y: -INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: 3000.  5 (=Lf:3000.004944 = 49152081 = x2ee0051 = b101110111000.00000001010001, 26 bits)
-y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: 3000.  5 (=Lf:3000.004944 = 49152081 = x2ee0051 = b101110111000.00000001010001, 26 bits)
+y: -INF
+div  (x/y)
+	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: 3000.  5 (=Lf:3000.004944 = 49152081 = x2ee0051 = b101110111000.00000001010001, 26 bits)
+y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
+div  (x/y)
+	got: +INF
+	exp. +INF (~same)
+x: 3000.  5 (=Lf:3000.004944 = 49152081 = x2ee0051 = b101110111000.00000001010001, 26 bits)
 y: 1.  0 (=Lf:1.000000 = 16384 = x4000 = b1.00000000000000, 15 bits)
-mul  (x*y)
+div  (x/y)
 	got: 3000.  5 (=Lf:3000.004944 = 49152081 = x2ee0051 = b101110111000.00000001010001, 26 bits)
 	exp. 3000.004944 (~same)
 x: 300.  0 (=Lf:300.000000 = 4915200 = x4b0000 = b100101100.00000000000000, 23 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: 300.  0 (=Lf:300.000000 = 4915200 = x4b0000 = b100101100.00000000000000, 23 bits)
 y: +INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: 300.  0 (=Lf:300.000000 = 4915200 = x4b0000 = b100101100.00000000000000, 23 bits)
-y: -INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: 300.  0 (=Lf:300.000000 = 4915200 = x4b0000 = b100101100.00000000000000, 23 bits)
-y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: 300.  0 (=Lf:300.000000 = 4915200 = x4b0000 = b100101100.00000000000000, 23 bits)
+y: -INF
+div  (x/y)
+	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: 300.  0 (=Lf:300.000000 = 4915200 = x4b0000 = b100101100.00000000000000, 23 bits)
+y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
+div  (x/y)
+	got: +INF
+	exp. +INF (~same)
+x: 300.  0 (=Lf:300.000000 = 4915200 = x4b0000 = b100101100.00000000000000, 23 bits)
 y: 1.  0 (=Lf:1.000000 = 16384 = x4000 = b1.00000000000000, 15 bits)
-mul  (x*y)
+div  (x/y)
 	got: 300.  0 (=Lf:300.000000 = 4915200 = x4b0000 = b100101100.00000000000000, 23 bits)
 	exp. 300.000000 (~same)
 x: 30.  0 (=Lf:30.000000 = 491520 = x78000 = b11110.00000000000000, 19 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: 30.  0 (=Lf:30.000000 = 491520 = x78000 = b11110.00000000000000, 19 bits)
 y: +INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: 30.  0 (=Lf:30.000000 = 491520 = x78000 = b11110.00000000000000, 19 bits)
-y: -INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: 30.  0 (=Lf:30.000000 = 491520 = x78000 = b11110.00000000000000, 19 bits)
-y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: 30.  0 (=Lf:30.000000 = 491520 = x78000 = b11110.00000000000000, 19 bits)
+y: -INF
+div  (x/y)
+	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: 30.  0 (=Lf:30.000000 = 491520 = x78000 = b11110.00000000000000, 19 bits)
+y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
+div  (x/y)
+	got: +INF
+	exp. +INF (~same)
+x: 30.  0 (=Lf:30.000000 = 491520 = x78000 = b11110.00000000000000, 19 bits)
 y: 1.  0 (=Lf:1.000000 = 16384 = x4000 = b1.00000000000000, 15 bits)
-mul  (x*y)
+div  (x/y)
 	got: 30.  0 (=Lf:30.000000 = 491520 = x78000 = b11110.00000000000000, 19 bits)
 	exp. 30.000000 (~same)
 x: 3.  0 (=Lf:3.000000 = 49152 = xc000 = b11.00000000000000, 16 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: 3.  0 (=Lf:3.000000 = 49152 = xc000 = b11.00000000000000, 16 bits)
 y: +INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: 3.  0 (=Lf:3.000000 = 49152 = xc000 = b11.00000000000000, 16 bits)
-y: -INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: 3.  0 (=Lf:3.000000 = 49152 = xc000 = b11.00000000000000, 16 bits)
-y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: 3.  0 (=Lf:3.000000 = 49152 = xc000 = b11.00000000000000, 16 bits)
+y: -INF
+div  (x/y)
+	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: 3.  0 (=Lf:3.000000 = 49152 = xc000 = b11.00000000000000, 16 bits)
+y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
+div  (x/y)
+	got: +INF
+	exp. +INF (~same)
+x: 3.  0 (=Lf:3.000000 = 49152 = xc000 = b11.00000000000000, 16 bits)
 y: 1.  0 (=Lf:1.000000 = 16384 = x4000 = b1.00000000000000, 15 bits)
-mul  (x*y)
+div  (x/y)
 	got: 3.  0 (=Lf:3.000000 = 49152 = xc000 = b11.00000000000000, 16 bits)
 	exp. 3.000000 (~same)
 x: 2.  0 (=Lf:2.000000 = 32768 = x8000 = b10.00000000000000, 16 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: 2.  0 (=Lf:2.000000 = 32768 = x8000 = b10.00000000000000, 16 bits)
 y: +INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: 2.  0 (=Lf:2.000000 = 32768 = x8000 = b10.00000000000000, 16 bits)
-y: -INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: 2.  0 (=Lf:2.000000 = 32768 = x8000 = b10.00000000000000, 16 bits)
-y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: 2.  0 (=Lf:2.000000 = 32768 = x8000 = b10.00000000000000, 16 bits)
+y: -INF
+div  (x/y)
+	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: 2.  0 (=Lf:2.000000 = 32768 = x8000 = b10.00000000000000, 16 bits)
+y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
+div  (x/y)
+	got: +INF
+	exp. +INF (~same)
+x: 2.  0 (=Lf:2.000000 = 32768 = x8000 = b10.00000000000000, 16 bits)
 y: 1.  0 (=Lf:1.000000 = 16384 = x4000 = b1.00000000000000, 15 bits)
-mul  (x*y)
+div  (x/y)
 	got: 2.  0 (=Lf:2.000000 = 32768 = x8000 = b10.00000000000000, 16 bits)
 	exp. 2.000000 (~same)
 x: 1.  0 (=Lf:1.000000 = 16384 = x4000 = b1.00000000000000, 15 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: 1.  0 (=Lf:1.000000 = 16384 = x4000 = b1.00000000000000, 15 bits)
 y: +INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: 1.  0 (=Lf:1.000000 = 16384 = x4000 = b1.00000000000000, 15 bits)
-y: -INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: 1.  0 (=Lf:1.000000 = 16384 = x4000 = b1.00000000000000, 15 bits)
-y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: 1.  0 (=Lf:1.000000 = 16384 = x4000 = b1.00000000000000, 15 bits)
+y: -INF
+div  (x/y)
+	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: 1.  0 (=Lf:1.000000 = 16384 = x4000 = b1.00000000000000, 15 bits)
+y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
+div  (x/y)
+	got: +INF
+	exp. +INF (~same)
+x: 1.  0 (=Lf:1.000000 = 16384 = x4000 = b1.00000000000000, 15 bits)
 y: 1.  0 (=Lf:1.000000 = 16384 = x4000 = b1.00000000000000, 15 bits)
-mul  (x*y)
+div  (x/y)
 	got: 1.  0 (=Lf:1.000000 = 16384 = x4000 = b1.00000000000000, 15 bits)
 	exp. 1.000000 (~same)
 x: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
 y: +INF
-mul  (x*y)
-	got: UNDEF
-	exp. -INF (~same)
-x: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
-y: -INF
-mul  (x*y)
-	got: UNDEF
-	exp. -INF (~same)
-x: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
-y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
+y: -INF
+div  (x/y)
+	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
+y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
+x: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
 y: 1.  0 (=Lf:1.000000 = 16384 = x4000 = b1.00000000000000, 15 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: -1.  0 (=Lf:-1.000000 = -16384 = x(-)4000 = b(-)1.00000000000000, 15 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: -1.  0 (=Lf:-1.000000 = -16384 = x(-)4000 = b(-)1.00000000000000, 15 bits)
 y: +INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: -1.  0 (=Lf:-1.000000 = -16384 = x(-)4000 = b(-)1.00000000000000, 15 bits)
-y: -INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: -1.  0 (=Lf:-1.000000 = -16384 = x(-)4000 = b(-)1.00000000000000, 15 bits)
-y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: -1.  0 (=Lf:-1.000000 = -16384 = x(-)4000 = b(-)1.00000000000000, 15 bits)
+y: -INF
+div  (x/y)
+	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: -1.  0 (=Lf:-1.000000 = -16384 = x(-)4000 = b(-)1.00000000000000, 15 bits)
+y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
+div  (x/y)
+	got: -INF
+	exp. -INF (~same)
+x: -1.  0 (=Lf:-1.000000 = -16384 = x(-)4000 = b(-)1.00000000000000, 15 bits)
 y: 1.  0 (=Lf:1.000000 = 16384 = x4000 = b1.00000000000000, 15 bits)
-mul  (x*y)
+div  (x/y)
 	got: -1.  0 (=Lf:-1.000000 = -16384 = x(-)4000 = b(-)1.00000000000000, 15 bits)
 	exp. -1.000000 (~same)
 x: -2.  0 (=Lf:-2.000000 = -32768 = x(-)8000 = b(-)10.00000000000000, 16 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: -2.  0 (=Lf:-2.000000 = -32768 = x(-)8000 = b(-)10.00000000000000, 16 bits)
 y: +INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: -2.  0 (=Lf:-2.000000 = -32768 = x(-)8000 = b(-)10.00000000000000, 16 bits)
-y: -INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: -2.  0 (=Lf:-2.000000 = -32768 = x(-)8000 = b(-)10.00000000000000, 16 bits)
-y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: -2.  0 (=Lf:-2.000000 = -32768 = x(-)8000 = b(-)10.00000000000000, 16 bits)
+y: -INF
+div  (x/y)
+	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: -2.  0 (=Lf:-2.000000 = -32768 = x(-)8000 = b(-)10.00000000000000, 16 bits)
+y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
+div  (x/y)
+	got: -INF
+	exp. -INF (~same)
+x: -2.  0 (=Lf:-2.000000 = -32768 = x(-)8000 = b(-)10.00000000000000, 16 bits)
 y: 1.  0 (=Lf:1.000000 = 16384 = x4000 = b1.00000000000000, 15 bits)
-mul  (x*y)
+div  (x/y)
 	got: -2.  0 (=Lf:-2.000000 = -32768 = x(-)8000 = b(-)10.00000000000000, 16 bits)
 	exp. -2.000000 (~same)
 x: -3.  0 (=Lf:-3.000000 = -49152 = x(-)c000 = b(-)11.00000000000000, 16 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: -3.  0 (=Lf:-3.000000 = -49152 = x(-)c000 = b(-)11.00000000000000, 16 bits)
 y: +INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: -3.  0 (=Lf:-3.000000 = -49152 = x(-)c000 = b(-)11.00000000000000, 16 bits)
-y: -INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: -3.  0 (=Lf:-3.000000 = -49152 = x(-)c000 = b(-)11.00000000000000, 16 bits)
-y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: -3.  0 (=Lf:-3.000000 = -49152 = x(-)c000 = b(-)11.00000000000000, 16 bits)
+y: -INF
+div  (x/y)
+	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: -3.  0 (=Lf:-3.000000 = -49152 = x(-)c000 = b(-)11.00000000000000, 16 bits)
+y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
+div  (x/y)
+	got: -INF
+	exp. -INF (~same)
+x: -3.  0 (=Lf:-3.000000 = -49152 = x(-)c000 = b(-)11.00000000000000, 16 bits)
 y: 1.  0 (=Lf:1.000000 = 16384 = x4000 = b1.00000000000000, 15 bits)
-mul  (x*y)
+div  (x/y)
 	got: -3.  0 (=Lf:-3.000000 = -49152 = x(-)c000 = b(-)11.00000000000000, 16 bits)
 	exp. -3.000000 (~same)
 x: -30.  0 (=Lf:-30.000000 = -491520 = x(-)78000 = b(-)11110.00000000000000, 19 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: -30.  0 (=Lf:-30.000000 = -491520 = x(-)78000 = b(-)11110.00000000000000, 19 bits)
 y: +INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: -30.  0 (=Lf:-30.000000 = -491520 = x(-)78000 = b(-)11110.00000000000000, 19 bits)
-y: -INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: -30.  0 (=Lf:-30.000000 = -491520 = x(-)78000 = b(-)11110.00000000000000, 19 bits)
-y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: -30.  0 (=Lf:-30.000000 = -491520 = x(-)78000 = b(-)11110.00000000000000, 19 bits)
+y: -INF
+div  (x/y)
+	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: -30.  0 (=Lf:-30.000000 = -491520 = x(-)78000 = b(-)11110.00000000000000, 19 bits)
+y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
+div  (x/y)
+	got: -INF
+	exp. -INF (~same)
+x: -30.  0 (=Lf:-30.000000 = -491520 = x(-)78000 = b(-)11110.00000000000000, 19 bits)
 y: 1.  0 (=Lf:1.000000 = 16384 = x4000 = b1.00000000000000, 15 bits)
-mul  (x*y)
+div  (x/y)
 	got: -30.  0 (=Lf:-30.000000 = -491520 = x(-)78000 = b(-)11110.00000000000000, 19 bits)
 	exp. -30.000000 (~same)
 x: -300.  0 (=Lf:-300.000000 = -4915200 = x(-)4b0000 = b(-)100101100.00000000000000, 23 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: -300.  0 (=Lf:-300.000000 = -4915200 = x(-)4b0000 = b(-)100101100.00000000000000, 23 bits)
 y: +INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: -300.  0 (=Lf:-300.000000 = -4915200 = x(-)4b0000 = b(-)100101100.00000000000000, 23 bits)
-y: -INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: -300.  0 (=Lf:-300.000000 = -4915200 = x(-)4b0000 = b(-)100101100.00000000000000, 23 bits)
-y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: -300.  0 (=Lf:-300.000000 = -4915200 = x(-)4b0000 = b(-)100101100.00000000000000, 23 bits)
+y: -INF
+div  (x/y)
+	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: -300.  0 (=Lf:-300.000000 = -4915200 = x(-)4b0000 = b(-)100101100.00000000000000, 23 bits)
+y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
+div  (x/y)
+	got: -INF
+	exp. -INF (~same)
+x: -300.  0 (=Lf:-300.000000 = -4915200 = x(-)4b0000 = b(-)100101100.00000000000000, 23 bits)
 y: 1.  0 (=Lf:1.000000 = 16384 = x4000 = b1.00000000000000, 15 bits)
-mul  (x*y)
+div  (x/y)
 	got: -300.  0 (=Lf:-300.000000 = -4915200 = x(-)4b0000 = b(-)100101100.00000000000000, 23 bits)
 	exp. -300.000000 (~same)
 x: -3000. -5 (=Lf:-3000.004944 = -49152081 = x(-)2ee0051 = b(-)101110111000.00000001010001, 26 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: -3000. -5 (=Lf:-3000.004944 = -49152081 = x(-)2ee0051 = b(-)101110111000.00000001010001, 26 bits)
 y: +INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: -3000. -5 (=Lf:-3000.004944 = -49152081 = x(-)2ee0051 = b(-)101110111000.00000001010001, 26 bits)
-y: -INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: -3000. -5 (=Lf:-3000.004944 = -49152081 = x(-)2ee0051 = b(-)101110111000.00000001010001, 26 bits)
-y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: -3000. -5 (=Lf:-3000.004944 = -49152081 = x(-)2ee0051 = b(-)101110111000.00000001010001, 26 bits)
+y: -INF
+div  (x/y)
+	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: -3000. -5 (=Lf:-3000.004944 = -49152081 = x(-)2ee0051 = b(-)101110111000.00000001010001, 26 bits)
+y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
+div  (x/y)
+	got: -INF
+	exp. -INF (~same)
+x: -3000. -5 (=Lf:-3000.004944 = -49152081 = x(-)2ee0051 = b(-)101110111000.00000001010001, 26 bits)
 y: 1.  0 (=Lf:1.000000 = 16384 = x4000 = b1.00000000000000, 15 bits)
-mul  (x*y)
+div  (x/y)
 	got: -3000. -5 (=Lf:-3000.004944 = -49152081 = x(-)2ee0051 = b(-)101110111000.00000001010001, 26 bits)
 	exp. -3000.004944 (~same)
 x: -INF
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: -INF
 y: +INF
-mul  (x*y)
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
+x: -INF
+y: -INF
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
+x: -INF
+y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
+div  (x/y)
 	got: -INF
 	exp. -INF (~same)
 x: -INF
-y: -INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: -INF
-y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
-mul  (x*y)
-	got: UNDEF
-	exp. -INF (~same)
-x: -INF
 y: 1.  0 (=Lf:1.000000 = 16384 = x4000 = b1.00000000000000, 15 bits)
-mul  (x*y)
+div  (x/y)
 	got: -INF
 	exp. -INF (~same)
 x: -131071.-999 (=Lf:-131071.999878 = -2147483646 = x(-)7ffffffe = b(-)11111111111111111.11111111111110, 31 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: -131071.-999 (=Lf:-131071.999878 = -2147483646 = x(-)7ffffffe = b(-)11111111111111111.11111111111110, 31 bits)
 y: +INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: -131071.-999 (=Lf:-131071.999878 = -2147483646 = x(-)7ffffffe = b(-)11111111111111111.11111111111110, 31 bits)
-y: -INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: -131071.-999 (=Lf:-131071.999878 = -2147483646 = x(-)7ffffffe = b(-)11111111111111111.11111111111110, 31 bits)
-y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: -131071.-999 (=Lf:-131071.999878 = -2147483646 = x(-)7ffffffe = b(-)11111111111111111.11111111111110, 31 bits)
+y: -INF
+div  (x/y)
+	got: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: -131071.-999 (=Lf:-131071.999878 = -2147483646 = x(-)7ffffffe = b(-)11111111111111111.11111111111110, 31 bits)
+y: 0.  0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
+div  (x/y)
+	got: -INF
+	exp. -INF (~same)
+x: -131071.-999 (=Lf:-131071.999878 = -2147483646 = x(-)7ffffffe = b(-)11111111111111111.11111111111110, 31 bits)
 y: 1.  0 (=Lf:1.000000 = 16384 = x4000 = b1.00000000000000, 15 bits)
-mul  (x*y)
+div  (x/y)
 	got: -131071.-999 (=Lf:-131071.999878 = -2147483646 = x(-)7ffffffe = b(-)11111111111111111.11111111111110, 31 bits)
 	exp. -131071.999878 (~same)
 
@@ -4067,480 +4067,480 @@ Ok sum == -2
 	got: 0.   2499 (=Lf:0.249985 = 16383 = x3fff = b.0011111111111111, 14 bits)
 	exp. 0.249985 (~same)
 
-Verifying multiplication with values of interest:
+Verifying divisions with values of interest:
 x: UNDEF
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: UNDEF
 y: +INF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: UNDEF
 y: -INF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: UNDEF
 y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: UNDEF
 y: 1.      0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: +INF
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: +INF
 y: +INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
 x: +INF
 y: -INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
 x: +INF
 y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-mul  (x*y)
-	got: UNDEF
-	exp. -INF (~same)
+div  (x/y)
+	got: +INF
+	exp. +INF (~same)
 x: +INF
 y: 1.      0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
-mul  (x*y)
+div  (x/y)
 	got: +INF
 	exp. +INF (~same)
 x: 32767.   9999 (=Lf:32767.999969 = 2147483646 = x7ffffffe = b111111111111111.1111111111111110, 31 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: 32767.   9999 (=Lf:32767.999969 = 2147483646 = x7ffffffe = b111111111111111.1111111111111110, 31 bits)
 y: +INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: 32767.   9999 (=Lf:32767.999969 = 2147483646 = x7ffffffe = b111111111111111.1111111111111110, 31 bits)
-y: -INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: 32767.   9999 (=Lf:32767.999969 = 2147483646 = x7ffffffe = b111111111111111.1111111111111110, 31 bits)
-y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: 32767.   9999 (=Lf:32767.999969 = 2147483646 = x7ffffffe = b111111111111111.1111111111111110, 31 bits)
+y: -INF
+div  (x/y)
+	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: 32767.   9999 (=Lf:32767.999969 = 2147483646 = x7ffffffe = b111111111111111.1111111111111110, 31 bits)
+y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+div  (x/y)
+	got: +INF
+	exp. +INF (~same)
+x: 32767.   9999 (=Lf:32767.999969 = 2147483646 = x7ffffffe = b111111111111111.1111111111111110, 31 bits)
 y: 1.      0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
-mul  (x*y)
+div  (x/y)
 	got: 32767.   9999 (=Lf:32767.999969 = 2147483646 = x7ffffffe = b111111111111111.1111111111111110, 31 bits)
 	exp. 32767.999969 (~same)
 x: +INF
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: +INF
 y: +INF
-mul  (x*y)
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
+x: +INF
+y: -INF
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
+x: +INF
+y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+div  (x/y)
 	got: +INF
 	exp. +INF (~same)
 x: +INF
-y: -INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: +INF
-y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-mul  (x*y)
-	got: UNDEF
-	exp. -INF (~same)
-x: +INF
 y: 1.      0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
-mul  (x*y)
+div  (x/y)
 	got: +INF
 	exp. +INF (~same)
 x: 3000.      5 (=Lf:3000.000488 = 196608032 = xbb80020 = b101110111000.0000000000100000, 28 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: 3000.      5 (=Lf:3000.000488 = 196608032 = xbb80020 = b101110111000.0000000000100000, 28 bits)
 y: +INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: 3000.      5 (=Lf:3000.000488 = 196608032 = xbb80020 = b101110111000.0000000000100000, 28 bits)
-y: -INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: 3000.      5 (=Lf:3000.000488 = 196608032 = xbb80020 = b101110111000.0000000000100000, 28 bits)
-y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: 3000.      5 (=Lf:3000.000488 = 196608032 = xbb80020 = b101110111000.0000000000100000, 28 bits)
+y: -INF
+div  (x/y)
+	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: 3000.      5 (=Lf:3000.000488 = 196608032 = xbb80020 = b101110111000.0000000000100000, 28 bits)
+y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+div  (x/y)
+	got: +INF
+	exp. +INF (~same)
+x: 3000.      5 (=Lf:3000.000488 = 196608032 = xbb80020 = b101110111000.0000000000100000, 28 bits)
 y: 1.      0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
-mul  (x*y)
+div  (x/y)
 	got: 3000.      5 (=Lf:3000.000488 = 196608032 = xbb80020 = b101110111000.0000000000100000, 28 bits)
 	exp. 3000.000488 (~same)
 x: 300.      0 (=Lf:300.000000 = 19660800 = x12c0000 = b100101100.0000000000000000, 25 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: 300.      0 (=Lf:300.000000 = 19660800 = x12c0000 = b100101100.0000000000000000, 25 bits)
 y: +INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: 300.      0 (=Lf:300.000000 = 19660800 = x12c0000 = b100101100.0000000000000000, 25 bits)
-y: -INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: 300.      0 (=Lf:300.000000 = 19660800 = x12c0000 = b100101100.0000000000000000, 25 bits)
-y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: 300.      0 (=Lf:300.000000 = 19660800 = x12c0000 = b100101100.0000000000000000, 25 bits)
+y: -INF
+div  (x/y)
+	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: 300.      0 (=Lf:300.000000 = 19660800 = x12c0000 = b100101100.0000000000000000, 25 bits)
+y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+div  (x/y)
+	got: +INF
+	exp. +INF (~same)
+x: 300.      0 (=Lf:300.000000 = 19660800 = x12c0000 = b100101100.0000000000000000, 25 bits)
 y: 1.      0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
-mul  (x*y)
+div  (x/y)
 	got: 300.      0 (=Lf:300.000000 = 19660800 = x12c0000 = b100101100.0000000000000000, 25 bits)
 	exp. 300.000000 (~same)
 x: 30.      0 (=Lf:30.000000 = 1966080 = x1e0000 = b11110.0000000000000000, 21 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: 30.      0 (=Lf:30.000000 = 1966080 = x1e0000 = b11110.0000000000000000, 21 bits)
 y: +INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: 30.      0 (=Lf:30.000000 = 1966080 = x1e0000 = b11110.0000000000000000, 21 bits)
-y: -INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: 30.      0 (=Lf:30.000000 = 1966080 = x1e0000 = b11110.0000000000000000, 21 bits)
-y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: 30.      0 (=Lf:30.000000 = 1966080 = x1e0000 = b11110.0000000000000000, 21 bits)
+y: -INF
+div  (x/y)
+	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: 30.      0 (=Lf:30.000000 = 1966080 = x1e0000 = b11110.0000000000000000, 21 bits)
+y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+div  (x/y)
+	got: +INF
+	exp. +INF (~same)
+x: 30.      0 (=Lf:30.000000 = 1966080 = x1e0000 = b11110.0000000000000000, 21 bits)
 y: 1.      0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
-mul  (x*y)
+div  (x/y)
 	got: 30.      0 (=Lf:30.000000 = 1966080 = x1e0000 = b11110.0000000000000000, 21 bits)
 	exp. 30.000000 (~same)
 x: 3.      0 (=Lf:3.000000 = 196608 = x30000 = b11.0000000000000000, 18 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: 3.      0 (=Lf:3.000000 = 196608 = x30000 = b11.0000000000000000, 18 bits)
 y: +INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: 3.      0 (=Lf:3.000000 = 196608 = x30000 = b11.0000000000000000, 18 bits)
-y: -INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: 3.      0 (=Lf:3.000000 = 196608 = x30000 = b11.0000000000000000, 18 bits)
-y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: 3.      0 (=Lf:3.000000 = 196608 = x30000 = b11.0000000000000000, 18 bits)
+y: -INF
+div  (x/y)
+	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: 3.      0 (=Lf:3.000000 = 196608 = x30000 = b11.0000000000000000, 18 bits)
+y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+div  (x/y)
+	got: +INF
+	exp. +INF (~same)
+x: 3.      0 (=Lf:3.000000 = 196608 = x30000 = b11.0000000000000000, 18 bits)
 y: 1.      0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
-mul  (x*y)
+div  (x/y)
 	got: 3.      0 (=Lf:3.000000 = 196608 = x30000 = b11.0000000000000000, 18 bits)
 	exp. 3.000000 (~same)
 x: 2.      0 (=Lf:2.000000 = 131072 = x20000 = b10.0000000000000000, 18 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: 2.      0 (=Lf:2.000000 = 131072 = x20000 = b10.0000000000000000, 18 bits)
 y: +INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: 2.      0 (=Lf:2.000000 = 131072 = x20000 = b10.0000000000000000, 18 bits)
-y: -INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: 2.      0 (=Lf:2.000000 = 131072 = x20000 = b10.0000000000000000, 18 bits)
-y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: 2.      0 (=Lf:2.000000 = 131072 = x20000 = b10.0000000000000000, 18 bits)
+y: -INF
+div  (x/y)
+	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: 2.      0 (=Lf:2.000000 = 131072 = x20000 = b10.0000000000000000, 18 bits)
+y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+div  (x/y)
+	got: +INF
+	exp. +INF (~same)
+x: 2.      0 (=Lf:2.000000 = 131072 = x20000 = b10.0000000000000000, 18 bits)
 y: 1.      0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
-mul  (x*y)
+div  (x/y)
 	got: 2.      0 (=Lf:2.000000 = 131072 = x20000 = b10.0000000000000000, 18 bits)
 	exp. 2.000000 (~same)
 x: 1.      0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: 1.      0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
 y: +INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: 1.      0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
-y: -INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: 1.      0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
-y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: 1.      0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
+y: -INF
+div  (x/y)
+	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: 1.      0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
+y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+div  (x/y)
+	got: +INF
+	exp. +INF (~same)
+x: 1.      0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
 y: 1.      0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
-mul  (x*y)
+div  (x/y)
 	got: 1.      0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
 	exp. 1.000000 (~same)
 x: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
 y: +INF
-mul  (x*y)
-	got: UNDEF
-	exp. -INF (~same)
-x: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-y: -INF
-mul  (x*y)
-	got: UNDEF
-	exp. -INF (~same)
-x: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+y: -INF
+div  (x/y)
+	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
+x: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
 y: 1.      0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: -1.      0 (=Lf:-1.000000 = -65536 = x(-)10000 = b(-)1.0000000000000000, 17 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: -1.      0 (=Lf:-1.000000 = -65536 = x(-)10000 = b(-)1.0000000000000000, 17 bits)
 y: +INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: -1.      0 (=Lf:-1.000000 = -65536 = x(-)10000 = b(-)1.0000000000000000, 17 bits)
-y: -INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: -1.      0 (=Lf:-1.000000 = -65536 = x(-)10000 = b(-)1.0000000000000000, 17 bits)
-y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: -1.      0 (=Lf:-1.000000 = -65536 = x(-)10000 = b(-)1.0000000000000000, 17 bits)
+y: -INF
+div  (x/y)
+	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: -1.      0 (=Lf:-1.000000 = -65536 = x(-)10000 = b(-)1.0000000000000000, 17 bits)
+y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+div  (x/y)
+	got: -INF
+	exp. -INF (~same)
+x: -1.      0 (=Lf:-1.000000 = -65536 = x(-)10000 = b(-)1.0000000000000000, 17 bits)
 y: 1.      0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
-mul  (x*y)
+div  (x/y)
 	got: -1.      0 (=Lf:-1.000000 = -65536 = x(-)10000 = b(-)1.0000000000000000, 17 bits)
 	exp. -1.000000 (~same)
 x: -2.      0 (=Lf:-2.000000 = -131072 = x(-)20000 = b(-)10.0000000000000000, 18 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: -2.      0 (=Lf:-2.000000 = -131072 = x(-)20000 = b(-)10.0000000000000000, 18 bits)
 y: +INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: -2.      0 (=Lf:-2.000000 = -131072 = x(-)20000 = b(-)10.0000000000000000, 18 bits)
-y: -INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: -2.      0 (=Lf:-2.000000 = -131072 = x(-)20000 = b(-)10.0000000000000000, 18 bits)
-y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: -2.      0 (=Lf:-2.000000 = -131072 = x(-)20000 = b(-)10.0000000000000000, 18 bits)
+y: -INF
+div  (x/y)
+	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: -2.      0 (=Lf:-2.000000 = -131072 = x(-)20000 = b(-)10.0000000000000000, 18 bits)
+y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+div  (x/y)
+	got: -INF
+	exp. -INF (~same)
+x: -2.      0 (=Lf:-2.000000 = -131072 = x(-)20000 = b(-)10.0000000000000000, 18 bits)
 y: 1.      0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
-mul  (x*y)
+div  (x/y)
 	got: -2.      0 (=Lf:-2.000000 = -131072 = x(-)20000 = b(-)10.0000000000000000, 18 bits)
 	exp. -2.000000 (~same)
 x: -3.      0 (=Lf:-3.000000 = -196608 = x(-)30000 = b(-)11.0000000000000000, 18 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: -3.      0 (=Lf:-3.000000 = -196608 = x(-)30000 = b(-)11.0000000000000000, 18 bits)
 y: +INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: -3.      0 (=Lf:-3.000000 = -196608 = x(-)30000 = b(-)11.0000000000000000, 18 bits)
-y: -INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: -3.      0 (=Lf:-3.000000 = -196608 = x(-)30000 = b(-)11.0000000000000000, 18 bits)
-y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: -3.      0 (=Lf:-3.000000 = -196608 = x(-)30000 = b(-)11.0000000000000000, 18 bits)
+y: -INF
+div  (x/y)
+	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: -3.      0 (=Lf:-3.000000 = -196608 = x(-)30000 = b(-)11.0000000000000000, 18 bits)
+y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+div  (x/y)
+	got: -INF
+	exp. -INF (~same)
+x: -3.      0 (=Lf:-3.000000 = -196608 = x(-)30000 = b(-)11.0000000000000000, 18 bits)
 y: 1.      0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
-mul  (x*y)
+div  (x/y)
 	got: -3.      0 (=Lf:-3.000000 = -196608 = x(-)30000 = b(-)11.0000000000000000, 18 bits)
 	exp. -3.000000 (~same)
 x: -30.      0 (=Lf:-30.000000 = -1966080 = x(-)1e0000 = b(-)11110.0000000000000000, 21 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: -30.      0 (=Lf:-30.000000 = -1966080 = x(-)1e0000 = b(-)11110.0000000000000000, 21 bits)
 y: +INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: -30.      0 (=Lf:-30.000000 = -1966080 = x(-)1e0000 = b(-)11110.0000000000000000, 21 bits)
-y: -INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: -30.      0 (=Lf:-30.000000 = -1966080 = x(-)1e0000 = b(-)11110.0000000000000000, 21 bits)
-y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: -30.      0 (=Lf:-30.000000 = -1966080 = x(-)1e0000 = b(-)11110.0000000000000000, 21 bits)
+y: -INF
+div  (x/y)
+	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: -30.      0 (=Lf:-30.000000 = -1966080 = x(-)1e0000 = b(-)11110.0000000000000000, 21 bits)
+y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+div  (x/y)
+	got: -INF
+	exp. -INF (~same)
+x: -30.      0 (=Lf:-30.000000 = -1966080 = x(-)1e0000 = b(-)11110.0000000000000000, 21 bits)
 y: 1.      0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
-mul  (x*y)
+div  (x/y)
 	got: -30.      0 (=Lf:-30.000000 = -1966080 = x(-)1e0000 = b(-)11110.0000000000000000, 21 bits)
 	exp. -30.000000 (~same)
 x: -300.      0 (=Lf:-300.000000 = -19660800 = x(-)12c0000 = b(-)100101100.0000000000000000, 25 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: -300.      0 (=Lf:-300.000000 = -19660800 = x(-)12c0000 = b(-)100101100.0000000000000000, 25 bits)
 y: +INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: -300.      0 (=Lf:-300.000000 = -19660800 = x(-)12c0000 = b(-)100101100.0000000000000000, 25 bits)
-y: -INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: -300.      0 (=Lf:-300.000000 = -19660800 = x(-)12c0000 = b(-)100101100.0000000000000000, 25 bits)
-y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: -300.      0 (=Lf:-300.000000 = -19660800 = x(-)12c0000 = b(-)100101100.0000000000000000, 25 bits)
+y: -INF
+div  (x/y)
+	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: -300.      0 (=Lf:-300.000000 = -19660800 = x(-)12c0000 = b(-)100101100.0000000000000000, 25 bits)
+y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+div  (x/y)
+	got: -INF
+	exp. -INF (~same)
+x: -300.      0 (=Lf:-300.000000 = -19660800 = x(-)12c0000 = b(-)100101100.0000000000000000, 25 bits)
 y: 1.      0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
-mul  (x*y)
+div  (x/y)
 	got: -300.      0 (=Lf:-300.000000 = -19660800 = x(-)12c0000 = b(-)100101100.0000000000000000, 25 bits)
 	exp. -300.000000 (~same)
 x: -3000.     -5 (=Lf:-3000.000488 = -196608032 = x(-)bb80020 = b(-)101110111000.0000000000100000, 28 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: -3000.     -5 (=Lf:-3000.000488 = -196608032 = x(-)bb80020 = b(-)101110111000.0000000000100000, 28 bits)
 y: +INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: -3000.     -5 (=Lf:-3000.000488 = -196608032 = x(-)bb80020 = b(-)101110111000.0000000000100000, 28 bits)
-y: -INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: -3000.     -5 (=Lf:-3000.000488 = -196608032 = x(-)bb80020 = b(-)101110111000.0000000000100000, 28 bits)
-y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: -3000.     -5 (=Lf:-3000.000488 = -196608032 = x(-)bb80020 = b(-)101110111000.0000000000100000, 28 bits)
+y: -INF
+div  (x/y)
+	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: -3000.     -5 (=Lf:-3000.000488 = -196608032 = x(-)bb80020 = b(-)101110111000.0000000000100000, 28 bits)
+y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+div  (x/y)
+	got: -INF
+	exp. -INF (~same)
+x: -3000.     -5 (=Lf:-3000.000488 = -196608032 = x(-)bb80020 = b(-)101110111000.0000000000100000, 28 bits)
 y: 1.      0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
-mul  (x*y)
+div  (x/y)
 	got: -3000.     -5 (=Lf:-3000.000488 = -196608032 = x(-)bb80020 = b(-)101110111000.0000000000100000, 28 bits)
 	exp. -3000.000488 (~same)
 x: -INF
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: -INF
 y: +INF
-mul  (x*y)
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
+x: -INF
+y: -INF
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
+x: -INF
+y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+div  (x/y)
 	got: -INF
 	exp. -INF (~same)
 x: -INF
-y: -INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: -INF
-y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-mul  (x*y)
-	got: UNDEF
-	exp. -INF (~same)
-x: -INF
 y: 1.      0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
-mul  (x*y)
+div  (x/y)
 	got: -INF
 	exp. -INF (~same)
 x: -32767.  -9999 (=Lf:-32767.999969 = -2147483646 = x(-)7ffffffe = b(-)111111111111111.1111111111111110, 31 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: -32767.  -9999 (=Lf:-32767.999969 = -2147483646 = x(-)7ffffffe = b(-)111111111111111.1111111111111110, 31 bits)
 y: +INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: -32767.  -9999 (=Lf:-32767.999969 = -2147483646 = x(-)7ffffffe = b(-)111111111111111.1111111111111110, 31 bits)
-y: -INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: -32767.  -9999 (=Lf:-32767.999969 = -2147483646 = x(-)7ffffffe = b(-)111111111111111.1111111111111110, 31 bits)
-y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: -32767.  -9999 (=Lf:-32767.999969 = -2147483646 = x(-)7ffffffe = b(-)111111111111111.1111111111111110, 31 bits)
+y: -INF
+div  (x/y)
+	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: -32767.  -9999 (=Lf:-32767.999969 = -2147483646 = x(-)7ffffffe = b(-)111111111111111.1111111111111110, 31 bits)
+y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+div  (x/y)
+	got: -INF
+	exp. -INF (~same)
+x: -32767.  -9999 (=Lf:-32767.999969 = -2147483646 = x(-)7ffffffe = b(-)111111111111111.1111111111111110, 31 bits)
 y: 1.      0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
-mul  (x*y)
+div  (x/y)
 	got: -32767.  -9999 (=Lf:-32767.999969 = -2147483646 = x(-)7ffffffe = b(-)111111111111111.1111111111111110, 31 bits)
 	exp. -32767.999969 (~same)
 
@@ -5304,480 +5304,480 @@ Ok sum == -2
 	got: 0. 249999 (=Lf:0.250000 = 4194303 = x3fffff = b.001111111111111111111111, 22 bits)
 	exp. 0.250000 (~same)
 
-Verifying multiplication with values of interest:
+Verifying divisions with values of interest:
 x: UNDEF
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: UNDEF
 y: +INF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: UNDEF
 y: -INF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: UNDEF
 y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: UNDEF
 y: 1.      0 (=Lf:1.000000 = 16777216 = x1000000 = b1.000000000000000000000000, 25 bits)
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: +INF
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: +INF
 y: +INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
 x: +INF
 y: -INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
 x: +INF
 y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
-mul  (x*y)
-	got: UNDEF
-	exp. -INF (~same)
+div  (x/y)
+	got: +INF
+	exp. +INF (~same)
 x: +INF
 y: 1.      0 (=Lf:1.000000 = 16777216 = x1000000 = b1.000000000000000000000000, 25 bits)
-mul  (x*y)
+div  (x/y)
 	got: +INF
 	exp. +INF (~same)
 x: 127. 999999 (=Lf:128.000000 = 2147483646 = x7ffffffe = b1111111.111111111111111111111110, 31 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: 127. 999999 (=Lf:128.000000 = 2147483646 = x7ffffffe = b1111111.111111111111111111111110, 31 bits)
 y: +INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: 127. 999999 (=Lf:128.000000 = 2147483646 = x7ffffffe = b1111111.111111111111111111111110, 31 bits)
-y: -INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: 127. 999999 (=Lf:128.000000 = 2147483646 = x7ffffffe = b1111111.111111111111111111111110, 31 bits)
-y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: 127. 999999 (=Lf:128.000000 = 2147483646 = x7ffffffe = b1111111.111111111111111111111110, 31 bits)
+y: -INF
+div  (x/y)
+	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: 127. 999999 (=Lf:128.000000 = 2147483646 = x7ffffffe = b1111111.111111111111111111111110, 31 bits)
+y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
+div  (x/y)
+	got: +INF
+	exp. +INF (~same)
+x: 127. 999999 (=Lf:128.000000 = 2147483646 = x7ffffffe = b1111111.111111111111111111111110, 31 bits)
 y: 1.      0 (=Lf:1.000000 = 16777216 = x1000000 = b1.000000000000000000000000, 25 bits)
-mul  (x*y)
+div  (x/y)
 	got: 127. 999999 (=Lf:128.000000 = 2147483646 = x7ffffffe = b1111111.111111111111111111111110, 31 bits)
 	exp. 128.000000 (~same)
 x: +INF
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: +INF
 y: +INF
-mul  (x*y)
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
+x: +INF
+y: -INF
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
+x: +INF
+y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
+div  (x/y)
 	got: +INF
 	exp. +INF (~same)
 x: +INF
-y: -INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: +INF
-y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
-mul  (x*y)
-	got: UNDEF
-	exp. -INF (~same)
-x: +INF
 y: 1.      0 (=Lf:1.000000 = 16777216 = x1000000 = b1.000000000000000000000000, 25 bits)
-mul  (x*y)
+div  (x/y)
 	got: +INF
 	exp. +INF (~same)
 x: +INF
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: +INF
 y: +INF
-mul  (x*y)
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
+x: +INF
+y: -INF
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
+x: +INF
+y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
+div  (x/y)
 	got: +INF
 	exp. +INF (~same)
 x: +INF
-y: -INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: +INF
-y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
-mul  (x*y)
-	got: UNDEF
-	exp. -INF (~same)
-x: +INF
 y: 1.      0 (=Lf:1.000000 = 16777216 = x1000000 = b1.000000000000000000000000, 25 bits)
-mul  (x*y)
+div  (x/y)
 	got: +INF
 	exp. +INF (~same)
 x: +INF
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: +INF
 y: +INF
-mul  (x*y)
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
+x: +INF
+y: -INF
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
+x: +INF
+y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
+div  (x/y)
 	got: +INF
 	exp. +INF (~same)
 x: +INF
-y: -INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: +INF
-y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
-mul  (x*y)
-	got: UNDEF
-	exp. -INF (~same)
-x: +INF
 y: 1.      0 (=Lf:1.000000 = 16777216 = x1000000 = b1.000000000000000000000000, 25 bits)
-mul  (x*y)
+div  (x/y)
 	got: +INF
 	exp. +INF (~same)
 x: 30.      0 (=Lf:30.000000 = 503316480 = x1e000000 = b11110.000000000000000000000000, 29 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: 30.      0 (=Lf:30.000000 = 503316480 = x1e000000 = b11110.000000000000000000000000, 29 bits)
 y: +INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: 30.      0 (=Lf:30.000000 = 503316480 = x1e000000 = b11110.000000000000000000000000, 29 bits)
-y: -INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: 30.      0 (=Lf:30.000000 = 503316480 = x1e000000 = b11110.000000000000000000000000, 29 bits)
-y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: 30.      0 (=Lf:30.000000 = 503316480 = x1e000000 = b11110.000000000000000000000000, 29 bits)
+y: -INF
+div  (x/y)
+	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: 30.      0 (=Lf:30.000000 = 503316480 = x1e000000 = b11110.000000000000000000000000, 29 bits)
+y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
+div  (x/y)
+	got: +INF
+	exp. +INF (~same)
+x: 30.      0 (=Lf:30.000000 = 503316480 = x1e000000 = b11110.000000000000000000000000, 29 bits)
 y: 1.      0 (=Lf:1.000000 = 16777216 = x1000000 = b1.000000000000000000000000, 25 bits)
-mul  (x*y)
+div  (x/y)
 	got: 30.      0 (=Lf:30.000000 = 503316480 = x1e000000 = b11110.000000000000000000000000, 29 bits)
 	exp. 30.000000 (~same)
 x: 3.      0 (=Lf:3.000000 = 50331648 = x3000000 = b11.000000000000000000000000, 26 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: 3.      0 (=Lf:3.000000 = 50331648 = x3000000 = b11.000000000000000000000000, 26 bits)
 y: +INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: 3.      0 (=Lf:3.000000 = 50331648 = x3000000 = b11.000000000000000000000000, 26 bits)
-y: -INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: 3.      0 (=Lf:3.000000 = 50331648 = x3000000 = b11.000000000000000000000000, 26 bits)
-y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: 3.      0 (=Lf:3.000000 = 50331648 = x3000000 = b11.000000000000000000000000, 26 bits)
+y: -INF
+div  (x/y)
+	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: 3.      0 (=Lf:3.000000 = 50331648 = x3000000 = b11.000000000000000000000000, 26 bits)
+y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
+div  (x/y)
+	got: +INF
+	exp. +INF (~same)
+x: 3.      0 (=Lf:3.000000 = 50331648 = x3000000 = b11.000000000000000000000000, 26 bits)
 y: 1.      0 (=Lf:1.000000 = 16777216 = x1000000 = b1.000000000000000000000000, 25 bits)
-mul  (x*y)
+div  (x/y)
 	got: 3.      0 (=Lf:3.000000 = 50331648 = x3000000 = b11.000000000000000000000000, 26 bits)
 	exp. 3.000000 (~same)
 x: 2.      0 (=Lf:2.000000 = 33554432 = x2000000 = b10.000000000000000000000000, 26 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: 2.      0 (=Lf:2.000000 = 33554432 = x2000000 = b10.000000000000000000000000, 26 bits)
 y: +INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: 2.      0 (=Lf:2.000000 = 33554432 = x2000000 = b10.000000000000000000000000, 26 bits)
-y: -INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: 2.      0 (=Lf:2.000000 = 33554432 = x2000000 = b10.000000000000000000000000, 26 bits)
-y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: 2.      0 (=Lf:2.000000 = 33554432 = x2000000 = b10.000000000000000000000000, 26 bits)
+y: -INF
+div  (x/y)
+	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: 2.      0 (=Lf:2.000000 = 33554432 = x2000000 = b10.000000000000000000000000, 26 bits)
+y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
+div  (x/y)
+	got: +INF
+	exp. +INF (~same)
+x: 2.      0 (=Lf:2.000000 = 33554432 = x2000000 = b10.000000000000000000000000, 26 bits)
 y: 1.      0 (=Lf:1.000000 = 16777216 = x1000000 = b1.000000000000000000000000, 25 bits)
-mul  (x*y)
+div  (x/y)
 	got: 2.      0 (=Lf:2.000000 = 33554432 = x2000000 = b10.000000000000000000000000, 26 bits)
 	exp. 2.000000 (~same)
 x: 1.      0 (=Lf:1.000000 = 16777216 = x1000000 = b1.000000000000000000000000, 25 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: 1.      0 (=Lf:1.000000 = 16777216 = x1000000 = b1.000000000000000000000000, 25 bits)
 y: +INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: 1.      0 (=Lf:1.000000 = 16777216 = x1000000 = b1.000000000000000000000000, 25 bits)
-y: -INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: 1.      0 (=Lf:1.000000 = 16777216 = x1000000 = b1.000000000000000000000000, 25 bits)
-y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: 1.      0 (=Lf:1.000000 = 16777216 = x1000000 = b1.000000000000000000000000, 25 bits)
+y: -INF
+div  (x/y)
+	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: 1.      0 (=Lf:1.000000 = 16777216 = x1000000 = b1.000000000000000000000000, 25 bits)
+y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
+div  (x/y)
+	got: +INF
+	exp. +INF (~same)
+x: 1.      0 (=Lf:1.000000 = 16777216 = x1000000 = b1.000000000000000000000000, 25 bits)
 y: 1.      0 (=Lf:1.000000 = 16777216 = x1000000 = b1.000000000000000000000000, 25 bits)
-mul  (x*y)
+div  (x/y)
 	got: 1.      0 (=Lf:1.000000 = 16777216 = x1000000 = b1.000000000000000000000000, 25 bits)
 	exp. 1.000000 (~same)
 x: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
 y: +INF
-mul  (x*y)
-	got: UNDEF
-	exp. -INF (~same)
-x: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
-y: -INF
-mul  (x*y)
-	got: UNDEF
-	exp. -INF (~same)
-x: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
-y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
+y: -INF
+div  (x/y)
+	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
+y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
+x: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
 y: 1.      0 (=Lf:1.000000 = 16777216 = x1000000 = b1.000000000000000000000000, 25 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: -1.      0 (=Lf:-1.000000 = -16777216 = x(-)1000000 = b(-)1.000000000000000000000000, 25 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: -1.      0 (=Lf:-1.000000 = -16777216 = x(-)1000000 = b(-)1.000000000000000000000000, 25 bits)
 y: +INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: -1.      0 (=Lf:-1.000000 = -16777216 = x(-)1000000 = b(-)1.000000000000000000000000, 25 bits)
-y: -INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: -1.      0 (=Lf:-1.000000 = -16777216 = x(-)1000000 = b(-)1.000000000000000000000000, 25 bits)
-y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: -1.      0 (=Lf:-1.000000 = -16777216 = x(-)1000000 = b(-)1.000000000000000000000000, 25 bits)
+y: -INF
+div  (x/y)
+	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: -1.      0 (=Lf:-1.000000 = -16777216 = x(-)1000000 = b(-)1.000000000000000000000000, 25 bits)
+y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
+div  (x/y)
+	got: -INF
+	exp. -INF (~same)
+x: -1.      0 (=Lf:-1.000000 = -16777216 = x(-)1000000 = b(-)1.000000000000000000000000, 25 bits)
 y: 1.      0 (=Lf:1.000000 = 16777216 = x1000000 = b1.000000000000000000000000, 25 bits)
-mul  (x*y)
+div  (x/y)
 	got: -1.      0 (=Lf:-1.000000 = -16777216 = x(-)1000000 = b(-)1.000000000000000000000000, 25 bits)
 	exp. -1.000000 (~same)
 x: -2.      0 (=Lf:-2.000000 = -33554432 = x(-)2000000 = b(-)10.000000000000000000000000, 26 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: -2.      0 (=Lf:-2.000000 = -33554432 = x(-)2000000 = b(-)10.000000000000000000000000, 26 bits)
 y: +INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: -2.      0 (=Lf:-2.000000 = -33554432 = x(-)2000000 = b(-)10.000000000000000000000000, 26 bits)
-y: -INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: -2.      0 (=Lf:-2.000000 = -33554432 = x(-)2000000 = b(-)10.000000000000000000000000, 26 bits)
-y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: -2.      0 (=Lf:-2.000000 = -33554432 = x(-)2000000 = b(-)10.000000000000000000000000, 26 bits)
+y: -INF
+div  (x/y)
+	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: -2.      0 (=Lf:-2.000000 = -33554432 = x(-)2000000 = b(-)10.000000000000000000000000, 26 bits)
+y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
+div  (x/y)
+	got: -INF
+	exp. -INF (~same)
+x: -2.      0 (=Lf:-2.000000 = -33554432 = x(-)2000000 = b(-)10.000000000000000000000000, 26 bits)
 y: 1.      0 (=Lf:1.000000 = 16777216 = x1000000 = b1.000000000000000000000000, 25 bits)
-mul  (x*y)
+div  (x/y)
 	got: -2.      0 (=Lf:-2.000000 = -33554432 = x(-)2000000 = b(-)10.000000000000000000000000, 26 bits)
 	exp. -2.000000 (~same)
 x: -3.      0 (=Lf:-3.000000 = -50331648 = x(-)3000000 = b(-)11.000000000000000000000000, 26 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: -3.      0 (=Lf:-3.000000 = -50331648 = x(-)3000000 = b(-)11.000000000000000000000000, 26 bits)
 y: +INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: -3.      0 (=Lf:-3.000000 = -50331648 = x(-)3000000 = b(-)11.000000000000000000000000, 26 bits)
-y: -INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: -3.      0 (=Lf:-3.000000 = -50331648 = x(-)3000000 = b(-)11.000000000000000000000000, 26 bits)
-y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: -3.      0 (=Lf:-3.000000 = -50331648 = x(-)3000000 = b(-)11.000000000000000000000000, 26 bits)
+y: -INF
+div  (x/y)
+	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: -3.      0 (=Lf:-3.000000 = -50331648 = x(-)3000000 = b(-)11.000000000000000000000000, 26 bits)
+y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
+div  (x/y)
+	got: -INF
+	exp. -INF (~same)
+x: -3.      0 (=Lf:-3.000000 = -50331648 = x(-)3000000 = b(-)11.000000000000000000000000, 26 bits)
 y: 1.      0 (=Lf:1.000000 = 16777216 = x1000000 = b1.000000000000000000000000, 25 bits)
-mul  (x*y)
+div  (x/y)
 	got: -3.      0 (=Lf:-3.000000 = -50331648 = x(-)3000000 = b(-)11.000000000000000000000000, 26 bits)
 	exp. -3.000000 (~same)
 x: -30.      0 (=Lf:-30.000000 = -503316480 = x(-)1e000000 = b(-)11110.000000000000000000000000, 29 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: -30.      0 (=Lf:-30.000000 = -503316480 = x(-)1e000000 = b(-)11110.000000000000000000000000, 29 bits)
 y: +INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: -30.      0 (=Lf:-30.000000 = -503316480 = x(-)1e000000 = b(-)11110.000000000000000000000000, 29 bits)
-y: -INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: -30.      0 (=Lf:-30.000000 = -503316480 = x(-)1e000000 = b(-)11110.000000000000000000000000, 29 bits)
-y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: -30.      0 (=Lf:-30.000000 = -503316480 = x(-)1e000000 = b(-)11110.000000000000000000000000, 29 bits)
+y: -INF
+div  (x/y)
+	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: -30.      0 (=Lf:-30.000000 = -503316480 = x(-)1e000000 = b(-)11110.000000000000000000000000, 29 bits)
+y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
+div  (x/y)
+	got: -INF
+	exp. -INF (~same)
+x: -30.      0 (=Lf:-30.000000 = -503316480 = x(-)1e000000 = b(-)11110.000000000000000000000000, 29 bits)
 y: 1.      0 (=Lf:1.000000 = 16777216 = x1000000 = b1.000000000000000000000000, 25 bits)
-mul  (x*y)
+div  (x/y)
 	got: -30.      0 (=Lf:-30.000000 = -503316480 = x(-)1e000000 = b(-)11110.000000000000000000000000, 29 bits)
 	exp. -30.000000 (~same)
 x: -INF
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: -INF
 y: +INF
-mul  (x*y)
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
+x: -INF
+y: -INF
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
+x: -INF
+y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
+div  (x/y)
 	got: -INF
 	exp. -INF (~same)
 x: -INF
-y: -INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: -INF
-y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
-mul  (x*y)
-	got: UNDEF
-	exp. -INF (~same)
-x: -INF
 y: 1.      0 (=Lf:1.000000 = 16777216 = x1000000 = b1.000000000000000000000000, 25 bits)
-mul  (x*y)
+div  (x/y)
 	got: -INF
 	exp. -INF (~same)
 x: -INF
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: -INF
 y: +INF
-mul  (x*y)
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
+x: -INF
+y: -INF
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
+x: -INF
+y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
+div  (x/y)
 	got: -INF
 	exp. -INF (~same)
 x: -INF
-y: -INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: -INF
-y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
-mul  (x*y)
-	got: UNDEF
-	exp. -INF (~same)
-x: -INF
 y: 1.      0 (=Lf:1.000000 = 16777216 = x1000000 = b1.000000000000000000000000, 25 bits)
-mul  (x*y)
+div  (x/y)
 	got: -INF
 	exp. -INF (~same)
 x: -INF
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: -INF
 y: +INF
-mul  (x*y)
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
+x: -INF
+y: -INF
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
+x: -INF
+y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
+div  (x/y)
 	got: -INF
 	exp. -INF (~same)
 x: -INF
-y: -INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: -INF
-y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
-mul  (x*y)
-	got: UNDEF
-	exp. -INF (~same)
-x: -INF
 y: 1.      0 (=Lf:1.000000 = 16777216 = x1000000 = b1.000000000000000000000000, 25 bits)
-mul  (x*y)
+div  (x/y)
 	got: -INF
 	exp. -INF (~same)
 x: -127.-999999 (=Lf:-128.000000 = -2147483646 = x(-)7ffffffe = b(-)1111111.111111111111111111111110, 31 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: -127.-999999 (=Lf:-128.000000 = -2147483646 = x(-)7ffffffe = b(-)1111111.111111111111111111111110, 31 bits)
 y: +INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: -127.-999999 (=Lf:-128.000000 = -2147483646 = x(-)7ffffffe = b(-)1111111.111111111111111111111110, 31 bits)
-y: -INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: -127.-999999 (=Lf:-128.000000 = -2147483646 = x(-)7ffffffe = b(-)1111111.111111111111111111111110, 31 bits)
-y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: -127.-999999 (=Lf:-128.000000 = -2147483646 = x(-)7ffffffe = b(-)1111111.111111111111111111111110, 31 bits)
+y: -INF
+div  (x/y)
+	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: -127.-999999 (=Lf:-128.000000 = -2147483646 = x(-)7ffffffe = b(-)1111111.111111111111111111111110, 31 bits)
+y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
+div  (x/y)
+	got: -INF
+	exp. -INF (~same)
+x: -127.-999999 (=Lf:-128.000000 = -2147483646 = x(-)7ffffffe = b(-)1111111.111111111111111111111110, 31 bits)
 y: 1.      0 (=Lf:1.000000 = 16777216 = x1000000 = b1.000000000000000000000000, 25 bits)
-mul  (x*y)
+div  (x/y)
 	got: -127.-999999 (=Lf:-128.000000 = -2147483646 = x(-)7ffffffe = b(-)1111111.111111111111111111111110, 31 bits)
 	exp. -128.000000 (~same)
 
@@ -6464,482 +6464,482 @@ maxfrac - maxfrac
 	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000000000000000000, 0 bits)
 	exp. 0.000000 (~same)
 
-Verifying multiplication with values of interest:
+Verifying divisions with values of interest:
 x: UNDEF
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: UNDEF
 y: +INF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: UNDEF
 y: -INF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: UNDEF
 y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000000000000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: UNDEF
 y: +INF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: +INF
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: +INF
 y: +INF
-mul  (x*y)
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
+x: +INF
+y: -INF
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
+x: +INF
+y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000000000000000000, 0 bits)
+div  (x/y)
 	got: +INF
 	exp. +INF (~same)
 x: +INF
-y: -INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: +INF
-y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000000000000000000, 0 bits)
-mul  (x*y)
-	got: UNDEF
-	exp. -INF (~same)
-x: +INF
 y: +INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
 x: 0.9999999 (=Lf:1.000000 = 2147483646 = x7ffffffe = b.1111111111111111111111111111110, 31 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: 0.9999999 (=Lf:1.000000 = 2147483646 = x7ffffffe = b.1111111111111111111111111111110, 31 bits)
 y: +INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: 0.9999999 (=Lf:1.000000 = 2147483646 = x7ffffffe = b.1111111111111111111111111111110, 31 bits)
-y: -INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: 0.9999999 (=Lf:1.000000 = 2147483646 = x7ffffffe = b.1111111111111111111111111111110, 31 bits)
-y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000000000000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000000000000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: 0.9999999 (=Lf:1.000000 = 2147483646 = x7ffffffe = b.1111111111111111111111111111110, 31 bits)
-y: +INF
-mul  (x*y)
+y: -INF
+div  (x/y)
+	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: 0.9999999 (=Lf:1.000000 = 2147483646 = x7ffffffe = b.1111111111111111111111111111110, 31 bits)
+y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000000000000000000, 0 bits)
+div  (x/y)
 	got: +INF
 	exp. +INF (~same)
+x: 0.9999999 (=Lf:1.000000 = 2147483646 = x7ffffffe = b.1111111111111111111111111111110, 31 bits)
+y: +INF
+div  (x/y)
+	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000000000000000000, 0 bits)
+	exp. 0.000000 (~same)
 x: +INF
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: +INF
 y: +INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
 x: +INF
 y: -INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
 x: +INF
 y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000000000000000000, 0 bits)
-mul  (x*y)
-	got: UNDEF
-	exp. -INF (~same)
-x: +INF
-y: +INF
-mul  (x*y)
+div  (x/y)
 	got: +INF
 	exp. +INF (~same)
+x: +INF
+y: +INF
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
 x: +INF
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: +INF
 y: +INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
 x: +INF
 y: -INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
 x: +INF
 y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000000000000000000, 0 bits)
-mul  (x*y)
-	got: UNDEF
-	exp. -INF (~same)
-x: +INF
-y: +INF
-mul  (x*y)
+div  (x/y)
 	got: +INF
 	exp. +INF (~same)
+x: +INF
+y: +INF
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
 x: +INF
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: +INF
 y: +INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
 x: +INF
 y: -INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
 x: +INF
 y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000000000000000000, 0 bits)
-mul  (x*y)
-	got: UNDEF
-	exp. -INF (~same)
-x: +INF
-y: +INF
-mul  (x*y)
+div  (x/y)
 	got: +INF
 	exp. +INF (~same)
+x: +INF
+y: +INF
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
 x: +INF
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: +INF
 y: +INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
 x: +INF
 y: -INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
 x: +INF
 y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000000000000000000, 0 bits)
-mul  (x*y)
-	got: UNDEF
-	exp. -INF (~same)
-x: +INF
-y: +INF
-mul  (x*y)
+div  (x/y)
 	got: +INF
 	exp. +INF (~same)
+x: +INF
+y: +INF
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
 x: +INF
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: +INF
 y: +INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
 x: +INF
 y: -INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
 x: +INF
 y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000000000000000000, 0 bits)
-mul  (x*y)
-	got: UNDEF
-	exp. -INF (~same)
-x: +INF
-y: +INF
-mul  (x*y)
+div  (x/y)
 	got: +INF
 	exp. +INF (~same)
+x: +INF
+y: +INF
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
 x: +INF
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: +INF
 y: +INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
 x: +INF
 y: -INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
 x: +INF
 y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000000000000000000, 0 bits)
-mul  (x*y)
-	got: UNDEF
-	exp. -INF (~same)
-x: +INF
-y: +INF
-mul  (x*y)
+div  (x/y)
 	got: +INF
 	exp. +INF (~same)
+x: +INF
+y: +INF
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
 x: +INF
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: +INF
 y: +INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
 x: +INF
 y: -INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
 x: +INF
 y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000000000000000000, 0 bits)
-mul  (x*y)
-	got: UNDEF
-	exp. -INF (~same)
-x: +INF
-y: +INF
-mul  (x*y)
+div  (x/y)
 	got: +INF
 	exp. +INF (~same)
+x: +INF
+y: +INF
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
 x: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000000000000000000, 0 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000000000000000000, 0 bits)
 y: +INF
-mul  (x*y)
-	got: UNDEF
-	exp. -INF (~same)
-x: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000000000000000000, 0 bits)
-y: -INF
-mul  (x*y)
-	got: UNDEF
-	exp. -INF (~same)
-x: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000000000000000000, 0 bits)
-y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000000000000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000000000000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000000000000000000, 0 bits)
-y: +INF
-mul  (x*y)
+y: -INF
+div  (x/y)
+	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000000000000000000, 0 bits)
+y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000000000000000000, 0 bits)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
+x: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000000000000000000, 0 bits)
+y: +INF
+div  (x/y)
+	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000000000000000000, 0 bits)
+	exp. 0.000000 (~same)
 x: -INF
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: -INF
 y: +INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
 x: -INF
 y: -INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
 x: -INF
 y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000000000000000000, 0 bits)
-mul  (x*y)
-	got: UNDEF
+div  (x/y)
+	got: -INF
 	exp. -INF (~same)
 x: -INF
 y: +INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
 x: -INF
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: -INF
 y: +INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
 x: -INF
 y: -INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
 x: -INF
 y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000000000000000000, 0 bits)
-mul  (x*y)
-	got: UNDEF
+div  (x/y)
+	got: -INF
 	exp. -INF (~same)
 x: -INF
 y: +INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
 x: -INF
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: -INF
 y: +INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
 x: -INF
 y: -INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
 x: -INF
 y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000000000000000000, 0 bits)
-mul  (x*y)
-	got: UNDEF
+div  (x/y)
+	got: -INF
 	exp. -INF (~same)
 x: -INF
 y: +INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
 x: -INF
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: -INF
 y: +INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
 x: -INF
 y: -INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
 x: -INF
 y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000000000000000000, 0 bits)
-mul  (x*y)
-	got: UNDEF
+div  (x/y)
+	got: -INF
 	exp. -INF (~same)
 x: -INF
 y: +INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
 x: -INF
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: -INF
 y: +INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
 x: -INF
 y: -INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
 x: -INF
 y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000000000000000000, 0 bits)
-mul  (x*y)
-	got: UNDEF
+div  (x/y)
+	got: -INF
 	exp. -INF (~same)
 x: -INF
 y: +INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
 x: -INF
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: -INF
 y: +INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
 x: -INF
 y: -INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
 x: -INF
 y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000000000000000000, 0 bits)
-mul  (x*y)
-	got: UNDEF
+div  (x/y)
+	got: -INF
 	exp. -INF (~same)
 x: -INF
 y: +INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
 x: -INF
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: -INF
 y: +INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
 x: -INF
 y: -INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
 x: -INF
 y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000000000000000000, 0 bits)
-mul  (x*y)
-	got: UNDEF
+div  (x/y)
+	got: -INF
 	exp. -INF (~same)
 x: -INF
 y: +INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
 x: 0.-9999999 (=Lf:-1.000000 = -2147483646 = x(-)7ffffffe = b(-).1111111111111111111111111111110, 31 bits)
 y: UNDEF
-mul  (x*y)
+div  (x/y)
 	got: UNDEF
-	exp. -INF (~same)
+	exp. UNDEF (~same)
 x: 0.-9999999 (=Lf:-1.000000 = -2147483646 = x(-)7ffffffe = b(-).1111111111111111111111111111110, 31 bits)
 y: +INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-x: 0.-9999999 (=Lf:-1.000000 = -2147483646 = x(-)7ffffffe = b(-).1111111111111111111111111111110, 31 bits)
-y: -INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-x: 0.-9999999 (=Lf:-1.000000 = -2147483646 = x(-)7ffffffe = b(-).1111111111111111111111111111110, 31 bits)
-y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000000000000000000, 0 bits)
-mul  (x*y)
+div  (x/y)
 	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000000000000000000, 0 bits)
 	exp. 0.000000 (~same)
 x: 0.-9999999 (=Lf:-1.000000 = -2147483646 = x(-)7ffffffe = b(-).1111111111111111111111111111110, 31 bits)
-y: +INF
-mul  (x*y)
+y: -INF
+div  (x/y)
+	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: 0.-9999999 (=Lf:-1.000000 = -2147483646 = x(-)7ffffffe = b(-).1111111111111111111111111111110, 31 bits)
+y: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000000000000000000, 0 bits)
+div  (x/y)
 	got: -INF
 	exp. -INF (~same)
+x: 0.-9999999 (=Lf:-1.000000 = -2147483646 = x(-)7ffffffe = b(-).1111111111111111111111111111110, 31 bits)
+y: +INF
+div  (x/y)
+	got: 0.      0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000000000000000000, 0 bits)
+	exp. 0.000000 (~same)
 
 Verifying different op implementations using random numbers:
 
