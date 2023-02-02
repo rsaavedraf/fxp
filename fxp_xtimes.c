@@ -22,7 +22,7 @@
 #include "fxp.h"
 
 #define DASHES "================================================\n"
-#define MAX_NUMS 10000
+#define MAX_NUMS 5000
 #define MAX_OPS  500
 
 int main(void) {

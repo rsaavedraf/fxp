@@ -17,12 +17,12 @@
 
 #include "fxp.h"
 #include <stdio.h>
-#include <stdlib.h>
+//#include <stdlib.h>
 //#include <assert.h>
 
 //Used when testing and debugging when trying to optimize division
-#include "fxp_aux.h"
-#define VERBOSE 1
+//#include "fxp_aux.h"
+//#define VERBOSE 1
 
 #define FXP_FRAC_BITS_MIN 4
 #define FXP_FRAC_BITS_DEF 12
