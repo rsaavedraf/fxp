@@ -17,12 +17,12 @@
 
 #include "fxp.h"
 #include <stdio.h>
-#include <stdlib.h>
-#include <assert.h>
+//#include <stdlib.h>
+//#include <assert.h>
 
 //Used when testing and debugging when trying to optimize division
-#include "fxp_aux.h"
-#define VERBOSE 0
+//#include "fxp_aux.h"
+//#define VERBOSE 1
 
 #define FXP_FRAC_BITS_MIN 4
 #define FXP_FRAC_BITS_DEF 12
@@ -592,8 +592,8 @@ int fxp_nbits_v0(unsigned int x, int max_bits)
  * Description of the distributive multiplication approach:
  * As in (a + x) * (b + y) = ab + ay + bx + xy,
  * for arguments fxp1 and fxp2 equal to the following:
- * fxp1 = (a << fxp_frac_bits) + x, and
- * fxp2 = (b << fxp_frac_bits) + y
+ * fxp1 = (a << fxp_frac_bits) | x, and
+ * fxp2 = (b << fxp_frac_bits) | y
  *
  * a, b their corresponding positive whole bits, and x, y their
  * positive frac bits, the product is calculated as:
@@ -704,12 +704,12 @@ int fxp_mul(int fxp1, int fxp2)
             pf3 = (x * y) >> (fxp_frac_bits - lostbits);
             */
             /*
-             * Improved method to compute pf3, using again a
+             * Below an improved method to compute pf3, using again a
              * distributive scheme, not with whole vs. frac parts
-             * (we are here all within fraction parts after all)
+             * (we are here all within fraction parts after all,)
              * but with left and right chunks of the frac parts:
-             * x = (xl << subshift) + xr
-             * y = (yl << subshift) + yr
+             * x = (xl << subshift) | xr
+             * y = (yl << subshift) | yr
              *
              * rchunk = R part of qrsum
              *      where:
@@ -811,114 +811,101 @@ int fxp_div(int fxp1, int fxp2)
                             (fxp1 > 0)? FXP_POS_INF: FXP_NEG_INF;
 
         // Positive values of the arguments
-        int dividend = (fxp1 >= 0)? fxp1: -fxp1;
-        int divisor = (fxp2 >  0)? fxp2: -fxp2;
-        if (divisor == FXP_POS_INF)
-                return (dividend == FXP_POS_INF)? FXP_UNDEF: 0;
-        if (dividend == FXP_POS_INF)
+        int x = (fxp1 >= 0)? fxp1: -fxp1;
+        int y = (fxp2 >  0)? fxp2: -fxp2;
+        if (y == FXP_POS_INF)
+                return (x == FXP_POS_INF)? FXP_UNDEF: 0;
+        if (x == FXP_POS_INF)
                 return ((fxp1 > 0 && fxp2 > 0) || (fxp1 < 0 && fxp2 < 0))?
                                 FXP_POS_INF: FXP_NEG_INF;
-        if ((divisor <= fxp_frac_mask) &&
-                (dividend > fxp_mul(FXP_MAX, divisor))) {
+        if ((y <= fxp_frac_mask) &&
+                (x > fxp_mul(FXP_MAX, y))) {
                 return ((fxp1 > 0 && fxp2 > 0) || (fxp1 < 0 && fxp2 < 0))?
                                 FXP_POS_INF: FXP_NEG_INF;
         }
-        // Calculation of division of fixed-point nums
-        // using only ints
 
-        int bits_dividend = fxp_nbits(dividend);
-        int bits_divisor = fxp_nbits(divisor);
+        int bx = fxp_nbits(x);
+        int by = fxp_nbits(y);
 
-        //if (VERBOSE) printf("d: x = %d (hex: %x, %d bits)\n   y = %d (hex: %x, %d bits)\n", \
-        //            dividend, dividend, bits_dividend, \
-        //            divisor, divisor, bits_divisor);
-        int size_diff = bits_dividend - bits_divisor;
-        int shift = size_diff - 1;
-        int minuend, next_bit_mask, bminuend, ba;
-        int difference = 0;
+        int m, bm, next_bit_mask;
+        int bmax = bx + fxp_frac_bits;
+        //int ba, difference = 0, qbits = 0;
+        if (by == FXP_INT_BITS_M1) {
+                // Border case, we need to shrink the divisor so that
+                // the minuend can still have 1 more bit
+                y = (y >> 1);
+                by--;
+                //if (VERBOSE) printf("\n\t\tNew shrinked divisor %d\n\n", y);
+                //qbits++;
+                bmax--;
+        }
         int bidx;
-        //int qbits = 0;
+        int size_diff = bx - by;
+        int shift = size_diff - 1;
         // Initialize starting minuend
         if (size_diff > 0) {
-                int mmask = FXP_POS_INF >> (FXP_INT_BITS - bits_divisor - 1);
-                minuend = (dividend & (mmask << size_diff)) >> size_diff;
+                int mmask = FXP_POS_INF >> (FXP_INT_BITS - by - 1);
+                m = (x & (mmask << size_diff)) >> size_diff;
                 next_bit_mask = 1 << shift;
-                bidx = bits_divisor;
-                bminuend = bits_divisor;
+                bidx = by;
+                bm = by;
         } else {
                 // Minor speedup, making the first minuend have as
                 // many bits as the divisor
-                minuend = dividend << -size_diff;
+                m = x << -size_diff;
                 next_bit_mask = 0;
-                bidx = bits_dividend - size_diff;
-                bminuend = bits_dividend - size_diff;
+                bidx = bx - size_diff;
                 //qbits = -size_diff;
+                bm = bx - size_diff;
         }
-        //if (VERBOSE) printf("\td: starting m: %d (%d bits)\n", minuend, bidx);
-        int quotient = 0;
-        int bmax = bits_dividend + fxp_frac_bits;
+        //if (VERBOSE) printf("\td: starting m: %d (%d bits)\n", m, bidx);
+        int q = 0;
         //printf("bidx processed while <= bmax: %d\n", bmax);
         //int loops = 0;
-        // bidx is (from left to right) the highest bit # we are currently
-        // processing, so we loop till bidx exceeds the right-most bit
-        // in the full (left-shifted) dividend
+        // bidx is (from left to right) the highest bit # we are
+        // currently processing, so we loop till bidx exceeds the
+        // right-most bit in the full (left-shifted) dividend
         while (bidx <= bmax) {
-                //if (VERBOSE) printf("\tm: %d (hex:%x, %d bits) bidx:%d\n", minuend, minuend, bminuend, bidx);
-                if (minuend >= divisor) {
+                //if (VERBOSE) printf("\tm: %d (hex:%x, %d bits) bidx:%d\n", m, m, bm, bidx);
+                if (m >= y) {
                         // Append a 1 to the right of the quotient
-                        quotient = (quotient << 1) | 1;
+                        q = (q << 1) | 1;
                         //ba = 1;
-                        //difference = minuend - divisor;
-                        minuend = minuend - divisor;
-                        bminuend = fxp_nbits(minuend);
+                        //difference = m - y;
+                        m = m - y;
+                        bm = fxp_nbits(m);
                 } else {
                         // Append a 0 to the right of the quotient
-                        quotient = (quotient << 1);
+                        q = (q << 1);
                         //ba = 0;
-                        //difference = minuend;
+                        //difference = m;
                 }
-                //qbits = fxp_nbits(quotient);
+                //qbits = fxp_nbits(q);
                 //if (VERBOSE) {
-                //    trace_fxp_div("div:", loops, fxp_frac_bits, bidx, \
-                //        dividend, divisor, \
-                //        quotient, ba, qbits, \
-                //        minuend, \
-                //        ba, \
-                //        difference );
+                //    trace_fxp_div("div:", loops, fxp_frac_bits,
+                //        bidx, x, y, q, ba, qbits, m, ba, difference);
                 //}
+                //m = difference;
+                //bm = fxp_nbits(m);
                 bidx++;
-                //minuend = difference;
-                //bminuend = fxp_nbits(minuend);
-                if (bminuend == FXP_INT_BITS_M1) {
-                        if (divisor > 1) {
-                                divisor = (divisor >> 1);
-                                //if (VERBOSE) printf("\t\tnew shrinked divisor %d\n\n", divisor);
-                        } else {
-                                // Overflow -> Return properly signed infinity
-                                return ((fxp1 >= 0 && fxp2 > 0) || \
-                                        (fxp1 < 0 && fxp2 < 0))? \
-                                                FXP_POS_INF: FXP_NEG_INF;
-                        }
+                if (next_bit_mask > 0) {
+                        // Pull down next bit from the dividend,
+                        // and append it to the right of the minuend
+                        m = (m << 1) | \
+                                    ((x & next_bit_mask) \
+                                        >> shift);
+                        next_bit_mask = (next_bit_mask >> 1);
+                        shift--;
                 } else {
-                        if (next_bit_mask > 0) {
-                                // Pull down next bit from the dividend,
-                                // and append it to the right of the minuend
-                                minuend = (minuend << 1) | \
-                                            ((dividend & next_bit_mask) \
-                                                >> shift);
-                                next_bit_mask = (next_bit_mask >> 1);
-                                shift--;
-                        } else {
-                                // Pull down a 0 bit and append it to minuend
-                                minuend = (minuend << 1);
-                        }
-                        bminuend = fxp_nbits(minuend);
+                        // Pull down a 0 bit and append it to minuend
+                        m = (m << 1);
                 }
+                bm = fxp_nbits(m);
                 //loops++;
         }
         // Return properly signed quotient
         return ((fxp1 >= 0 && fxp2 > 0) || (fxp1 < 0 && fxp2 < 0))?
-                        quotient: -quotient;
+                        q: -q;
 }
 
 /*
@@ -933,16 +920,16 @@ int fxp_div_l(int fxp1, int fxp2)
                 return (fxp1 > 0)? FXP_POS_INF:
                                 (fxp1 < 0)? FXP_NEG_INF: FXP_UNDEF;
         // Positive values of the arguments
-        int v1 = (fxp1 >= 0)? fxp1: -fxp1;
-        int v2 = (fxp2 >  0)? fxp2: -fxp2;
-        if (v2 == FXP_POS_INF)
-                return (v1 == FXP_POS_INF)? FXP_UNDEF: 0;
-        if (v1 == FXP_POS_INF)
+        int x = (fxp1 >= 0)? fxp1: -fxp1;
+        int y = (fxp2 >  0)? fxp2: -fxp2;
+        if (y == FXP_POS_INF)
+                return (x == FXP_POS_INF)? FXP_UNDEF: 0;
+        if (x == FXP_POS_INF)
                 return ((fxp1 > 0 && fxp2 > 0) || (fxp1 < 0 && fxp2 < 0))?
                                 FXP_POS_INF: FXP_NEG_INF;
         // Compute positive division
-        long numerator = ((long) v1) << fxp_frac_bits;
-        long division = numerator / v2;
+        long numerator = ((long) x) << fxp_frac_bits;
+        long division = numerator / y;
 
         if (division > FXP_MAX_L) {
                 // Overflow -> Return properly signed infinity

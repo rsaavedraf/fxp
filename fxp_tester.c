@@ -195,7 +195,7 @@ int main(void) {
                 int whole_max = fxp_get_whole_max();
                 int whole_min = fxp_get_whole_min();
 
-                // Much more smaller error allowance now,
+                // Much smaller error allowance now,
                 // after implementing fxp_mul with pretty much
                 // no precision-loss compared to fxp_mul_l
                 warn_delta = ((long double) 3.0) / frac_max;
@@ -542,8 +542,9 @@ int main(void) {
                 int sign1, sign2, sign3, n1, n2, n3, n4, fxp1, fxp2;
                 long double ldx, ldy, ldz, tgt1, tgt2;
 
-                printf("\nVerifying multiplication with values of interest:\n");
-                //printf("\nVerifying divisions with values of interest:\n");
+                //printf("\nVerifying multiplication with values of interest:\n");
+                printf("\nVerifying divisions with values of interest:\n");
+
                 int ax[] = {FXP_UNDEF, FXP_POS_INF, FXP_MAX,
                         fxp(300000), fxp_dec(3000, 5), fxp(300), fxp(30),
                         fxp(3), fxp(2), fxp(1),
@@ -551,8 +552,6 @@ int main(void) {
                         fxp(-30), fxp(-300), fxp_dec(-3000, 5),
                         fxp(-300000), FXP_MIN};
                 int ay[] = {FXP_UNDEF, FXP_POS_INF, FXP_NEG_INF, 0, fxp(1)};
-                //int ax[] = {fxp_bin(0, fxp_get_frac_max())};
-                //int ay[] = {fxp_bin(0, fxp_get_frac_max())};
                 int x, y, posx, posy;
                 int ndd = (int) (sizeof(ax) / sizeof(int));
                 int ndr = (int) (sizeof(ay) / sizeof(int));
@@ -568,15 +567,14 @@ int main(void) {
                         print_fxp(y);
 
                         //For multiplication
-                        tgt1 = dfxp (fxp_mul_l(x, y));
-                        n1 = fxp_mul(x, y);
-                        test_fxp("\nmul  (x*y)", n1, tgt1);
-/*
+                        //tgt1 = dfxp (fxp_mul_l(x, y));
+                        //n1 = fxp_mul(x, y);
+                        //test_fxp("\nmul  (x*y)", n1, tgt1);
+
                         //For division
                         tgt1 = get_div_target(x, y);
                         n1 = fxp_div(x, y);
                         test_fxp("\ndiv  (x/y)", n1, tgt1);
-*/
 
                     }
                 }
@@ -595,9 +593,6 @@ int main(void) {
                             n3 %= fxp_get_frac_max();
                         }
 
-                        //ldx = lim_frac(dfxp(n1), frac_bits);
-                        //ldy = lim_frac(dfxp(n2), frac_bits);
-                        //ldz = lim_frac(dfxp(n3), frac_bits);
                         ldx = dfxp(n1);
                         ldy = dfxp(n2);
                         ldz = dfxp(n3);
@@ -646,9 +641,7 @@ int main(void) {
                         tgt2 = get_div_target(n1, n3);
                         test_fxp("div_l (n1/n3)", fxp1, tgt2);
                         test_fxp("div   (n1/n3)", fxp2, tgt2);
-
                 }
-
 
                 printf("\n%d Warnings for %d frac bits.\n", \
                             nwarnings, frac_bits);
