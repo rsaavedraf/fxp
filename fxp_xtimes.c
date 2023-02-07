@@ -5,15 +5,14 @@
  * Shows relavite execution times (smaller is better)
  * for the different fxp arithmetic operations.
  * Example end of the ouput, for a system with an
- * Intel i7-6700K cpu, run on 2023-01-31:
+ * Intel i7-6700K cpu, run on 2023-02-07:
  *
- * add:    1.000000
- * add_l:  1.009193
- * mul:    8.523299
- * mul_l:  1.487134
- * div:    20.434878
- * div_l:  3.249009
- *
+ *   add:	1.000000
+ *   add_l:	1.014556
+ *   mul:	8.979335
+ *   mul_l:	1.439898
+ *   div:	15.482966
+ *   div_l:	3.237721
  */
 
 #include <stdio.h>
