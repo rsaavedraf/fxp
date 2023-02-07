@@ -62,23 +62,49 @@ long double lim_frac(long double x, int fbp)
 }
 
 /*
+ * Creates an fxp given a long double value
+ */
+int fxp_from_ldouble(long double x)
+{
+    long shift = pow(2, fxp_get_frac_bits());
+    long double px = (x < 0)? -x: x;
+    long plwhole = trunc(px);
+    if (plwhole > ((long) fxp_get_whole_max()))
+        return x > 0? FXP_POS_INF: FXP_NEG_INF;
+    long double pdfrac = px - ((long double) plwhole);
+    long plfrac = trunc(pdfrac * shift);
+    if (plwhole > 0)
+        return fxp_bin((int) plwhole, (int) plfrac);
+    else if (plwhole < 0)
+        return fxp_bin((int) -plwhole, (int) plfrac);
+    else
+        return fxp_bin(0, (int) -plfrac);
+}
+
+
+/*
  * Returns a double value corresponding to a given fxp.
- * Watch out this code returns the same long double
- * value for FXP_UNDEF and FXP_NEG_INF
- * (but see the implementation of dfxp_undef()
- * vs. dfxp_neg_inf() below, precisely to
- * get around this using those functions)
+ * Now here we make sure we return different enough
+ * values for FXP_UNDEF and FXP_NEG_INF
  */
 long double dfxp(int fxp)
 {
-    long wi = fxp_get_whole_part(fxp);
-    long fi = fxp_get_bin_frac(fxp);
-    //printf("\nfxp long  whole & frac parts: %ld, %ld\n", wi, fi);
-    long double wd = (long double) wi;
-    long double fd = int_to_frac(fi);
-    //printf("fxp Lf whole & frac parts: %Lf, %Lf\n", wd, fd);
-    long double x = wd + fd;
-    return x;
+    if (fxp <= FXP_NEG_INF) {
+            int maxfrac = (1 << fxp_get_frac_bits()) - 1;
+            long double wd = (long double) -fxp_get_whole_max();
+            long double fd = int_to_frac(maxfrac);
+            long double x = wd - fd - (fxp == FXP_UNDEF? 0.1: 0.0);
+            return x;
+    } else {
+            long wi = fxp_get_whole_part(fxp);
+            long fi = fxp_get_bin_frac(fxp);
+            //printf("\nfxp long  whole & frac parts: %ld, %ld\n", wi, fi);
+            long double wd = (long double) wi;
+            long double fd = int_to_frac(fi);
+            //printf("fxp Lf whole & frac parts: %Lf, %Lf\n", wd, fd);
+            long double x = wd + fd;
+            return x;
+    }
 }
 
 long double dfxp_pos_inf()
@@ -93,9 +119,7 @@ long double dfxp_neg_inf()
 
 long double dfxp_undef()
 {
-    // Substracting an additional small value to force it to have
-    // a different long double value from dfxp_neg_inf()
-    return lim_frac(dfxp(FXP_UNDEF) - 0.1, fxp_get_frac_bits());
+    return lim_frac(dfxp(FXP_UNDEF), fxp_get_frac_bits());
 }
 
 
@@ -168,17 +192,17 @@ void print_fxp(int fxp)
                 long double n = lim_frac(dfxp(fxp), fxp_get_frac_bits());
                 int whole = fxp_get_whole_part(fxp);
                 int nbits;
-                if (fxp_get_frac_max_dec() <= 999) {
+                if (fxp_get_frac_max_dec() <= 9999) {
                     if (fxp < 0) {
                         int pfxp = -fxp;
                         nbits = fxp_nbits(pfxp);
-                        printf("%d.%3d (=Lf:%Lf = %d = x(-)%x = b",
+                        printf("%d.%5d (=Lf:%Lf = %d = x(-)%x = b",
                                 whole,
                                 fxp_get_dec_frac(fxp),
                                 n, fxp, pfxp);
                     } else {
                         nbits = fxp_nbits(fxp);
-                        printf("%d.%3d (=Lf:%Lf = %d = x%x = b",
+                        printf("%d.%5d (=Lf:%Lf = %d = x%x = b",
                                 whole,
                                 fxp_get_dec_frac(fxp),
                                 n, fxp, fxp);
@@ -187,13 +211,13 @@ void print_fxp(int fxp)
                     if (fxp < 0) {
                         int pfxp = -fxp;
                         nbits = fxp_nbits(pfxp);
-                        printf("%d.%7d (=Lf:%Lf = %d = x(-)%x = b",
+                        printf("%d.%8d (=Lf:%Lf = %d = x(-)%x = b",
                                 whole,
                                 fxp_get_dec_frac(fxp),
                                 n, fxp, pfxp);
                     } else {
                         nbits = fxp_nbits(fxp);
-                        printf("%d.%7d (=Lf:%Lf = %d = x%x = b",
+                        printf("%d.%8d (=Lf:%Lf = %d = x%x = b",
                                 whole,
                                 fxp_get_dec_frac(fxp),
                                 n, fxp, fxp);
@@ -237,9 +261,8 @@ void print_fxp_div(int startmask, int nmaskbits, int n, int frac_bits)
 void trace_fxp_div( char * msg,
             int iteration, int frac_bits, int bindex, \
             int dividend, int divisor, \
-            int quotient, int lastqbit, int qbits, \
+            int quotient, int newqbit, \
             int mc, \
-            int newqbit, \
             int difference)
 {
     int bmc = fxp_nbits(mc);

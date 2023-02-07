@@ -34,7 +34,9 @@ void print_fxp_div(int startmask, int nmaskbits, int n, int frac_bits);
 void trace_fxp_div( char * msg,
             int iteration, int frac_bits, int bindex, \
             int dividend, int divisor, \
-            int quotient, int lastqbit, int qbits, \
+            int quotient, int newqbit, \
             int mc, \
-            int newqbit, \
             int difference);
+
+int fxp_from_ldouble(long double x);
+
