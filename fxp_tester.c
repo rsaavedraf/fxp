@@ -18,6 +18,7 @@
 #define DASHES "========================\n"
 
 static int fracbit_configs[] = {0, 11, 14, 16, 24, 31};
+//static int fracbit_configs[] = {16};
 static long double max_warn_delta = 0.0;
 static long double larger_delta = 0.0;
 static long double largest_delta = 0.0;
@@ -77,9 +78,11 @@ void test_fxp(char *s, int fxp1, long double d_assert_val)
 static long double get_target(long double x)
 {
     long double y = lim_frac(x, fxp_get_frac_bits());
-    if (y >= dfxp_pos_inf())
+    if ((y >= dfxp_pos_inf()) \
+        || (trunc(y) > fxp_get_whole_max()))
         return dfxp_pos_inf();
-    else if (y <= dfxp_neg_inf())
+    else if ((y <= dfxp_neg_inf()) \
+            || (trunc(y) < fxp_get_whole_min()))
         return dfxp_neg_inf();
     return y;
 }
@@ -113,10 +116,12 @@ static long double get_div_target(int x, int y)
                     int frbits = fxp_get_frac_bits();
                     target = lim_frac(ldx, frbits) / lim_frac(ldy, frbits);
                     target = lim_frac(target, frbits);
-                    if (target >= dfxp_pos_inf()) {
+                    if ((target >= dfxp_pos_inf()) \
+                        || (trunc(target) > fxp_get_whole_max())) {
                         target = dfxp_pos_inf();
                     } else {
-                        if (target <= dfxp_neg_inf()) {
+                        if ((target <= dfxp_neg_inf()) \
+                            || (trunc(target) < fxp_get_whole_min())) {
                             target = dfxp_neg_inf();
                         }
                     }
@@ -148,7 +153,7 @@ static int fxp_halfp2;
 void tests_01()
 {
         printf("\nChecking extreme int values, part I:\n");
-        test_fxp("Infinity", FXP_POS_INF, dfxp_pos_inf());
+        test_fxp("+Inf", FXP_POS_INF, dfxp_pos_inf());
         test_fxp("Largest", fxp_largest, dfxp(FXP_MAX));
         test_fxp("HalfMax", fxp_halfmax, dfxp(FXP_MAX)/2);
         test_fxp("Largest frac", frac_max, dfxp(fxp_bin(0, frac_max)));
@@ -158,7 +163,7 @@ void tests_01()
         test_fxp("-tiniest", -fxp_tiniest, dfxp(-fxp_tiniest));
         test_fxp("-Largest frac", -frac_max, dfxp(-frac_max));
         test_fxp("Most negative", -fxp_largest, dfxp(FXP_MIN));
-        test_fxp("-Infinity", FXP_NEG_INF, dfxp_neg_inf());
+        test_fxp("-Inf", FXP_NEG_INF, dfxp_neg_inf());
         test_fxp("Undefined", FXP_UNDEF, dfxp_undef());
 }
 
@@ -575,6 +580,33 @@ void test_ops_with_rand_nums()
         }
 }
 
+void test_fxp_from_ldouble()
+{
+        long double e = lim_frac( exp(1), frac_bits);
+        long double pi = lim_frac( asin(1)*2, frac_bits);
+        long double log2e = lim_frac( 1/log(2), frac_bits);
+        //printf("e:%Le\t", e);
+        //print_fxp(fxp_from_ldouble(e)); printf("\n");
+        //printf("pi:%Le\t", pi);
+        //print_fxp(fxp_from_ldouble(pi)); printf("\n");
+        //printf("log2e:%Le\t", log2e);
+        //print_fxp(fxp_from_ldouble(log2e)); printf("\n");
+
+        printf("\ne  as fxp: ");
+        print_fxp(fxp_get_e()); printf("\n");
+        printf("pi as fxp: ");
+        print_fxp(fxp_get_pi()); printf("\n");
+        printf("ln2 as fxp: ");
+        print_fxp(fxp_get_ln2()); printf("\n");
+        printf("log2e as fxp: ");
+        print_fxp(fxp_get_log2e()); printf("\n");
+        //printf("sqrt(64.5): ");
+        //int x = fxp_bin(64, fxp_get_frac_max()/2);
+        //print_fxp(x); printf("\n");
+        //print_fxp(fxp_sqrt(x)); printf("\n");
+}
+
+
 int main(void)
 {
         printf("%sFXP Tester run\n%s", DASHES, DASHES);
@@ -622,9 +654,31 @@ int main(void)
         // (comment this out to be able to reproduce exactly between runs)
         //srand((unsigned int) time(0));
 
+        // Make sure starting trascendental constants still have exactly
+        // the same values after resetting the # of frac bits to default
+        int nfb = fxp_get_frac_bits();
+        int e = fxp_get_e();
+        int pi = fxp_get_pi();
+        int ln2 = fxp_get_ln2();
+        int log2e = fxp_get_log2e();
+        fxp_set_frac_bits( nfb );
+        if ((pi != fxp_get_pi()) || (e != fxp_get_e()) || \
+            (ln2 != fxp_get_ln2()) || (log2e != fxp_get_log2e())) {
+            // These differences might happen if rounding for least-significant
+            // bit of the constants is done differently between the startup vs.
+            // what fxp_set_frac_bits() does when called
+            printf("Constant difference detected after resetting frac bits to default:\n");
+            printf("  \tstarting\tafter\n");
+            printf("e:\t%x\t\t%x\n", e, fxp_get_e());
+            printf("pi:\t%x\t\t%x\n", pi, fxp_get_pi());
+            printf("ln2:\t%x\t\t%x\n", ln2, fxp_get_ln2());
+            printf("log2e:\t%x\t\t%x\n", log2e, fxp_get_log2e());
+            assert( 0 );
+        }
+
         int nconfigs = sizeof(fracbit_configs) / sizeof(fracbit_configs[0]);
         printf("\nRunning tests for frac-bit sizes: ");
-        for (int nfb = 0; nfb < nconfigs; nfb++) {
+        for (nfb = 0; nfb < nconfigs; nfb++) {
             printf("%d", fracbit_configs[nfb]);
             if ((nfb + 1) < nconfigs) printf(", ");
         }
@@ -662,23 +716,32 @@ int main(void)
                 nwarnings = 0;
                 larger_delta = 0;
                 printf("\n%sFXP configuration parameters:\n", DASHES);
-                printf("frac bits   : %d (requested was %d)\n",
+                printf("frac bits : %d (requested was %d)\n",
 
                                 frac_bits, fracbit_configs[nfb]);
-                printf("whole bits  : %d\n", whole_bits);
-                printf("pos infinity: %d (Lf: %Lf)\n",
-                                FXP_POS_INF, dfxp_pos_inf());
-                printf("whole max   : %d\n", whole_max);
-                printf("frac mask   : %d\n", frac_mask);
-                printf("frac max    : %d (->decimals: .%d)\n",
+                printf("whole bits: %d\n", whole_bits);
+                printf("+INF      : %d (x%x,  wh,fr values: %d, %d,  Lf eq.:%Lf)\n", \
+                                FXP_POS_INF, FXP_POS_INF, \
+                                fxp_get_whole_part(FXP_POS_INF), \
+                                fxp_get_bin_frac(FXP_POS_INF), \
+                                dfxp_pos_inf());
+                printf("whole max : %d\n", whole_max);
+                printf("frac mask : %d\n", frac_mask);
+                printf("frac max  : %d (->decimals: .%d)\n",
                                 frac_max,
                                 frac_max_dec);
-                printf("whole min   : %d\n", whole_min);
-                printf("neg infinity: %d (Lf: %Lf)\n",
-                                FXP_NEG_INF, dfxp_neg_inf());
-                printf("undefined   : %d (Lf: %Lf)\n",
-                                FXP_UNDEF, dfxp_undef());
-                printf("warn_delta   : %LE\n", warn_delta);
+                printf("whole min : %d\n", whole_min);
+                printf("-INF      : %d (x%x,  wh,fr values: %d, %d,  Lf eq.:%Lf)\n", \
+                                FXP_NEG_INF, FXP_NEG_INF, \
+                                fxp_get_whole_part(FXP_NEG_INF), \
+                                fxp_get_bin_frac(FXP_NEG_INF), \
+                                dfxp_neg_inf());
+                printf("UNDEF     : %d (x%x,  wh,fr values: %d, %d,  Lf eq.:%Lf)\n", \
+                                FXP_UNDEF, FXP_UNDEF, \
+                                fxp_get_whole_part(FXP_UNDEF), \
+                                fxp_get_bin_frac(FXP_UNDEF), \
+                                dfxp_undef());
+                printf("warn_delta: %LE\n", warn_delta);
                 printf("max_warn_delta: %LE\n", max_warn_delta);
 
                 /*
@@ -690,6 +753,7 @@ int main(void)
                     test_fxp("fraction", fxpfr, int_to_frac(frac));
                 }
                 */
+
 
                 tests_01();
 
@@ -706,6 +770,9 @@ int main(void)
                 test_ops_with_values_of_interest();
 
                 test_ops_with_rand_nums();
+
+                test_fxp_from_ldouble();
+
 
                 printf("\n%d Warnings for %d frac bits.\n", \
                             nwarnings, frac_bits);
