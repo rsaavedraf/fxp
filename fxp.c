@@ -14,6 +14,7 @@
  * v0.1: 2022-11-13
  * v0.2: 2023-01-08: runtime-modifiable number of frac bits to use.
  * v0.3: 2023-01-30: fxp_mul avoiding precision loss!
+ * v0.4: 2023-02-09: first version of fxp_log2_l implemented
  */
 
 #include "fxp.h"
@@ -971,8 +972,7 @@ int fxp_log2_l(int fxp1)
         // we have nx satisfying: 1 <= nx < 2
         int m = 0; // starting mantissa
         int b = fxp_half; // b starts as 0.5 (corresponding to first frac bit)
-        int nb = fxp_frac_bits; // desired number of mantissa bits to process
-        while (nb > 0) {
+        while (b > 0) {
                 // Here comes a squaring of nx, so one inevitable multiplication
                 // required per bit of the mantissa. This is by far the most
                 // expensive part of this entire log2 algorithm
@@ -985,7 +985,6 @@ int fxp_log2_l(int fxp1)
                         m += b; // Sets to 1 mantissa bit corresponding to b
                 }
                 b = b >> 1;
-                nb--;
         }
         //int fxp_log = (c << fxp_frac_bits) | m;
         //printf("\nlog(%d) = c + m = %d\n", fxp1, fxp_log);
