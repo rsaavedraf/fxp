@@ -17,8 +17,8 @@
 
 #define DASHES "========================\n"
 
-static int fracbit_configs[] = {0, 11, 14, 16, 24, 31};
-//static int fracbit_configs[] = {16};
+//static int fracbit_configs[] = {0, 11, 14, 16, 24, 31};
+static int fracbit_configs[] = {16};
 static long double max_warn_delta = 0.0;
 static long double larger_delta = 0.0;
 static long double largest_delta = 0.0;
@@ -85,6 +85,14 @@ static long double get_target(long double x)
             || (trunc(y) < fxp_get_whole_min()))
         return dfxp_neg_inf();
     return y;
+}
+
+static long double get_log2_target(int x)
+{
+    if (x < 0) return dfxp_undef();
+    if (x == 0) return dfxp_neg_inf();
+    if (x == FXP_POS_INF) return dfxp_pos_inf();
+    return log2(dfxp(x));
 }
 
 static long double get_div_target(int x, int y)
@@ -513,7 +521,7 @@ void test_ops_with_values_of_interest()
 void test_ops_with_rand_nums()
 {
         int sign1, sign2, sign3, n1, n2, n3, n4, fxp1, fxp2;
-        long double ldx, ldy, ldz, tgt1, tgt2;
+        long double ldx, ldy, ldz, tgt1, tgt2, tgt3;
 
         printf("\nVerifying different op ");
         printf("implementations using random numbers:\n");
@@ -577,14 +585,22 @@ void test_ops_with_rand_nums()
                 tgt2 = get_div_target(n1, n3);
                 test_fxp("div_l (n1/n3)", fxp1, tgt2);
                 test_fxp("div   (n1/n3)", fxp2, tgt2);
+
+                tgt1 = get_log2_target(n1);
+                tgt2 = get_log2_target(n2);
+                tgt3 = get_log2_target(n3);
+                test_fxp("log2_l(n1)", fxp_log2_l(n1), tgt1);
+                test_fxp("log2_l(n2)", fxp_log2_l(n2), tgt2);
+                test_fxp("log2_l(n3)", fxp_log2_l(n3), tgt3);
+
         }
 }
 
 void test_fxp_from_ldouble()
 {
-        long double e = lim_frac( exp(1), frac_bits);
-        long double pi = lim_frac( asin(1)*2, frac_bits);
-        long double log2e = lim_frac( 1/log(2), frac_bits);
+        //long double e = lim_frac( exp(1), frac_bits);
+        //long double pi = lim_frac( asin(1)*2, frac_bits);
+        //long double log2e = lim_frac( 1/log(2), frac_bits);
         //printf("e:%Le\t", e);
         //print_fxp(fxp_from_ldouble(e)); printf("\n");
         //printf("pi:%Le\t", pi);
@@ -600,10 +616,24 @@ void test_fxp_from_ldouble()
         print_fxp(fxp_get_ln2()); printf("\n");
         printf("log2e as fxp: ");
         print_fxp(fxp_get_log2e()); printf("\n");
-        //printf("sqrt(64.5): ");
-        //int x = fxp_bin(64, fxp_get_frac_max()/2);
-        //print_fxp(x); printf("\n");
-        //print_fxp(fxp_sqrt(x)); printf("\n");
+        printf("\nlog2_l(+INF): ");
+        print_fxp(fxp_log2_l(FXP_POS_INF)); printf("\n");
+        printf("log2_l(2): ");
+        print_fxp(fxp_log2_l(fxp(2))); printf("\n");
+        printf("log2_l(1): ");
+        print_fxp(fxp_log2_l(fxp(1))); printf("\n");
+        printf("log2_l(0): ");
+        print_fxp(fxp_log2_l(0)); printf("\n");
+        printf("ln(e): ");
+        print_fxp(fxp_ln_l(fxp_get_e())); printf("\n");
+        printf("ln(1): ");
+        print_fxp(fxp_ln_l(fxp(1))); printf("\n");
+        printf("ln(0): ");
+        print_fxp(fxp_ln_l(0)); printf("\n");
+        printf("log2_l(-INF): ");
+        print_fxp(fxp_log2_l(FXP_NEG_INF)); printf("\n");
+        printf("log2_l(UNDEF): ");
+        print_fxp(fxp_log2_l(FXP_UNDEF)); printf("\n");
 }
 
 

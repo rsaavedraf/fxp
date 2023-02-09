@@ -1,8 +1,9 @@
 /*
  * fxp.c
  * An implementation of Binary Fixed Point numbers
- * encoding them into integers, together with
- * arithmetic operations +, -, *, and / for them.
+ * encoding them into integers, together with their
+ * arithmetic operations +, -, *, and /,
+ * also log2, ln, 
  *
  * Safe arithmetic operations for the fxp's compliant
  * with INT32-C, as in:
@@ -67,11 +68,15 @@ static int fxp_whole_min = -(FXP_MAX >> FXP_FRAC_BITS_DEF);
 #define FXP_DEF_SHIFT (FXP_INT_BITS_M1 - FXP_FRAC_BITS_DEF - 2)
 static int fxp_e = FXP_E_I32 >> FXP_DEF_SHIFT;
 static int fxp_pi = FXP_PI_I32 >> FXP_DEF_SHIFT;
-static int fxp_ln2 = (FXP_LN2_I32 >> (FXP_DEF_SHIFT + 1));
-static int fxp_log2e = (FXP_LOG2E_I32 >> (FXP_DEF_SHIFT + 1));
+static int fxp_log2e = FXP_LOG2E_I32 >> (FXP_DEF_SHIFT + 1);
+static int fxp_ln2 = FXP_LN2_I32 >> (FXP_DEF_SHIFT + 2);
 
-int fxp_get_frac_bits()
-{
+// Auxiliary variables used for log2 calculations
+static int fxp_half = 1 << FXP_FRAC_BITS_DEF - 1;
+static int fxp_one = 1 << FXP_FRAC_BITS_DEF;
+static int fxp_two = 1 << FXP_FRAC_BITS_DEF + 1;
+
+int fxp_get_frac_bits() {
         return fxp_frac_bits;
 }
 
@@ -179,8 +184,14 @@ int fxp_set_frac_bits(int nfracbits)
         // Adjust precision of e, pi, and log2e to the frac bits in use
         fxp_e = fxp_change_nfracbits(FXP_E_I32, FXP_INT_BITS - 3, fxp_frac_bits);
         fxp_pi = fxp_change_nfracbits(FXP_PI_I32, FXP_INT_BITS - 3, fxp_frac_bits);
-        fxp_ln2 = fxp_change_nfracbits(FXP_LN2_I32, FXP_INT_BITS - 2, fxp_frac_bits);
         fxp_log2e = fxp_change_nfracbits(FXP_LOG2E_I32, FXP_INT_BITS - 2, fxp_frac_bits);
+        fxp_ln2 = fxp_change_nfracbits(FXP_LN2_I32, FXP_INT_BITS - 1, fxp_frac_bits);
+
+        // Auxiliary variables used for log calculation
+        fxp_one = fxp(1);
+        fxp_half = fxp_one >> 1;
+        fxp_two = fxp_one << 1;
+
         return fxp_frac_bits;
 }
 
@@ -303,6 +314,11 @@ int fxp_get_whole_part(int fxp)
 {
         if (fxp < 0)
                 if (fxp <= FXP_NEG_INF)
+                        // Technically, the whole part of -INF would still be -INF,
+                        // and both the whole and the frac parts of UNDEF would still
+                        // be UNDEF. But here returning just what our whole-part bits
+                        // of -INF (and also UNDEF) actually correspond to. However,
+                        // see also the comment in fxp_get_bin_frac()
                         return -fxp_whole_max;
                 else
                         return -((-fxp) >> fxp_frac_bits);
@@ -317,6 +333,18 @@ int fxp_get_bin_frac(int fxp)
 {
         if (fxp < 0)
                 if (fxp <= FXP_NEG_INF)
+                        // In the whole-part function above we are returning the same
+                        // whole parts for both -INF and UNDEF. Here for -INF we return
+                        // the actual bits used, but for UNDEF something different
+                        // and odd in order to enable differenciating -INF from UNDEF when
+                        // checking their whole and frac constituents. It must be something
+                        // that no other fxp could ever have, not even the +/-INF values.
+                        // That can be some (alleged) frac bits that are actually
+                        // invalid, e.g. outside the range of valid frac bits, like
+                        // -frac_mask - 1. Notice that this value "overflows" the frac bits,
+                        // but in a way makes sense to mark and differenciate precisely
+                        // only UNDEF this way. Conveniently, when the # of frac bits is 31,
+                        // this scheme returns the full FXP_UNDEF as the alleged frac part.
                         return -fxp_frac_mask - (fxp == FXP_UNDEF? 1: 0);
                 else
                         return -((-fxp) & fxp_frac_mask);
@@ -867,45 +895,98 @@ int fxp_get_log2e()
 }
 
 
-int fxp_log2(int fxp1)
-{
-        return 0;
-}
-
-/*
- * Implementations of ln()
- */
-int fxp_ln(int fxp1)
-{
-    return fxp_log2(fxp1) / fxp_log2e;
-}
-
 int fxp_exp(int fxp1)
 {
     return 0;
 }
 
 /*
- * Square root implementation based on Cordic
+ * Square root implementation
  */
 int fxp_sqrt(int fxp1)
 {
-    if (fxp1 < 0) return FXP_UNDEF;
-    if (fxp1 == FXP_POS_INF) return FXP_POS_INF;
-    int whole = fxp_get_whole_part(fxp1);
-    int nb = fxp_nbits(whole);
-    int shift = ((nb + 1) / 2) - 1;
-    //printf("nb:%d, shift:%d\n", nb, shift);
-    int k = (1 << shift);
-    int sqw = 0;
-    while (k > 0) {
-        sqw += k;
-        if (sqw * sqw > whole)
-            sqw -= k;
-        //printf("\tsqw:%d\n", sqw);
-        k = k >> 1;
-    }
-    int result = fxp(sqw);
-    //printf("result will be:%d\n", result);
-    return result;
+    return 0;
+}
+
+/*
+ * Implementation of ln() using log2
+ */
+int fxp_ln_l(int fxp1)
+{
+  return fxp_mul_l(fxp_log2_l(fxp1), fxp_ln2);
+}
+
+/*
+ * Calculate the log2 of an fxp.
+ * This initial tentative implementation of log2 for fxp's needs no
+ * pre-calculated table of logs in any range, but requires
+ * multiplications inside a loop, which is a very expensive way to do it,
+ * even if simple to implement. Later to be replaced with a slightly
+ * more complicated approach, yet more efficient while still offering
+ * the same accuracy (i.e. CORDIC or BKM.)
+ *
+ * Adapted to fxps from a general algorithm to calculate
+ * binary logarithms explained by Clay Turner in IEEE Signal
+ * Processing Magazine, Sep/2010.
+ * D. E. Knuth's "The Art of Computer Programming Vol 2:
+ * Seminumerical Algorithms", 2nd ed., 1981 (pages 441 - 446) is
+ * the one and only reference in that short article, so that's the
+ * effective reference.
+ *
+ */
+int fxp_log2_l(int fxp1)
+{
+        if (fxp1 <= 0) return ((fxp1 == 0)? FXP_NEG_INF: FXP_UNDEF);
+        if (fxp1 == FXP_POS_INF) return FXP_POS_INF;
+        // A logarithm value consists of a characteristic (whole part)
+        // + a mantissa (fraction part).
+        // The mantissa calculation done by this algorithm assumes
+        // 1 <= argument < 2, so we need to get there first. We do that
+        // by calculating a normalized version of x with a succession
+        // of divides/multiplies by 2 (that is, r- or l-shifts).
+        // The count of those operations will actually correspond to
+        // the log characteristic (divides counted positively,
+        // multiplies negatively)
+        int c = 0; // characteristic
+        int nx;
+        int nbx = fxp_nbits(fxp1);
+        if (fxp1 < fxp_one) {
+                c = -(fxp_frac_bits - nbx + 1);
+                if (c < fxp_whole_min) {
+                        // The characteristic of the logarithm alone will not fit
+                        // in the whole bits part of our current fxp settings
+                        return FXP_NEG_INF;
+                }
+                nx = fxp1 << (-c);
+        } else if (fxp1 >= fxp_two) {
+                c = nbx - fxp_frac_bits - 1;
+                nx = fxp1 >> c;
+        } else {
+                nx = fxp1;
+        }
+        // Mantissa calculation:
+        // Here we have already calculated the log characteristic c, and
+        // we have xx satisfying: 1 <= xx < 2
+        int m = 0; // starting mantissa
+        int b = fxp_half; // b starts as 0.5 (corresponding to first frac bit)
+        int nb = fxp_frac_bits; // desired number of mantissa bits to process
+        while (nb > 0) {
+                // Here comes a squaring of xx, so one inevitable multiplication
+                // required per bit of the mantissa. This is by far the most
+                // expensive part of this entire log2 algorithm
+                nx = fxp_mul_l(nx, nx);
+                if (nx >= fxp_two) {
+                        nx = nx >> 1;
+                        // Notice here comes a direct sum of two fxps,
+                        // but we know it cannot possibly ever overflow
+                        // because m always remains < fxp_one
+                        m += b; // Sets to 1 our mantissa bit corresponding to b
+                }
+                b = b >> 1;
+                nb--;
+        }
+        //int fxp_log = (c << fxp_frac_bits) | m;
+        //printf("\nlog(%d) = c + m = %d\n", fxp1, fxp_log);
+        // Return the calculated logarithm as fxp
+        return ((c << fxp_frac_bits) | m);
 }
