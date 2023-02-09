@@ -942,19 +942,21 @@ int fxp_log2_l(int fxp1)
         // + a mantissa (fraction part).
         // The mantissa calculation done by this algorithm assumes
         // 1 <= argument < 2, so we need to get there first. We do that
-        // by calculating a normalized version of x with a succession
-        // of divides/multiplies by 2 (that is, r- or l-shifts).
+        // by calculating a normalized version of the original argument
+        // with a succession of divides/multiplies by 2 (that is,
+        // r- or l-shifts).
         // The count of those operations will actually correspond to
-        // the log characteristic (divides counted positively,
-        // multiplies negatively)
+        // the log characteristic, with divides counted positively,
+        // and multiplies negatively.
         int c = 0; // characteristic
         int nx;
         int nbx = fxp_nbits(fxp1);
         if (fxp1 < fxp_one) {
                 c = -(fxp_frac_bits - nbx + 1);
                 if (c < fxp_whole_min) {
-                        // The characteristic of the logarithm alone will not fit
-                        // in the whole bits part of our current fxp settings
+                        // Overflow: the characteristic of the logarithm
+                        // will not fit in the whole bits part of our
+                        // current fxp settings
                         return FXP_NEG_INF;
                 }
                 nx = fxp1 << (-c);
@@ -966,12 +968,12 @@ int fxp_log2_l(int fxp1)
         }
         // Mantissa calculation:
         // Here we have already calculated the log characteristic c, and
-        // we have xx satisfying: 1 <= xx < 2
+        // we have nx satisfying: 1 <= nx < 2
         int m = 0; // starting mantissa
         int b = fxp_half; // b starts as 0.5 (corresponding to first frac bit)
         int nb = fxp_frac_bits; // desired number of mantissa bits to process
         while (nb > 0) {
-                // Here comes a squaring of xx, so one inevitable multiplication
+                // Here comes a squaring of nx, so one inevitable multiplication
                 // required per bit of the mantissa. This is by far the most
                 // expensive part of this entire log2 algorithm
                 nx = fxp_mul_l(nx, nx);
@@ -980,7 +982,7 @@ int fxp_log2_l(int fxp1)
                         // Notice here comes a direct sum of two fxps,
                         // but we know it cannot possibly ever overflow
                         // because m always remains < fxp_one
-                        m += b; // Sets to 1 our mantissa bit corresponding to b
+                        m += b; // Sets to 1 mantissa bit corresponding to b
                 }
                 b = b >> 1;
                 nb--;

@@ -150,7 +150,6 @@ int main(void) {
                 t1= clock();
                 tdiv_l += ((double) t1 - t0);
 
-
                 t0 = clock();
                 for (int i = 0; i < MAX_OPS; i++) {
                         x = fxp_log2_l(n1);
@@ -164,14 +163,12 @@ int main(void) {
                 }
                 t1= clock();
                 tlog2_l += ((double) t1 - t0);
-
         }
 
         printf("add:\t%lf\n", 1.0);
         printf("add_l:\t%lf\n", tadd_l / tadd);
         printf("mul:\t%lf\n", tmul / tadd);
         printf("mul_l:\t%lf\n", tmul_l / tadd);
-        //printf("mul_d:\t%lf\n", tmul_d / tadd);
         printf("div:\t%lf\n", tdiv / tadd);
         printf("div_l:\t%lf\n", tdiv_l / tadd);
         printf("log2_l:\t%lf\n", tlog2_l / tadd);
