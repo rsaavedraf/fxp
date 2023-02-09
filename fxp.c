@@ -962,7 +962,7 @@ int fxp_log2_l(int fxp1)
                 nx = fxp1 << (-c);
         } else if (fxp1 >= fxp_two) {
                 c = nbx - fxp_frac_bits - 1;
-                nx = fxp1 >> c;
+                nx = fxp1 >> c; // notice: inevitably losing frac bits here
         } else {
                 nx = fxp1;
         }
