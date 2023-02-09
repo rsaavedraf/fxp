@@ -3,7 +3,7 @@
  * An implementation of Binary Fixed Point numbers
  * encoding them into integers, together with their
  * arithmetic operations +, -, *, and /,
- * also log2, ln, 
+ * also log2, ln, and others.
  *
  * Safe arithmetic operations for the fxp's compliant
  * with INT32-C, as in:
