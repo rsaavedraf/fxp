@@ -3,16 +3,17 @@
  * By Raul Saavedra, 2023-01-09
  *
  * Shows relavite execution times (smaller is better)
- * for the different fxp arithmetic operations.
+ * for the different fxp operations and functions.
  * Example end of the ouput, for a system with an
- * Intel i7-6700K cpu, run on 2023-02-07:
+ * Intel i7-6700K cpu, run on 2023-02-09:
  *
- *   add:	1.000000
- *   add_l:	1.014556
- *   mul:	8.979335
- *   mul_l:	1.439898
- *   div:	15.482966
- *   div_l:	3.237721
+ *   add:    1.000000
+ *   add_l:  1.003676
+ *   mul:    8.968592
+ *   mul_l:  1.423160
+ *   div:    15.273056
+ *   div_l:  3.247293
+ *   log2_l: 18.058645
  */
 
 #include <stdio.h>
@@ -27,7 +28,7 @@
 int main(void) {
 
         int s1, s2, s3, n1, n2, n3, x, y, n, lastp;
-        double tadd, tadd_l, tmul, tmul_l, tmul_d, tdiv, tdiv_l;
+        double tadd, tadd_l, tmul, tmul_l, tmul_d, tdiv, tdiv_l, tlog2_l;
         clock_t t0, t1;
         int val[] = {FXP_UNDEF, FXP_MIN, \
                         FXP_MIN/3, -3333333, -300000, -30000, -3000, -300,
@@ -50,6 +51,7 @@ int main(void) {
         tmul_d = 0;
         tdiv = 0;
         tdiv_l = 0;
+        tlog2_l = 0;
         lastp = -1;
         for (int n = 0; n < MAX_NUMS; n++) {
                 int p = (int) (((float) (n+1) * 100) / MAX_NUMS);
@@ -120,22 +122,6 @@ int main(void) {
                 t1 = clock();
                 tmul_l += ((double) t1 - t0);
 
-                /*
-                t0 = clock();
-                for (int i = 0; i < MAX_OPS; i++) {
-                        x = fxp_mul_d(n1, n2);
-                        x = fxp_mul_d(n3, n2);
-                        for (int j = 0; j < nvals; j++) {
-                            y = val[j];
-                            x = fxp_mul_d(n1, y);
-                            x = fxp_mul_d(n2, y);
-                            x = fxp_mul_d(n3, y);
-                        }
-                }
-                t1 = clock();
-                tmul_d += ((double) t1 - t0);
-                */
-
                 t0 = clock();
                 for (int i = 0; i < MAX_OPS; i++) {
                         x = fxp_div(n1, n2);
@@ -163,6 +149,22 @@ int main(void) {
                 }
                 t1= clock();
                 tdiv_l += ((double) t1 - t0);
+
+
+                t0 = clock();
+                for (int i = 0; i < MAX_OPS; i++) {
+                        x = fxp_log2_l(n1);
+                        x = fxp_log2_l(n2);
+                        for (int j = 0; j < nvals; j++) {
+                            y = val[j];
+                            x = fxp_log2_l(n3);
+                            x = fxp_log2_l(y);
+                            x = fxp_log2_l(y);
+                        }
+                }
+                t1= clock();
+                tlog2_l += ((double) t1 - t0);
+
         }
 
         printf("add:\t%lf\n", 1.0);
@@ -172,6 +174,7 @@ int main(void) {
         //printf("mul_d:\t%lf\n", tmul_d / tadd);
         printf("div:\t%lf\n", tdiv / tadd);
         printf("div_l:\t%lf\n", tdiv_l / tadd);
+        printf("log2_l:\t%lf\n", tlog2_l / tadd);
 
         return 0;
 }
