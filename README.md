@@ -17,7 +17,7 @@ By Raul Saavedra
 - 2023-01-04: bug fix in fxp_sum
 - 2023-01-05: multiplication now done not using longs, entirely with ints, so
 supporting systems where sizeof(long) == sizeof(int), but for now at the
-cost of performance, and precision loss of up to ~half the frac bits in use.
+cost of performance and some precision loss.
 - 2023-01-06: bugs fixed in new safe multiplication, also in the safe sum for a
 border case.
 - 2023-01-08: new version with runtime-modifiable number of bits to use for
