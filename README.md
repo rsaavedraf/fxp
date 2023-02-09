@@ -49,3 +49,8 @@ effectively ~6x that of fxp_mul_l(). This makes a lot of sense,
 as a similar ratio stands between fxp_div() and fxp_div_l().
 Both * and / operations implemented using longs are then
 significantly faster (~6x) than the int-only implementations.
+- 2023-02-09: log2_l implemented. Uses an algorithm that requires
+one multiplication (using longs) per mantissa bit, so simple to
+implement, but quite expensive. Likely will replace it with a more
+efficient one later. For now the relative execution time of one
+log2_l() calculation of an fxp is about ~18x that of adding two fxp's.
