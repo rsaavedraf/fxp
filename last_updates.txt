@@ -1,3 +1,4 @@
+
 Last updates:
 
 2022-11-15: first version
@@ -60,4 +61,5 @@ tolerance in this case. The only drawback of BKM is that it requires some
 more memory: needs a table of 32 ints with some pre-calculated log values
 
 2023-02-11: Debugging implementations of log2, and exploring the largest 
-errors incurred.
+errors incurred. Also moving these last updates out of the README and into
+this separate file.
