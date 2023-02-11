@@ -56,9 +56,12 @@ implement, but quite expensive. Likely will replace it with a more
 efficient one later. For now the relative execution time of one
 log2_l() calculation of an fxp is about ~18x that of adding two fxp's.
 - 2023-02-10: BKM for logarithm calculation implemented: log2_bkm()
-Clearly faster than log2_l, taking only ~28.5%
-the runtime, and with 30 bit-frac precision (log2_l's precision
-is max 29 bit). log2_bkm can also compute the logarithms when the fxp
-configuration is using only 1 whole bit (log2_l requires at least
-3 whole bits.) Tester requires relaxing the delta tolerance
-in this case.
+Clearly faster than log2_l: ~28.5% the runtime: one BKM
+log calculation is about ~5x the addition of two fxp's.
+The BKM calculation also has 30 bit-frac precision
+(log2_l's precision is max 29 frac bits). BKM can also compute the
+logarithms when the fxp config is using only 1 whole bit
+(log2_l requires at least 3 whole bits.) Tester requires
+relaxing the delta tolerance in this case.
+The only drawback of BKM is that it requires some more memory: needs
+a table of 32 ints with some pre-calculated log values.
