@@ -76,13 +76,13 @@ int fxp_get_pi();
 int fxp_get_ln2();
 int fxp_get_log2e();
 
+int fxp_log2(int fxp);
 int fxp_log2_l(int fxp);
+int fxp_log2_mul(int fxp);
 int fxp_ln_l(int fxp);
-int fxp_log2_bkm(int fxp);
-int fxp_ln_bkm(int fxp);
+int fxp_ln(int fxp);
 
 // Still to implement
-//int fxp_ln(int fxp);
 //int fxp_exp(int fxp);
 //int fxp_sqrt(int fxp);
 //int fxp_pow(int fxp_base, int fxp_exponent);

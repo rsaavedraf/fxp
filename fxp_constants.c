@@ -52,7 +52,7 @@
 static char * alog2[] = {
 // 76 decimal digits for each number here
 //0----*----1----*----2----*----3----*----4----*----5----*----6----*----7----*-
-//"1.0000000000000000000000000000000000000000000000000000000000000000000000000000",
+"1.0000000000000000000000000000000000000000000000000000000000000000000000000000",
 "0.5849625007211561814537389439478165087598144076924810604557526545410982276485",
 "0.3219280948873623478703194294893901758648313930245806120547563958159347765589",
 "0.1699250014423123629074778878956330175196288153849621209115053090821964552970",
@@ -84,12 +84,11 @@ static char * alog2[] = {
 "0.0000000026872289172287079490026152352638891824761667284401180026908031182361",
 "0.0000000013436144592400232123622589569799954658536700992739887706412976115422",
 "0.0000000006718072297764289157920422846078078155859484240808550018085324187007",
-"0.0000000003359036149273187853169587152657145221968468364663464125722491530858"
 };
 
 static const long double BKM_LOGS[] = {
 // Skipping first one with a one, we won't really use it in our bkm,
-//1.0000000000000000000000000000000000000000000000000000000000000000000000000000,
+1.0000000000000000000000000000000000000000000000000000000000000000000000000000,
 0.5849625007211561814537389439478165087598144076924810604557526545410982276485,
 0.3219280948873623478703194294893901758648313930245806120547563958159347765589,
 0.1699250014423123629074778878956330175196288153849621209115053090821964552970,
@@ -121,8 +120,19 @@ static const long double BKM_LOGS[] = {
 0.0000000026872289172287079490026152352638891824761667284401180026908031182361,
 0.0000000013436144592400232123622589569799954658536700992739887706412976115422,
 0.0000000006718072297764289157920422846078078155859484240808550018085324187007,
-0.0000000003359036149273187853169587152657145221968468364663464125722491530858
 };
+
+static const unsigned long BKM_LOGSX[] = {
+0x000000,   0x7ef5a2,   0xcd1b8b,   0xfdeb43,   0xb244c5,
+0xb1dfb0,   0x5c2d22,   0xb77842,   0xb5eab1,   0xfe14ea,
+0x3743f4,   0x17bcab,   0xb0a86f,   0x623f4a,   0x93b17d,
+0x828017,   0xef6a3e,   0x833fb7,   0x448283,   0xa2f9eb,
+0x51ab20,   0xa8e11a,   0x547370,   0xaa3a70,   0x551d66,
+0x2a8ebe,   0x154762,   0x8aa3b1,   0xc551d9,   0xe2a8ec,
+0x715476,   0xb8aa3b,
+};
+
+
 
 /*
  * Return binary expansion (up to nbits) of a string representation
@@ -388,24 +398,28 @@ int main(void)
         //printf("\nsqrt2 (63 bits) %llx\n\n", bex_from_bin(STR_SQRT2_BIN, 63, 1));
 
         // Generate fxp's for the logs table of numbers to be used by BKM algorithm
-        int nfbits = 30;
+        int nfbits = 62;
         printf("\nPrecalculated logs for BKM (frac bits: %d):\n",
                 nfbits);
         fxp_set_frac_bits(nfbits);
         int n = sizeof(alog2) / sizeof(alog2[0]);
         int j = 1;
+        long sumlogs2 = 0;
         for (int i=0; i < n; i++) {
             //printf("log2(1 + 0.5^%i) is ", i);
             //printf(alog2[i]);
             //printf("\n");
             //printf("In binary: \t");
-            long long num = bex_from_dec(alog2[i], 0, nfbits, 1);
-            unsigned int x = (unsigned int) num;
-            //printf("%d: %llx", i, num);
-            printf("0x%llx, ", num);
+            unsigned long long num = bex_from_dec(alog2[i], 0, nfbits, 0);
+            //unsigned int x = (unsigned int) num;
+            printf("0x%llX,\n", num);
+            printf("0x%lX,\n\n", BKM_LOGSX[i]);
+            sumlogs2 += BKM_LOGSX[i];
             if (j % 5 == 0) printf("\n");
             j++;
         }
+        printf("Sum BKM_LOGSX is:%ld\n", sumlogs2);
+        printf("Shifted 24 bits:%ld\n", (sumlogs2 >> 24));
         /*
         long double bkm_logs[n];
         for (int i=0; i < n; i++) {

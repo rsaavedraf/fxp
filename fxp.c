@@ -19,8 +19,8 @@
 
 #include "fxp.h"
 #include "fxp_constants.h"
-//#include <stdio.h>
-//#include <stdlib.h>
+#include <stdio.h>
+#include <stdlib.h>
 //#include <assert.h>
 
 //Used when testing and debugging when trying to optimize division
@@ -77,21 +77,38 @@ static int fxp_half = 1 << FXP_FRAC_BITS_DEF - 1;
 static int fxp_one = 1 << FXP_FRAC_BITS_DEF;
 static int fxp_two = 1 << FXP_FRAC_BITS_DEF + 1;
 
-// Array of 32 pre-computed log values to calculate
+// Array of 31 pre-computed log values to calculate
 // logs base 2 using the BKM algorithm. The values here are
 // simply: a[k] = log2(1 + 1/2^k) represented as fxp's using
-// 30 frac bits
+// 30 frac bits (not rounded.)
 static const unsigned int FXP_BKM_LOGS[] = {
-        0x40000000, 0x2570068e, 0x149a784c, 0xae00d1d,  0x598fdbf,
-        0x2d75a6f,  0x16e7968,  0xb7f286,   0x5c2712,   0x2e1f08,
-        0x171265,   0xb89eb,    0x5c524,    0x2e29d,    0x17152,
-        0xb8aa,     0x5c55,     0x2e2b,     0x1715,     0xb8b,
-        0x5c5,      0x2e3,      0x171,      0xb9,       0x5c,
-        0x2e,       0x17,       0xc,        0x6,        0x3,
-        0x1,        0x1
+        0x40000000, 0x2570068e, 0x149a784b, 0xae00d1c,  0x598fdbe,
+        0x2d75a6e,  0x16e7968,  0xb7f285,   0x5c2711,   0x2e1f07,
+        0x171265,   0xb89eb,    0x5c523,    0x2e29d,    0x17151,
+        0xb8a9,     0x5c54,     0x2e2a,     0x1715,     0xb8a,
+        0x5c5,      0x2e2,      0x171,      0xb8,       0x5c,
+        0x2e,       0x17,       0xb,        0x5,        0x2,
+        0x1,        0x0
 };
 
+// 24 extra bits following each of the frac values
+// above, stored here in lowest 3 bytes of ints.
+// Exploring higher precision calculation of log2's with BKM,
+// while still only using ints
+static const unsigned int FXP_BKM_LOGSXTRA[] = {
+    0x000000,   0x7ef5a2,   0xcd1b8b,   0xfdeb43,   0xb244c5,
+    0xb1dfb0,   0x5c2d22,   0xb77842,   0xb5eab1,   0xfe14ea,
+    0x3743f4,   0x17bcab,   0xb0a86f,   0x623f4a,   0x93b17d,
+    0x828017,   0xef6a3e,   0x833fb7,   0x448283,   0xa2f9eb,
+    0x51ab20,   0xa8e11a,   0x547370,   0xaa3a70,   0x551d66,
+    0x2a8ebe,   0x154762,   0x8aa3b1,   0xc551d9,   0xe2a8ec,
+    0x715476,   0xb8aa3b,
+};
+
+static const int FXP_BKM_LOGSX_SHIFT = (FXP_INT_BITS - 8);
+static const unsigned int FXP_BKM_LOGSX_MASK = (255 << FXP_BKM_LOGSX_SHIFT);
 static const int FXP_BKM_PREC = FXP_INT_BITS - 2;
+static const int FXP_BKM_LOOPS = FXP_BKM_PREC + 1;
 static const unsigned int FXP_BKM_ONE = (1 << FXP_BKM_PREC);
 static const unsigned int FXP_BKM_HALF = (FXP_BKM_ONE >> 1);
 
@@ -928,29 +945,31 @@ int fxp_sqrt(int fxp1)
 }
 
 /*
- * Implementation of ln() using log2_l
+ * Implementation of ln() using longs (for the multiplication)
  */
 int fxp_ln_l(int fxp1)
 {
-        return fxp_mul_l(fxp_log2_l(fxp1), fxp_ln2);
+        return fxp_mul_l(fxp_log2(fxp1), fxp_ln2);
 }
 
 /*
- * Implementation of ln() using log2_bkm
+ * Default implementation of ln()
+ * Uses the default log2() and int-only multiplication
  */
-int fxp_ln_bkm(int fxp1)
+int fxp_ln(int fxp1)
 {
-        return fxp_mul_l(fxp_log2_bkm(fxp1), fxp_ln2);
+        return fxp_mul(fxp_log2(fxp1), fxp_ln2);
 }
 
 /*
- * Calculate the log2 of an fxp.
- * This initial tentative implementation of log2 for fxp's needs no
- * pre-calculated table of logs in any range, but requires
- * multiplications inside a loop, which is a very expensive way to do it,
- * even if simple to implement. Later to be replaced with a slightly
- * more complicated approach, yet more efficient while still offering
- * the same accuracy (i.e. CORDIC or BKM.)
+ * Alternative log2 of an fxp using multiplication.
+ * Requires the fxp configuration to have 3 or more whole bits.
+ * Needs no pre-calculated table of log values in any range, but
+ * requires one multiplication per mantissa bit, so slower than
+ * the default. Operates within the current fxp's settings,
+ * so # effective mantissa bits calculated == current # frac bits,
+ * which compensates a bit the execution time for fewer
+ * frac bit configurations.
  *
  * Adapted to fxps from a general algorithm to calculate
  * binary logarithms explained by Clay Turner in IEEE Signal
@@ -961,7 +980,7 @@ int fxp_ln_bkm(int fxp1)
  * effective reference.
  *
  */
-int fxp_log2_l(int fxp1)
+int fxp_log2_mul(int fxp1)
 {
         if (fxp1 <= 0) return ((fxp1 == 0)? FXP_NEG_INF: FXP_UNDEF);
         if (fxp1 == FXP_POS_INF) return FXP_POS_INF;
@@ -979,13 +998,7 @@ int fxp_log2_l(int fxp1)
         int nx;
         int nbx = fxp_nbits(fxp1);
         if (fxp1 < fxp_one) {
-                c = -(fxp_frac_bits - nbx + 1);
-                if (c < fxp_whole_min) {
-                        // Overflow: the characteristic of the logarithm
-                        // will not fit in the whole bits part of our
-                        // current fxp settings
-                        return FXP_NEG_INF;
-                }
+                c = nbx - fxp_frac_bits - 1;
                 nx = fxp1 << (-c);
         } else if (fxp1 >= fxp_two) {
                 c = nbx - fxp_frac_bits - 1;
@@ -1002,12 +1015,12 @@ int fxp_log2_l(int fxp1)
                 // Here comes a squaring of nx, so one inevitable multiplication
                 // required per bit of the mantissa. This is by far the most
                 // expensive part of this entire log2 algorithm
-                nx = fxp_mul_l(nx, nx);
+                nx = fxp_mul(nx, nx);
                 if (nx >= fxp_two) {
                         nx = nx >> 1;
-                        // Notice here comes a direct sum of two fxps,
-                        // but we know it cannot possibly ever overflow
-                        // because m always remains < fxp_one
+                        // Notice the following sum is safe, cannot
+                        // possibly ever overflow because m always
+                        // remains < fxp_one
                         m += b; // Sets to 1 mantissa bit corresponding to b
                 }
                 b = b >> 1;
@@ -1015,77 +1028,147 @@ int fxp_log2_l(int fxp1)
         //int fxp_log = (c << fxp_frac_bits) | m;
         //printf("\nlog(%d) = c + m = %d\n", fxp1, fxp_log);
         // Return the calculated logarithm as fxp
-        return ((c << fxp_frac_bits) | m);
+
+        //return ((c << fxp_frac_bits) | m);
+
+        if (c < fxp_whole_min) {
+                if ((c + 1 == fxp_whole_min) && (m > 0)) {
+                    return INT_MIN + m;
+                }
+                return FXP_NEG_INF;
+        }
+        if (c >= 0)
+            return (c << fxp_frac_bits) + m;
+        else
+            return -(-c << fxp_frac_bits) + m;
 }
 
 /*
- * Calculate the log2 of an fxp using the BKM algorithm.
- * This implementation does not use longs.
- * For more details on BKM:
- * https://en.wikipedia.org/wiki/BKM_algorithm
- *
+ * Same log2 implementation as above using multiplication, but
+ * here a long multiplication for speed. Therefore, only applicable
+ * for systems in which sizeof(long) > sizeof(int)
+ * Requires the fxp configuration to have 3 or more whole bits.
  */
-int fxp_log2_bkm(int fxp1)
+int fxp_log2_mul_l(int fxp1)
 {
         if (fxp1 <= 0) return ((fxp1 == 0)? FXP_NEG_INF: FXP_UNDEF);
         if (fxp1 == FXP_POS_INF) return FXP_POS_INF;
-        //int nx;
-        int clz = __builtin_clz(fxp1);
-        int nbx = FXP_INT_BITS - clz;
         int c = 0; // characteristic
+        int nx;
+        int nbx = fxp_nbits(fxp1);
         if (fxp1 < fxp_one) {
-                c = -(fxp_frac_bits - nbx + 1);
+                c = nbx - fxp_frac_bits - 1;
+                nx = fxp1 << (-c);
         } else if (fxp1 >= fxp_two) {
                 c = nbx - fxp_frac_bits - 1;
+                nx = fxp1 >> c;
+        } else {
+                nx = fxp1;
         }
+        // Mantissa calculation:
+        int m = 0;
+        int b = fxp_half;
+        while (b > 0) {
+                nx = fxp_mul_l(nx, nx);
+                if (nx >= fxp_two) {
+                        nx = nx >> 1;
+                        m += b;
+                }
+                b = b >> 1;
+        }
+        //return ((c << fxp_frac_bits) | m);
+
+        if (c < fxp_whole_min) {
+                if ((c + 1 == fxp_whole_min) && (m > 0)) {
+                    return INT_MIN + m;
+                }
+                return FXP_NEG_INF;
+        }
+        if (c >= 0)
+            return (c << fxp_frac_bits) + m;
+        else
+            return -(-c << fxp_frac_bits) + m;
+}
+
+/*
+ * Default log2 calculation using the BKM algorithm, and
+ * only ints (no longs)
+ * For more details on BKM:
+ * https://en.wikipedia.org/wiki/BKM_algorithm
+ */
+int fxp_log2(int fxp1)
+{
+        if (fxp1 <= 0) return ((fxp1 == 0)? FXP_NEG_INF: FXP_UNDEF);
+        if (fxp1 == FXP_POS_INF) return FXP_POS_INF;
+        // Here fxp1 for sure > 0
+        int clz = __builtin_clz(fxp1);
+        // clz > 0 since at least sign bit == 0
+        int nbx = FXP_INT_BITS - clz;
+        // c is characteristic
+        int c = ((fxp1 < fxp_one) || (fxp1 >= fxp_two))?
+                    (nbx - fxp_frac_bits - 1): 0;
+        //printf("clz:%d, nbx:%d\n", clz, nbx);
+        //printf("c:%d  Proceeding with BKM loop for mantissa:\n", c);
         // Here we have already calculated the log characteristic c
         // Now lshifting the original number to have it as unsigned
         // fxp with 30 frac bits (same as the pre-calculated values
         // in our bkm table of logs)
-        unsigned int z = (unsigned int) (fxp1 << (clz - 1));
+        unsigned int z = ((unsigned int) fxp1) << (clz - 1);
         unsigned int x = FXP_BKM_ONE;
-        unsigned int s = FXP_BKM_HALF; // b starts as 0.5
+        //unsigned int s = FXP_BKM_HALF; // b starts as 0.5
         unsigned int zz;
         unsigned int y = 0; // starting mantissa
-        int maxshift = FXP_BKM_PREC + 1;
-        if (maxshift > fxp_frac_bits) maxshift = fxp_frac_bits + 1;
-        int shift = 1;
-        while (shift <= maxshift) {
-                zz = x + (x >> shift);
-                if (zz < z) {
+        unsigned int yxtra = 0; // sum of xtra bits
+        for (int shift=1; shift <= FXP_BKM_LOOPS; shift++) {
+                unsigned int xs = (x >> shift);
+                zz = x + xs;
+                //printf("z-zz:%d,  z:%u,  zz:%u,  x:%u,  xs:%u\n",
+                //        ((int) z) - ((int) zz), z, zz, x, xs);
+                if (zz <= z) {
                         x = zz;
                         y += FXP_BKM_LOGS[shift];
+                        yxtra += FXP_BKM_LOGSXTRA[shift];
+                        //printf("\t\ty:%u  yxtra:%d\n", y, yxtra);
                 }
-                shift++;
         }
-        // y has the mantissa with 30 frac bits, adjust for final fxp
-        shift = FXP_BKM_PREC - fxp_frac_bits;
+        unsigned int co = ((yxtra & FXP_BKM_LOGSX_MASK) >> \
+                                FXP_BKM_LOGSX_SHIFT);
+        //printf("\nyxtra:%u  x%X  co:%u  x%X\n", yxtra, yxtra, co, co);
+        //printf("y before:%d\ty after:%d\n\n", y, y + yxtra);
+        y += co;
+        // Now y has the mantissa with 30 frac bits
+        // Shift it adjusting it for final fxp
         int m;
-        if (shift > 0) {
-                m = (int) y >> shift;
-                // Round last bit in m
-                shift--;
-                int roundbit = (y & (1 << shift)) >> shift;
-                m = m + roundbit;
-        } else if (shift < 0) {
-                m = (int) (y << (-shift));
+        int shift = FXP_BKM_PREC - fxp_frac_bits;
+        if (shift >= 0) {
+                m = ((int) y) >> shift;
+                if (shift > 0) {
+                    // Round last bit in m
+                    shift--;
+                    int roundbit = (y & (1 << shift)) >> shift;
+                    //printf("shift:%d  roundbit:%d  m before:%d  m after rounding:%d\n", \
+                    //        shift, roundbit, m, m + roundbit);
+                    //m = m + roundbit;
+                }
+        } else {
+                m = ((int) y) << (-shift);
         }
         // Return the complete logarithm (c + m) as fxp
         if (c < fxp_whole_min) {
-                if ((c == -1) && (m > 0)) {
-                    // Special case, the logarithm is > -1, so in
-                    // spite of no whole bits available other than the
-                    // sign one, we are still able to compute the full
-                    // logarithm with BKM and return it, even when the
-                    // fxp configuration is set to use the maximum possible
-                    // number of frac bits == FXP_INT_BITS_M1
+                if ((c + 1 == fxp_whole_min) && (m > 0)) {
+                    // Special case: in spite of not enough whole bits
+                    // available for c, there are for c + 1, which is what
+                    // this logarithm will have as whole part
                     return INT_MIN + m;
                 }
                 // Overflow: the characteristic of the logarithm
                 // will not fit in the whole bits part of our
                 // current fxp settings
+                //printf("\n\nReturning -INF here: c:%d, whole_min:%d, m:%d!!!!!\n\n", c, fxp_whole_min, m);
                 return FXP_NEG_INF;
         }
-        int logresult = (c << fxp_frac_bits) + m;
-        return logresult;
+        if (c >= 0)
+            return (c << fxp_frac_bits) + m;
+        else
+            return -(-c << fxp_frac_bits) + m;
 }

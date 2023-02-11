@@ -211,13 +211,13 @@ void print_fxp(int fxp)
                     if (fxp < 0) {
                         int pfxp = -fxp;
                         nbits = fxp_nbits(pfxp);
-                        printf("%d.%8d (=Lf:%Lf = %d = x(-)%x = b",
+                        printf("%d.%8d (=LE:%1.2LE = %d = x(-)%x = b",
                                 whole,
                                 fxp_get_dec_frac(fxp),
                                 n, fxp, pfxp);
                     } else {
                         nbits = fxp_nbits(fxp);
-                        printf("%d.%8d (=Lf:%Lf = %d = x%x = b",
+                        printf("%d.%8d (=LE:%1.2LE = %d = x%x = b",
                                 whole,
                                 fxp_get_dec_frac(fxp),
                                 n, fxp, fxp);
