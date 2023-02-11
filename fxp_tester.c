@@ -17,8 +17,17 @@
 
 #define DASHES "========================\n"
 
-static int fracbit_configs[] = {0, 11, 14, 16, 24, 31};
-//static int fracbit_configs[] = {16};
+// Set to 0 in order to be able to replicate runs
+#define SET_RAND_SEED 0
+
+#define MAX_RAND_NUMS 10
+#define WDELTA1 3
+#define WDELTA2 6
+#define WDELTA_MAF1 1.5
+#define WDELTA_MAF2 6
+
+static int fracbit_configs[] = {0, 11, 14, 24, 16, 31};
+//static int fracbit_configs[] = {31};
 static long double max_warn_delta = 0.0;
 static long double larger_delta = 0.0;
 static long double largest_delta = 0.0;
@@ -60,8 +69,9 @@ void test_fxp(char *s, int fxp1, long double d_assert_val)
             printf(" (~same)\n");
         } else {
             nwarnings++;
-            printf("\n***** Warning %d: delta=%LE (above:%LE, max allowed %LE)\n\n",
-                        nwarnings, delta, warn_delta, max_warn_delta);
+            printf("\n***** Warning %d: delta=%1.2LE (>%1.2LE, max allowed %1.2LE for %d f.bits)\n\n",
+                        nwarnings, delta, warn_delta,
+                        max_warn_delta, fxp_get_frac_bits());
             if (delta > larger_delta) {
                 larger_delta = delta;
                 printf("Updating largest delta: %Lf\n", larger_delta);
@@ -92,7 +102,7 @@ static long double get_log2_target(int x)
     if (x < 0) return dfxp_undef();
     if (x == 0) return dfxp_neg_inf();
     if (x == FXP_POS_INF) return dfxp_pos_inf();
-    return log2(dfxp(x));
+    return get_target(log2(dfxp(x)));
 }
 
 static long double get_div_target(int x, int y)
@@ -525,7 +535,7 @@ void test_ops_with_rand_nums()
 
         printf("\nVerifying different op ");
         printf("implementations using random numbers:\n");
-        for (int i=0; i < 10; i++) {
+        for (int i=0; i < MAX_RAND_NUMS; i++) {
                 sign1 = rand() % 2 == 1? -1: 1;
                 sign2 = rand() % 2 == 1? -1: 1;
                 sign3 = rand() % 2 == 1? -1: 1;
@@ -594,6 +604,12 @@ void test_ops_with_rand_nums()
                         test_fxp("log2_l(n2)", fxp_log2_l(n2), tgt2);
                         test_fxp("log2_l(n3)", fxp_log2_l(n3), tgt3);
                 }
+                tgt1 = get_log2_target(n1);
+                tgt2 = get_log2_target(n2);
+                tgt3 = get_log2_target(n3);
+                test_fxp("log2_bkm(n1)", fxp_log2_bkm(n1), tgt1);
+                test_fxp("log2_bkm(n2)", fxp_log2_bkm(n2), tgt2);
+                test_fxp("log2_bkm(n3)", fxp_log2_bkm(n3), tgt3);
 
         }
 }
@@ -644,9 +660,27 @@ void test_fxp_from_ldouble()
                 printf("log2_l(UNDEF): ");
                 print_fxp(fxp_log2_l(FXP_UNDEF)); printf("\n");
         } else {
-                printf("Only %d whole bit(s) -> skipping log2_l tests\n",
+                printf("Only %d whole bit(s) -> skipping log2_l tests (>2 whole bits needed)\n",
                         fxp_get_whole_bits());
         }
+        printf("\nlog2_bkm(+INF): ");
+        print_fxp(fxp_log2_bkm(FXP_POS_INF)); printf("\n");
+        printf("log2_bkm(2): ");
+        print_fxp(fxp_log2_bkm(fxp(2))); printf("\n");
+        printf("log2_bkm(1): ");
+        print_fxp(fxp_log2_bkm(fxp(1))); printf("\n");
+        printf("log2_bkm(0): ");
+        print_fxp(fxp_log2_bkm(0)); printf("\n");
+        printf("ln_bkm(e): ");
+        print_fxp(fxp_ln_bkm(fxp_get_e())); printf("\n");
+        printf("ln_bkm(1): ");
+        print_fxp(fxp_ln_bkm(fxp(1))); printf("\n");
+        printf("ln_bkm(0): ");
+        print_fxp(fxp_ln_bkm(0)); printf("\n");
+        printf("log2_bkm(-INF): ");
+        print_fxp(fxp_log2_bkm(FXP_NEG_INF)); printf("\n");
+        printf("log2_bkm(UNDEF): ");
+        print_fxp(fxp_log2_bkm(FXP_UNDEF)); printf("\n");
 }
 
 
@@ -693,9 +727,7 @@ int main(void)
                 fxp_nbits(UINT_MAX));
         */
 
-        // Randomize seed
-        // (comment this out to be able to reproduce exactly between runs)
-        //srand((unsigned int) time(0));
+        if (SET_RAND_SEED) srand((unsigned int) time(0));
 
         // Make sure starting trascendental constants still have exactly
         // the same values after resetting the # of frac bits to default
@@ -750,11 +782,22 @@ int main(void)
                 // Much smaller error allowance now,
                 // after implementing fxp_mul with pretty much
                 // no precision-loss compared to fxp_mul_l
-                warn_delta = ((long double) 3.0) / frac_max;
-                warn_delta = lim_frac(warn_delta, frac_bits);
                 // And assert/halt the tester immediately if the error
                 // ever exceeds max_warn_delta
-                max_warn_delta = lim_frac(warn_delta * 1.5, frac_bits);
+                if (frac_bits == FXP_INT_BITS_M1) {
+                    // Relaxing for the case of maximum num. frac bits,
+                    // because the implemented logs2_bkm has a
+                    // 30 bit frac precision
+                    warn_delta = ((long double) WDELTA2) / frac_max;
+                    max_warn_delta = lim_frac(warn_delta * WDELTA_MAF2,
+                                                frac_bits);
+                } else {
+                    // More strict in all other cases
+                    warn_delta = ((long double) WDELTA1) / frac_max;
+                    max_warn_delta = lim_frac(warn_delta * WDELTA_MAF1,
+                                                frac_bits);
+                }
+                warn_delta = lim_frac(warn_delta, frac_bits);
 
                 nwarnings = 0;
                 larger_delta = 0;
@@ -820,7 +863,7 @@ int main(void)
                 printf("\n%d Warnings for %d frac bits.\n", \
                             nwarnings, frac_bits);
                 if (nwarnings > 0) {
-                    printf("Largest delta was: %LE (max allowed: %LE)\n", \
+                    printf("Largest delta was: %1.2LE (max allowed: %1.2LE)\n", \
                             larger_delta, max_warn_delta);
                 }
                 printf("All tests passed using %d-bit fracs, ", frac_bits);
@@ -835,8 +878,10 @@ int main(void)
         printf("Grand total of %d warnings checking %d configurations.\n", \
                     twarnings, nconfigs);
         if (twarnings > 0) {
-            printf("Largest warning delta: %LE (max allowed:%LE, using %d frac bits)\n", \
-                        largest_delta, largest_madelta, largest_delta_fbits);
+            printf("Largest warning delta: %1.4LE (max allowed:%1.4LE, using %d frac bits)\n", \
+                        largest_delta,
+                        largest_madelta,
+                        largest_delta_fbits);
         }
         return 0;
 }

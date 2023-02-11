@@ -5,15 +5,17 @@
  * Shows relavite execution times (smaller is better)
  * for the different fxp operations and functions.
  * Example end of the ouput, for a system with an
- * Intel i7-6700K cpu, run on 2023-02-09:
+ * Intel i7-6700K cpu, run on 2023-02-10:
  *
- *   add:    1.000000
- *   add_l:  1.003676
- *   mul:    8.968592
- *   mul_l:  1.423160
- *   div:    15.273056
- *   div_l:  3.247293
- *   log2_l: 18.058645
+ * add     : 1.000000
+ * add_l   : 1.001424
+ * mul     : 8.934389
+ * mul_l   : 1.425173
+ * div     : 15.245576
+ * div_l   : 3.242095
+ * log2_l  : 18.049780
+ * log2_bkm: 5.156109
+ *
  */
 
 #include <stdio.h>
@@ -28,7 +30,8 @@
 int main(void) {
 
         int s1, s2, s3, n1, n2, n3, x, y, n, lastp;
-        double tadd, tadd_l, tmul, tmul_l, tmul_d, tdiv, tdiv_l, tlog2_l;
+        double tadd, tadd_l, tmul, tmul_l, tmul_d;
+        double tdiv, tdiv_l, tlog2_l, tlog2_bkm;
         clock_t t0, t1;
         int val[] = {FXP_UNDEF, FXP_MIN, \
                         FXP_MIN/3, -3333333, -300000, -30000, -3000, -300,
@@ -52,6 +55,7 @@ int main(void) {
         tdiv = 0;
         tdiv_l = 0;
         tlog2_l = 0;
+        tlog2_bkm = 0;
         lastp = -1;
         for (int n = 0; n < MAX_NUMS; n++) {
                 int p = (int) (((float) (n+1) * 100) / MAX_NUMS);
@@ -163,15 +167,30 @@ int main(void) {
                 }
                 t1= clock();
                 tlog2_l += ((double) t1 - t0);
+
+                t0 = clock();
+                for (int i = 0; i < MAX_OPS; i++) {
+                        x = fxp_log2_bkm(n1);
+                        x = fxp_log2_bkm(n2);
+                        for (int j = 0; j < nvals; j++) {
+                            y = val[j];
+                            x = fxp_log2_bkm(n3);
+                            x = fxp_log2_bkm(y);
+                            x = fxp_log2_bkm(y);
+                        }
+                }
+                t1= clock();
+                tlog2_bkm += ((double) t1 - t0);
         }
 
-        printf("add:\t%lf\n", 1.0);
-        printf("add_l:\t%lf\n", tadd_l / tadd);
-        printf("mul:\t%lf\n", tmul / tadd);
-        printf("mul_l:\t%lf\n", tmul_l / tadd);
-        printf("div:\t%lf\n", tdiv / tadd);
-        printf("div_l:\t%lf\n", tdiv_l / tadd);
-        printf("log2_l:\t%lf\n", tlog2_l / tadd);
+        printf("add     : %lf\n", 1.0);
+        printf("add_l   : %lf\n", tadd_l / tadd);
+        printf("mul     : %lf\n", tmul / tadd);
+        printf("mul_l   : %lf\n", tmul_l / tadd);
+        printf("div     : %lf\n", tdiv / tadd);
+        printf("div_l   : %lf\n", tdiv_l / tadd);
+        printf("log2_l  : %lf\n", tlog2_l / tadd);
+        printf("log2_bkm: %lf\n", tlog2_bkm / tadd);
 
         return 0;
 }

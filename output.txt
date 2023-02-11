@@ -10,7 +10,7 @@ float       has a size of 4 bytes.
 double      has a size of 8 bytes.
 long double has a size of 16 bytes.
 
-Running tests for frac-bit sizes: 0, 11, 14, 16, 24, 31
+Running tests for frac-bit sizes: 0, 11, 14, 24, 16, 31
 
 ========================
 FXP configuration parameters:
@@ -1183,6 +1183,15 @@ log2_l(n2)
 log2_l(n3)
 	got: UNDEF
 	exp. UNDEF (~same)
+log2_bkm(n1)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n2)
+	got: 26.    8 (=Lf:26.812500 = 429 = x1ad = b11010.1101, 9 bits)
+	exp. 26.812500 (~same)
+log2_bkm(n3)
+	got: UNDEF
+	exp. UNDEF (~same)
 
 Random Test #1 for 4 frac bits:
 n1 = 74352588.    8 (=Lf:74352588.812500 = 1189641421 = x46e87ccd = b100011011101000011111001100.1101, 31 bits)
@@ -1231,6 +1240,15 @@ log2_l(n2)
 	got: 25.    9 (=Lf:25.875000 = 414 = x19e = b11001.1110, 9 bits)
 	exp. 25.875000 (~same)
 log2_l(n3)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n1)
+	got: 26.    1 (=Lf:26.125000 = 418 = x1a2 = b11010.0010, 9 bits)
+	exp. 26.125000 (~same)
+log2_bkm(n2)
+	got: 25.    9 (=Lf:25.937500 = 415 = x19f = b11001.1111, 9 bits)
+	exp. 25.875000 (~same)
+log2_bkm(n3)
 	got: UNDEF
 	exp. UNDEF (~same)
 
@@ -1283,6 +1301,15 @@ log2_l(n2)
 log2_l(n3)
 	got: UNDEF
 	exp. UNDEF (~same)
+log2_bkm(n1)
+	got: 26.    8 (=Lf:26.812500 = 429 = x1ad = b11010.1101, 9 bits)
+	exp. 26.812500 (~same)
+log2_bkm(n2)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n3)
+	got: UNDEF
+	exp. UNDEF (~same)
 
 Random Test #3 for 4 frac bits:
 n1 = 32599710.    5 (=Lf:32599710.500000 = 521595368 = x1f16e9e8 = b1111100010110111010011110.1000, 29 bits)
@@ -1331,6 +1358,15 @@ log2_l(n2)
 	got: 24.    1 (=Lf:24.062500 = 385 = x181 = b11000.0001, 9 bits)
 	exp. 24.125000 (~same)
 log2_l(n3)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n1)
+	got: 24.    9 (=Lf:24.937500 = 399 = x18f = b11000.1111, 9 bits)
+	exp. 24.937500 (~same)
+log2_bkm(n2)
+	got: 24.    1 (=Lf:24.125000 = 386 = x182 = b11000.0010, 9 bits)
+	exp. 24.125000 (~same)
+log2_bkm(n3)
 	got: UNDEF
 	exp. UNDEF (~same)
 
@@ -1383,6 +1419,15 @@ log2_l(n2)
 log2_l(n3)
 	got: 0.   -7 (=Lf:-0.750000 = -12 = x(-)c = b(-).1100, 4 bits)
 	exp. -0.625000 (~same)
+log2_bkm(n1)
+	got: 23.    8 (=Lf:23.812500 = 381 = x17d = b10111.1101, 9 bits)
+	exp. 23.750000 (~same)
+log2_bkm(n2)
+	got: 27.    0 (=Lf:27.000000 = 432 = x1b0 = b11011.0000, 9 bits)
+	exp. 26.937500 (~same)
+log2_bkm(n3)
+	got: 0.   -7 (=Lf:-0.687500 = -11 = x(-)b = b(-).1011, 4 bits)
+	exp. -0.625000 (~same)
 
 Random Test #5 for 4 frac bits:
 n1 = -39732691.   -1 (=Lf:-39732691.125000 = -635723058 = x(-)25e45d32 = b(-)10010111100100010111010011.0010, 30 bits)
@@ -1431,6 +1476,15 @@ log2_l(n2)
 	got: 26.    3 (=Lf:26.250000 = 420 = x1a4 = b11010.0100, 9 bits)
 	exp. 26.312500 (~same)
 log2_l(n3)
+	got: 0.   -4 (=Lf:-0.437500 = -7 = x(-)7 = b(-).0111, 3 bits)
+	exp. -0.375000 (~same)
+log2_bkm(n1)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n2)
+	got: 26.    3 (=Lf:26.312500 = 421 = x1a5 = b11010.0101, 9 bits)
+	exp. 26.312500 (~same)
+log2_bkm(n3)
 	got: 0.   -4 (=Lf:-0.437500 = -7 = x(-)7 = b(-).0111, 3 bits)
 	exp. -0.375000 (~same)
 
@@ -1483,6 +1537,15 @@ log2_l(n2)
 log2_l(n3)
 	got: UNDEF
 	exp. UNDEF (~same)
+log2_bkm(n1)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n2)
+	got: 26.    1 (=Lf:26.062500 = 417 = x1a1 = b11010.0001, 9 bits)
+	exp. 26.062500 (~same)
+log2_bkm(n3)
+	got: UNDEF
+	exp. UNDEF (~same)
 
 Random Test #7 for 4 frac bits:
 n1 = -47306158.   -6 (=Lf:-47306158.562500 = -756898537 = x(-)2d1d5ae9 = b(-)10110100011101010110101110.1001, 30 bits)
@@ -1533,6 +1596,15 @@ log2_l(n2)
 log2_l(n3)
 	got: 0.   -3 (=Lf:-0.250000 = -4 = x(-)4 = b(-).0100, 3 bits)
 	exp. -0.187500 (~same)
+log2_bkm(n1)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n2)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n3)
+	got: 0.   -2 (=Lf:-0.187500 = -3 = x(-)3 = b(-).0011, 2 bits)
+	exp. -0.187500 (~same)
 
 Random Test #8 for 4 frac bits:
 n1 = -11550220.   -4 (=Lf:-11550220.375000 = -184803526 = x(-)b03e0c6 = b(-)101100000011111000001100.0110, 28 bits)
@@ -1581,6 +1653,15 @@ log2_l(n2)
 	got: 24.    6 (=Lf:24.562500 = 393 = x189 = b11000.1001, 9 bits)
 	exp. 24.562500 (~same)
 log2_l(n3)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n1)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n2)
+	got: 24.    6 (=Lf:24.562500 = 393 = x189 = b11000.1001, 9 bits)
+	exp. 24.562500 (~same)
+log2_bkm(n3)
 	got: UNDEF
 	exp. UNDEF (~same)
 
@@ -1633,6 +1714,15 @@ log2_l(n2)
 log2_l(n3)
 	got: -4.    0 (=Lf:-4.000000 = -64 = x(-)40 = b(-)100.0000, 7 bits)
 	exp. -4.000000 (~same)
+log2_bkm(n1)
+	got: 21.    3 (=Lf:21.312500 = 341 = x155 = b10101.0101, 9 bits)
+	exp. 21.312500 (~same)
+log2_bkm(n2)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n3)
+	got: -4.    0 (=Lf:-4.000000 = -64 = x(-)40 = b(-)100.0000, 7 bits)
+	exp. -4.000000 (~same)
 
 Some transcendental numbers as fxp's (4 frac bits):
 e  as fxp: 2.    7 (=Lf:2.687500 = 43 = x2b = b10.1011, 6 bits)
@@ -1649,6 +1739,16 @@ ln(1): 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
 ln(0): -INF
 log2_l(-INF): UNDEF
 log2_l(UNDEF): UNDEF
+
+log2_bkm(+INF): +INF
+log2_bkm(2): 1.    0 (=Lf:1.000000 = 16 = x10 = b1.0000, 5 bits)
+log2_bkm(1): 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
+log2_bkm(0): -INF
+ln_bkm(e): 0.    9 (=Lf:0.937500 = 15 = xf = b.1111, 4 bits)
+ln_bkm(1): 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000, 0 bits)
+ln_bkm(0): -INF
+log2_bkm(-INF): UNDEF
+log2_bkm(UNDEF): UNDEF
 
 0 Warnings for 4 frac bits.
 All tests passed using 4-bit fracs, and '9' as max decimal frac.
@@ -2825,6 +2925,15 @@ log2_l(n2)
 log2_l(n3)
 	got: -2.  -11 (=Lf:-2.114746 = -4331 = x(-)10eb = b(-)10.00011101011, 13 bits)
 	exp. -2.114258 (~same)
+log2_bkm(n1)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n2)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n3)
+	got: -2.  -11 (=Lf:-2.114746 = -4331 = x(-)10eb = b(-)10.00011101011, 13 bits)
+	exp. -2.114258 (~same)
 
 Random Test #1 for 11 frac bits:
 n1 = 700159.   10 (=Lf:700159.109863 = 1433925857 = x5577f8e1 = b10101010111011111111.00011100001, 31 bits)
@@ -2873,6 +2982,15 @@ log2_l(n2)
 	got: UNDEF
 	exp. UNDEF (~same)
 log2_l(n3)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n1)
+	got: 19.   41 (=Lf:19.416992 = 39766 = x9b56 = b10011.01101010110, 16 bits)
+	exp. 19.416992 (~same)
+log2_bkm(n2)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n3)
 	got: UNDEF
 	exp. UNDEF (~same)
 
@@ -2925,6 +3043,15 @@ log2_l(n2)
 log2_l(n3)
 	got: 0.  -57 (=Lf:-0.575195 = -1178 = x(-)49a = b(-).10010011010, 11 bits)
 	exp. -0.574707 (~same)
+log2_bkm(n1)
+	got: 19.   52 (=Lf:19.527832 = 39993 = x9c39 = b10011.10000111001, 16 bits)
+	exp. 19.527832 (~same)
+log2_bkm(n2)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n3)
+	got: 0.  -56 (=Lf:-0.574707 = -1177 = x(-)499 = b(-).10010011001, 11 bits)
+	exp. -0.574707 (~same)
 
 Random Test #3 for 11 frac bits:
 n1 = -174036.  -52 (=Lf:-174036.527344 = -356426808 = x(-)153ea438 = b(-)101010011111010100.10000111000, 29 bits)
@@ -2973,6 +3100,15 @@ log2_l(n2)
 	got: 18.   80 (=Lf:18.815430 = 38534 = x9686 = b10010.11010000110, 16 bits)
 	exp. 18.815918 (~same)
 log2_l(n3)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n1)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n2)
+	got: 18.   80 (=Lf:18.815918 = 38535 = x9687 = b10010.11010000111, 16 bits)
+	exp. 18.815918 (~same)
+log2_bkm(n3)
 	got: UNDEF
 	exp. UNDEF (~same)
 
@@ -3025,6 +3161,15 @@ log2_l(n2)
 log2_l(n3)
 	got: UNDEF
 	exp. UNDEF (~same)
+log2_bkm(n1)
+	got: 19.   82 (=Lf:19.836914 = 40626 = x9eb2 = b10011.11010110010, 16 bits)
+	exp. 19.836914 (~same)
+log2_bkm(n2)
+	got: 18.   48 (=Lf:18.486816 = 37861 = x93e5 = b10010.01111100101, 16 bits)
+	exp. 18.486816 (~same)
+log2_bkm(n3)
+	got: UNDEF
+	exp. UNDEF (~same)
 
 Random Test #5 for 11 frac bits:
 n1 = 900387.   38 (=Lf:900387.386719 = 1843993368 = x6de91b18 = b11011011110100100011.01100011000, 31 bits)
@@ -3074,6 +3219,15 @@ log2_l(n2)
 	exp. 18.813965 (~same)
 log2_l(n3)
 	got: 0.  -23 (=Lf:-0.238281 = -488 = x(-)1e8 = b(-).00111101000, 9 bits)
+	exp. -0.237305 (~same)
+log2_bkm(n1)
+	got: 19.   77 (=Lf:19.780273 = 40510 = x9e3e = b10011.11000111110, 16 bits)
+	exp. 19.779785 (~same)
+log2_bkm(n2)
+	got: 18.   80 (=Lf:18.813965 = 38531 = x9683 = b10010.11010000011, 16 bits)
+	exp. 18.813965 (~same)
+log2_bkm(n3)
+	got: 0.  -23 (=Lf:-0.237793 = -487 = x(-)1e7 = b(-).00111100111, 9 bits)
 	exp. -0.237305 (~same)
 
 Random Test #6 for 11 frac bits:
@@ -3125,6 +3279,15 @@ log2_l(n2)
 log2_l(n3)
 	got: -1.  -22 (=Lf:-1.224121 = -2507 = x(-)9cb = b(-)1.00111001011, 12 bits)
 	exp. -1.223145 (~same)
+log2_bkm(n1)
+	got: 19.   85 (=Lf:19.865234 = 40684 = x9eec = b10011.11011101100, 16 bits)
+	exp. 19.865234 (~same)
+log2_bkm(n2)
+	got: 18.   93 (=Lf:18.948242 = 38806 = x9796 = b10010.11110010110, 16 bits)
+	exp. 18.948242 (~same)
+log2_bkm(n3)
+	got: -1.  -22 (=Lf:-1.223633 = -2506 = x(-)9ca = b(-)1.00111001010, 12 bits)
+	exp. -1.223145 (~same)
 
 Random Test #7 for 11 frac bits:
 n1 = 923860.   63 (=Lf:923860.645020 = 1892066601 = x70c6a529 = b11100001100011010100.10100101001, 31 bits)
@@ -3173,6 +3336,15 @@ log2_l(n2)
 	got: 19.   35 (=Lf:19.357422 = 39644 = x9adc = b10011.01011011100, 16 bits)
 	exp. 19.358398 (~same)
 log2_l(n3)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n1)
+	got: 19.   81 (=Lf:19.817383 = 40586 = x9e8a = b10011.11010001010, 16 bits)
+	exp. 19.816895 (~same)
+log2_bkm(n2)
+	got: 19.   35 (=Lf:19.358398 = 39646 = x9ade = b10011.01011011110, 16 bits)
+	exp. 19.358398 (~same)
+log2_bkm(n3)
 	got: UNDEF
 	exp. UNDEF (~same)
 
@@ -3225,6 +3397,15 @@ log2_l(n2)
 log2_l(n3)
 	got: 0.  -31 (=Lf:-0.316406 = -648 = x(-)288 = b(-).01010001000, 10 bits)
 	exp. -0.315918 (~same)
+log2_bkm(n1)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n2)
+	got: 18.   83 (=Lf:18.838379 = 38581 = x96b5 = b10010.11010110101, 16 bits)
+	exp. 18.838379 (~same)
+log2_bkm(n3)
+	got: 0.  -31 (=Lf:-0.316406 = -648 = x(-)288 = b(-).01010001000, 10 bits)
+	exp. -0.315918 (~same)
 
 Random Test #9 for 11 frac bits:
 n1 = 436733.   24 (=Lf:436733.246582 = 894429689 = x354fe9f9 = b1101010100111111101.00111111001, 30 bits)
@@ -3275,6 +3456,15 @@ log2_l(n2)
 log2_l(n3)
 	got: UNDEF
 	exp. UNDEF (~same)
+log2_bkm(n1)
+	got: 18.   72 (=Lf:18.736328 = 38372 = x95e4 = b10010.10111100100, 16 bits)
+	exp. 18.736328 (~same)
+log2_bkm(n2)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n3)
+	got: UNDEF
+	exp. UNDEF (~same)
 
 Some transcendental numbers as fxp's (11 frac bits):
 e  as fxp: 2.   71 (=Lf:2.718262 = 5567 = x15bf = b10.10110111111, 13 bits)
@@ -3291,6 +3481,16 @@ ln(1): 0.    0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
 ln(0): -INF
 log2_l(-INF): UNDEF
 log2_l(UNDEF): UNDEF
+
+log2_bkm(+INF): +INF
+log2_bkm(2): 1.    0 (=Lf:1.000000 = 2048 = x800 = b1.00000000000, 12 bits)
+log2_bkm(1): 0.    0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
+log2_bkm(0): -INF
+ln_bkm(e): 1.    0 (=Lf:1.000000 = 2048 = x800 = b1.00000000000, 12 bits)
+ln_bkm(1): 0.    0 (=Lf:0.000000 = 0 = x0 = b.00000000000, 0 bits)
+ln_bkm(0): -INF
+log2_bkm(-INF): UNDEF
+log2_bkm(UNDEF): UNDEF
 
 0 Warnings for 11 frac bits.
 All tests passed using 11-bit fracs, and '99' as max decimal frac.
@@ -4467,6 +4667,15 @@ log2_l(n2)
 log2_l(n3)
 	got: UNDEF
 	exp. UNDEF (~same)
+log2_bkm(n1)
+	got: 16.  604 (=Lf:16.604919 = 272055 = x426b7 = b10000.10011010110111, 19 bits)
+	exp. 16.604919 (~same)
+log2_bkm(n2)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n3)
+	got: UNDEF
+	exp. UNDEF (~same)
 
 Random Test #1 for 14 frac bits:
 n1 = -48321. -467 (=Lf:-48321.467712 = -791698927 = x(-)2f305def = b(-)1011110011000001.01110111101111, 30 bits)
@@ -4515,6 +4724,15 @@ log2_l(n2)
 	got: UNDEF
 	exp. UNDEF (~same)
 log2_l(n3)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n1)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n2)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n3)
 	got: UNDEF
 	exp. UNDEF (~same)
 
@@ -4567,6 +4785,15 @@ log2_l(n2)
 log2_l(n3)
 	got: -3. -338 (=Lf:-3.339172 = -54709 = x(-)d5b5 = b(-)11.01010110110101, 16 bits)
 	exp. -3.339111 (~same)
+log2_bkm(n1)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n2)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n3)
+	got: -3. -338 (=Lf:-3.339111 = -54708 = x(-)d5b4 = b(-)11.01010110110100, 16 bits)
+	exp. -3.339111 (~same)
 
 Random Test #3 for 14 frac bits:
 n1 = -124532.  -35 (=Lf:-124532.035583 = -2040332871 = x(-)799d0247 = b(-)11110011001110100.00001001000111, 31 bits)
@@ -4617,6 +4844,15 @@ log2_l(n2)
 log2_l(n3)
 	got: 0. -920 (=Lf:-0.921387 = -15096 = x(-)3af8 = b(-).11101011111000, 14 bits)
 	exp. -0.921326 (~same)
+log2_bkm(n1)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n2)
+	got: 12.  748 (=Lf:12.749268 = 208884 = x32ff4 = b1100.10111111110100, 18 bits)
+	exp. 12.749207 (~same)
+log2_bkm(n3)
+	got: 0. -920 (=Lf:-0.921326 = -15095 = x(-)3af7 = b(-).11101011110111, 14 bits)
+	exp. -0.921326 (~same)
 
 Random Test #4 for 14 frac bits:
 n1 = -96030. -478 (=Lf:-96030.479004 = -1573363368 = x(-)5dc79ea8 = b(-)10111011100011110.01111010101000, 31 bits)
@@ -4665,6 +4901,15 @@ log2_l(n2)
 	got: UNDEF
 	exp. UNDEF (~same)
 log2_l(n3)
+	got: -1. -101 (=Lf:-1.101807 = -18052 = x(-)4684 = b(-)1.00011010000100, 15 bits)
+	exp. -1.101746 (~same)
+log2_bkm(n1)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n2)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n3)
 	got: -1. -101 (=Lf:-1.101807 = -18052 = x(-)4684 = b(-)1.00011010000100, 15 bits)
 	exp. -1.101746 (~same)
 
@@ -4717,6 +4962,15 @@ log2_l(n2)
 log2_l(n3)
 	got: 0. -579 (=Lf:-0.579712 = -9498 = x(-)251a = b(-).10010100011010, 14 bits)
 	exp. -0.579590 (~same)
+log2_bkm(n1)
+	got: 14.  109 (=Lf:14.109985 = 231178 = x3870a = b1110.00011100001010, 18 bits)
+	exp. 14.109985 (~same)
+log2_bkm(n2)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n3)
+	got: 0. -579 (=Lf:-0.579651 = -9497 = x(-)2519 = b(-).10010100011001, 14 bits)
+	exp. -0.579590 (~same)
 
 Random Test #6 for 14 frac bits:
 n1 = 107436.  739 (=Lf:107436.740417 = 1760243555 = x68eb2f63 = b11010001110101100.10111101100011, 31 bits)
@@ -4765,6 +5019,15 @@ log2_l(n2)
 	got: UNDEF
 	exp. UNDEF (~same)
 log2_l(n3)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n1)
+	got: 16.  712 (=Lf:16.713074 = 273827 = x42da3 = b10000.10110110100011, 19 bits)
+	exp. 16.713074 (~same)
+log2_bkm(n2)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n3)
 	got: UNDEF
 	exp. UNDEF (~same)
 
@@ -4817,6 +5080,15 @@ log2_l(n2)
 log2_l(n3)
 	got: UNDEF
 	exp. UNDEF (~same)
+log2_bkm(n1)
+	got: 14.  708 (=Lf:14.708923 = 240991 = x3ad5f = b1110.10110101011111, 18 bits)
+	exp. 14.708923 (~same)
+log2_bkm(n2)
+	got: 16.  831 (=Lf:16.831787 = 275772 = x4353c = b10000.11010100111100, 19 bits)
+	exp. 16.831787 (~same)
+log2_bkm(n3)
+	got: UNDEF
+	exp. UNDEF (~same)
 
 Random Test #8 for 14 frac bits:
 n1 = 9480.  280 (=Lf:9480.280396 = 155324914 = x94211f2 = b10010100001000.01000111110010, 28 bits)
@@ -4866,6 +5138,15 @@ log2_l(n2)
 	exp. 9.091309 (~same)
 log2_l(n3)
 	got: 0. -149 (=Lf:-0.149597 = -2451 = x(-)993 = b(-).00100110010011, 12 bits)
+	exp. -0.149475 (~same)
+log2_bkm(n1)
+	got: 13.  210 (=Lf:13.210693 = 216444 = x34d7c = b1101.00110101111100, 18 bits)
+	exp. 13.210693 (~same)
+log2_bkm(n2)
+	got: 9.   91 (=Lf:9.091309 = 148952 = x245d8 = b1001.00010111011000, 18 bits)
+	exp. 9.091309 (~same)
+log2_bkm(n3)
+	got: 0. -149 (=Lf:-0.149536 = -2450 = x(-)992 = b(-).00100110010010, 12 bits)
 	exp. -0.149475 (~same)
 
 Random Test #9 for 14 frac bits:
@@ -4917,6 +5198,15 @@ log2_l(n2)
 log2_l(n3)
 	got: UNDEF
 	exp. UNDEF (~same)
+log2_bkm(n1)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n2)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n3)
+	got: UNDEF
+	exp. UNDEF (~same)
 
 Some transcendental numbers as fxp's (14 frac bits):
 e  as fxp: 2.  717 (=Lf:2.718262 = 44536 = xadf8 = b10.10110111111000, 16 bits)
@@ -4934,1650 +5224,18 @@ ln(0): -INF
 log2_l(-INF): UNDEF
 log2_l(UNDEF): UNDEF
 
+log2_bkm(+INF): +INF
+log2_bkm(2): 1.    0 (=Lf:1.000000 = 16384 = x4000 = b1.00000000000000, 15 bits)
+log2_bkm(1): 0.    0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
+log2_bkm(0): -INF
+ln_bkm(e): 1.    0 (=Lf:1.000000 = 16384 = x4000 = b1.00000000000000, 15 bits)
+ln_bkm(1): 0.    0 (=Lf:0.000000 = 0 = x0 = b.00000000000000, 0 bits)
+ln_bkm(0): -INF
+log2_bkm(-INF): UNDEF
+log2_bkm(UNDEF): UNDEF
+
 0 Warnings for 14 frac bits.
 All tests passed using 14-bit fracs, and '999' as max decimal frac.
-
-
-========================
-FXP configuration parameters:
-frac bits : 16 (requested was 16)
-whole bits: 16
-+INF      : 2147483647 (x7fffffff,  wh,fr values: 32767, 65535,  Lf eq.:32767.999985)
-whole max : 32767
-frac mask : 65535
-frac max  : 65535 (->decimals: .9999)
-whole min : -32767
--INF      : -2147483647 (x80000001,  wh,fr values: -32767, -65535,  Lf eq.:-32767.999985)
-UNDEF     : -2147483648 (x80000000,  wh,fr values: -32767, -65536,  Lf eq.:-32768.099976)
-warn_delta: 4.577637E-05
-max_warn_delta: 6.103516E-05
-
-Checking extreme int values, part I:
-+Inf
-	got: +INF
-	exp. +INF (~same)
-Largest
-	got: 32767. 9999 (=Lf:32767.999969 = 2147483646 = x7ffffffe = b111111111111111.1111111111111110, 31 bits)
-	exp. 32767.999969 (~same)
-HalfMax
-	got: 16383. 9999 (=Lf:16383.999985 = 1073741823 = x3fffffff = b11111111111111.1111111111111111, 30 bits)
-	exp. 16383.999985 (~same)
-Largest frac
-	got: 0. 9999 (=Lf:0.999985 = 65535 = xffff = b.1111111111111111, 16 bits)
-	exp. 0.999985 (~same)
-tiniest
-	got: 0.    0 (=Lf:0.000015 = 1 = x1 = b.0000000000000001, 1 bits)
-	exp. 0.000015 (~same)
-0.5
-	got: 0. 4999 (=Lf:0.500000 = 32768 = x8000 = b.1000000000000000, 16 bits)
-	exp. 0.500000 (~same)
-zero
-	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-	exp. 0.000000 (~same)
--tiniest
-	got: 0.    0 (=Lf:-0.000015 = -1 = x(-)1 = b(-).0000000000000001, 1 bits)
-	exp. -0.000015 (~same)
--Largest frac
-	got: 0.-9999 (=Lf:-0.999985 = -65535 = x(-)ffff = b(-).1111111111111111, 16 bits)
-	exp. -0.999985 (~same)
-Most negative
-	got: -32767.-9999 (=Lf:-32767.999969 = -2147483646 = x(-)7ffffffe = b(-)111111111111111.1111111111111110, 31 bits)
-	exp. -32767.999969 (~same)
--Inf
-	got: -INF
-	exp. -INF (~same)
-Undefined
-	got: UNDEF
-	exp. UNDEF (~same)
-
-Checking extreme int values, part II:
-Almost most negative
-	got: -32767.-9998 (=Lf:-32767.999954 = -2147483645 = x(-)7ffffffd = b(-)111111111111111.1111111111111101, 31 bits)
-	exp. -32767.999954 (~same)
- Largest -Largest
-	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-	exp. 0.000000 (~same)
--Largest +Largest
-	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-	exp. 0.000000 (~same)
-Largest + 0
-	got: 32767. 9999 (=Lf:32767.999969 = 2147483646 = x7ffffffe = b111111111111111.1111111111111110, 31 bits)
-	exp. 32767.999969 (~same)
--Largest - 0
-	got: -32767.-9999 (=Lf:-32767.999969 = -2147483646 = x(-)7ffffffe = b(-)111111111111111.1111111111111110, 31 bits)
-	exp. -32767.999969 (~same)
-Largest - tiniest
-	got: 32767. 9998 (=Lf:32767.999954 = 2147483645 = x7ffffffd = b111111111111111.1111111111111101, 31 bits)
-	exp. 32767.999954 (~same)
-Largest + tiniest safe
-	got: +INF
-	exp. +INF (~same)
-Largest + tiniest unsafe
-	got: +INF
-	exp. +INF (~same)
--(+inf)
-	got: -INF
-	exp. -INF (~same)
--(-inf)
-	got: +INF
-	exp. +INF (~same)
-+inf + +inf
-	got: +INF
-	exp. +INF (~same)
--inf - +inf
-	got: -INF
-	exp. -INF (~same)
-+inf + -inf
-	got: UNDEF
-	exp. UNDEF (~same)
--inf + -inf
-	got: -INF
-	exp. -INF (~same)
--inf - -inf
-	got: UNDEF
-	exp. UNDEF (~same)
-+inf * -inf
-	got: -INF
-	exp. -INF (~same)
-+inf - 0.5
-	got: +INF
-	exp. +INF (~same)
--inf + 0.5
-	got: -INF
-	exp. -INF (~same)
-+num / zero
-	got: +INF
-	exp. +INF (~same)
-zero / zero
-	got: UNDEF
-	exp. UNDEF (~same)
-zero * zero
-	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-	exp. 0.000000 (~same)
-zero + zero
-	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-	exp. 0.000000 (~same)
-zero - zero
-	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-	exp. 0.000000 (~same)
-zero - undef
-	got: UNDEF
-	exp. UNDEF (~same)
--num / zero
-	got: -INF
-	exp. -INF (~same)
-zero * +inf
-	got: UNDEF
-	exp. UNDEF (~same)
-zero * -inf
-	got: UNDEF
-	exp. UNDEF (~same)
-zero * undef
-	got: UNDEF
-	exp. UNDEF (~same)
--inf * undef
-	got: UNDEF
-	exp. UNDEF (~same)
-+inf * undef
-	got: UNDEF
-	exp. UNDEF (~same)
-undef * undef
-	got: UNDEF
-	exp. UNDEF (~same)
-tiniest * inf
-	got: +INF
-	exp. +INF (~same)
-
-Checking extreme int values, part III:
-Way Too Large whole part!
-	got: +INF
-	exp. +INF (~same)
-Largest * 1
-	got: 32767. 9999 (=Lf:32767.999969 = 2147483646 = x7ffffffe = b111111111111111.1111111111111110, 31 bits)
-	exp. 32767.999969 (~same)
-Largest * -1
-	got: -32767.-9999 (=Lf:-32767.999969 = -2147483646 = x(-)7ffffffe = b(-)111111111111111.1111111111111110, 31 bits)
-	exp. -32767.999969 (~same)
-Largest + two safe
-	got: +INF
-	exp. +INF (~same)
-Largest + two unsafe
-	got: -32766.    0 (=Lf:-32766.000031 = -2147352578 = x(-)7ffe0002 = b(-)111111111111110.0000000000000010, 31 bits)
-	exp. -32766.000031 (~same)
-Safe Too neg substraction
-	got: -INF
-	exp. -INF (~same)
-Unsafe Too neg substraction
-	got: 32767. 5000 (=Lf:32767.500031 = 2147450882 = x7fff8002 = b111111111111111.1000000000000010, 31 bits)
-	exp. 32767.500031 (~same)
-Largest + 0.5
-	got: +INF
-	exp. +INF (~same)
--Largest - 0.5
-	got: -INF
-	exp. -INF (~same)
-+HalfMax + HMaxp2
-	got: +INF
-	exp. +INF (~same)
--HalfMax - HMaxp2
-	got: -INF
-	exp. -INF (~same)
-HalfMax + HalfMax
-	got: 32767. 9999 (=Lf:32767.999969 = 2147483646 = x7ffffffe = b111111111111111.1111111111111110, 31 bits)
-	exp. 32767.999969 (~same)
-FXP_MAX - HalfMax
-	got: 16383. 9999 (=Lf:16383.999985 = 1073741823 = x3fffffff = b11111111111111.1111111111111111, 30 bits)
-	exp. 16383.999985 (~same)
-HalfMax + FXP_MAX
-	got: +INF
-	exp. +INF (~same)
--FXP_MAX - HalfMax
-	got: -INF
-	exp. -INF (~same)
-HalfMax * 2
-	got: 32767. 9999 (=Lf:32767.999969 = 2147483646 = x7ffffffe = b111111111111111.1111111111111110, 31 bits)
-	exp. 32767.999969 (~same)
-HalfMax * 2 (long)
-	got: 32767. 9999 (=Lf:32767.999969 = 2147483646 = x7ffffffe = b111111111111111.1111111111111110, 31 bits)
-	exp. 32767.999969 (~same)
-HalfMax * 3
-	got: +INF
-	exp. +INF (~same)
--HalfMax * 3
-	got: -INF
-	exp. -INF (~same)
-(HalfMax+0.5)*2
-	got: +INF
-	exp. +INF (~same)
-(HalfMax+0.5)*2 (long)
-	got: +INF
-	exp. +INF (~same)
-
-Checking decimal <=> bin mappings of frac ranges:
-Max frac dec: 9999 (bin 65535)
-Showing fxp for 0.  0: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-Showing fxp for 0.  1: 0.    1 (=Lf:0.000092 = 6 = x6 = b.0000000000000110, 3 bits)
-Showing fxp for 0.  2: 0.    2 (=Lf:0.000198 = 13 = xd = b.0000000000001101, 4 bits)
-Showing fxp for 0.  3: 0.    3 (=Lf:0.000290 = 19 = x13 = b.0000000000010011, 5 bits)
-Showing fxp for 0.  4: 0.    4 (=Lf:0.000397 = 26 = x1a = b.0000000000011010, 5 bits)
-Showing fxp for 0.  5: 0.    5 (=Lf:0.000488 = 32 = x20 = b.0000000000100000, 6 bits)
-:
-Showing fxp for 0.4998: 0. 4998 (=Lf:0.499832 = 32757 = x7ff5 = b.0111111111110101, 15 bits)
-Showing fxp for 0.4999: 0. 4999 (=Lf:0.499939 = 32764 = x7ffc = b.0111111111111100, 15 bits)
-Showing fxp for 0.5000: 0. 5000 (=Lf:0.500031 = 32770 = x8002 = b.1000000000000010, 16 bits)
-Showing fxp for 0.5001: 0. 5001 (=Lf:0.500137 = 32777 = x8009 = b.1000000000001001, 16 bits)
-Showing fxp for 0.5002: 0. 5002 (=Lf:0.500229 = 32783 = x800f = b.1000000000001111, 16 bits)
-:
-Showing fxp for 0.9994: 0. 9994 (=Lf:0.999481 = 65502 = xffde = b.1111111111011110, 16 bits)
-Showing fxp for 0.9995: 0. 9995 (=Lf:0.999573 = 65508 = xffe4 = b.1111111111100100, 16 bits)
-Showing fxp for 0.9996: 0. 9996 (=Lf:0.999680 = 65515 = xffeb = b.1111111111101011, 16 bits)
-Showing fxp for 0.9997: 0. 9997 (=Lf:0.999771 = 65521 = xfff1 = b.1111111111110001, 16 bits)
-Showing fxp for 0.9998: 0. 9998 (=Lf:0.999878 = 65528 = xfff8 = b.1111111111111000, 16 bits)
-Showing fxp for 0.9999: 0. 9999 (=Lf:0.999985 = 65535 = xffff = b.1111111111111111, 16 bits)
-
-Checking sign taken from frac when whole == 0:
--0.(+)500
-	got: 0.  500 (=Lf:0.500488 = 32800 = x8020 = b.1000000000100000, 16 bits)
-	exp. 0.500000 (~same)
--0.(-)500
-	got: 0. -500 (=Lf:-0.500488 = -32800 = x(-)8020 = b(-).1000000000100000, 16 bits)
-	exp. -0.500000 (~same)
-
-Checking truncation of longer frac decimal arguments:
-0.22222
-	got: 0.  222 (=Lf:0.222214 = 14563 = x38e3 = b.0011100011100011, 14 bits)
-	exp. 0.221985 (~same)
-0.4444444
-	got: 0.  444 (=Lf:0.444427 = 29126 = x71c6 = b.0111000111000110, 15 bits)
-	exp. 0.443985 (~same)
-0.771999
-	got: 0.  771 (=Lf:0.771759 = 50578 = xc592 = b.1100010110010010, 16 bits)
-	exp. 0.770996 (~same)
-0.9999999
-	got: 0.  999 (=Lf:0.999985 = 65535 = xffff = b.1111111111111111, 16 bits)
-	exp. 0.998993 (~same)
-
-Checking extreme frac values:
-maxfrac
-	got: 0. 9999 (=Lf:0.999985 = 65535 = xffff = b.1111111111111111, 16 bits)
-	exp. 0.999985 (~same)
-0.5 + maxfrac
-	got: 1. 4999 (=Lf:1.499985 = 98303 = x17fff = b1.0111111111111111, 17 bits)
-	exp. 1.499985 (~same)
-maxfrac +tiniest
-	got: 1.    0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
-	exp. 1.000000 (~same)
--maxfrac -tiniest
-	got: -1.    0 (=Lf:-1.000000 = -65536 = x(-)10000 = b(-)1.0000000000000000, 17 bits)
-	exp. -1.000000 (~same)
-maxfrac - maxfrac
-	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-	exp. 0.000000 (~same)
-
-Checking simple ops when using 3+ bits for whole part:
- 1 + 1
-	got: 2.    0 (=Lf:2.000000 = 131072 = x20000 = b10.0000000000000000, 18 bits)
-	exp. 2.000000 (~same)
--1 - 1
-	got: -2.    0 (=Lf:-2.000000 = -131072 = x(-)20000 = b(-)10.0000000000000000, 18 bits)
-	exp. -2.000000 (~same)
-Ok sum == 2
-	got: 2.    0 (=Lf:2.000000 = 131072 = x20000 = b10.0000000000000000, 18 bits)
-	exp. 2.000000 (~same)
-Ok sum == -2
-	got: -2.    0 (=Lf:-2.000000 = -131072 = x(-)20000 = b(-)10.0000000000000000, 18 bits)
-	exp. -2.000000 (~same)
- num
-	got: 0. 4999 (=Lf:0.499985 = 32767 = x7fff = b.0111111111111111, 15 bits)
-	exp. 0.499985 (~same)
- num +  2
-	got: 2. 4999 (=Lf:2.499985 = 163839 = x27fff = b10.0111111111111111, 18 bits)
-	exp. 2.499985 (~same)
- num + -2
-	got: -1.-4999 (=Lf:-1.500015 = -98305 = x(-)18001 = b(-)1.1000000000000001, 17 bits)
-	exp. -1.500015 (~same)
--num +  2
-	got: 1. 4999 (=Lf:1.500015 = 98305 = x18001 = b1.1000000000000001, 17 bits)
-	exp. 1.500015 (~same)
--num + -2
-	got: -2.-4999 (=Lf:-2.499985 = -163839 = x(-)27fff = b(-)10.0111111111111111, 18 bits)
-	exp. -2.499985 (~same)
- num -  2
-	got: -1.-4999 (=Lf:-1.500015 = -98305 = x(-)18001 = b(-)1.1000000000000001, 17 bits)
-	exp. -1.500015 (~same)
- num - -2
-	got: 2. 4999 (=Lf:2.499985 = 163839 = x27fff = b10.0111111111111111, 18 bits)
-	exp. 2.499985 (~same)
--num -  2
-	got: -2.-4999 (=Lf:-2.499985 = -163839 = x(-)27fff = b(-)10.0111111111111111, 18 bits)
-	exp. -2.499985 (~same)
--num - -2
-	got: 1. 4999 (=Lf:1.500015 = 98305 = x18001 = b1.1000000000000001, 17 bits)
-	exp. 1.500015 (~same)
- num *  2
-	got: 0. 9999 (=Lf:0.999969 = 65534 = xfffe = b.1111111111111110, 16 bits)
-	exp. 0.999969 (~same)
- num * -2
-	got: 0.-9999 (=Lf:-0.999969 = -65534 = x(-)fffe = b(-).1111111111111110, 16 bits)
-	exp. -0.999969 (~same)
--num *  2
-	got: 0.-9999 (=Lf:-0.999969 = -65534 = x(-)fffe = b(-).1111111111111110, 16 bits)
-	exp. -0.999969 (~same)
--num * -2
-	got: 0. 9999 (=Lf:0.999969 = 65534 = xfffe = b.1111111111111110, 16 bits)
-	exp. 0.999969 (~same)
- num *  2 (long)
-	got: 0. 9999 (=Lf:0.999969 = 65534 = xfffe = b.1111111111111110, 16 bits)
-	exp. 0.999969 (~same)
- num * -2 (long)
-	got: 0.-9999 (=Lf:-0.999969 = -65534 = x(-)fffe = b(-).1111111111111110, 16 bits)
-	exp. -0.999969 (~same)
--num *  2 (long)
-	got: 0.-9999 (=Lf:-0.999969 = -65534 = x(-)fffe = b(-).1111111111111110, 16 bits)
-	exp. -0.999969 (~same)
--num * -2 (long)
-	got: 0. 9999 (=Lf:0.999969 = 65534 = xfffe = b.1111111111111110, 16 bits)
-	exp. 0.999969 (~same)
- num /  2
-	got: 0. 2499 (=Lf:0.249985 = 16383 = x3fff = b.0011111111111111, 14 bits)
-	exp. 0.249985 (~same)
- num / -2
-	got: 0.-2499 (=Lf:-0.249985 = -16383 = x(-)3fff = b(-).0011111111111111, 14 bits)
-	exp. -0.249985 (~same)
--num /  2
-	got: 0.-2499 (=Lf:-0.249985 = -16383 = x(-)3fff = b(-).0011111111111111, 14 bits)
-	exp. -0.249985 (~same)
--num / -2
-	got: 0. 2499 (=Lf:0.249985 = 16383 = x3fff = b.0011111111111111, 14 bits)
-	exp. 0.249985 (~same)
-
-Verifying divisions with values of interest:
-x: UNDEF
-y: UNDEF
-mul  (x*y)
-	got: UNDEF
-	exp. -32768.099976 (~same)
-
-div  (x/y)
-	got: UNDEF
-	exp. UNDEF (~same)
-x: UNDEF
-y: +INF
-mul  (x*y)
-	got: UNDEF
-	exp. -32768.099976 (~same)
-
-div  (x/y)
-	got: UNDEF
-	exp. UNDEF (~same)
-x: UNDEF
-y: -INF
-mul  (x*y)
-	got: UNDEF
-	exp. -32768.099976 (~same)
-
-div  (x/y)
-	got: UNDEF
-	exp. UNDEF (~same)
-x: UNDEF
-y: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-mul  (x*y)
-	got: UNDEF
-	exp. -32768.099976 (~same)
-
-div  (x/y)
-	got: UNDEF
-	exp. UNDEF (~same)
-x: UNDEF
-y: 1.    0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
-mul  (x*y)
-	got: UNDEF
-	exp. -32768.099976 (~same)
-
-div  (x/y)
-	got: UNDEF
-	exp. UNDEF (~same)
-x: +INF
-y: UNDEF
-mul  (x*y)
-	got: UNDEF
-	exp. -32768.099976 (~same)
-
-div  (x/y)
-	got: UNDEF
-	exp. UNDEF (~same)
-x: +INF
-y: +INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-
-div  (x/y)
-	got: UNDEF
-	exp. UNDEF (~same)
-x: +INF
-y: -INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-
-div  (x/y)
-	got: UNDEF
-	exp. UNDEF (~same)
-x: +INF
-y: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-mul  (x*y)
-	got: UNDEF
-	exp. -32768.099976 (~same)
-
-div  (x/y)
-	got: +INF
-	exp. +INF (~same)
-x: +INF
-y: 1.    0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-
-div  (x/y)
-	got: +INF
-	exp. +INF (~same)
-x: 32767. 9999 (=Lf:32767.999969 = 2147483646 = x7ffffffe = b111111111111111.1111111111111110, 31 bits)
-y: UNDEF
-mul  (x*y)
-	got: UNDEF
-	exp. -32768.099976 (~same)
-
-div  (x/y)
-	got: UNDEF
-	exp. UNDEF (~same)
-x: 32767. 9999 (=Lf:32767.999969 = 2147483646 = x7ffffffe = b111111111111111.1111111111111110, 31 bits)
-y: +INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-
-div  (x/y)
-	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-	exp. 0.000000 (~same)
-x: 32767. 9999 (=Lf:32767.999969 = 2147483646 = x7ffffffe = b111111111111111.1111111111111110, 31 bits)
-y: -INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-
-div  (x/y)
-	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-	exp. 0.000000 (~same)
-x: 32767. 9999 (=Lf:32767.999969 = 2147483646 = x7ffffffe = b111111111111111.1111111111111110, 31 bits)
-y: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-mul  (x*y)
-	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-	exp. 0.000000 (~same)
-
-div  (x/y)
-	got: +INF
-	exp. +INF (~same)
-x: 32767. 9999 (=Lf:32767.999969 = 2147483646 = x7ffffffe = b111111111111111.1111111111111110, 31 bits)
-y: 1.    0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
-mul  (x*y)
-	got: 32767. 9999 (=Lf:32767.999969 = 2147483646 = x7ffffffe = b111111111111111.1111111111111110, 31 bits)
-	exp. 32767.999969 (~same)
-
-div  (x/y)
-	got: 32767. 9999 (=Lf:32767.999969 = 2147483646 = x7ffffffe = b111111111111111.1111111111111110, 31 bits)
-	exp. 32767.999969 (~same)
-x: +INF
-y: UNDEF
-mul  (x*y)
-	got: UNDEF
-	exp. -32768.099976 (~same)
-
-div  (x/y)
-	got: UNDEF
-	exp. UNDEF (~same)
-x: +INF
-y: +INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-
-div  (x/y)
-	got: UNDEF
-	exp. UNDEF (~same)
-x: +INF
-y: -INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-
-div  (x/y)
-	got: UNDEF
-	exp. UNDEF (~same)
-x: +INF
-y: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-mul  (x*y)
-	got: UNDEF
-	exp. -32768.099976 (~same)
-
-div  (x/y)
-	got: +INF
-	exp. +INF (~same)
-x: +INF
-y: 1.    0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-
-div  (x/y)
-	got: +INF
-	exp. +INF (~same)
-x: 3000.    5 (=Lf:3000.000488 = 196608032 = xbb80020 = b101110111000.0000000000100000, 28 bits)
-y: UNDEF
-mul  (x*y)
-	got: UNDEF
-	exp. -32768.099976 (~same)
-
-div  (x/y)
-	got: UNDEF
-	exp. UNDEF (~same)
-x: 3000.    5 (=Lf:3000.000488 = 196608032 = xbb80020 = b101110111000.0000000000100000, 28 bits)
-y: +INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-
-div  (x/y)
-	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-	exp. 0.000000 (~same)
-x: 3000.    5 (=Lf:3000.000488 = 196608032 = xbb80020 = b101110111000.0000000000100000, 28 bits)
-y: -INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-
-div  (x/y)
-	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-	exp. 0.000000 (~same)
-x: 3000.    5 (=Lf:3000.000488 = 196608032 = xbb80020 = b101110111000.0000000000100000, 28 bits)
-y: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-mul  (x*y)
-	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-	exp. 0.000000 (~same)
-
-div  (x/y)
-	got: +INF
-	exp. +INF (~same)
-x: 3000.    5 (=Lf:3000.000488 = 196608032 = xbb80020 = b101110111000.0000000000100000, 28 bits)
-y: 1.    0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
-mul  (x*y)
-	got: 3000.    5 (=Lf:3000.000488 = 196608032 = xbb80020 = b101110111000.0000000000100000, 28 bits)
-	exp. 3000.000488 (~same)
-
-div  (x/y)
-	got: 3000.    5 (=Lf:3000.000488 = 196608032 = xbb80020 = b101110111000.0000000000100000, 28 bits)
-	exp. 3000.000488 (~same)
-x: 30.    0 (=Lf:30.000000 = 1966080 = x1e0000 = b11110.0000000000000000, 21 bits)
-y: UNDEF
-mul  (x*y)
-	got: UNDEF
-	exp. -32768.099976 (~same)
-
-div  (x/y)
-	got: UNDEF
-	exp. UNDEF (~same)
-x: 30.    0 (=Lf:30.000000 = 1966080 = x1e0000 = b11110.0000000000000000, 21 bits)
-y: +INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-
-div  (x/y)
-	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-	exp. 0.000000 (~same)
-x: 30.    0 (=Lf:30.000000 = 1966080 = x1e0000 = b11110.0000000000000000, 21 bits)
-y: -INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-
-div  (x/y)
-	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-	exp. 0.000000 (~same)
-x: 30.    0 (=Lf:30.000000 = 1966080 = x1e0000 = b11110.0000000000000000, 21 bits)
-y: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-mul  (x*y)
-	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-	exp. 0.000000 (~same)
-
-div  (x/y)
-	got: +INF
-	exp. +INF (~same)
-x: 30.    0 (=Lf:30.000000 = 1966080 = x1e0000 = b11110.0000000000000000, 21 bits)
-y: 1.    0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
-mul  (x*y)
-	got: 30.    0 (=Lf:30.000000 = 1966080 = x1e0000 = b11110.0000000000000000, 21 bits)
-	exp. 30.000000 (~same)
-
-div  (x/y)
-	got: 30.    0 (=Lf:30.000000 = 1966080 = x1e0000 = b11110.0000000000000000, 21 bits)
-	exp. 30.000000 (~same)
-x: 3.    0 (=Lf:3.000000 = 196608 = x30000 = b11.0000000000000000, 18 bits)
-y: UNDEF
-mul  (x*y)
-	got: UNDEF
-	exp. -32768.099976 (~same)
-
-div  (x/y)
-	got: UNDEF
-	exp. UNDEF (~same)
-x: 3.    0 (=Lf:3.000000 = 196608 = x30000 = b11.0000000000000000, 18 bits)
-y: +INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-
-div  (x/y)
-	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-	exp. 0.000000 (~same)
-x: 3.    0 (=Lf:3.000000 = 196608 = x30000 = b11.0000000000000000, 18 bits)
-y: -INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-
-div  (x/y)
-	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-	exp. 0.000000 (~same)
-x: 3.    0 (=Lf:3.000000 = 196608 = x30000 = b11.0000000000000000, 18 bits)
-y: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-mul  (x*y)
-	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-	exp. 0.000000 (~same)
-
-div  (x/y)
-	got: +INF
-	exp. +INF (~same)
-x: 3.    0 (=Lf:3.000000 = 196608 = x30000 = b11.0000000000000000, 18 bits)
-y: 1.    0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
-mul  (x*y)
-	got: 3.    0 (=Lf:3.000000 = 196608 = x30000 = b11.0000000000000000, 18 bits)
-	exp. 3.000000 (~same)
-
-div  (x/y)
-	got: 3.    0 (=Lf:3.000000 = 196608 = x30000 = b11.0000000000000000, 18 bits)
-	exp. 3.000000 (~same)
-x: 2.    0 (=Lf:2.000000 = 131072 = x20000 = b10.0000000000000000, 18 bits)
-y: UNDEF
-mul  (x*y)
-	got: UNDEF
-	exp. -32768.099976 (~same)
-
-div  (x/y)
-	got: UNDEF
-	exp. UNDEF (~same)
-x: 2.    0 (=Lf:2.000000 = 131072 = x20000 = b10.0000000000000000, 18 bits)
-y: +INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-
-div  (x/y)
-	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-	exp. 0.000000 (~same)
-x: 2.    0 (=Lf:2.000000 = 131072 = x20000 = b10.0000000000000000, 18 bits)
-y: -INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-
-div  (x/y)
-	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-	exp. 0.000000 (~same)
-x: 2.    0 (=Lf:2.000000 = 131072 = x20000 = b10.0000000000000000, 18 bits)
-y: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-mul  (x*y)
-	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-	exp. 0.000000 (~same)
-
-div  (x/y)
-	got: +INF
-	exp. +INF (~same)
-x: 2.    0 (=Lf:2.000000 = 131072 = x20000 = b10.0000000000000000, 18 bits)
-y: 1.    0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
-mul  (x*y)
-	got: 2.    0 (=Lf:2.000000 = 131072 = x20000 = b10.0000000000000000, 18 bits)
-	exp. 2.000000 (~same)
-
-div  (x/y)
-	got: 2.    0 (=Lf:2.000000 = 131072 = x20000 = b10.0000000000000000, 18 bits)
-	exp. 2.000000 (~same)
-x: 1.    0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
-y: UNDEF
-mul  (x*y)
-	got: UNDEF
-	exp. -32768.099976 (~same)
-
-div  (x/y)
-	got: UNDEF
-	exp. UNDEF (~same)
-x: 1.    0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
-y: +INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-
-div  (x/y)
-	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-	exp. 0.000000 (~same)
-x: 1.    0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
-y: -INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-
-div  (x/y)
-	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-	exp. 0.000000 (~same)
-x: 1.    0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
-y: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-mul  (x*y)
-	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-	exp. 0.000000 (~same)
-
-div  (x/y)
-	got: +INF
-	exp. +INF (~same)
-x: 1.    0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
-y: 1.    0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
-mul  (x*y)
-	got: 1.    0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
-	exp. 1.000000 (~same)
-
-div  (x/y)
-	got: 1.    0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
-	exp. 1.000000 (~same)
-x: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-y: UNDEF
-mul  (x*y)
-	got: UNDEF
-	exp. -32768.099976 (~same)
-
-div  (x/y)
-	got: UNDEF
-	exp. UNDEF (~same)
-x: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-y: +INF
-mul  (x*y)
-	got: UNDEF
-	exp. -32768.099976 (~same)
-
-div  (x/y)
-	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-	exp. 0.000000 (~same)
-x: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-y: -INF
-mul  (x*y)
-	got: UNDEF
-	exp. -32768.099976 (~same)
-
-div  (x/y)
-	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-	exp. 0.000000 (~same)
-x: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-y: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-mul  (x*y)
-	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-	exp. 0.000000 (~same)
-
-div  (x/y)
-	got: UNDEF
-	exp. UNDEF (~same)
-x: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-y: 1.    0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
-mul  (x*y)
-	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-	exp. 0.000000 (~same)
-
-div  (x/y)
-	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-	exp. 0.000000 (~same)
-x: -1.    0 (=Lf:-1.000000 = -65536 = x(-)10000 = b(-)1.0000000000000000, 17 bits)
-y: UNDEF
-mul  (x*y)
-	got: UNDEF
-	exp. -32768.099976 (~same)
-
-div  (x/y)
-	got: UNDEF
-	exp. UNDEF (~same)
-x: -1.    0 (=Lf:-1.000000 = -65536 = x(-)10000 = b(-)1.0000000000000000, 17 bits)
-y: +INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-
-div  (x/y)
-	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-	exp. 0.000000 (~same)
-x: -1.    0 (=Lf:-1.000000 = -65536 = x(-)10000 = b(-)1.0000000000000000, 17 bits)
-y: -INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-
-div  (x/y)
-	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-	exp. 0.000000 (~same)
-x: -1.    0 (=Lf:-1.000000 = -65536 = x(-)10000 = b(-)1.0000000000000000, 17 bits)
-y: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-mul  (x*y)
-	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-	exp. 0.000000 (~same)
-
-div  (x/y)
-	got: -INF
-	exp. -INF (~same)
-x: -1.    0 (=Lf:-1.000000 = -65536 = x(-)10000 = b(-)1.0000000000000000, 17 bits)
-y: 1.    0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
-mul  (x*y)
-	got: -1.    0 (=Lf:-1.000000 = -65536 = x(-)10000 = b(-)1.0000000000000000, 17 bits)
-	exp. -1.000000 (~same)
-
-div  (x/y)
-	got: -1.    0 (=Lf:-1.000000 = -65536 = x(-)10000 = b(-)1.0000000000000000, 17 bits)
-	exp. -1.000000 (~same)
-x: -2.    0 (=Lf:-2.000000 = -131072 = x(-)20000 = b(-)10.0000000000000000, 18 bits)
-y: UNDEF
-mul  (x*y)
-	got: UNDEF
-	exp. -32768.099976 (~same)
-
-div  (x/y)
-	got: UNDEF
-	exp. UNDEF (~same)
-x: -2.    0 (=Lf:-2.000000 = -131072 = x(-)20000 = b(-)10.0000000000000000, 18 bits)
-y: +INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-
-div  (x/y)
-	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-	exp. 0.000000 (~same)
-x: -2.    0 (=Lf:-2.000000 = -131072 = x(-)20000 = b(-)10.0000000000000000, 18 bits)
-y: -INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-
-div  (x/y)
-	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-	exp. 0.000000 (~same)
-x: -2.    0 (=Lf:-2.000000 = -131072 = x(-)20000 = b(-)10.0000000000000000, 18 bits)
-y: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-mul  (x*y)
-	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-	exp. 0.000000 (~same)
-
-div  (x/y)
-	got: -INF
-	exp. -INF (~same)
-x: -2.    0 (=Lf:-2.000000 = -131072 = x(-)20000 = b(-)10.0000000000000000, 18 bits)
-y: 1.    0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
-mul  (x*y)
-	got: -2.    0 (=Lf:-2.000000 = -131072 = x(-)20000 = b(-)10.0000000000000000, 18 bits)
-	exp. -2.000000 (~same)
-
-div  (x/y)
-	got: -2.    0 (=Lf:-2.000000 = -131072 = x(-)20000 = b(-)10.0000000000000000, 18 bits)
-	exp. -2.000000 (~same)
-x: -3.    0 (=Lf:-3.000000 = -196608 = x(-)30000 = b(-)11.0000000000000000, 18 bits)
-y: UNDEF
-mul  (x*y)
-	got: UNDEF
-	exp. -32768.099976 (~same)
-
-div  (x/y)
-	got: UNDEF
-	exp. UNDEF (~same)
-x: -3.    0 (=Lf:-3.000000 = -196608 = x(-)30000 = b(-)11.0000000000000000, 18 bits)
-y: +INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-
-div  (x/y)
-	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-	exp. 0.000000 (~same)
-x: -3.    0 (=Lf:-3.000000 = -196608 = x(-)30000 = b(-)11.0000000000000000, 18 bits)
-y: -INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-
-div  (x/y)
-	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-	exp. 0.000000 (~same)
-x: -3.    0 (=Lf:-3.000000 = -196608 = x(-)30000 = b(-)11.0000000000000000, 18 bits)
-y: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-mul  (x*y)
-	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-	exp. 0.000000 (~same)
-
-div  (x/y)
-	got: -INF
-	exp. -INF (~same)
-x: -3.    0 (=Lf:-3.000000 = -196608 = x(-)30000 = b(-)11.0000000000000000, 18 bits)
-y: 1.    0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
-mul  (x*y)
-	got: -3.    0 (=Lf:-3.000000 = -196608 = x(-)30000 = b(-)11.0000000000000000, 18 bits)
-	exp. -3.000000 (~same)
-
-div  (x/y)
-	got: -3.    0 (=Lf:-3.000000 = -196608 = x(-)30000 = b(-)11.0000000000000000, 18 bits)
-	exp. -3.000000 (~same)
-x: -30.    0 (=Lf:-30.000000 = -1966080 = x(-)1e0000 = b(-)11110.0000000000000000, 21 bits)
-y: UNDEF
-mul  (x*y)
-	got: UNDEF
-	exp. -32768.099976 (~same)
-
-div  (x/y)
-	got: UNDEF
-	exp. UNDEF (~same)
-x: -30.    0 (=Lf:-30.000000 = -1966080 = x(-)1e0000 = b(-)11110.0000000000000000, 21 bits)
-y: +INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-
-div  (x/y)
-	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-	exp. 0.000000 (~same)
-x: -30.    0 (=Lf:-30.000000 = -1966080 = x(-)1e0000 = b(-)11110.0000000000000000, 21 bits)
-y: -INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-
-div  (x/y)
-	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-	exp. 0.000000 (~same)
-x: -30.    0 (=Lf:-30.000000 = -1966080 = x(-)1e0000 = b(-)11110.0000000000000000, 21 bits)
-y: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-mul  (x*y)
-	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-	exp. 0.000000 (~same)
-
-div  (x/y)
-	got: -INF
-	exp. -INF (~same)
-x: -30.    0 (=Lf:-30.000000 = -1966080 = x(-)1e0000 = b(-)11110.0000000000000000, 21 bits)
-y: 1.    0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
-mul  (x*y)
-	got: -30.    0 (=Lf:-30.000000 = -1966080 = x(-)1e0000 = b(-)11110.0000000000000000, 21 bits)
-	exp. -30.000000 (~same)
-
-div  (x/y)
-	got: -30.    0 (=Lf:-30.000000 = -1966080 = x(-)1e0000 = b(-)11110.0000000000000000, 21 bits)
-	exp. -30.000000 (~same)
-x: -3000.   -5 (=Lf:-3000.000488 = -196608032 = x(-)bb80020 = b(-)101110111000.0000000000100000, 28 bits)
-y: UNDEF
-mul  (x*y)
-	got: UNDEF
-	exp. -32768.099976 (~same)
-
-div  (x/y)
-	got: UNDEF
-	exp. UNDEF (~same)
-x: -3000.   -5 (=Lf:-3000.000488 = -196608032 = x(-)bb80020 = b(-)101110111000.0000000000100000, 28 bits)
-y: +INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-
-div  (x/y)
-	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-	exp. 0.000000 (~same)
-x: -3000.   -5 (=Lf:-3000.000488 = -196608032 = x(-)bb80020 = b(-)101110111000.0000000000100000, 28 bits)
-y: -INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-
-div  (x/y)
-	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-	exp. 0.000000 (~same)
-x: -3000.   -5 (=Lf:-3000.000488 = -196608032 = x(-)bb80020 = b(-)101110111000.0000000000100000, 28 bits)
-y: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-mul  (x*y)
-	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-	exp. 0.000000 (~same)
-
-div  (x/y)
-	got: -INF
-	exp. -INF (~same)
-x: -3000.   -5 (=Lf:-3000.000488 = -196608032 = x(-)bb80020 = b(-)101110111000.0000000000100000, 28 bits)
-y: 1.    0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
-mul  (x*y)
-	got: -3000.   -5 (=Lf:-3000.000488 = -196608032 = x(-)bb80020 = b(-)101110111000.0000000000100000, 28 bits)
-	exp. -3000.000488 (~same)
-
-div  (x/y)
-	got: -3000.   -5 (=Lf:-3000.000488 = -196608032 = x(-)bb80020 = b(-)101110111000.0000000000100000, 28 bits)
-	exp. -3000.000488 (~same)
-x: -INF
-y: UNDEF
-mul  (x*y)
-	got: UNDEF
-	exp. -32768.099976 (~same)
-
-div  (x/y)
-	got: UNDEF
-	exp. UNDEF (~same)
-x: -INF
-y: +INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-
-div  (x/y)
-	got: UNDEF
-	exp. UNDEF (~same)
-x: -INF
-y: -INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-
-div  (x/y)
-	got: UNDEF
-	exp. UNDEF (~same)
-x: -INF
-y: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-mul  (x*y)
-	got: UNDEF
-	exp. -32768.099976 (~same)
-
-div  (x/y)
-	got: -INF
-	exp. -INF (~same)
-x: -INF
-y: 1.    0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-
-div  (x/y)
-	got: -INF
-	exp. -INF (~same)
-x: -32767.-9999 (=Lf:-32767.999969 = -2147483646 = x(-)7ffffffe = b(-)111111111111111.1111111111111110, 31 bits)
-y: UNDEF
-mul  (x*y)
-	got: UNDEF
-	exp. -32768.099976 (~same)
-
-div  (x/y)
-	got: UNDEF
-	exp. UNDEF (~same)
-x: -32767.-9999 (=Lf:-32767.999969 = -2147483646 = x(-)7ffffffe = b(-)111111111111111.1111111111111110, 31 bits)
-y: +INF
-mul  (x*y)
-	got: -INF
-	exp. -INF (~same)
-
-div  (x/y)
-	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-	exp. 0.000000 (~same)
-x: -32767.-9999 (=Lf:-32767.999969 = -2147483646 = x(-)7ffffffe = b(-)111111111111111.1111111111111110, 31 bits)
-y: -INF
-mul  (x*y)
-	got: +INF
-	exp. +INF (~same)
-
-div  (x/y)
-	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-	exp. 0.000000 (~same)
-x: -32767.-9999 (=Lf:-32767.999969 = -2147483646 = x(-)7ffffffe = b(-)111111111111111.1111111111111110, 31 bits)
-y: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-mul  (x*y)
-	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-	exp. 0.000000 (~same)
-
-div  (x/y)
-	got: -INF
-	exp. -INF (~same)
-x: -32767.-9999 (=Lf:-32767.999969 = -2147483646 = x(-)7ffffffe = b(-)111111111111111.1111111111111110, 31 bits)
-y: 1.    0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
-mul  (x*y)
-	got: -32767.-9999 (=Lf:-32767.999969 = -2147483646 = x(-)7ffffffe = b(-)111111111111111.1111111111111110, 31 bits)
-	exp. -32767.999969 (~same)
-
-div  (x/y)
-	got: -32767.-9999 (=Lf:-32767.999969 = -2147483646 = x(-)7ffffffe = b(-)111111111111111.1111111111111110, 31 bits)
-	exp. -32767.999969 (~same)
-
-Verifying different op implementations using random numbers:
-
-Random Test #0 for 16 frac bits:
-n1 = 14830.   53 (=Lf:14830.005310 = 971899228 = x39ee015c = b11100111101110.0000000101011100, 30 bits)
-n2 = -22524.-3114 (=Lf:-22524.311447 = -1476153275 = x(-)57fc4fbb = b(-)101011111111100.0100111110111011, 31 bits)
-n3 = 0. -554 (=Lf:-0.055420 = -3632 = x(-)e30 = b(-).0000111000110000, 12 bits)( n3 always in (-1,1) )
-add   (n1+n2)
-	got: -7694.-3061 (=Lf:-7694.306137 = -504254047 = x(-)1e0e4e5f = b(-)1111000001110.0100111001011111, 29 bits)
-	exp. -7694.306137 (~same)
-add_l (n1+n2)
-	got: -7694.-3061 (=Lf:-7694.306137 = -504254047 = x(-)1e0e4e5f = b(-)1111000001110.0100111001011111, 29 bits)
-	exp. -7694.306137 (~same)
-add   (n1+n3)
-	got: 14829. 9498 (=Lf:14829.949890 = 971895596 = x39edf32c = b11100111101101.1111001100101100, 30 bits)
-	exp. 14829.949890 (~same)
-add_l (n1+n3)
-	got: 14829. 9498 (=Lf:14829.949890 = 971895596 = x39edf32c = b11100111101101.1111001100101100, 30 bits)
-	exp. 14829.949890 (~same)
-mul   (n1*n2)
-	got: -INF
-	exp. -INF (~same)
-mul_l (n1*n2)
-	got: -INF
-	exp. -INF (~same)
-mul   (n1*n3)
-	got: -821.-8776 (=Lf:-821.877731 = -53862579 = x(-)335e0b3 = b(-)1100110101.1110000010110011, 26 bits)
-	exp. -821.877731 (~same)
-mul_l (n1*n3)
-	got: -821.-8776 (=Lf:-821.877731 = -53862579 = x(-)335e0b3 = b(-)1100110101.1110000010110011, 26 bits)
-	exp. -821.877731 (~same)
-div_l (n1/n2)
-	got: 0.-6583 (=Lf:-0.658386 = -43148 = x(-)a88c = b(-).1010100010001100, 16 bits)
-	exp. -0.658386 (~same)
-div   (n1/n2)
-	got: 0.-6583 (=Lf:-0.658386 = -43148 = x(-)a88c = b(-).1010100010001100, 16 bits)
-	exp. -0.658386 (~same)
-div_l (n1/n3)
-	got: -INF
-	exp. -INF (~same)
-div   (n1/n3)
-	got: -INF
-	exp. -INF (~same)
-log2_l(n1)
-	got: 13. 8561 (=Lf:13.856216 = 908081 = xddb31 = b1101.1101101100110001, 20 bits)
-	exp. 13.856216 (~same)
-log2_l(n2)
-	got: UNDEF
-	exp. UNDEF (~same)
-log2_l(n3)
-	got: UNDEF
-	exp. UNDEF (~same)
-
-Random Test #1 for 16 frac bits:
-n1 = 32513. 3421 (=Lf:32513.342209 = 2130794395 = x7f01579b = b111111100000001.0101011110011011, 31 bits)
-n2 = -18906.-1894 (=Lf:-18906.189407 = -1239036029 = x(-)49da307d = b(-)100100111011010.0011000001111101, 31 bits)
-n3 = 0.  870 (=Lf:0.087082 = 5707 = x164b = b.0001011001001011, 13 bits)( n3 always in (-1,1) )
-add   (n1+n2)
-	got: 13607. 1528 (=Lf:13607.152802 = 891758366 = x3527271e = b11010100100111.0010011100011110, 30 bits)
-	exp. 13607.152802 (~same)
-add_l (n1+n2)
-	got: 13607. 1528 (=Lf:13607.152802 = 891758366 = x3527271e = b11010100100111.0010011100011110, 30 bits)
-	exp. 13607.152802 (~same)
-add   (n1+n3)
-	got: 32513. 4292 (=Lf:32513.429291 = 2130800102 = x7f016de6 = b111111100000001.0110110111100110, 31 bits)
-	exp. 32513.429291 (~same)
-add_l (n1+n3)
-	got: 32513. 4292 (=Lf:32513.429291 = 2130800102 = x7f016de6 = b111111100000001.0110110111100110, 31 bits)
-	exp. 32513.429291 (~same)
-mul   (n1*n2)
-	got: -INF
-	exp. -INF (~same)
-mul_l (n1*n2)
-	got: -INF
-	exp. -INF (~same)
-mul   (n1*n3)
-	got: 2831. 3238 (=Lf:2831.323898 = 185553643 = xb0f52eb = b101100001111.0101001011101011, 28 bits)
-	exp. 2831.323898 (~same)
-mul_l (n1*n3)
-	got: 2831. 3238 (=Lf:2831.323898 = 185553643 = xb0f52eb = b101100001111.0101001011101011, 28 bits)
-	exp. 2831.323898 (~same)
-div_l (n1/n2)
-	got: -1.-7196 (=Lf:-1.719711 = -112703 = x(-)1b83f = b(-)1.1011100000111111, 17 bits)
-	exp. -1.719711 (~same)
-div   (n1/n2)
-	got: -1.-7196 (=Lf:-1.719711 = -112703 = x(-)1b83f = b(-)1.1011100000111111, 17 bits)
-	exp. -1.719711 (~same)
-div_l (n1/n3)
-	got: +INF
-	exp. +INF (~same)
-div   (n1/n3)
-	got: +INF
-	exp. +INF (~same)
-log2_l(n1)
-	got: 14. 9886 (=Lf:14.988724 = 982301 = xefd1d = b1110.1111110100011101, 20 bits)
-	exp. 14.988739 (~same)
-log2_l(n2)
-	got: UNDEF
-	exp. UNDEF (~same)
-log2_l(n3)
-	got: -3.-5214 (=Lf:-3.521500 = -230785 = x(-)38581 = b(-)11.1000010110000001, 18 bits)
-	exp. -3.521469 (~same)
-
-Random Test #2 for 16 frac bits:
-n1 = -24504.  -43 (=Lf:-24504.004333 = -1605894428 = x(-)5fb8011c = b(-)101111110111000.0000000100011100, 31 bits)
-n2 = -27303.-5604 (=Lf:-27303.560532 = -1789366143 = x(-)6aa78f7f = b(-)110101010100111.1000111101111111, 31 bits)
-n3 = 0. 2015 (=Lf:0.201508 = 13206 = x3396 = b.0011001110010110, 14 bits)( n3 always in (-1,1) )
-add   (n1+n2)
-	got: -INF
-	exp. -INF (~same)
-add_l (n1+n2)
-	got: -INF
-	exp. -INF (~same)
-add   (n1+n3)
-	got: -24503.-8027 (=Lf:-24503.802826 = -1605881222 = x(-)5fb7cd86 = b(-)101111110110111.1100110110000110, 31 bits)
-	exp. -24503.802826 (~same)
-add_l (n1+n3)
-	got: -24503.-8027 (=Lf:-24503.802826 = -1605881222 = x(-)5fb7cd86 = b(-)101111110110111.1100110110000110, 31 bits)
-	exp. -24503.802826 (~same)
-mul   (n1*n2)
-	got: +INF
-	exp. +INF (~same)
-mul_l (n1*n2)
-	got: +INF
-	exp. +INF (~same)
-mul   (n1*n3)
-	got: -4937.-7422 (=Lf:-4937.742325 = -323599881 = x(-)1349be09 = b(-)1001101001001.1011111000001001, 29 bits)
-	exp. -4937.742325 (~same)
-mul_l (n1*n3)
-	got: -4937.-7422 (=Lf:-4937.742325 = -323599881 = x(-)1349be09 = b(-)1001101001001.1011111000001001, 29 bits)
-	exp. -4937.742325 (~same)
-div_l (n1/n2)
-	got: 0. 8974 (=Lf:0.897461 = 58816 = xe5c0 = b.1110010111000000, 16 bits)
-	exp. 0.897461 (~same)
-div   (n1/n2)
-	got: 0. 8974 (=Lf:0.897461 = 58816 = xe5c0 = b.1110010111000000, 16 bits)
-	exp. 0.897461 (~same)
-div_l (n1/n3)
-	got: -INF
-	exp. -INF (~same)
-div   (n1/n3)
-	got: -INF
-	exp. -INF (~same)
-log2_l(n1)
-	got: UNDEF
-	exp. UNDEF (~same)
-log2_l(n2)
-	got: UNDEF
-	exp. UNDEF (~same)
-log2_l(n3)
-	got: -2.-3111 (=Lf:-2.311111 = -151461 = x(-)24fa5 = b(-)10.0100111110100101, 18 bits)
-	exp. -2.311081 (~same)
-
-Random Test #3 for 16 frac bits:
-n1 = 24373. 2056 (=Lf:24373.205627 = 1597322404 = x5f3534a4 = b101111100110101.0011010010100100, 31 bits)
-n2 = -29601.-5081 (=Lf:-29601.508224 = -1939964443 = x(-)73a1821b = b(-)111001110100001.1000001000011011, 31 bits)
-n3 = 0. 9568 (=Lf:0.956924 = 62713 = xf4f9 = b.1111010011111001, 16 bits)( n3 always in (-1,1) )
-add   (n1+n2)
-	got: -5228.-3025 (=Lf:-5228.302597 = -342642039 = x(-)146c4d77 = b(-)1010001101100.0100110101110111, 29 bits)
-	exp. -5228.302597 (~same)
-add_l (n1+n2)
-	got: -5228.-3025 (=Lf:-5228.302597 = -342642039 = x(-)146c4d77 = b(-)1010001101100.0100110101110111, 29 bits)
-	exp. -5228.302597 (~same)
-add   (n1+n3)
-	got: 24374. 1625 (=Lf:24374.162552 = 1597385117 = x5f36299d = b101111100110110.0010100110011101, 31 bits)
-	exp. 24374.162552 (~same)
-add_l (n1+n3)
-	got: 24374. 1625 (=Lf:24374.162552 = 1597385117 = x5f36299d = b101111100110110.0010100110011101, 31 bits)
-	exp. 24374.162552 (~same)
-mul   (n1*n2)
-	got: -INF
-	exp. -INF (~same)
-mul_l (n1*n2)
-	got: -INF
-	exp. -INF (~same)
-mul   (n1*n3)
-	got: 23323. 3160 (=Lf:23323.316101 = 1528516844 = x5b1b50ec = b101101100011011.0101000011101100, 31 bits)
-	exp. 23323.316101 (~same)
-mul_l (n1*n3)
-	got: 23323. 3160 (=Lf:23323.316101 = 1528516844 = x5b1b50ec = b101101100011011.0101000011101100, 31 bits)
-	exp. 23323.316101 (~same)
-div_l (n1/n2)
-	got: 0.-8233 (=Lf:-0.823364 = -53960 = x(-)d2c8 = b(-).1101001011001000, 16 bits)
-	exp. -0.823364 (~same)
-div   (n1/n2)
-	got: 0.-8233 (=Lf:-0.823364 = -53960 = x(-)d2c8 = b(-).1101001011001000, 16 bits)
-	exp. -0.823364 (~same)
-div_l (n1/n3)
-	got: 25470. 3554 (=Lf:25470.355484 = 1669225217 = x637e5b01 = b110001101111110.0101101100000001, 31 bits)
-	exp. 25470.355484 (~same)
-div   (n1/n3)
-	got: 25470. 3554 (=Lf:25470.355484 = 1669225217 = x637e5b01 = b110001101111110.0101101100000001, 31 bits)
-	exp. 25470.355484 (~same)
-log2_l(n1)
-	got: 14. 5729 (=Lf:14.572983 = 955055 = xe92af = b1110.1001001010101111, 20 bits)
-	exp. 14.572998 (~same)
-log2_l(n2)
-	got: UNDEF
-	exp. UNDEF (~same)
-log2_l(n3)
-	got: 0. -635 (=Lf:-0.063538 = -4164 = x(-)1044 = b(-).0001000001000100, 13 bits)
-	exp. -0.063522 (~same)
-
-Random Test #4 for 16 frac bits:
-n1 = -27197.-8277 (=Lf:-27197.827759 = -1782436840 = x(-)6a3dd3e8 = b(-)110101000111101.1101001111101000, 31 bits)
-n2 = 29129.  726 (=Lf:29129.072632 = 1909002904 = x71c91298 = b111000111001001.0001001010011000, 31 bits)
-n3 = 0.    2 (=Lf:0.000198 = 13 = xd = b.0000000000001101, 4 bits)( n3 always in (-1,1) )
-add   (n1+n2)
-	got: 1931. 2448 (=Lf:1931.244873 = 126566064 = x78b3eb0 = b11110001011.0011111010110000, 27 bits)
-	exp. 1931.244873 (~same)
-add_l (n1+n2)
-	got: 1931. 2448 (=Lf:1931.244873 = 126566064 = x78b3eb0 = b11110001011.0011111010110000, 27 bits)
-	exp. 1931.244873 (~same)
-add   (n1+n3)
-	got: -27197.-8275 (=Lf:-27197.827560 = -1782436827 = x(-)6a3dd3db = b(-)110101000111101.1101001111011011, 31 bits)
-	exp. -27197.827560 (~same)
-add_l (n1+n3)
-	got: -27197.-8275 (=Lf:-27197.827560 = -1782436827 = x(-)6a3dd3db = b(-)110101000111101.1101001111011011, 31 bits)
-	exp. -27197.827560 (~same)
-mul   (n1*n2)
-	got: -INF
-	exp. -INF (~same)
-mul_l (n1*n2)
-	got: -INF
-	exp. -INF (~same)
-mul   (n1*n3)
-	got: -5.-3950 (=Lf:-5.395065 = -353571 = x(-)56523 = b(-)101.0110010100100011, 19 bits)
-	exp. -5.395065 (~same)
-mul_l (n1*n3)
-	got: -5.-3950 (=Lf:-5.395065 = -353571 = x(-)56523 = b(-)101.0110010100100011, 19 bits)
-	exp. -5.395065 (~same)
-div_l (n1/n2)
-	got: 0.-9336 (=Lf:-0.933685 = -61190 = x(-)ef06 = b(-).1110111100000110, 16 bits)
-	exp. -0.933685 (~same)
-div   (n1/n2)
-	got: 0.-9336 (=Lf:-0.933685 = -61190 = x(-)ef06 = b(-).1110111100000110, 16 bits)
-	exp. -0.933685 (~same)
-div_l (n1/n3)
-	got: -INF
-	exp. -INF (~same)
-div   (n1/n3)
-	got: -INF
-	exp. -INF (~same)
-log2_l(n1)
-	got: UNDEF
-	exp. UNDEF (~same)
-log2_l(n2)
-	got: 14. 8300 (=Lf:14.830154 = 971909 = xed485 = b1110.1101010010000101, 20 bits)
-	exp. 14.830170 (~same)
-log2_l(n3)
-	got: -12.-2995 (=Lf:-12.299576 = -806065 = x(-)c4cb1 = b(-)1100.0100110010110001, 20 bits)
-	exp. -12.299545 (~same)
-
-Random Test #5 for 16 frac bits:
-n1 = 7508. 3605 (=Lf:7508.360550 = 492067917 = x1d545c4d = b1110101010100.0101110001001101, 29 bits)
-n2 = 22957. 9149 (=Lf:22957.914993 = 1504569917 = x59adea3d = b101100110101101.1110101000111101, 31 bits)
-n3 = 0.-2607 (=Lf:-0.260788 = -17091 = x(-)42c3 = b(-).0100001011000011, 15 bits)( n3 always in (-1,1) )
-add   (n1+n2)
-	got: 30466. 2755 (=Lf:30466.275543 = 1996637834 = x7702468a = b111011100000010.0100011010001010, 31 bits)
-	exp. 30466.275543 (~same)
-add_l (n1+n2)
-	got: 30466. 2755 (=Lf:30466.275543 = 1996637834 = x7702468a = b111011100000010.0100011010001010, 31 bits)
-	exp. 30466.275543 (~same)
-add   (n1+n3)
-	got: 7508.  997 (=Lf:7508.099762 = 492050826 = x1d54198a = b1110101010100.0001100110001010, 29 bits)
-	exp. 7508.099762 (~same)
-add_l (n1+n3)
-	got: 7508.  997 (=Lf:7508.099762 = 492050826 = x1d54198a = b1110101010100.0001100110001010, 29 bits)
-	exp. 7508.099762 (~same)
-mul   (n1*n2)
-	got: +INF
-	exp. +INF (~same)
-mul_l (n1*n2)
-	got: +INF
-	exp. +INF (~same)
-mul   (n1*n3)
-	got: -1958. -900 (=Lf:-1958.090057 = -128325390 = x(-)7a6170e = b(-)11110100110.0001011100001110, 27 bits)
-	exp. -1958.090057 (~same)
-mul_l (n1*n3)
-	got: -1958. -900 (=Lf:-1958.090057 = -128325390 = x(-)7a6170e = b(-)11110100110.0001011100001110, 27 bits)
-	exp. -1958.090057 (~same)
-div_l (n1/n2)
-	got: 0. 3270 (=Lf:0.327042 = 21433 = x53b9 = b.0101001110111001, 15 bits)
-	exp. 0.327042 (~same)
-div   (n1/n2)
-	got: 0. 3270 (=Lf:0.327042 = 21433 = x53b9 = b.0101001110111001, 15 bits)
-	exp. 0.327042 (~same)
-div_l (n1/n3)
-	got: -28791. -547 (=Lf:-28791.054764 = -1886850565 = x(-)70770e05 = b(-)111000001110111.0000111000000101, 31 bits)
-	exp. -28791.054764 (~same)
-div   (n1/n3)
-	got: -28791. -547 (=Lf:-28791.054764 = -1886850565 = x(-)70770e05 = b(-)111000001110111.0000111000000101, 31 bits)
-	exp. -28791.054764 (~same)
-log2_l(n1)
-	got: 12. 8741 (=Lf:12.874252 = 843727 = xcdfcf = b1100.1101111111001111, 20 bits)
-	exp. 12.874268 (~same)
-log2_l(n2)
-	got: 14. 4866 (=Lf:14.486679 = 949399 = xe7c97 = b1110.0111110010010111, 20 bits)
-	exp. 14.486694 (~same)
-log2_l(n3)
-	got: UNDEF
-	exp. UNDEF (~same)
-
-Random Test #6 for 16 frac bits:
-n1 = 20744. 5096 (=Lf:20744.509628 = 1359512183 = x51088277 = b101000100001000.1000001001110111, 31 bits)
-n2 = -7328.-7732 (=Lf:-7328.773346 = -480298490 = x(-)1ca0c5fa = b(-)1110010100000.1100010111111010, 29 bits)
-n3 = 0. 6215 (=Lf:0.621628 = 40739 = x9f23 = b.1001111100100011, 16 bits)( n3 always in (-1,1) )
-add   (n1+n2)
-	got: 13415. 7362 (=Lf:13415.736282 = 879213693 = x3467bc7d = b11010001100111.1011110001111101, 30 bits)
-	exp. 13415.736282 (~same)
-add_l (n1+n2)
-	got: 13415. 7362 (=Lf:13415.736282 = 879213693 = x3467bc7d = b11010001100111.1011110001111101, 30 bits)
-	exp. 13415.736282 (~same)
-add   (n1+n3)
-	got: 20745. 1312 (=Lf:20745.131256 = 1359552922 = x5109219a = b101000100001001.0010000110011010, 31 bits)
-	exp. 20745.131256 (~same)
-add_l (n1+n3)
-	got: 20745. 1312 (=Lf:20745.131256 = 1359552922 = x5109219a = b101000100001001.0010000110011010, 31 bits)
-	exp. 20745.131256 (~same)
-mul   (n1*n2)
-	got: -INF
-	exp. -INF (~same)
-mul_l (n1*n2)
-	got: -INF
-	exp. -INF (~same)
-mul   (n1*n3)
-	got: 12895. 3640 (=Lf:12895.364029 = 845110577 = x325f5d31 = b11001001011111.0101110100110001, 30 bits)
-	exp. 12895.364029 (~same)
-mul_l (n1*n3)
-	got: 12895. 3640 (=Lf:12895.364029 = 845110577 = x325f5d31 = b11001001011111.0101110100110001, 30 bits)
-	exp. 12895.364029 (~same)
-div_l (n1/n2)
-	got: -2.-8304 (=Lf:-2.830551 = -185503 = x(-)2d49f = b(-)10.1101010010011111, 18 bits)
-	exp. -2.830551 (~same)
-div   (n1/n2)
-	got: -2.-8304 (=Lf:-2.830551 = -185503 = x(-)2d49f = b(-)10.1101010010011111, 18 bits)
-	exp. -2.830551 (~same)
-div_l (n1/n3)
-	got: +INF
-	exp. +INF (~same)
-div   (n1/n3)
-	got: +INF
-	exp. +INF (~same)
-log2_l(n1)
-	got: 14. 3404 (=Lf:14.340424 = 939814 = xe5726 = b1110.0101011100100110, 20 bits)
-	exp. 14.340439 (~same)
-log2_l(n2)
-	got: UNDEF
-	exp. UNDEF (~same)
-log2_l(n3)
-	got: 0.-6858 (=Lf:-0.685898 = -44951 = x(-)af97 = b(-).1010111110010111, 16 bits)
-	exp. -0.685867 (~same)
-
-Random Test #7 for 16 frac bits:
-n1 = 17894. 8301 (=Lf:17894.830170 = 1172755590 = x45e6d486 = b100010111100110.1101010010000110, 31 bits)
-n2 = -23568.-9926 (=Lf:-23568.992691 = -1544617505 = x(-)5c10fe21 = b(-)101110000010000.1111111000100001, 31 bits)
-n3 = 0.  338 (=Lf:0.033859 = 2219 = x8ab = b.0000100010101011, 12 bits)( n3 always in (-1,1) )
-add   (n1+n2)
-	got: -5674.-1625 (=Lf:-5674.162521 = -371861915 = x(-)162a299b = b(-)1011000101010.0010100110011011, 29 bits)
-	exp. -5674.162521 (~same)
-add_l (n1+n2)
-	got: -5674.-1625 (=Lf:-5674.162521 = -371861915 = x(-)162a299b = b(-)1011000101010.0010100110011011, 29 bits)
-	exp. -5674.162521 (~same)
-add   (n1+n3)
-	got: 17894. 8639 (=Lf:17894.864029 = 1172757809 = x45e6dd31 = b100010111100110.1101110100110001, 31 bits)
-	exp. 17894.864029 (~same)
-add_l (n1+n3)
-	got: 17894. 8639 (=Lf:17894.864029 = 1172757809 = x45e6dd31 = b100010111100110.1101110100110001, 31 bits)
-	exp. 17894.864029 (~same)
-mul   (n1*n2)
-	got: -INF
-	exp. -INF (~same)
-mul_l (n1*n2)
-	got: -INF
-	exp. -INF (~same)
-mul   (n1*n3)
-	got: 605. 9055 (=Lf:605.905579 = 39708628 = x25de7d4 = b1001011101.1110011111010100, 26 bits)
-	exp. 605.905579 (~same)
-mul_l (n1*n3)
-	got: 605. 9055 (=Lf:605.905579 = 39708628 = x25de7d4 = b1001011101.1110011111010100, 26 bits)
-	exp. 605.905579 (~same)
-div_l (n1/n2)
-	got: 0.-7591 (=Lf:-0.759247 = -49758 = x(-)c25e = b(-).1100001001011110, 16 bits)
-	exp. -0.759247 (~same)
-div   (n1/n2)
-	got: 0.-7591 (=Lf:-0.759247 = -49758 = x(-)c25e = b(-).1100001001011110, 16 bits)
-	exp. -0.759247 (~same)
-div_l (n1/n3)
-	got: +INF
-	exp. +INF (~same)
-div   (n1/n3)
-	got: +INF
-	exp. +INF (~same)
-log2_l(n1)
-	got: 14. 1272 (=Lf:14.127243 = 925843 = xe2093 = b1110.0010000010010011, 20 bits)
-	exp. 14.127243 (~same)
-log2_l(n2)
-	got: UNDEF
-	exp. UNDEF (~same)
-log2_l(n3)
-	got: -4.-8842 (=Lf:-4.884323 = -320099 = x(-)4e263 = b(-)100.1110001001100011, 19 bits)
-	exp. -4.884293 (~same)
-
-Random Test #8 for 16 frac bits:
-n1 = 14775. 6664 (=Lf:14775.666534 = 968338082 = x39b7aaa2 = b11100110110111.1010101010100010, 30 bits)
-n2 = 11021. 5536 (=Lf:11021.553680 = 722308542 = x2b0d8dbe = b10101100001101.1000110110111110, 30 bits)
-n3 = 0.-3474 (=Lf:-0.347427 = -22769 = x(-)58f1 = b(-).0101100011110001, 15 bits)( n3 always in (-1,1) )
-add   (n1+n2)
-	got: 25797. 2202 (=Lf:25797.220215 = 1690646624 = x64c53860 = b110010011000101.0011100001100000, 31 bits)
-	exp. 25797.220215 (~same)
-add_l (n1+n2)
-	got: 25797. 2202 (=Lf:25797.220215 = 1690646624 = x64c53860 = b110010011000101.0011100001100000, 31 bits)
-	exp. 25797.220215 (~same)
-add   (n1+n3)
-	got: 14775. 3190 (=Lf:14775.319107 = 968315313 = x39b751b1 = b11100110110111.0101000110110001, 30 bits)
-	exp. 14775.319107 (~same)
-add_l (n1+n3)
-	got: 14775. 3190 (=Lf:14775.319107 = 968315313 = x39b751b1 = b11100110110111.0101000110110001, 30 bits)
-	exp. 14775.319107 (~same)
-mul   (n1*n2)
-	got: +INF
-	exp. +INF (~same)
-mul_l (n1*n2)
-	got: +INF
-	exp. +INF (~same)
-mul   (n1*n3)
-	got: -5133.-4709 (=Lf:-5133.470932 = -336427151 = x(-)140d788f = b(-)1010000001101.0111100010001111, 29 bits)
-	exp. -5133.470932 (~same)
-mul_l (n1*n3)
-	got: -5133.-4709 (=Lf:-5133.470932 = -336427151 = x(-)140d788f = b(-)1010000001101.0111100010001111, 29 bits)
-	exp. -5133.470932 (~same)
-div_l (n1/n2)
-	got: 1. 3405 (=Lf:1.340607 = 87858 = x15732 = b1.0101011100110010, 17 bits)
-	exp. 1.340607 (~same)
-div   (n1/n2)
-	got: 1. 3405 (=Lf:1.340607 = 87858 = x15732 = b1.0101011100110010, 17 bits)
-	exp. 1.340607 (~same)
-div_l (n1/n3)
-	got: -INF
-	exp. -INF (~same)
-div   (n1/n3)
-	got: -INF
-	exp. -INF (~same)
-log2_l(n1)
-	got: 13. 8508 (=Lf:13.850922 = 907734 = xdd9d6 = b1101.1101100111010110, 20 bits)
-	exp. 13.850922 (~same)
-log2_l(n2)
-	got: 13. 4280 (=Lf:13.428024 = 880019 = xd6d93 = b1101.0110110110010011, 20 bits)
-	exp. 13.428040 (~same)
-log2_l(n3)
-	got: UNDEF
-	exp. UNDEF (~same)
-
-Random Test #9 for 16 frac bits:
-n1 = -19611. -352 (=Lf:-19611.035217 = -1285228804 = x(-)4c9b0904 = b(-)100110010011011.0000100100000100, 31 bits)
-n2 = -27303.-7162 (=Lf:-27303.716248 = -1789376348 = x(-)6aa7b75c = b(-)110101010100111.1011011101011100, 31 bits)
-n3 = 0.-2803 (=Lf:-0.280319 = -18371 = x(-)47c3 = b(-).0100011111000011, 15 bits)( n3 always in (-1,1) )
-add   (n1+n2)
-	got: -INF
-	exp. -INF (~same)
-add_l (n1+n2)
-	got: -INF
-	exp. -INF (~same)
-add   (n1+n3)
-	got: -19611.-3155 (=Lf:-19611.315536 = -1285247175 = x(-)4c9b50c7 = b(-)100110010011011.0101000011000111, 31 bits)
-	exp. -19611.315536 (~same)
-add_l (n1+n3)
-	got: -19611.-3155 (=Lf:-19611.315536 = -1285247175 = x(-)4c9b50c7 = b(-)100110010011011.0101000011000111, 31 bits)
-	exp. -19611.315536 (~same)
-mul   (n1*n2)
-	got: +INF
-	exp. +INF (~same)
-mul_l (n1*n2)
-	got: +INF
-	exp. +INF (~same)
-mul   (n1*n3)
-	got: 5497. 3499 (=Lf:5497.349960 = 360274327 = x15795997 = b1010101111001.0101100110010111, 29 bits)
-	exp. 5497.349960 (~same)
-mul_l (n1*n3)
-	got: 5497. 3499 (=Lf:5497.349960 = 360274327 = x15795997 = b1010101111001.0101100110010111, 29 bits)
-	exp. 5497.349960 (~same)
-div_l (n1/n2)
-	got: 0. 7182 (=Lf:0.718246 = 47071 = xb7df = b.1011011111011111, 16 bits)
-	exp. 0.718246 (~same)
-div   (n1/n2)
-	got: 0. 7182 (=Lf:0.718246 = 47071 = xb7df = b.1011011111011111, 16 bits)
-	exp. 0.718246 (~same)
-div_l (n1/n3)
-	got: +INF
-	exp. +INF (~same)
-div   (n1/n3)
-	got: +INF
-	exp. +INF (~same)
-log2_l(n1)
-	got: UNDEF
-	exp. UNDEF (~same)
-log2_l(n2)
-	got: UNDEF
-	exp. UNDEF (~same)
-log2_l(n3)
-	got: UNDEF
-	exp. UNDEF (~same)
-
-Some transcendental numbers as fxp's (16 frac bits):
-e  as fxp: 2. 7182 (=Lf:2.718277 = 178145 = x2b7e1 = b10.1011011111100001, 18 bits)
-pi as fxp: 3. 1415 (=Lf:3.141586 = 205887 = x3243f = b11.0010010000111111, 18 bits)
-ln2 as fxp: 0. 6931 (=Lf:0.693146 = 45426 = xb172 = b.1011000101110010, 16 bits)
-log2e as fxp: 1. 4426 (=Lf:1.442688 = 94548 = x17154 = b1.0111000101010100, 17 bits)
-
-log2_l(+INF): +INF
-log2_l(2): 1.    0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
-log2_l(1): 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-log2_l(0): -INF
-ln(e): 0. 9999 (=Lf:0.999969 = 65534 = xfffe = b.1111111111111110, 16 bits)
-ln(1): 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
-ln(0): -INF
-log2_l(-INF): UNDEF
-log2_l(UNDEF): UNDEF
-
-0 Warnings for 16 frac bits.
-All tests passed using 16-bit fracs, and '9999' as max decimal frac.
 
 
 ========================
@@ -7703,139 +6361,157 @@ div  (x/y)
 Verifying different op implementations using random numbers:
 
 Random Test #0 for 24 frac bits:
-n1 = 39.   34327 (=Lf:39.034327 = 654887343 = x2708c9af = b100111.000010001100100110101111, 30 bits)
-n2 = 91.  147169 (=Lf:91.147169 = 1529195746 = x5b25ace2 = b1011011.001001011010110011100010, 31 bits)
-n3 = 0. -367141 (=Lf:-0.367142 = -6159623 = x(-)5dfd07 = b(-).010111011111110100000111, 23 bits)( n3 always in (-1,1) )
+n1 = 57.  929707 (=Lf:57.929708 = 971899228 = x39ee015c = b111001.111011100000000101011100, 30 bits)
+n2 = -87. -985590 (=Lf:-87.985592 = -1476153275 = x(-)57fc4fbb = b(-)1010111.111111000100111110111011, 31 bits)
+n3 = 0. -753928 (=Lf:-0.753929 = -12648827 = x(-)c1017b = b(-).110000010000000101111011, 24 bits)( n3 always in (-1,1) )
 add   (n1+n2)
-	got: +INF
-	exp. +INF (~same)
+	got: -30.  -55883 (=Lf:-30.055883 = -504254047 = x(-)1e0e4e5f = b(-)11110.000011100100111001011111, 29 bits)
+	exp. -30.055883 (~same)
 add_l (n1+n2)
-	got: +INF
-	exp. +INF (~same)
+	got: -30.  -55883 (=Lf:-30.055883 = -504254047 = x(-)1e0e4e5f = b(-)11110.000011100100111001011111, 29 bits)
+	exp. -30.055883 (~same)
 add   (n1+n3)
-	got: 38.  667184 (=Lf:38.667185 = 648727720 = x26aacca8 = b100110.101010101100110010101000, 30 bits)
-	exp. 38.667185 (~same)
+	got: 57.  175779 (=Lf:57.175779 = 959250401 = x392cffe1 = b111001.001011001111111111100001, 30 bits)
+	exp. 57.175779 (~same)
 add_l (n1+n3)
-	got: 38.  667184 (=Lf:38.667185 = 648727720 = x26aacca8 = b100110.101010101100110010101000, 30 bits)
-	exp. 38.667185 (~same)
+	got: 57.  175779 (=Lf:57.175779 = 959250401 = x392cffe1 = b111001.001011001111111111100001, 30 bits)
+	exp. 57.175779 (~same)
 mul   (n1*n2)
-	got: +INF
-	exp. +INF (~same)
+	got: -INF
+	exp. -INF (~same)
 mul_l (n1*n2)
-	got: +INF
-	exp. +INF (~same)
+	got: -INF
+	exp. -INF (~same)
 mul   (n1*n3)
-	got: -14. -331146 (=Lf:-14.331147 = -240436741 = x(-)e54c605 = b(-)1110.010101001100011000000101, 28 bits)
-	exp. -14.331147 (~same)
+	got: -43. -674877 (=Lf:-43.674878 = -732742857 = x(-)2bacc4c9 = b(-)101011.101011001100010011001001, 30 bits)
+	exp. -43.674878 (~same)
 mul_l (n1*n3)
-	got: -14. -331146 (=Lf:-14.331147 = -240436741 = x(-)e54c605 = b(-)1110.010101001100011000000101, 28 bits)
-	exp. -14.331147 (~same)
+	got: -43. -674877 (=Lf:-43.674878 = -732742857 = x(-)2bacc4c9 = b(-)101011.101011001100010011001001, 30 bits)
+	exp. -43.674878 (~same)
 div_l (n1/n2)
-	got: 0.  428255 (=Lf:0.428256 = 7184944 = x6da230 = b.011011011010001000110000, 23 bits)
-	exp. 0.428256 (~same)
+	got: 0. -658399 (=Lf:-0.658400 = -11046118 = x(-)a88ce6 = b(-).101010001000110011100110, 24 bits)
+	exp. -0.658400 (~same)
 div   (n1/n2)
-	got: 0.  428255 (=Lf:0.428256 = 7184944 = x6da230 = b.011011011010001000110000, 23 bits)
-	exp. 0.428256 (~same)
+	got: 0. -658399 (=Lf:-0.658400 = -11046118 = x(-)a88ce6 = b(-).101010001000110011100110, 24 bits)
+	exp. -0.658400 (~same)
 div_l (n1/n3)
-	got: -106. -319386 (=Lf:-106.319387 = -1783743324 = x(-)6a51c35c = b(-)1101010.010100011100001101011100, 31 bits)
-	exp. -106.319387 (~same)
+	got: -76. -837102 (=Lf:-76.837103 = -1289112680 = x(-)4cd64c68 = b(-)1001100.110101100100110001101000, 31 bits)
+	exp. -76.837103 (~same)
 div   (n1/n3)
-	got: -106. -319386 (=Lf:-106.319387 = -1783743324 = x(-)6a51c35c = b(-)1101010.010100011100001101011100, 31 bits)
-	exp. -106.319387 (~same)
+	got: -76. -837102 (=Lf:-76.837103 = -1289112680 = x(-)4cd64c68 = b(-)1001100.110101100100110001101000, 31 bits)
+	exp. -76.837103 (~same)
 log2_l(n1)
-	got: 5.  286671 (=Lf:5.286671 = 88695628 = x549634c = b101.010010010110001101001100, 27 bits)
-	exp. 5.286671 (~same)
+	got: 5.  856230 (=Lf:5.856231 = 98251259 = x5db31fb = b101.110110110011000111111011, 27 bits)
+	exp. 5.856231 (~same)
 log2_l(n2)
-	got: 6.  510125 (=Lf:6.510126 = 109221787 = x682979b = b110.100000101001011110011011, 27 bits)
-	exp. 6.510126 (~same)
+	got: UNDEF
+	exp. UNDEF (~same)
 log2_l(n3)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n1)
+	got: 5.  856230 (=Lf:5.856232 = 98251261 = x5db31fd = b101.110110110011000111111101, 27 bits)
+	exp. 5.856231 (~same)
+log2_bkm(n2)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n3)
 	got: UNDEF
 	exp. UNDEF (~same)
 
 Random Test #1 for 24 frac bits:
-n1 = 89.   85925 (=Lf:89.085925 = 1494613810 = x5915ff32 = b1011001.000101011111111100110010, 31 bits)
-n2 = 86.  263871 (=Lf:86.263871 = 1447267605 = x56438d15 = b1010110.010000111000110100010101, 31 bits)
-n3 = 0. -617943 (=Lf:-0.617944 = -10367386 = x(-)9e319a = b(-).100111100011000110011010, 24 bits)( n3 always in (-1,1) )
+n1 = 127.    5243 (=Lf:127.005243 = 2130794395 = x7f01579b = b1111111.000000010101011110011011, 31 bits)
+n2 = -73. -852301 (=Lf:-73.852302 = -1239036029 = x(-)49da307d = b(-)1001001.110110100011000001111101, 31 bits)
+n3 = 0.  334569 (=Lf:0.334570 = 5613157 = x55a665 = b.010101011010011001100101, 23 bits)( n3 always in (-1,1) )
 add   (n1+n2)
-	got: +INF
-	exp. +INF (~same)
+	got: 53.  152940 (=Lf:53.152941 = 891758366 = x3527271e = b110101.001001110010011100011110, 30 bits)
+	exp. 53.152941 (~same)
 add_l (n1+n2)
-	got: +INF
-	exp. +INF (~same)
+	got: 53.  152940 (=Lf:53.152941 = 891758366 = x3527271e = b110101.001001110010011100011110, 30 bits)
+	exp. 53.152941 (~same)
 add   (n1+n3)
-	got: 88.  467980 (=Lf:88.467981 = 1484246424 = x5877cd98 = b1011000.011101111100110110011000, 31 bits)
-	exp. 88.467981 (~same)
+	got: 127.  339812 (=Lf:127.339813 = 2136407552 = x7f56fe00 = b1111111.010101101111111000000000, 31 bits)
+	exp. 127.339813 (~same)
 add_l (n1+n3)
-	got: 88.  467980 (=Lf:88.467981 = 1484246424 = x5877cd98 = b1011000.011101111100110110011000, 31 bits)
-	exp. 88.467981 (~same)
+	got: 127.  339812 (=Lf:127.339813 = 2136407552 = x7f56fe00 = b1111111.010101101111111000000000, 31 bits)
+	exp. 127.339813 (~same)
 mul   (n1*n2)
-	got: +INF
-	exp. +INF (~same)
+	got: -INF
+	exp. -INF (~same)
 mul_l (n1*n2)
+	got: -INF
+	exp. -INF (~same)
+mul   (n1*n3)
+	got: 42.  492172 (=Lf:42.492173 = 712900368 = x2a7dff10 = b101010.011111011111111100010000, 30 bits)
+	exp. 42.492173 (~same)
+mul_l (n1*n3)
+	got: 42.  492172 (=Lf:42.492173 = 712900368 = x2a7dff10 = b101010.011111011111111100010000, 30 bits)
+	exp. 42.492173 (~same)
+div_l (n1/n2)
+	got: -1. -719718 (=Lf:-1.719719 = -28852105 = x(-)1b83f89 = b(-)1.101110000011111110001001, 25 bits)
+	exp. -1.719719 (~same)
+div   (n1/n2)
+	got: -1. -719718 (=Lf:-1.719719 = -28852105 = x(-)1b83f89 = b(-)1.101110000011111110001001, 25 bits)
+	exp. -1.719719 (~same)
+div_l (n1/n3)
 	got: +INF
 	exp. +INF (~same)
-mul   (n1*n3)
-	got: -55.  -50144 (=Lf:-55.050145 = -923588173 = x(-)370cd64d = b(-)110111.000011001101011001001101, 30 bits)
-	exp. -55.050145 (~same)
-mul_l (n1*n3)
-	got: -55.  -50144 (=Lf:-55.050145 = -923588173 = x(-)370cd64d = b(-)110111.000011001101011001001101, 30 bits)
-	exp. -55.050145 (~same)
-div_l (n1/n2)
-	got: 1.   32714 (=Lf:1.032714 = 17326069 = x1085ff5 = b1.000010000101111111110101, 25 bits)
-	exp. 1.032714 (~same)
-div   (n1/n2)
-	got: 1.   32714 (=Lf:1.032714 = 17326069 = x1085ff5 = b1.000010000101111111110101, 25 bits)
-	exp. 1.032714 (~same)
-div_l (n1/n3)
-	got: -INF
-	exp. -INF (~same)
 div   (n1/n3)
-	got: -INF
-	exp. -INF (~same)
+	got: +INF
+	exp. +INF (~same)
 log2_l(n1)
-	got: 6.  477125 (=Lf:6.477126 = 108668134 = x67a24e6 = b110.011110100010010011100110, 27 bits)
-	exp. 6.477126 (~same)
+	got: 6.  988743 (=Lf:6.988744 = 117251670 = x6fd1e56 = b110.111111010001111001010110, 27 bits)
+	exp. 6.988744 (~same)
 log2_l(n2)
-	got: 6.  430684 (=Lf:6.430684 = 107888982 = x66e4156 = b110.011011100100000101010110, 27 bits)
-	exp. 6.430685 (~same)
-log2_l(n3)
 	got: UNDEF
 	exp. UNDEF (~same)
+log2_l(n3)
+	got: -1. -579618 (=Lf:-1.579619 = -26501610 = x(-)19461ea = b(-)1.100101000110000111101010, 25 bits)
+	exp. -1.579619 (~same)
+log2_bkm(n1)
+	got: 6.  988743 (=Lf:6.988744 = 117251671 = x6fd1e57 = b110.111111010001111001010111, 27 bits)
+	exp. 6.988744 (~same)
+log2_bkm(n2)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n3)
+	got: -1. -579618 (=Lf:-1.579619 = -26501610 = x(-)19461ea = b(-)1.100101000110000111101010, 25 bits)
+	exp. -1.579619 (~same)
 
 Random Test #2 for 24 frac bits:
-n1 = -80. -276209 (=Lf:-80.276209 = -1346811305 = x(-)5046b5a9 = b(-)1010000.010001101011010110101001, 31 bits)
-n2 = 93.  533355 (=Lf:93.533356 = 1569229320 = x5d888a08 = b1011101.100010001000101000001000, 31 bits)
-n3 = 0.   31930 (=Lf:0.031931 = 535706 = x82c9a = b.000010000010110010011010, 20 bits)( n3 always in (-1,1) )
+n1 = -95. -718766 (=Lf:-95.718767 = -1605894428 = x(-)5fb8011c = b(-)1011111.101110000000000100011100, 31 bits)
+n2 = -106. -654532 (=Lf:-106.654533 = -1789366143 = x(-)6aa78f7f = b(-)1101010.101001111000111101111111, 31 bits)
+n3 = 0.  448205 (=Lf:0.448206 = 7519641 = x72bd99 = b.011100101011110110011001, 23 bits)( n3 always in (-1,1) )
 add   (n1+n2)
-	got: 13.  257146 (=Lf:13.257147 = 222418015 = xd41d45f = b1101.010000011101010001011111, 28 bits)
-	exp. 13.257147 (~same)
+	got: -INF
+	exp. -INF (~same)
 add_l (n1+n2)
-	got: 13.  257146 (=Lf:13.257147 = 222418015 = xd41d45f = b1101.010000011101010001011111, 28 bits)
-	exp. 13.257147 (~same)
+	got: -INF
+	exp. -INF (~same)
 add   (n1+n3)
-	got: -80. -244278 (=Lf:-80.244279 = -1346275599 = x(-)503e890f = b(-)1010000.001111101000100100001111, 31 bits)
-	exp. -80.244279 (~same)
+	got: -95. -270561 (=Lf:-95.270561 = -1598374787 = x(-)5f454383 = b(-)1011111.010001010100001110000011, 31 bits)
+	exp. -95.270561 (~same)
 add_l (n1+n3)
-	got: -80. -244278 (=Lf:-80.244279 = -1346275599 = x(-)503e890f = b(-)1010000.001111101000100100001111, 31 bits)
-	exp. -80.244279 (~same)
+	got: -95. -270561 (=Lf:-95.270561 = -1598374787 = x(-)5f454383 = b(-)1011111.010001010100001110000011, 31 bits)
+	exp. -95.270561 (~same)
 mul   (n1*n2)
-	got: -INF
-	exp. -INF (~same)
+	got: +INF
+	exp. +INF (~same)
 mul_l (n1*n2)
-	got: -INF
-	exp. -INF (~same)
+	got: +INF
+	exp. +INF (~same)
 mul   (n1*n3)
-	got: -2. -563264 (=Lf:-2.563265 = -43004447 = x(-)290321f = b(-)10.100100000011001000011111, 26 bits)
-	exp. -2.563265 (~same)
+	got: -42. -901679 (=Lf:-42.901681 = -719770764 = x(-)2ae6d48c = b(-)101010.111001101101010010001100, 30 bits)
+	exp. -42.901681 (~same)
 mul_l (n1*n3)
-	got: -2. -563264 (=Lf:-2.563265 = -43004447 = x(-)290321f = b(-)10.100100000011001000011111, 26 bits)
-	exp. -2.563265 (~same)
+	got: -42. -901679 (=Lf:-42.901681 = -719770764 = x(-)2ae6d48c = b(-)101010.111001101101010010001100, 30 bits)
+	exp. -42.901681 (~same)
 div_l (n1/n2)
-	got: 0. -858262 (=Lf:-0.858263 = -14399262 = x(-)dbb71e = b(-).110110111011011100011110, 24 bits)
-	exp. -0.858263 (~same)
+	got: 0.  897464 (=Lf:0.897465 = 15056972 = xe5c04c = b.111001011100000001001100, 24 bits)
+	exp. 0.897465 (~same)
 div   (n1/n2)
-	got: 0. -858262 (=Lf:-0.858263 = -14399262 = x(-)dbb71e = b(-).110110111011011100011110, 24 bits)
-	exp. -0.858263 (~same)
+	got: 0.  897464 (=Lf:0.897466 = 15056973 = xe5c04d = b.111001011100000001001101, 24 bits)
+	exp. 0.897465 (~same)
 div_l (n1/n3)
 	got: -INF
 	exp. -INF (~same)
@@ -7846,128 +6522,155 @@ log2_l(n1)
 	got: UNDEF
 	exp. UNDEF (~same)
 log2_l(n2)
-	got: 6.  547408 (=Lf:6.547409 = 109847294 = x68c22fe = b110.100011000010001011111110, 27 bits)
-	exp. 6.547409 (~same)
+	got: UNDEF
+	exp. UNDEF (~same)
 log2_l(n3)
-	got: -4. -968917 (=Lf:-4.968918 = -83364613 = x(-)4f80b05 = b(-)100.111110000000101100000101, 27 bits)
-	exp. -4.968918 (~same)
+	got: -1. -157767 (=Lf:-1.157768 = -19424119 = x(-)1286377 = b(-)1.001010000110001101110111, 25 bits)
+	exp. -1.157768 (~same)
+log2_bkm(n1)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n2)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n3)
+	got: -1. -157767 (=Lf:-1.157768 = -19424118 = x(-)1286376 = b(-)1.001010000110001101110110, 25 bits)
+	exp. -1.157768 (~same)
 
 Random Test #3 for 24 frac bits:
-n1 = 87.  648836 (=Lf:87.648837 = 1470503465 = x57a61a29 = b1010111.101001100001101000101001, 31 bits)
-n2 = 83.  600681 (=Lf:83.600682 = 1402586708 = x5399c654 = b1010011.100110011100011001010100, 31 bits)
-n3 = 0.  929982 (=Lf:0.929984 = 15602536 = xee1368 = b.111011100001001101101000, 24 bits)( n3 always in (-1,1) )
+n1 = 95.  207834 (=Lf:95.207834 = 1597322404 = x5f3534a4 = b1011111.001101010011010010100100, 31 bits)
+n2 = -115. -630890 (=Lf:-115.630892 = -1939964443 = x(-)73a1821b = b(-)1110011.101000011000001000011011, 31 bits)
+n3 = 0.  900261 (=Lf:0.900262 = 15103888 = xe67790 = b.111001100111011110010000, 24 bits)( n3 always in (-1,1) )
 add   (n1+n2)
-	got: +INF
-	exp. +INF (~same)
+	got: -20. -423056 (=Lf:-20.423057 = -342642039 = x(-)146c4d77 = b(-)10100.011011000100110101110111, 29 bits)
+	exp. -20.423057 (~same)
 add_l (n1+n2)
-	got: +INF
-	exp. +INF (~same)
+	got: -20. -423056 (=Lf:-20.423057 = -342642039 = x(-)146c4d77 = b(-)10100.011011000100110101110111, 29 bits)
+	exp. -20.423057 (~same)
 add   (n1+n3)
-	got: 88.  578819 (=Lf:88.578820 = 1486106001 = x58942d91 = b1011000.100101000010110110010001, 31 bits)
-	exp. 88.578820 (~same)
+	got: 96.  108096 (=Lf:96.108096 = 1612426292 = x601bac34 = b1100000.000110111010110000110100, 31 bits)
+	exp. 96.108096 (~same)
 add_l (n1+n3)
-	got: 88.  578819 (=Lf:88.578820 = 1486106001 = x58942d91 = b1011000.100101000010110110010001, 31 bits)
-	exp. 88.578820 (~same)
+	got: 96.  108096 (=Lf:96.108096 = 1612426292 = x601bac34 = b1100000.000110111010110000110100, 31 bits)
+	exp. 96.108096 (~same)
 mul   (n1*n2)
-	got: +INF
-	exp. +INF (~same)
+	got: -INF
+	exp. -INF (~same)
 mul_l (n1*n2)
-	got: +INF
-	exp. +INF (~same)
+	got: -INF
+	exp. -INF (~same)
 mul   (n1*n3)
-	got: 81.  511981 (=Lf:81.511982 = 1367544129 = x51831141 = b1010001.100000110001000101000001, 31 bits)
-	exp. 81.511982 (~same)
+	got: 85.  711983 (=Lf:85.711984 = 1438008468 = x55b64494 = b1010101.101101100100010010010100, 31 bits)
+	exp. 85.711984 (~same)
 mul_l (n1*n3)
-	got: 81.  511981 (=Lf:81.511982 = 1367544129 = x51831141 = b1010001.100000110001000101000001, 31 bits)
-	exp. 81.511982 (~same)
+	got: 85.  711983 (=Lf:85.711984 = 1438008468 = x55b64494 = b1010101.101101100100010010010100, 31 bits)
+	exp. 85.711984 (~same)
 div_l (n1/n2)
-	got: 1.   48422 (=Lf:1.048422 = 17589610 = x10c656a = b1.000011000110010101101010, 25 bits)
-	exp. 1.048422 (~same)
+	got: 0. -823376 (=Lf:-0.823377 = -13813976 = x(-)d2c8d8 = b(-).110100101100100011011000, 24 bits)
+	exp. -0.823377 (~same)
 div   (n1/n2)
-	got: 1.   48422 (=Lf:1.048422 = 17589610 = x10c656a = b1.000011000110010101101010, 25 bits)
-	exp. 1.048422 (~same)
+	got: 0. -823376 (=Lf:-0.823377 = -13813976 = x(-)d2c8d8 = b(-).110100101100100011011000, 24 bits)
+	exp. -0.823377 (~same)
 div_l (n1/n3)
-	got: 94.  247721 (=Lf:94.247721 = 1581214378 = x5e3f6aaa = b1011110.001111110110101010101010, 31 bits)
-	exp. 94.247721 (~same)
+	got: 105.  755709 (=Lf:105.755710 = 1774286395 = x69c1763b = b1101001.110000010111011000111011, 31 bits)
+	exp. 105.755710 (~same)
 div   (n1/n3)
-	got: 94.  247721 (=Lf:94.247721 = 1581214378 = x5e3f6aaa = b1011110.001111110110101010101010, 31 bits)
-	exp. 94.247721 (~same)
+	got: 105.  755709 (=Lf:105.755710 = 1774286395 = x69c1763b = b1101001.110000010111011000111011, 31 bits)
+	exp. 105.755710 (~same)
 log2_l(n1)
-	got: 6.  453662 (=Lf:6.453663 = 108274497 = x6742341 = b110.011101000010001101000001, 27 bits)
-	exp. 6.453663 (~same)
+	got: 6.  573007 (=Lf:6.573008 = 110276780 = x692b0ac = b110.100100101011000010101100, 27 bits)
+	exp. 6.573008 (~same)
 log2_l(n2)
-	got: 6.  385442 (=Lf:6.385443 = 107129952 = x662ac60 = b110.011000101010110001100000, 27 bits)
-	exp. 6.385443 (~same)
+	got: UNDEF
+	exp. UNDEF (~same)
 log2_l(n3)
-	got: 0. -104722 (=Lf:-0.104723 = -1756958 = x(-)1acf1e = b(-).000110101100111100011110, 21 bits)
-	exp. -0.104723 (~same)
+	got: 0. -151583 (=Lf:-0.151583 = -2543148 = x(-)26ce2c = b(-).001001101100111000101100, 22 bits)
+	exp. -0.151583 (~same)
+log2_bkm(n1)
+	got: 6.  573007 (=Lf:6.573008 = 110276782 = x692b0ae = b110.100100101011000010101110, 27 bits)
+	exp. 6.573008 (~same)
+log2_bkm(n2)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n3)
+	got: 0. -151583 (=Lf:-0.151583 = -2543147 = x(-)26ce2b = b(-).001001101100111000101011, 22 bits)
+	exp. -0.151583 (~same)
 
 Random Test #4 for 24 frac bits:
-n1 = 112.  305142 (=Lf:112.305143 = 1884167637 = x704e1dd5 = b1110000.010011100001110111010101, 31 bits)
-n2 = 87.  823989 (=Lf:87.823991 = 1473442062 = x57d2f10e = b1010111.110100101111000100001110, 31 bits)
-n3 = 0.  998749 (=Lf:0.998751 = 16756259 = xffae23 = b.111111111010111000100011, 24 bits)( n3 always in (-1,1) )
+n1 = -106. -241514 (=Lf:-106.241515 = -1782436840 = x(-)6a3dd3e8 = b(-)1101010.001111011101001111101000, 31 bits)
+n2 = 113.  785439 (=Lf:113.785440 = 1909002904 = x71c91298 = b1110001.110010010001001010011000, 31 bits)
+n3 = 0.  855318 (=Lf:0.855320 = 14349883 = xdaf63b = b.110110101111011000111011, 24 bits)( n3 always in (-1,1) )
 add   (n1+n2)
-	got: +INF
-	exp. +INF (~same)
+	got: 7.  543924 (=Lf:7.543925 = 126566064 = x78b3eb0 = b111.100010110011111010110000, 27 bits)
+	exp. 7.543925 (~same)
 add_l (n1+n2)
-	got: +INF
-	exp. +INF (~same)
+	got: 7.  543924 (=Lf:7.543925 = 126566064 = x78b3eb0 = b111.100010110011111010110000, 27 bits)
+	exp. 7.543925 (~same)
 add   (n1+n3)
-	got: 113.  303893 (=Lf:113.303894 = 1900923896 = x714dcbf8 = b1110001.010011011100101111111000, 31 bits)
-	exp. 113.303894 (~same)
+	got: -105. -386194 (=Lf:-105.386195 = -1768086957 = x(-)6962ddad = b(-)1101001.011000101101110110101101, 31 bits)
+	exp. -105.386195 (~same)
 add_l (n1+n3)
-	got: 113.  303893 (=Lf:113.303894 = 1900923896 = x714dcbf8 = b1110001.010011011100101111111000, 31 bits)
-	exp. 113.303894 (~same)
+	got: -105. -386194 (=Lf:-105.386195 = -1768086957 = x(-)6962ddad = b(-)1101001.011000101101110110101101, 31 bits)
+	exp. -105.386195 (~same)
 mul   (n1*n2)
-	got: +INF
-	exp. +INF (~same)
+	got: -INF
+	exp. -INF (~same)
 mul_l (n1*n2)
-	got: +INF
-	exp. +INF (~same)
+	got: -INF
+	exp. -INF (~same)
 mul   (n1*n3)
-	got: 112.  164858 (=Lf:112.164858 = 1881814058 = x702a342a = b1110000.001010100011010000101010, 31 bits)
-	exp. 112.164858 (~same)
+	got: -90. -870457 (=Lf:-90.870458 = -1524553305 = x(-)5aded659 = b(-)1011010.110111101101011001011001, 31 bits)
+	exp. -90.870458 (~same)
 mul_l (n1*n3)
-	got: 112.  164858 (=Lf:112.164858 = 1881814058 = x702a342a = b1110000.001010100011010000101010, 31 bits)
-	exp. 112.164858 (~same)
+	got: -90. -870457 (=Lf:-90.870458 = -1524553305 = x(-)5aded659 = b(-)1011010.110111101101011001011001, 31 bits)
+	exp. -90.870458 (~same)
 div_l (n1/n2)
-	got: 1.  278752 (=Lf:1.278752 = 21453905 = x1475c51 = b1.010001110101110001010001, 25 bits)
-	exp. 1.278752 (~same)
+	got: 0. -933699 (=Lf:-0.933700 = -15664893 = x(-)ef06fd = b(-).111011110000011011111101, 24 bits)
+	exp. -0.933700 (~same)
 div   (n1/n2)
-	got: 1.  278752 (=Lf:1.278752 = 21453905 = x1475c51 = b1.010001110101110001010001, 25 bits)
-	exp. 1.278752 (~same)
+	got: 0. -933699 (=Lf:-0.933700 = -15664893 = x(-)ef06fd = b(-).111011110000011011111101, 24 bits)
+	exp. -0.933700 (~same)
 div_l (n1/n3)
-	got: 112.  445601 (=Lf:112.445602 = 1886524159 = x707212ff = b1110000.011100100001001011111111, 31 bits)
-	exp. 112.445602 (~same)
+	got: -124. -212639 (=Lf:-124.212639 = -2083942278 = x(-)7c366f86 = b(-)1111100.001101100110111110000110, 31 bits)
+	exp. -124.212639 (~same)
 div   (n1/n3)
-	got: 112.  445601 (=Lf:112.445602 = 1886524159 = x707212ff = b1110000.011100100001001011111111, 31 bits)
-	exp. 112.445602 (~same)
+	got: -124. -212639 (=Lf:-124.212639 = -2083942278 = x(-)7c366f86 = b(-)1111100.001101100110111110000110, 31 bits)
+	exp. -124.212639 (~same)
 log2_l(n1)
-	got: 6.  811279 (=Lf:6.811280 = 114274318 = x6cfb00e = b110.110011111011000000001110, 27 bits)
-	exp. 6.811280 (~same)
+	got: UNDEF
+	exp. UNDEF (~same)
 log2_l(n2)
-	got: 6.  456542 (=Lf:6.456543 = 108322818 = x674e002 = b110.011101001110000000000010, 27 bits)
-	exp. 6.456543 (~same)
+	got: 6.  830171 (=Lf:6.830172 = 114591272 = x6d48628 = b110.110101001000011000101000, 27 bits)
+	exp. 6.830172 (~same)
 log2_l(n3)
-	got: 0.   -1803 (=Lf:-0.001803 = -30254 = x(-)762e = b(-).000000000111011000101110, 15 bits)
-	exp. -0.001803 (~same)
+	got: 0. -225464 (=Lf:-0.225464 = -3782665 = x(-)39b809 = b(-).001110011011100000001001, 22 bits)
+	exp. -0.225464 (~same)
+log2_bkm(n1)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n2)
+	got: 6.  830171 (=Lf:6.830172 = 114591274 = x6d4862a = b110.110101001000011000101010, 27 bits)
+	exp. 6.830172 (~same)
+log2_bkm(n3)
+	got: 0. -225464 (=Lf:-0.225464 = -3782665 = x(-)39b809 = b(-).001110011011100000001001, 22 bits)
+	exp. -0.225464 (~same)
 
 Random Test #5 for 24 frac bits:
-n1 = 75.  931065 (=Lf:75.931066 = 1273911899 = x4bee5a5b = b1001011.111011100101101001011011, 31 bits)
-n2 = 85.  319243 (=Lf:85.319244 = 1431419379 = x5551b9f3 = b1010101.010100011011100111110011, 31 bits)
-n3 = 0.  963556 (=Lf:0.963557 = 16165810 = xf6abb2 = b.111101101010101110110010, 24 bits)( n3 always in (-1,1) )
+n1 = 29.  329533 (=Lf:29.329533 = 492067917 = x1d545c4d = b11101.010101000101110001001101, 29 bits)
+n2 = 89.  679354 (=Lf:89.679355 = 1504569917 = x59adea3d = b1011001.101011011110101000111101, 31 bits)
+n3 = 0. -558995 (=Lf:-0.558996 = -9378396 = x(-)8f1a5c = b(-).100011110001101001011100, 24 bits)( n3 always in (-1,1) )
 add   (n1+n2)
-	got: +INF
-	exp. +INF (~same)
+	got: 119.    8888 (=Lf:119.008889 = 1996637834 = x7702468a = b1110111.000000100100011010001010, 31 bits)
+	exp. 119.008889 (~same)
 add_l (n1+n2)
-	got: +INF
-	exp. +INF (~same)
+	got: 119.    8888 (=Lf:119.008889 = 1996637834 = x7702468a = b1110111.000000100100011010001010, 31 bits)
+	exp. 119.008889 (~same)
 add   (n1+n3)
-	got: 76.  894622 (=Lf:76.894624 = 1290077709 = x4ce5060d = b1001100.111001010000011000001101, 31 bits)
-	exp. 76.894624 (~same)
+	got: 28.  770536 (=Lf:28.770537 = 482689521 = x1cc541f1 = b11100.110001010100000111110001, 29 bits)
+	exp. 28.770537 (~same)
 add_l (n1+n3)
-	got: 76.  894622 (=Lf:76.894624 = 1290077709 = x4ce5060d = b1001100.111001010000011000001101, 31 bits)
-	exp. 76.894624 (~same)
+	got: 28.  770536 (=Lf:28.770537 = 482689521 = x1cc541f1 = b11100.110001010100000111110001, 29 bits)
+	exp. 28.770537 (~same)
 mul   (n1*n2)
 	got: +INF
 	exp. +INF (~same)
@@ -7975,49 +6678,58 @@ mul_l (n1*n2)
 	got: +INF
 	exp. +INF (~same)
 mul   (n1*n3)
-	got: 73.  163937 (=Lf:73.163938 = 1227487189 = x4929f7d5 = b1001001.001010011111011111010101, 31 bits)
-	exp. 73.163938 (~same)
+	got: -16. -395090 (=Lf:-16.395091 = -275063978 = x(-)106524aa = b(-)10000.011001010010010010101010, 29 bits)
+	exp. -16.395091 (~same)
 mul_l (n1*n3)
-	got: 73.  163937 (=Lf:73.163938 = 1227487189 = x4929f7d5 = b1001001.001010011111011111010101, 31 bits)
-	exp. 73.163938 (~same)
+	got: -16. -395090 (=Lf:-16.395091 = -275063978 = x(-)106524aa = b(-)10000.011001010010010010101010, 29 bits)
+	exp. -16.395091 (~same)
 div_l (n1/n2)
-	got: 0.  889963 (=Lf:0.889964 = 14931120 = xe3d4b0 = b.111000111101010010110000, 24 bits)
-	exp. 0.889964 (~same)
+	got: 0.  327048 (=Lf:0.327049 = 5486969 = x53b979 = b.010100111011100101111001, 23 bits)
+	exp. 0.327049 (~same)
 div   (n1/n2)
-	got: 0.  889963 (=Lf:0.889964 = 14931120 = xe3d4b0 = b.111000111101010010110000, 24 bits)
-	exp. 0.889964 (~same)
+	got: 0.  327048 (=Lf:0.327049 = 5486969 = x53b979 = b.010100111011100101111001, 23 bits)
+	exp. 0.327049 (~same)
 div_l (n1/n3)
-	got: 78.  802849 (=Lf:78.802850 = 1322092434 = x4ecd8792 = b1001110.110011011000011110010010, 31 bits)
-	exp. 78.802850 (~same)
+	got: -52. -468237 (=Lf:-52.468238 = -880270968 = x(-)3477de78 = b(-)110100.011101111101111001111000, 30 bits)
+	exp. -52.468238 (~same)
 div   (n1/n3)
-	got: 78.  802849 (=Lf:78.802850 = 1322092434 = x4ecd8792 = b1001110.110011011000011110010010, 31 bits)
-	exp. 78.802850 (~same)
+	got: -52. -468237 (=Lf:-52.468238 = -880270968 = x(-)3477de78 = b(-)110100.011101111101111001111000, 30 bits)
+	exp. -52.468238 (~same)
 log2_l(n1)
-	got: 6.  246618 (=Lf:6.246618 = 104800864 = x63f2260 = b110.001111110010001001100000, 27 bits)
-	exp. 6.246618 (~same)
+	got: 4.  874281 (=Lf:4.874282 = 81776884 = x4dfd0f4 = b100.110111111101000011110100, 27 bits)
+	exp. 4.874282 (~same)
 log2_l(n2)
-	got: 6.  414798 (=Lf:6.414799 = 107622471 = x66a3047 = b110.011010100011000001000111, 27 bits)
-	exp. 6.414799 (~same)
+	got: 6.  486703 (=Lf:6.486704 = 108828832 = x67c98a0 = b110.011111001001100010100000, 27 bits)
+	exp. 6.486704 (~same)
 log2_l(n3)
-	got: 0.  -53557 (=Lf:-0.053558 = -898547 = x(-)db5f3 = b(-).000011011011010111110011, 20 bits)
-	exp. -0.053558 (~same)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n1)
+	got: 4.  874281 (=Lf:4.874282 = 81776885 = x4dfd0f5 = b100.110111111101000011110101, 27 bits)
+	exp. 4.874282 (~same)
+log2_bkm(n2)
+	got: 6.  486703 (=Lf:6.486704 = 108828834 = x67c98a2 = b110.011111001001100010100010, 27 bits)
+	exp. 6.486704 (~same)
+log2_bkm(n3)
+	got: UNDEF
+	exp. UNDEF (~same)
 
 Random Test #6 for 24 frac bits:
-n1 = 24.  288125 (=Lf:24.288126 = 407487131 = x1849c29b = b11000.010010011100001010011011, 29 bits)
-n2 = -125. -998489 (=Lf:-125.998490 = -2113903881 = x(-)7dff9d09 = b(-)1111101.111111111001110100001001, 31 bits)
-n3 = 0. -458057 (=Lf:-0.458058 = -7684930 = x(-)754342 = b(-).011101010100001101000010, 23 bits)( n3 always in (-1,1) )
+n1 = 81.   33240 (=Lf:81.033241 = 1359512183 = x51088277 = b1010001.000010001000001001110111, 31 bits)
+n2 = -28. -628020 (=Lf:-28.628021 = -480298490 = x(-)1ca0c5fa = b(-)11100.101000001100010111111010, 29 bits)
+n3 = 0.  344911 (=Lf:0.344911 = 5786654 = x584c1e = b.010110000100110000011110, 23 bits)( n3 always in (-1,1) )
 add   (n1+n2)
-	got: -101. -710363 (=Lf:-101.710364 = -1706416750 = x(-)65b5da6e = b(-)1100101.101101011101101001101110, 31 bits)
-	exp. -101.710364 (~same)
+	got: 52.  405219 (=Lf:52.405220 = 879213693 = x3467bc7d = b110100.011001111011110001111101, 30 bits)
+	exp. 52.405220 (~same)
 add_l (n1+n2)
-	got: -101. -710363 (=Lf:-101.710364 = -1706416750 = x(-)65b5da6e = b(-)1100101.101101011101101001101110, 31 bits)
-	exp. -101.710364 (~same)
+	got: 52.  405219 (=Lf:52.405220 = 879213693 = x3467bc7d = b110100.011001111011110001111101, 30 bits)
+	exp. 52.405220 (~same)
 add   (n1+n3)
-	got: 23.  830067 (=Lf:23.830068 = 399802201 = x17d47f59 = b10111.110101000111111101011001, 29 bits)
-	exp. 23.830068 (~same)
+	got: 81.  378151 (=Lf:81.378152 = 1365298837 = x5160ce95 = b1010001.011000001100111010010101, 31 bits)
+	exp. 81.378152 (~same)
 add_l (n1+n3)
-	got: 23.  830067 (=Lf:23.830068 = 399802201 = x17d47f59 = b10111.110101000111111101011001, 29 bits)
-	exp. 23.830068 (~same)
+	got: 81.  378151 (=Lf:81.378152 = 1365298837 = x5160ce95 = b1010001.011000001100111010010101, 31 bits)
+	exp. 81.378152 (~same)
 mul   (n1*n2)
 	got: -INF
 	exp. -INF (~same)
@@ -8025,49 +6737,58 @@ mul_l (n1*n2)
 	got: -INF
 	exp. -INF (~same)
 mul   (n1*n3)
-	got: -11. -125358 (=Lf:-11.125359 = -186652545 = x(-)b201781 = b(-)1011.001000000001011110000001, 28 bits)
-	exp. -11.125359 (~same)
+	got: 27.  949292 (=Lf:27.949293 = 468911326 = x1bf304de = b11011.111100110000010011011110, 29 bits)
+	exp. 27.949293 (~same)
 mul_l (n1*n3)
-	got: -11. -125358 (=Lf:-11.125359 = -186652545 = x(-)b201781 = b(-)1011.001000000001011110000001, 28 bits)
-	exp. -11.125359 (~same)
+	got: 27.  949292 (=Lf:27.949293 = 468911326 = x1bf304de = b11011.111100110000010011011110, 29 bits)
+	exp. 27.949293 (~same)
 div_l (n1/n2)
-	got: 0. -192765 (=Lf:-0.192765 = -3234063 = x(-)31590f = b(-).001100010101100100001111, 22 bits)
-	exp. -0.192765 (~same)
+	got: -2. -830556 (=Lf:-2.830557 = -47488863 = x(-)2d49f5f = b(-)10.110101001001111101011111, 26 bits)
+	exp. -2.830557 (~same)
 div   (n1/n2)
-	got: 0. -192765 (=Lf:-0.192765 = -3234063 = x(-)31590f = b(-).001100010101100100001111, 22 bits)
-	exp. -0.192765 (~same)
+	got: -2. -830556 (=Lf:-2.830557 = -47488863 = x(-)2d49f5f = b(-)10.110101001001111101011111, 26 bits)
+	exp. -2.830557 (~same)
 div_l (n1/n3)
-	got: -53.  -24182 (=Lf:-53.024182 = -889598163 = x(-)350630d3 = b(-)110101.000001100011000011010011, 30 bits)
-	exp. -53.024182 (~same)
+	got: +INF
+	exp. +INF (~same)
 div   (n1/n3)
-	got: -53.  -24182 (=Lf:-53.024182 = -889598163 = x(-)350630d3 = b(-)110101.000001100011000011010011, 30 bits)
-	exp. -53.024182 (~same)
+	got: +INF
+	exp. +INF (~same)
 log2_l(n1)
-	got: 4.  602178 (=Lf:4.602179 = 77211754 = x49a286a = b100.100110100010100001101010, 27 bits)
-	exp. 4.602179 (~same)
+	got: 6.  340441 (=Lf:6.340442 = 106374962 = x6572732 = b110.010101110010011100110010, 27 bits)
+	exp. 6.340442 (~same)
 log2_l(n2)
 	got: UNDEF
 	exp. UNDEF (~same)
 log2_l(n3)
+	got: -1. -535701 (=Lf:-1.535702 = -25764806 = x(-)18923c6 = b(-)1.100010010010001111000110, 25 bits)
+	exp. -1.535702 (~same)
+log2_bkm(n1)
+	got: 6.  340441 (=Lf:6.340442 = 106374964 = x6572734 = b110.010101110010011100110100, 27 bits)
+	exp. 6.340442 (~same)
+log2_bkm(n2)
 	got: UNDEF
 	exp. UNDEF (~same)
+log2_bkm(n3)
+	got: -1. -535701 (=Lf:-1.535702 = -25764805 = x(-)18923c5 = b(-)1.100010010010001111000101, 25 bits)
+	exp. -1.535702 (~same)
 
 Random Test #7 for 24 frac bits:
-n1 = -55. -871614 (=Lf:-55.871616 = -937370163 = x(-)37df2233 = b(-)110111.110111110010001000110011, 30 bits)
-n2 = 122.  705530 (=Lf:122.705531 = 2058657199 = x7ab49daf = b1111010.101101001001110110101111, 31 bits)
-n3 = 0.  623096 (=Lf:0.623097 = 10453826 = x9f8342 = b.100111111000001101000010, 24 bits)( n3 always in (-1,1) )
+n1 = 69.  901679 (=Lf:69.901680 = 1172755590 = x45e6d486 = b1000101.111001101101010010000110, 31 bits)
+n2 = -92.  -66377 (=Lf:-92.066378 = -1544617505 = x(-)5c10fe21 = b(-)1011100.000100001111111000100001, 31 bits)
+n3 = 0.  499911 (=Lf:0.499912 = 8387129 = x7ffa39 = b.011111111111101000111001, 23 bits)( n3 always in (-1,1) )
 add   (n1+n2)
-	got: 66.  833914 (=Lf:66.833915 = 1121287036 = x42d57b7c = b1000010.110101010111101101111100, 31 bits)
-	exp. 66.833915 (~same)
+	got: -22. -164697 (=Lf:-22.164697 = -371861915 = x(-)162a299b = b(-)10110.001010100010100110011011, 29 bits)
+	exp. -22.164697 (~same)
 add_l (n1+n2)
-	got: 66.  833914 (=Lf:66.833915 = 1121287036 = x42d57b7c = b1000010.110101010111101101111100, 31 bits)
-	exp. 66.833915 (~same)
+	got: -22. -164697 (=Lf:-22.164697 = -371861915 = x(-)162a299b = b(-)10110.001010100010100110011011, 29 bits)
+	exp. -22.164697 (~same)
 add   (n1+n3)
-	got: -55. -248518 (=Lf:-55.248519 = -926916337 = x(-)373f9ef1 = b(-)110111.001111111001111011110001, 30 bits)
-	exp. -55.248519 (~same)
+	got: 70.  401591 (=Lf:70.401592 = 1181142719 = x4666cebf = b1000110.011001101100111010111111, 31 bits)
+	exp. 70.401592 (~same)
 add_l (n1+n3)
-	got: -55. -248518 (=Lf:-55.248519 = -926916337 = x(-)373f9ef1 = b(-)110111.001111111001111011110001, 30 bits)
-	exp. -55.248519 (~same)
+	got: 70.  401591 (=Lf:70.401592 = 1181142719 = x4666cebf = b1000110.011001101100111010111111, 31 bits)
+	exp. 70.401592 (~same)
 mul   (n1*n2)
 	got: -INF
 	exp. -INF (~same)
@@ -8075,132 +6796,159 @@ mul_l (n1*n2)
 	got: -INF
 	exp. -INF (~same)
 mul   (n1*n3)
-	got: -34. -813412 (=Lf:-34.813413 = -584072147 = x(-)22d03bd3 = b(-)100010.110100000011101111010011, 30 bits)
-	exp. -34.813413 (~same)
+	got: 34.  944677 (=Lf:34.944678 = 586274410 = x22f1d66a = b100010.111100011101011001101010, 30 bits)
+	exp. 34.944678 (~same)
 mul_l (n1*n3)
-	got: -34. -813412 (=Lf:-34.813413 = -584072147 = x(-)22d03bd3 = b(-)100010.110100000011101111010011, 30 bits)
-	exp. -34.813413 (~same)
+	got: 34.  944677 (=Lf:34.944678 = 586274410 = x22f1d66a = b100010.111100011101011001101010, 30 bits)
+	exp. 34.944678 (~same)
 div_l (n1/n2)
-	got: 0. -455330 (=Lf:-0.455331 = -7639184 = x(-)749090 = b(-).011101001001000010010000, 23 bits)
-	exp. -0.455331 (~same)
+	got: 0. -759252 (=Lf:-0.759253 = -12738152 = x(-)c25e68 = b(-).110000100101111001101000, 24 bits)
+	exp. -0.759253 (~same)
 div   (n1/n2)
-	got: 0. -455330 (=Lf:-0.455331 = -7639184 = x(-)749090 = b(-).011101001001000010010000, 23 bits)
-	exp. -0.455331 (~same)
+	got: 0. -759252 (=Lf:-0.759253 = -12738152 = x(-)c25e68 = b(-).110000100101111001101000, 24 bits)
+	exp. -0.759253 (~same)
 div_l (n1/n3)
-	got: -89. -667663 (=Lf:-89.667665 = -1504373776 = x(-)59aaec10 = b(-)1011001.101010101110110000010000, 31 bits)
-	exp. -89.667665 (~same)
+	got: +INF
+	exp. +INF (~same)
 div   (n1/n3)
-	got: -89. -667663 (=Lf:-89.667665 = -1504373776 = x(-)59aaec10 = b(-)1011001.101010101110110000010000, 31 bits)
-	exp. -89.667665 (~same)
+	got: +INF
+	exp. +INF (~same)
 log2_l(n1)
+	got: 6.  127255 (=Lf:6.127255 = 102798283 = x62093cb = b110.001000001001001111001011, 27 bits)
+	exp. 6.127255 (~same)
+log2_l(n2)
 	got: UNDEF
 	exp. UNDEF (~same)
-log2_l(n2)
-	got: 6.  939055 (=Lf:6.939056 = 116418048 = x6f06600 = b110.111100000110011000000000, 27 bits)
-	exp. 6.939056 (~same)
 log2_l(n3)
-	got: 0. -682471 (=Lf:-0.682472 = -11449986 = x(-)aeb682 = b(-).101011101011011010000010, 24 bits)
-	exp. -0.682472 (~same)
+	got: -1.    -254 (=Lf:-1.000254 = -16781485 = x(-)10010ad = b(-)1.000000000001000010101101, 25 bits)
+	exp. -1.000254 (~same)
+log2_bkm(n1)
+	got: 6.  127255 (=Lf:6.127255 = 102798285 = x62093cd = b110.001000001001001111001101, 27 bits)
+	exp. 6.127255 (~same)
+log2_bkm(n2)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n3)
+	got: -1.    -254 (=Lf:-1.000254 = -16781484 = x(-)10010ac = b(-)1.000000000001000010101100, 25 bits)
+	exp. -1.000254 (~same)
 
 Random Test #8 for 24 frac bits:
-n1 = -87. -780580 (=Lf:-87.780581 = -1472713773 = x(-)57c7d42d = b(-)1010111.110001111101010000101101, 31 bits)
-n2 = 49.  130488 (=Lf:49.130488 = 824272813 = x312167ad = b110001.001000010110011110101101, 30 bits)
-n3 = 0. -107013 (=Lf:-0.107013 = -1795383 = x(-)1b6537 = b(-).000110110110010100110111, 21 bits)( n3 always in (-1,1) )
+n1 = 57.  717446 (=Lf:57.717447 = 968338082 = x39b7aaa2 = b111001.101101111010101010100010, 30 bits)
+n2 = 43.   52944 (=Lf:43.052944 = 722308542 = x2b0d8dbe = b101011.000011011000110110111110, 30 bits)
+n3 = 0. -503613 (=Lf:-0.503614 = -8449244 = x(-)80ecdc = b(-).100000001110110011011100, 24 bits)( n3 always in (-1,1) )
 add   (n1+n2)
-	got: -38. -650092 (=Lf:-38.650093 = -648440960 = x(-)26a66c80 = b(-)100110.101001100110110010000000, 30 bits)
-	exp. -38.650093 (~same)
+	got: 100.  770390 (=Lf:100.770391 = 1690646624 = x64c53860 = b1100100.110001010011100001100000, 31 bits)
+	exp. 100.770391 (~same)
 add_l (n1+n2)
-	got: -38. -650092 (=Lf:-38.650093 = -648440960 = x(-)26a66c80 = b(-)100110.101001100110110010000000, 30 bits)
-	exp. -38.650093 (~same)
+	got: 100.  770390 (=Lf:100.770391 = 1690646624 = x64c53860 = b1100100.110001010011100001100000, 31 bits)
+	exp. 100.770391 (~same)
 add   (n1+n3)
-	got: -87. -887593 (=Lf:-87.887594 = -1474509156 = x(-)57e33964 = b(-)1010111.111000110011100101100100, 31 bits)
-	exp. -87.887594 (~same)
+	got: 57.  213833 (=Lf:57.213833 = 959888838 = x3936bdc6 = b111001.001101101011110111000110, 30 bits)
+	exp. 57.213833 (~same)
 add_l (n1+n3)
-	got: -87. -887593 (=Lf:-87.887594 = -1474509156 = x(-)57e33964 = b(-)1010111.111000110011100101100100, 31 bits)
-	exp. -87.887594 (~same)
+	got: 57.  213833 (=Lf:57.213833 = 959888838 = x3936bdc6 = b111001.001101101011110111000110, 30 bits)
+	exp. 57.213833 (~same)
 mul   (n1*n2)
-	got: -INF
-	exp. -INF (~same)
+	got: +INF
+	exp. +INF (~same)
 mul_l (n1*n2)
-	got: -INF
-	exp. -INF (~same)
+	got: +INF
+	exp. +INF (~same)
 mul   (n1*n3)
-	got: 9.  393677 (=Lf:9.393678 = 157599763 = x964c813 = b1001.011001001100100000010011, 28 bits)
-	exp. 9.393678 (~same)
+	got: -29.  -67325 (=Lf:-29.067325 = -487668796 = x(-)1d113c3c = b(-)11101.000100010011110000111100, 29 bits)
+	exp. -29.067325 (~same)
 mul_l (n1*n3)
-	got: 9.  393677 (=Lf:9.393678 = 157599763 = x964c813 = b1001.011001001100100000010011, 28 bits)
-	exp. 9.393678 (~same)
+	got: -29.  -67325 (=Lf:-29.067325 = -487668796 = x(-)1d113c3c = b(-)11101.000100010011110000111100, 29 bits)
+	exp. -29.067325 (~same)
 div_l (n1/n2)
-	got: -1. -786681 (=Lf:-1.786682 = -29975557 = x(-)1c96405 = b(-)1.110010010110010000000101, 25 bits)
-	exp. -1.786682 (~same)
+	got: 1.  340615 (=Lf:1.340616 = 22491797 = x1573295 = b1.010101110011001010010101, 25 bits)
+	exp. 1.340616 (~same)
 div   (n1/n2)
-	got: -1. -786681 (=Lf:-1.786682 = -29975557 = x(-)1c96405 = b(-)1.110010010110010000000101, 25 bits)
-	exp. -1.786682 (~same)
+	got: 1.  340615 (=Lf:1.340616 = 22491797 = x1573295 = b1.010101110011001010010101, 25 bits)
+	exp. 1.340616 (~same)
 div_l (n1/n3)
-	got: +INF
-	exp. +INF (~same)
+	got: -114. -606475 (=Lf:-114.606476 = -1922777607 = x(-)729b4207 = b(-)1110010.100110110100001000000111, 31 bits)
+	exp. -114.606476 (~same)
 div   (n1/n3)
-	got: +INF
-	exp. +INF (~same)
+	got: -114. -606475 (=Lf:-114.606476 = -1922777607 = x(-)729b4207 = b(-)1110010.100110110100001000000111, 31 bits)
+	exp. -114.606476 (~same)
 log2_l(n1)
+	got: 5.  850934 (=Lf:5.850936 = 98162409 = x5d9d6e9 = b101.110110011101011011101001, 27 bits)
+	exp. 5.850936 (~same)
+log2_l(n2)
+	got: 5.  428039 (=Lf:5.428040 = 91067397 = x56d9405 = b101.011011011001010000000101, 27 bits)
+	exp. 5.428040 (~same)
+log2_l(n3)
 	got: UNDEF
 	exp. UNDEF (~same)
-log2_l(n2)
-	got: 5.  618546 (=Lf:5.618547 = 94263569 = x59e5911 = b101.100111100101100100010001, 27 bits)
-	exp. 5.618547 (~same)
-log2_l(n3)
+log2_bkm(n1)
+	got: 5.  850934 (=Lf:5.850936 = 98162410 = x5d9d6ea = b101.110110011101011011101010, 27 bits)
+	exp. 5.850936 (~same)
+log2_bkm(n2)
+	got: 5.  428039 (=Lf:5.428040 = 91067399 = x56d9407 = b101.011011011001010000000111, 27 bits)
+	exp. 5.428040 (~same)
+log2_bkm(n3)
 	got: UNDEF
 	exp. UNDEF (~same)
 
 Random Test #9 for 24 frac bits:
-n1 = 26.   54171 (=Lf:26.054172 = 437116466 = x1a0dde32 = b11010.000011011101111000110010, 29 bits)
-n2 = -101. -588074 (=Lf:-101.588075 = -1704365084 = x(-)65968c1c = b(-)1100101.100101101000110000011100, 31 bits)
-n3 = 0.  149386 (=Lf:0.149387 = 2506290 = x263e32 = b.001001100011111000110010, 22 bits)( n3 always in (-1,1) )
+n1 = -76. -605605 (=Lf:-76.605606 = -1285228804 = x(-)4c9b0904 = b(-)1001100.100110110000100100000100, 31 bits)
+n2 = -106. -655141 (=Lf:-106.655142 = -1789376348 = x(-)6aa7b75c = b(-)1101010.101001111011011101011100, 31 bits)
+n3 = 0. -938139 (=Lf:-0.938140 = -15739376 = x(-)f029f0 = b(-).111100000010100111110000, 24 bits)( n3 always in (-1,1) )
 add   (n1+n2)
-	got: -75. -533903 (=Lf:-75.533904 = -1267248618 = x(-)4b88adea = b(-)1001011.100010001010110111101010, 31 bits)
-	exp. -75.533904 (~same)
+	got: -INF
+	exp. -INF (~same)
 add_l (n1+n2)
-	got: -75. -533903 (=Lf:-75.533904 = -1267248618 = x(-)4b88adea = b(-)1001011.100010001010110111101010, 31 bits)
-	exp. -75.533904 (~same)
+	got: -INF
+	exp. -INF (~same)
 add   (n1+n3)
-	got: 26.  203558 (=Lf:26.203558 = 439622756 = x1a341c64 = b11010.001101000001110001100100, 29 bits)
-	exp. 26.203558 (~same)
+	got: -77. -543745 (=Lf:-77.543746 = -1300968180 = x(-)4d8b32f4 = b(-)1001101.100010110011001011110100, 31 bits)
+	exp. -77.543746 (~same)
 add_l (n1+n3)
-	got: 26.  203558 (=Lf:26.203558 = 439622756 = x1a341c64 = b11010.001101000001110001100100, 29 bits)
-	exp. 26.203558 (~same)
+	got: -77. -543745 (=Lf:-77.543746 = -1300968180 = x(-)4d8b32f4 = b(-)1001101.100010110011001011110100, 31 bits)
+	exp. -77.543746 (~same)
 mul   (n1*n2)
-	got: -INF
-	exp. -INF (~same)
+	got: +INF
+	exp. +INF (~same)
 mul_l (n1*n2)
-	got: -INF
-	exp. -INF (~same)
+	got: +INF
+	exp. +INF (~same)
 mul   (n1*n3)
-	got: 3.  892141 (=Lf:3.892142 = 65299309 = x3e4636d = b11.111001000110001101101101, 26 bits)
-	exp. 3.892142 (~same)
+	got: 71.  866776 (=Lf:71.866777 = 1205724441 = x47dde519 = b1000111.110111011110010100011001, 31 bits)
+	exp. 71.866777 (~same)
 mul_l (n1*n3)
-	got: 3.  892141 (=Lf:3.892142 = 65299309 = x3e4636d = b11.111001000110001101101101, 26 bits)
-	exp. 3.892142 (~same)
+	got: 71.  866776 (=Lf:71.866777 = 1205724441 = x47dde519 = b1000111.110111011110010100011001, 31 bits)
+	exp. 71.866777 (~same)
 div_l (n1/n2)
-	got: 0. -256468 (=Lf:-0.256469 = -4302832 = x(-)41a7f0 = b(-).010000011010011111110000, 23 bits)
-	exp. -0.256469 (~same)
+	got: 0.  718254 (=Lf:0.718255 = 12050322 = xb7df92 = b.101101111101111110010010, 24 bits)
+	exp. 0.718255 (~same)
 div   (n1/n2)
-	got: 0. -256468 (=Lf:-0.256469 = -4302832 = x(-)41a7f0 = b(-).010000011010011111110000, 23 bits)
-	exp. -0.256469 (~same)
+	got: 0.  718254 (=Lf:0.718255 = 12050322 = xb7df92 = b.101101111101111110010010, 24 bits)
+	exp. 0.718255 (~same)
 div_l (n1/n3)
-	got: +INF
-	exp. +INF (~same)
+	got: 81.  656909 (=Lf:81.656910 = 1369975611 = x51a82b3b = b1010001.101010000010101100111011, 31 bits)
+	exp. 81.656910 (~same)
 div   (n1/n3)
-	got: +INF
-	exp. +INF (~same)
+	got: 81.  656909 (=Lf:81.656910 = 1369975611 = x51a82b3b = b1010001.101010000010101100111011, 31 bits)
+	exp. 81.656910 (~same)
 log2_l(n1)
-	got: 4.  703441 (=Lf:4.703442 = 78910670 = x4b414ce = b100.101101000001010011001110, 27 bits)
-	exp. 4.703442 (~same)
+	got: UNDEF
+	exp. UNDEF (~same)
 log2_l(n2)
 	got: UNDEF
 	exp. UNDEF (~same)
 log2_l(n3)
-	got: -2. -742877 (=Lf:-2.742878 = -46017859 = x(-)2be2d43 = b(-)10.101111100010110101000011, 26 bits)
-	exp. -2.742878 (~same)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n1)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n2)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n3)
+	got: UNDEF
+	exp. UNDEF (~same)
 
 Some transcendental numbers as fxp's (24 frac bits):
 e  as fxp: 2.  718281 (=Lf:2.718282 = 45605201 = x2b7e151 = b10.101101111110000101010001, 26 bits)
@@ -8218,8 +6966,1760 @@ ln(0): -INF
 log2_l(-INF): UNDEF
 log2_l(UNDEF): UNDEF
 
+log2_bkm(+INF): +INF
+log2_bkm(2): 1.       0 (=Lf:1.000000 = 16777216 = x1000000 = b1.000000000000000000000000, 25 bits)
+log2_bkm(1): 0.       0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
+log2_bkm(0): -INF
+ln_bkm(e): 0.  999999 (=Lf:1.000000 = 16777215 = xffffff = b.111111111111111111111111, 24 bits)
+ln_bkm(1): 0.       0 (=Lf:0.000000 = 0 = x0 = b.000000000000000000000000, 0 bits)
+ln_bkm(0): -INF
+log2_bkm(-INF): UNDEF
+log2_bkm(UNDEF): UNDEF
+
 0 Warnings for 24 frac bits.
 All tests passed using 24-bit fracs, and '999999' as max decimal frac.
+
+
+========================
+FXP configuration parameters:
+frac bits : 16 (requested was 16)
+whole bits: 16
++INF      : 2147483647 (x7fffffff,  wh,fr values: 32767, 65535,  Lf eq.:32767.999985)
+whole max : 32767
+frac mask : 65535
+frac max  : 65535 (->decimals: .9999)
+whole min : -32767
+-INF      : -2147483647 (x80000001,  wh,fr values: -32767, -65535,  Lf eq.:-32767.999985)
+UNDEF     : -2147483648 (x80000000,  wh,fr values: -32767, -65536,  Lf eq.:-32768.099976)
+warn_delta: 4.577637E-05
+max_warn_delta: 6.103516E-05
+
+Checking extreme int values, part I:
++Inf
+	got: +INF
+	exp. +INF (~same)
+Largest
+	got: 32767. 9999 (=Lf:32767.999969 = 2147483646 = x7ffffffe = b111111111111111.1111111111111110, 31 bits)
+	exp. 32767.999969 (~same)
+HalfMax
+	got: 16383. 9999 (=Lf:16383.999985 = 1073741823 = x3fffffff = b11111111111111.1111111111111111, 30 bits)
+	exp. 16383.999985 (~same)
+Largest frac
+	got: 0. 9999 (=Lf:0.999985 = 65535 = xffff = b.1111111111111111, 16 bits)
+	exp. 0.999985 (~same)
+tiniest
+	got: 0.    0 (=Lf:0.000015 = 1 = x1 = b.0000000000000001, 1 bits)
+	exp. 0.000015 (~same)
+0.5
+	got: 0. 4999 (=Lf:0.500000 = 32768 = x8000 = b.1000000000000000, 16 bits)
+	exp. 0.500000 (~same)
+zero
+	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+-tiniest
+	got: 0.    0 (=Lf:-0.000015 = -1 = x(-)1 = b(-).0000000000000001, 1 bits)
+	exp. -0.000015 (~same)
+-Largest frac
+	got: 0.-9999 (=Lf:-0.999985 = -65535 = x(-)ffff = b(-).1111111111111111, 16 bits)
+	exp. -0.999985 (~same)
+Most negative
+	got: -32767.-9999 (=Lf:-32767.999969 = -2147483646 = x(-)7ffffffe = b(-)111111111111111.1111111111111110, 31 bits)
+	exp. -32767.999969 (~same)
+-Inf
+	got: -INF
+	exp. -INF (~same)
+Undefined
+	got: UNDEF
+	exp. UNDEF (~same)
+
+Checking extreme int values, part II:
+Almost most negative
+	got: -32767.-9998 (=Lf:-32767.999954 = -2147483645 = x(-)7ffffffd = b(-)111111111111111.1111111111111101, 31 bits)
+	exp. -32767.999954 (~same)
+ Largest -Largest
+	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+-Largest +Largest
+	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+Largest + 0
+	got: 32767. 9999 (=Lf:32767.999969 = 2147483646 = x7ffffffe = b111111111111111.1111111111111110, 31 bits)
+	exp. 32767.999969 (~same)
+-Largest - 0
+	got: -32767.-9999 (=Lf:-32767.999969 = -2147483646 = x(-)7ffffffe = b(-)111111111111111.1111111111111110, 31 bits)
+	exp. -32767.999969 (~same)
+Largest - tiniest
+	got: 32767. 9998 (=Lf:32767.999954 = 2147483645 = x7ffffffd = b111111111111111.1111111111111101, 31 bits)
+	exp. 32767.999954 (~same)
+Largest + tiniest safe
+	got: +INF
+	exp. +INF (~same)
+Largest + tiniest unsafe
+	got: +INF
+	exp. +INF (~same)
+-(+inf)
+	got: -INF
+	exp. -INF (~same)
+-(-inf)
+	got: +INF
+	exp. +INF (~same)
++inf + +inf
+	got: +INF
+	exp. +INF (~same)
+-inf - +inf
+	got: -INF
+	exp. -INF (~same)
++inf + -inf
+	got: UNDEF
+	exp. UNDEF (~same)
+-inf + -inf
+	got: -INF
+	exp. -INF (~same)
+-inf - -inf
+	got: UNDEF
+	exp. UNDEF (~same)
++inf * -inf
+	got: -INF
+	exp. -INF (~same)
++inf - 0.5
+	got: +INF
+	exp. +INF (~same)
+-inf + 0.5
+	got: -INF
+	exp. -INF (~same)
++num / zero
+	got: +INF
+	exp. +INF (~same)
+zero / zero
+	got: UNDEF
+	exp. UNDEF (~same)
+zero * zero
+	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+zero + zero
+	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+zero - zero
+	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+zero - undef
+	got: UNDEF
+	exp. UNDEF (~same)
+-num / zero
+	got: -INF
+	exp. -INF (~same)
+zero * +inf
+	got: UNDEF
+	exp. UNDEF (~same)
+zero * -inf
+	got: UNDEF
+	exp. UNDEF (~same)
+zero * undef
+	got: UNDEF
+	exp. UNDEF (~same)
+-inf * undef
+	got: UNDEF
+	exp. UNDEF (~same)
++inf * undef
+	got: UNDEF
+	exp. UNDEF (~same)
+undef * undef
+	got: UNDEF
+	exp. UNDEF (~same)
+tiniest * inf
+	got: +INF
+	exp. +INF (~same)
+
+Checking extreme int values, part III:
+Way Too Large whole part!
+	got: +INF
+	exp. +INF (~same)
+Largest * 1
+	got: 32767. 9999 (=Lf:32767.999969 = 2147483646 = x7ffffffe = b111111111111111.1111111111111110, 31 bits)
+	exp. 32767.999969 (~same)
+Largest * -1
+	got: -32767.-9999 (=Lf:-32767.999969 = -2147483646 = x(-)7ffffffe = b(-)111111111111111.1111111111111110, 31 bits)
+	exp. -32767.999969 (~same)
+Largest + two safe
+	got: +INF
+	exp. +INF (~same)
+Largest + two unsafe
+	got: -32766.    0 (=Lf:-32766.000031 = -2147352578 = x(-)7ffe0002 = b(-)111111111111110.0000000000000010, 31 bits)
+	exp. -32766.000031 (~same)
+Safe Too neg substraction
+	got: -INF
+	exp. -INF (~same)
+Unsafe Too neg substraction
+	got: 32767. 5000 (=Lf:32767.500031 = 2147450882 = x7fff8002 = b111111111111111.1000000000000010, 31 bits)
+	exp. 32767.500031 (~same)
+Largest + 0.5
+	got: +INF
+	exp. +INF (~same)
+-Largest - 0.5
+	got: -INF
+	exp. -INF (~same)
++HalfMax + HMaxp2
+	got: +INF
+	exp. +INF (~same)
+-HalfMax - HMaxp2
+	got: -INF
+	exp. -INF (~same)
+HalfMax + HalfMax
+	got: 32767. 9999 (=Lf:32767.999969 = 2147483646 = x7ffffffe = b111111111111111.1111111111111110, 31 bits)
+	exp. 32767.999969 (~same)
+FXP_MAX - HalfMax
+	got: 16383. 9999 (=Lf:16383.999985 = 1073741823 = x3fffffff = b11111111111111.1111111111111111, 30 bits)
+	exp. 16383.999985 (~same)
+HalfMax + FXP_MAX
+	got: +INF
+	exp. +INF (~same)
+-FXP_MAX - HalfMax
+	got: -INF
+	exp. -INF (~same)
+HalfMax * 2
+	got: 32767. 9999 (=Lf:32767.999969 = 2147483646 = x7ffffffe = b111111111111111.1111111111111110, 31 bits)
+	exp. 32767.999969 (~same)
+HalfMax * 2 (long)
+	got: 32767. 9999 (=Lf:32767.999969 = 2147483646 = x7ffffffe = b111111111111111.1111111111111110, 31 bits)
+	exp. 32767.999969 (~same)
+HalfMax * 3
+	got: +INF
+	exp. +INF (~same)
+-HalfMax * 3
+	got: -INF
+	exp. -INF (~same)
+(HalfMax+0.5)*2
+	got: +INF
+	exp. +INF (~same)
+(HalfMax+0.5)*2 (long)
+	got: +INF
+	exp. +INF (~same)
+
+Checking decimal <=> bin mappings of frac ranges:
+Max frac dec: 9999 (bin 65535)
+Showing fxp for 0.  0: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+Showing fxp for 0.  1: 0.    1 (=Lf:0.000092 = 6 = x6 = b.0000000000000110, 3 bits)
+Showing fxp for 0.  2: 0.    2 (=Lf:0.000198 = 13 = xd = b.0000000000001101, 4 bits)
+Showing fxp for 0.  3: 0.    3 (=Lf:0.000290 = 19 = x13 = b.0000000000010011, 5 bits)
+Showing fxp for 0.  4: 0.    4 (=Lf:0.000397 = 26 = x1a = b.0000000000011010, 5 bits)
+Showing fxp for 0.  5: 0.    5 (=Lf:0.000488 = 32 = x20 = b.0000000000100000, 6 bits)
+:
+Showing fxp for 0.4998: 0. 4998 (=Lf:0.499832 = 32757 = x7ff5 = b.0111111111110101, 15 bits)
+Showing fxp for 0.4999: 0. 4999 (=Lf:0.499939 = 32764 = x7ffc = b.0111111111111100, 15 bits)
+Showing fxp for 0.5000: 0. 5000 (=Lf:0.500031 = 32770 = x8002 = b.1000000000000010, 16 bits)
+Showing fxp for 0.5001: 0. 5001 (=Lf:0.500137 = 32777 = x8009 = b.1000000000001001, 16 bits)
+Showing fxp for 0.5002: 0. 5002 (=Lf:0.500229 = 32783 = x800f = b.1000000000001111, 16 bits)
+:
+Showing fxp for 0.9994: 0. 9994 (=Lf:0.999481 = 65502 = xffde = b.1111111111011110, 16 bits)
+Showing fxp for 0.9995: 0. 9995 (=Lf:0.999573 = 65508 = xffe4 = b.1111111111100100, 16 bits)
+Showing fxp for 0.9996: 0. 9996 (=Lf:0.999680 = 65515 = xffeb = b.1111111111101011, 16 bits)
+Showing fxp for 0.9997: 0. 9997 (=Lf:0.999771 = 65521 = xfff1 = b.1111111111110001, 16 bits)
+Showing fxp for 0.9998: 0. 9998 (=Lf:0.999878 = 65528 = xfff8 = b.1111111111111000, 16 bits)
+Showing fxp for 0.9999: 0. 9999 (=Lf:0.999985 = 65535 = xffff = b.1111111111111111, 16 bits)
+
+Checking sign taken from frac when whole == 0:
+-0.(+)500
+	got: 0.  500 (=Lf:0.500488 = 32800 = x8020 = b.1000000000100000, 16 bits)
+	exp. 0.500000 (~same)
+-0.(-)500
+	got: 0. -500 (=Lf:-0.500488 = -32800 = x(-)8020 = b(-).1000000000100000, 16 bits)
+	exp. -0.500000 (~same)
+
+Checking truncation of longer frac decimal arguments:
+0.22222
+	got: 0.  222 (=Lf:0.222214 = 14563 = x38e3 = b.0011100011100011, 14 bits)
+	exp. 0.221985 (~same)
+0.4444444
+	got: 0.  444 (=Lf:0.444427 = 29126 = x71c6 = b.0111000111000110, 15 bits)
+	exp. 0.443985 (~same)
+0.771999
+	got: 0.  771 (=Lf:0.771759 = 50578 = xc592 = b.1100010110010010, 16 bits)
+	exp. 0.770996 (~same)
+0.9999999
+	got: 0.  999 (=Lf:0.999985 = 65535 = xffff = b.1111111111111111, 16 bits)
+	exp. 0.998993 (~same)
+
+Checking extreme frac values:
+maxfrac
+	got: 0. 9999 (=Lf:0.999985 = 65535 = xffff = b.1111111111111111, 16 bits)
+	exp. 0.999985 (~same)
+0.5 + maxfrac
+	got: 1. 4999 (=Lf:1.499985 = 98303 = x17fff = b1.0111111111111111, 17 bits)
+	exp. 1.499985 (~same)
+maxfrac +tiniest
+	got: 1.    0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
+	exp. 1.000000 (~same)
+-maxfrac -tiniest
+	got: -1.    0 (=Lf:-1.000000 = -65536 = x(-)10000 = b(-)1.0000000000000000, 17 bits)
+	exp. -1.000000 (~same)
+maxfrac - maxfrac
+	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+
+Checking simple ops when using 3+ bits for whole part:
+ 1 + 1
+	got: 2.    0 (=Lf:2.000000 = 131072 = x20000 = b10.0000000000000000, 18 bits)
+	exp. 2.000000 (~same)
+-1 - 1
+	got: -2.    0 (=Lf:-2.000000 = -131072 = x(-)20000 = b(-)10.0000000000000000, 18 bits)
+	exp. -2.000000 (~same)
+Ok sum == 2
+	got: 2.    0 (=Lf:2.000000 = 131072 = x20000 = b10.0000000000000000, 18 bits)
+	exp. 2.000000 (~same)
+Ok sum == -2
+	got: -2.    0 (=Lf:-2.000000 = -131072 = x(-)20000 = b(-)10.0000000000000000, 18 bits)
+	exp. -2.000000 (~same)
+ num
+	got: 0. 4999 (=Lf:0.499985 = 32767 = x7fff = b.0111111111111111, 15 bits)
+	exp. 0.499985 (~same)
+ num +  2
+	got: 2. 4999 (=Lf:2.499985 = 163839 = x27fff = b10.0111111111111111, 18 bits)
+	exp. 2.499985 (~same)
+ num + -2
+	got: -1.-4999 (=Lf:-1.500015 = -98305 = x(-)18001 = b(-)1.1000000000000001, 17 bits)
+	exp. -1.500015 (~same)
+-num +  2
+	got: 1. 4999 (=Lf:1.500015 = 98305 = x18001 = b1.1000000000000001, 17 bits)
+	exp. 1.500015 (~same)
+-num + -2
+	got: -2.-4999 (=Lf:-2.499985 = -163839 = x(-)27fff = b(-)10.0111111111111111, 18 bits)
+	exp. -2.499985 (~same)
+ num -  2
+	got: -1.-4999 (=Lf:-1.500015 = -98305 = x(-)18001 = b(-)1.1000000000000001, 17 bits)
+	exp. -1.500015 (~same)
+ num - -2
+	got: 2. 4999 (=Lf:2.499985 = 163839 = x27fff = b10.0111111111111111, 18 bits)
+	exp. 2.499985 (~same)
+-num -  2
+	got: -2.-4999 (=Lf:-2.499985 = -163839 = x(-)27fff = b(-)10.0111111111111111, 18 bits)
+	exp. -2.499985 (~same)
+-num - -2
+	got: 1. 4999 (=Lf:1.500015 = 98305 = x18001 = b1.1000000000000001, 17 bits)
+	exp. 1.500015 (~same)
+ num *  2
+	got: 0. 9999 (=Lf:0.999969 = 65534 = xfffe = b.1111111111111110, 16 bits)
+	exp. 0.999969 (~same)
+ num * -2
+	got: 0.-9999 (=Lf:-0.999969 = -65534 = x(-)fffe = b(-).1111111111111110, 16 bits)
+	exp. -0.999969 (~same)
+-num *  2
+	got: 0.-9999 (=Lf:-0.999969 = -65534 = x(-)fffe = b(-).1111111111111110, 16 bits)
+	exp. -0.999969 (~same)
+-num * -2
+	got: 0. 9999 (=Lf:0.999969 = 65534 = xfffe = b.1111111111111110, 16 bits)
+	exp. 0.999969 (~same)
+ num *  2 (long)
+	got: 0. 9999 (=Lf:0.999969 = 65534 = xfffe = b.1111111111111110, 16 bits)
+	exp. 0.999969 (~same)
+ num * -2 (long)
+	got: 0.-9999 (=Lf:-0.999969 = -65534 = x(-)fffe = b(-).1111111111111110, 16 bits)
+	exp. -0.999969 (~same)
+-num *  2 (long)
+	got: 0.-9999 (=Lf:-0.999969 = -65534 = x(-)fffe = b(-).1111111111111110, 16 bits)
+	exp. -0.999969 (~same)
+-num * -2 (long)
+	got: 0. 9999 (=Lf:0.999969 = 65534 = xfffe = b.1111111111111110, 16 bits)
+	exp. 0.999969 (~same)
+ num /  2
+	got: 0. 2499 (=Lf:0.249985 = 16383 = x3fff = b.0011111111111111, 14 bits)
+	exp. 0.249985 (~same)
+ num / -2
+	got: 0.-2499 (=Lf:-0.249985 = -16383 = x(-)3fff = b(-).0011111111111111, 14 bits)
+	exp. -0.249985 (~same)
+-num /  2
+	got: 0.-2499 (=Lf:-0.249985 = -16383 = x(-)3fff = b(-).0011111111111111, 14 bits)
+	exp. -0.249985 (~same)
+-num / -2
+	got: 0. 2499 (=Lf:0.249985 = 16383 = x3fff = b.0011111111111111, 14 bits)
+	exp. 0.249985 (~same)
+
+Verifying divisions with values of interest:
+x: UNDEF
+y: UNDEF
+mul  (x*y)
+	got: UNDEF
+	exp. -32768.099976 (~same)
+
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
+x: UNDEF
+y: +INF
+mul  (x*y)
+	got: UNDEF
+	exp. -32768.099976 (~same)
+
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
+x: UNDEF
+y: -INF
+mul  (x*y)
+	got: UNDEF
+	exp. -32768.099976 (~same)
+
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
+x: UNDEF
+y: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+mul  (x*y)
+	got: UNDEF
+	exp. -32768.099976 (~same)
+
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
+x: UNDEF
+y: 1.    0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
+mul  (x*y)
+	got: UNDEF
+	exp. -32768.099976 (~same)
+
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
+x: +INF
+y: UNDEF
+mul  (x*y)
+	got: UNDEF
+	exp. -32768.099976 (~same)
+
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
+x: +INF
+y: +INF
+mul  (x*y)
+	got: +INF
+	exp. +INF (~same)
+
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
+x: +INF
+y: -INF
+mul  (x*y)
+	got: -INF
+	exp. -INF (~same)
+
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
+x: +INF
+y: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+mul  (x*y)
+	got: UNDEF
+	exp. -32768.099976 (~same)
+
+div  (x/y)
+	got: +INF
+	exp. +INF (~same)
+x: +INF
+y: 1.    0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
+mul  (x*y)
+	got: +INF
+	exp. +INF (~same)
+
+div  (x/y)
+	got: +INF
+	exp. +INF (~same)
+x: 32767. 9999 (=Lf:32767.999969 = 2147483646 = x7ffffffe = b111111111111111.1111111111111110, 31 bits)
+y: UNDEF
+mul  (x*y)
+	got: UNDEF
+	exp. -32768.099976 (~same)
+
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
+x: 32767. 9999 (=Lf:32767.999969 = 2147483646 = x7ffffffe = b111111111111111.1111111111111110, 31 bits)
+y: +INF
+mul  (x*y)
+	got: +INF
+	exp. +INF (~same)
+
+div  (x/y)
+	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: 32767. 9999 (=Lf:32767.999969 = 2147483646 = x7ffffffe = b111111111111111.1111111111111110, 31 bits)
+y: -INF
+mul  (x*y)
+	got: -INF
+	exp. -INF (~same)
+
+div  (x/y)
+	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: 32767. 9999 (=Lf:32767.999969 = 2147483646 = x7ffffffe = b111111111111111.1111111111111110, 31 bits)
+y: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+mul  (x*y)
+	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+
+div  (x/y)
+	got: +INF
+	exp. +INF (~same)
+x: 32767. 9999 (=Lf:32767.999969 = 2147483646 = x7ffffffe = b111111111111111.1111111111111110, 31 bits)
+y: 1.    0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
+mul  (x*y)
+	got: 32767. 9999 (=Lf:32767.999969 = 2147483646 = x7ffffffe = b111111111111111.1111111111111110, 31 bits)
+	exp. 32767.999969 (~same)
+
+div  (x/y)
+	got: 32767. 9999 (=Lf:32767.999969 = 2147483646 = x7ffffffe = b111111111111111.1111111111111110, 31 bits)
+	exp. 32767.999969 (~same)
+x: +INF
+y: UNDEF
+mul  (x*y)
+	got: UNDEF
+	exp. -32768.099976 (~same)
+
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
+x: +INF
+y: +INF
+mul  (x*y)
+	got: +INF
+	exp. +INF (~same)
+
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
+x: +INF
+y: -INF
+mul  (x*y)
+	got: -INF
+	exp. -INF (~same)
+
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
+x: +INF
+y: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+mul  (x*y)
+	got: UNDEF
+	exp. -32768.099976 (~same)
+
+div  (x/y)
+	got: +INF
+	exp. +INF (~same)
+x: +INF
+y: 1.    0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
+mul  (x*y)
+	got: +INF
+	exp. +INF (~same)
+
+div  (x/y)
+	got: +INF
+	exp. +INF (~same)
+x: 3000.    5 (=Lf:3000.000488 = 196608032 = xbb80020 = b101110111000.0000000000100000, 28 bits)
+y: UNDEF
+mul  (x*y)
+	got: UNDEF
+	exp. -32768.099976 (~same)
+
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
+x: 3000.    5 (=Lf:3000.000488 = 196608032 = xbb80020 = b101110111000.0000000000100000, 28 bits)
+y: +INF
+mul  (x*y)
+	got: +INF
+	exp. +INF (~same)
+
+div  (x/y)
+	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: 3000.    5 (=Lf:3000.000488 = 196608032 = xbb80020 = b101110111000.0000000000100000, 28 bits)
+y: -INF
+mul  (x*y)
+	got: -INF
+	exp. -INF (~same)
+
+div  (x/y)
+	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: 3000.    5 (=Lf:3000.000488 = 196608032 = xbb80020 = b101110111000.0000000000100000, 28 bits)
+y: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+mul  (x*y)
+	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+
+div  (x/y)
+	got: +INF
+	exp. +INF (~same)
+x: 3000.    5 (=Lf:3000.000488 = 196608032 = xbb80020 = b101110111000.0000000000100000, 28 bits)
+y: 1.    0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
+mul  (x*y)
+	got: 3000.    5 (=Lf:3000.000488 = 196608032 = xbb80020 = b101110111000.0000000000100000, 28 bits)
+	exp. 3000.000488 (~same)
+
+div  (x/y)
+	got: 3000.    5 (=Lf:3000.000488 = 196608032 = xbb80020 = b101110111000.0000000000100000, 28 bits)
+	exp. 3000.000488 (~same)
+x: 30.    0 (=Lf:30.000000 = 1966080 = x1e0000 = b11110.0000000000000000, 21 bits)
+y: UNDEF
+mul  (x*y)
+	got: UNDEF
+	exp. -32768.099976 (~same)
+
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
+x: 30.    0 (=Lf:30.000000 = 1966080 = x1e0000 = b11110.0000000000000000, 21 bits)
+y: +INF
+mul  (x*y)
+	got: +INF
+	exp. +INF (~same)
+
+div  (x/y)
+	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: 30.    0 (=Lf:30.000000 = 1966080 = x1e0000 = b11110.0000000000000000, 21 bits)
+y: -INF
+mul  (x*y)
+	got: -INF
+	exp. -INF (~same)
+
+div  (x/y)
+	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: 30.    0 (=Lf:30.000000 = 1966080 = x1e0000 = b11110.0000000000000000, 21 bits)
+y: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+mul  (x*y)
+	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+
+div  (x/y)
+	got: +INF
+	exp. +INF (~same)
+x: 30.    0 (=Lf:30.000000 = 1966080 = x1e0000 = b11110.0000000000000000, 21 bits)
+y: 1.    0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
+mul  (x*y)
+	got: 30.    0 (=Lf:30.000000 = 1966080 = x1e0000 = b11110.0000000000000000, 21 bits)
+	exp. 30.000000 (~same)
+
+div  (x/y)
+	got: 30.    0 (=Lf:30.000000 = 1966080 = x1e0000 = b11110.0000000000000000, 21 bits)
+	exp. 30.000000 (~same)
+x: 3.    0 (=Lf:3.000000 = 196608 = x30000 = b11.0000000000000000, 18 bits)
+y: UNDEF
+mul  (x*y)
+	got: UNDEF
+	exp. -32768.099976 (~same)
+
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
+x: 3.    0 (=Lf:3.000000 = 196608 = x30000 = b11.0000000000000000, 18 bits)
+y: +INF
+mul  (x*y)
+	got: +INF
+	exp. +INF (~same)
+
+div  (x/y)
+	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: 3.    0 (=Lf:3.000000 = 196608 = x30000 = b11.0000000000000000, 18 bits)
+y: -INF
+mul  (x*y)
+	got: -INF
+	exp. -INF (~same)
+
+div  (x/y)
+	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: 3.    0 (=Lf:3.000000 = 196608 = x30000 = b11.0000000000000000, 18 bits)
+y: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+mul  (x*y)
+	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+
+div  (x/y)
+	got: +INF
+	exp. +INF (~same)
+x: 3.    0 (=Lf:3.000000 = 196608 = x30000 = b11.0000000000000000, 18 bits)
+y: 1.    0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
+mul  (x*y)
+	got: 3.    0 (=Lf:3.000000 = 196608 = x30000 = b11.0000000000000000, 18 bits)
+	exp. 3.000000 (~same)
+
+div  (x/y)
+	got: 3.    0 (=Lf:3.000000 = 196608 = x30000 = b11.0000000000000000, 18 bits)
+	exp. 3.000000 (~same)
+x: 2.    0 (=Lf:2.000000 = 131072 = x20000 = b10.0000000000000000, 18 bits)
+y: UNDEF
+mul  (x*y)
+	got: UNDEF
+	exp. -32768.099976 (~same)
+
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
+x: 2.    0 (=Lf:2.000000 = 131072 = x20000 = b10.0000000000000000, 18 bits)
+y: +INF
+mul  (x*y)
+	got: +INF
+	exp. +INF (~same)
+
+div  (x/y)
+	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: 2.    0 (=Lf:2.000000 = 131072 = x20000 = b10.0000000000000000, 18 bits)
+y: -INF
+mul  (x*y)
+	got: -INF
+	exp. -INF (~same)
+
+div  (x/y)
+	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: 2.    0 (=Lf:2.000000 = 131072 = x20000 = b10.0000000000000000, 18 bits)
+y: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+mul  (x*y)
+	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+
+div  (x/y)
+	got: +INF
+	exp. +INF (~same)
+x: 2.    0 (=Lf:2.000000 = 131072 = x20000 = b10.0000000000000000, 18 bits)
+y: 1.    0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
+mul  (x*y)
+	got: 2.    0 (=Lf:2.000000 = 131072 = x20000 = b10.0000000000000000, 18 bits)
+	exp. 2.000000 (~same)
+
+div  (x/y)
+	got: 2.    0 (=Lf:2.000000 = 131072 = x20000 = b10.0000000000000000, 18 bits)
+	exp. 2.000000 (~same)
+x: 1.    0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
+y: UNDEF
+mul  (x*y)
+	got: UNDEF
+	exp. -32768.099976 (~same)
+
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
+x: 1.    0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
+y: +INF
+mul  (x*y)
+	got: +INF
+	exp. +INF (~same)
+
+div  (x/y)
+	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: 1.    0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
+y: -INF
+mul  (x*y)
+	got: -INF
+	exp. -INF (~same)
+
+div  (x/y)
+	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: 1.    0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
+y: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+mul  (x*y)
+	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+
+div  (x/y)
+	got: +INF
+	exp. +INF (~same)
+x: 1.    0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
+y: 1.    0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
+mul  (x*y)
+	got: 1.    0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
+	exp. 1.000000 (~same)
+
+div  (x/y)
+	got: 1.    0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
+	exp. 1.000000 (~same)
+x: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+y: UNDEF
+mul  (x*y)
+	got: UNDEF
+	exp. -32768.099976 (~same)
+
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
+x: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+y: +INF
+mul  (x*y)
+	got: UNDEF
+	exp. -32768.099976 (~same)
+
+div  (x/y)
+	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+y: -INF
+mul  (x*y)
+	got: UNDEF
+	exp. -32768.099976 (~same)
+
+div  (x/y)
+	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+y: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+mul  (x*y)
+	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
+x: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+y: 1.    0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
+mul  (x*y)
+	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+
+div  (x/y)
+	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: -1.    0 (=Lf:-1.000000 = -65536 = x(-)10000 = b(-)1.0000000000000000, 17 bits)
+y: UNDEF
+mul  (x*y)
+	got: UNDEF
+	exp. -32768.099976 (~same)
+
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
+x: -1.    0 (=Lf:-1.000000 = -65536 = x(-)10000 = b(-)1.0000000000000000, 17 bits)
+y: +INF
+mul  (x*y)
+	got: -INF
+	exp. -INF (~same)
+
+div  (x/y)
+	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: -1.    0 (=Lf:-1.000000 = -65536 = x(-)10000 = b(-)1.0000000000000000, 17 bits)
+y: -INF
+mul  (x*y)
+	got: +INF
+	exp. +INF (~same)
+
+div  (x/y)
+	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: -1.    0 (=Lf:-1.000000 = -65536 = x(-)10000 = b(-)1.0000000000000000, 17 bits)
+y: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+mul  (x*y)
+	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+
+div  (x/y)
+	got: -INF
+	exp. -INF (~same)
+x: -1.    0 (=Lf:-1.000000 = -65536 = x(-)10000 = b(-)1.0000000000000000, 17 bits)
+y: 1.    0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
+mul  (x*y)
+	got: -1.    0 (=Lf:-1.000000 = -65536 = x(-)10000 = b(-)1.0000000000000000, 17 bits)
+	exp. -1.000000 (~same)
+
+div  (x/y)
+	got: -1.    0 (=Lf:-1.000000 = -65536 = x(-)10000 = b(-)1.0000000000000000, 17 bits)
+	exp. -1.000000 (~same)
+x: -2.    0 (=Lf:-2.000000 = -131072 = x(-)20000 = b(-)10.0000000000000000, 18 bits)
+y: UNDEF
+mul  (x*y)
+	got: UNDEF
+	exp. -32768.099976 (~same)
+
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
+x: -2.    0 (=Lf:-2.000000 = -131072 = x(-)20000 = b(-)10.0000000000000000, 18 bits)
+y: +INF
+mul  (x*y)
+	got: -INF
+	exp. -INF (~same)
+
+div  (x/y)
+	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: -2.    0 (=Lf:-2.000000 = -131072 = x(-)20000 = b(-)10.0000000000000000, 18 bits)
+y: -INF
+mul  (x*y)
+	got: +INF
+	exp. +INF (~same)
+
+div  (x/y)
+	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: -2.    0 (=Lf:-2.000000 = -131072 = x(-)20000 = b(-)10.0000000000000000, 18 bits)
+y: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+mul  (x*y)
+	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+
+div  (x/y)
+	got: -INF
+	exp. -INF (~same)
+x: -2.    0 (=Lf:-2.000000 = -131072 = x(-)20000 = b(-)10.0000000000000000, 18 bits)
+y: 1.    0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
+mul  (x*y)
+	got: -2.    0 (=Lf:-2.000000 = -131072 = x(-)20000 = b(-)10.0000000000000000, 18 bits)
+	exp. -2.000000 (~same)
+
+div  (x/y)
+	got: -2.    0 (=Lf:-2.000000 = -131072 = x(-)20000 = b(-)10.0000000000000000, 18 bits)
+	exp. -2.000000 (~same)
+x: -3.    0 (=Lf:-3.000000 = -196608 = x(-)30000 = b(-)11.0000000000000000, 18 bits)
+y: UNDEF
+mul  (x*y)
+	got: UNDEF
+	exp. -32768.099976 (~same)
+
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
+x: -3.    0 (=Lf:-3.000000 = -196608 = x(-)30000 = b(-)11.0000000000000000, 18 bits)
+y: +INF
+mul  (x*y)
+	got: -INF
+	exp. -INF (~same)
+
+div  (x/y)
+	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: -3.    0 (=Lf:-3.000000 = -196608 = x(-)30000 = b(-)11.0000000000000000, 18 bits)
+y: -INF
+mul  (x*y)
+	got: +INF
+	exp. +INF (~same)
+
+div  (x/y)
+	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: -3.    0 (=Lf:-3.000000 = -196608 = x(-)30000 = b(-)11.0000000000000000, 18 bits)
+y: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+mul  (x*y)
+	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+
+div  (x/y)
+	got: -INF
+	exp. -INF (~same)
+x: -3.    0 (=Lf:-3.000000 = -196608 = x(-)30000 = b(-)11.0000000000000000, 18 bits)
+y: 1.    0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
+mul  (x*y)
+	got: -3.    0 (=Lf:-3.000000 = -196608 = x(-)30000 = b(-)11.0000000000000000, 18 bits)
+	exp. -3.000000 (~same)
+
+div  (x/y)
+	got: -3.    0 (=Lf:-3.000000 = -196608 = x(-)30000 = b(-)11.0000000000000000, 18 bits)
+	exp. -3.000000 (~same)
+x: -30.    0 (=Lf:-30.000000 = -1966080 = x(-)1e0000 = b(-)11110.0000000000000000, 21 bits)
+y: UNDEF
+mul  (x*y)
+	got: UNDEF
+	exp. -32768.099976 (~same)
+
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
+x: -30.    0 (=Lf:-30.000000 = -1966080 = x(-)1e0000 = b(-)11110.0000000000000000, 21 bits)
+y: +INF
+mul  (x*y)
+	got: -INF
+	exp. -INF (~same)
+
+div  (x/y)
+	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: -30.    0 (=Lf:-30.000000 = -1966080 = x(-)1e0000 = b(-)11110.0000000000000000, 21 bits)
+y: -INF
+mul  (x*y)
+	got: +INF
+	exp. +INF (~same)
+
+div  (x/y)
+	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: -30.    0 (=Lf:-30.000000 = -1966080 = x(-)1e0000 = b(-)11110.0000000000000000, 21 bits)
+y: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+mul  (x*y)
+	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+
+div  (x/y)
+	got: -INF
+	exp. -INF (~same)
+x: -30.    0 (=Lf:-30.000000 = -1966080 = x(-)1e0000 = b(-)11110.0000000000000000, 21 bits)
+y: 1.    0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
+mul  (x*y)
+	got: -30.    0 (=Lf:-30.000000 = -1966080 = x(-)1e0000 = b(-)11110.0000000000000000, 21 bits)
+	exp. -30.000000 (~same)
+
+div  (x/y)
+	got: -30.    0 (=Lf:-30.000000 = -1966080 = x(-)1e0000 = b(-)11110.0000000000000000, 21 bits)
+	exp. -30.000000 (~same)
+x: -3000.   -5 (=Lf:-3000.000488 = -196608032 = x(-)bb80020 = b(-)101110111000.0000000000100000, 28 bits)
+y: UNDEF
+mul  (x*y)
+	got: UNDEF
+	exp. -32768.099976 (~same)
+
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
+x: -3000.   -5 (=Lf:-3000.000488 = -196608032 = x(-)bb80020 = b(-)101110111000.0000000000100000, 28 bits)
+y: +INF
+mul  (x*y)
+	got: -INF
+	exp. -INF (~same)
+
+div  (x/y)
+	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: -3000.   -5 (=Lf:-3000.000488 = -196608032 = x(-)bb80020 = b(-)101110111000.0000000000100000, 28 bits)
+y: -INF
+mul  (x*y)
+	got: +INF
+	exp. +INF (~same)
+
+div  (x/y)
+	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: -3000.   -5 (=Lf:-3000.000488 = -196608032 = x(-)bb80020 = b(-)101110111000.0000000000100000, 28 bits)
+y: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+mul  (x*y)
+	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+
+div  (x/y)
+	got: -INF
+	exp. -INF (~same)
+x: -3000.   -5 (=Lf:-3000.000488 = -196608032 = x(-)bb80020 = b(-)101110111000.0000000000100000, 28 bits)
+y: 1.    0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
+mul  (x*y)
+	got: -3000.   -5 (=Lf:-3000.000488 = -196608032 = x(-)bb80020 = b(-)101110111000.0000000000100000, 28 bits)
+	exp. -3000.000488 (~same)
+
+div  (x/y)
+	got: -3000.   -5 (=Lf:-3000.000488 = -196608032 = x(-)bb80020 = b(-)101110111000.0000000000100000, 28 bits)
+	exp. -3000.000488 (~same)
+x: -INF
+y: UNDEF
+mul  (x*y)
+	got: UNDEF
+	exp. -32768.099976 (~same)
+
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
+x: -INF
+y: +INF
+mul  (x*y)
+	got: -INF
+	exp. -INF (~same)
+
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
+x: -INF
+y: -INF
+mul  (x*y)
+	got: +INF
+	exp. +INF (~same)
+
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
+x: -INF
+y: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+mul  (x*y)
+	got: UNDEF
+	exp. -32768.099976 (~same)
+
+div  (x/y)
+	got: -INF
+	exp. -INF (~same)
+x: -INF
+y: 1.    0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
+mul  (x*y)
+	got: -INF
+	exp. -INF (~same)
+
+div  (x/y)
+	got: -INF
+	exp. -INF (~same)
+x: -32767.-9999 (=Lf:-32767.999969 = -2147483646 = x(-)7ffffffe = b(-)111111111111111.1111111111111110, 31 bits)
+y: UNDEF
+mul  (x*y)
+	got: UNDEF
+	exp. -32768.099976 (~same)
+
+div  (x/y)
+	got: UNDEF
+	exp. UNDEF (~same)
+x: -32767.-9999 (=Lf:-32767.999969 = -2147483646 = x(-)7ffffffe = b(-)111111111111111.1111111111111110, 31 bits)
+y: +INF
+mul  (x*y)
+	got: -INF
+	exp. -INF (~same)
+
+div  (x/y)
+	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: -32767.-9999 (=Lf:-32767.999969 = -2147483646 = x(-)7ffffffe = b(-)111111111111111.1111111111111110, 31 bits)
+y: -INF
+mul  (x*y)
+	got: +INF
+	exp. +INF (~same)
+
+div  (x/y)
+	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+x: -32767.-9999 (=Lf:-32767.999969 = -2147483646 = x(-)7ffffffe = b(-)111111111111111.1111111111111110, 31 bits)
+y: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+mul  (x*y)
+	got: 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+	exp. 0.000000 (~same)
+
+div  (x/y)
+	got: -INF
+	exp. -INF (~same)
+x: -32767.-9999 (=Lf:-32767.999969 = -2147483646 = x(-)7ffffffe = b(-)111111111111111.1111111111111110, 31 bits)
+y: 1.    0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
+mul  (x*y)
+	got: -32767.-9999 (=Lf:-32767.999969 = -2147483646 = x(-)7ffffffe = b(-)111111111111111.1111111111111110, 31 bits)
+	exp. -32767.999969 (~same)
+
+div  (x/y)
+	got: -32767.-9999 (=Lf:-32767.999969 = -2147483646 = x(-)7ffffffe = b(-)111111111111111.1111111111111110, 31 bits)
+	exp. -32767.999969 (~same)
+
+Verifying different op implementations using random numbers:
+
+Random Test #0 for 16 frac bits:
+n1 = 9992. 7877 (=Lf:9992.787827 = 654887343 = x2708c9af = b10011100001000.1100100110101111, 30 bits)
+n2 = 23333. 6752 (=Lf:23333.675323 = 1529195746 = x5b25ace2 = b101101100100101.1010110011100010, 31 bits)
+n3 = 0. -793 (=Lf:-0.079315 = -5198 = x(-)144e = b(-).0001010001001110, 13 bits)( n3 always in (-1,1) )
+add   (n1+n2)
+	got: +INF
+	exp. +INF (~same)
+add_l (n1+n2)
+	got: +INF
+	exp. +INF (~same)
+add   (n1+n3)
+	got: 9992. 7084 (=Lf:9992.708511 = 654882145 = x2708b561 = b10011100001000.1011010101100001, 30 bits)
+	exp. 9992.708511 (~same)
+add_l (n1+n3)
+	got: 9992. 7084 (=Lf:9992.708511 = 654882145 = x2708b561 = b10011100001000.1011010101100001, 30 bits)
+	exp. 9992.708511 (~same)
+mul   (n1*n2)
+	got: +INF
+	exp. +INF (~same)
+mul_l (n1*n2)
+	got: +INF
+	exp. +INF (~same)
+mul   (n1*n3)
+	got: -792.-5797 (=Lf:-792.579819 = -51942511 = x(-)318946f = b(-)1100011000.1001010001101111, 26 bits)
+	exp. -792.579819 (~same)
+mul_l (n1*n3)
+	got: -792.-5797 (=Lf:-792.579819 = -51942511 = x(-)318946f = b(-)1100011000.1001010001101111, 26 bits)
+	exp. -792.579819 (~same)
+div_l (n1/n2)
+	got: 0. 4282 (=Lf:0.428253 = 28066 = x6da2 = b.0110110110100010, 15 bits)
+	exp. 0.428253 (~same)
+div   (n1/n2)
+	got: 0. 4282 (=Lf:0.428253 = 28066 = x6da2 = b.0110110110100010, 15 bits)
+	exp. 0.428253 (~same)
+div_l (n1/n3)
+	got: -INF
+	exp. -INF (~same)
+div   (n1/n3)
+	got: -INF
+	exp. -INF (~same)
+log2_l(n1)
+	got: 13. 2866 (=Lf:13.286652 = 870754 = xd4962 = b1101.0100100101100010, 20 bits)
+	exp. 13.286667 (~same)
+log2_l(n2)
+	got: 14. 5100 (=Lf:14.510101 = 950934 = xe8296 = b1110.1000001010010110, 20 bits)
+	exp. 14.510117 (~same)
+log2_l(n3)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n1)
+	got: 13. 2866 (=Lf:13.286667 = 870755 = xd4963 = b1101.0100100101100011, 20 bits)
+	exp. 13.286667 (~same)
+log2_bkm(n2)
+	got: 14. 5100 (=Lf:14.510117 = 950935 = xe8297 = b1110.1000001010010111, 20 bits)
+	exp. 14.510117 (~same)
+log2_bkm(n3)
+	got: UNDEF
+	exp. UNDEF (~same)
+
+Random Test #1 for 16 frac bits:
+n1 = 22805. 9967 (=Lf:22805.996857 = 1494613810 = x5915ff32 = b101100100010101.1111111100110010, 31 bits)
+n2 = 22083. 5510 (=Lf:22083.551102 = 1447267605 = x56438d15 = b101011001000011.1000110100010101, 31 bits)
+n3 = 0.-5113 (=Lf:-0.511337 = -33511 = x(-)82e7 = b(-).1000001011100111, 16 bits)( n3 always in (-1,1) )
+add   (n1+n2)
+	got: +INF
+	exp. +INF (~same)
+add_l (n1+n2)
+	got: +INF
+	exp. +INF (~same)
+add   (n1+n3)
+	got: 22805. 4854 (=Lf:22805.485519 = 1494580299 = x59157c4b = b101100100010101.0111110001001011, 31 bits)
+	exp. 22805.485519 (~same)
+add_l (n1+n3)
+	got: 22805. 4854 (=Lf:22805.485519 = 1494580299 = x59157c4b = b101100100010101.0111110001001011, 31 bits)
+	exp. 22805.485519 (~same)
+mul   (n1*n2)
+	got: +INF
+	exp. +INF (~same)
+mul_l (n1*n2)
+	got: +INF
+	exp. +INF (~same)
+mul   (n1*n3)
+	got: -11661.-5563 (=Lf:-11661.556396 = -764251760 = x(-)2d8d8e70 = b(-)10110110001101.1000111001110000, 30 bits)
+	exp. -11661.556396 (~same)
+mul_l (n1*n3)
+	got: -11661.-5563 (=Lf:-11661.556396 = -764251760 = x(-)2d8d8e70 = b(-)10110110001101.1000111001110000, 30 bits)
+	exp. -11661.556396 (~same)
+div_l (n1/n2)
+	got: 1.  327 (=Lf:1.032700 = 67679 = x1085f = b1.0000100001011111, 17 bits)
+	exp. 1.032700 (~same)
+div   (n1/n2)
+	got: 1.  327 (=Lf:1.032700 = 67679 = x1085f = b1.0000100001011111, 17 bits)
+	exp. 1.032700 (~same)
+div_l (n1/n3)
+	got: -INF
+	exp. -INF (~same)
+div   (n1/n3)
+	got: -INF
+	exp. -INF (~same)
+log2_l(n1)
+	got: 14. 4770 (=Lf:14.477097 = 948771 = xe7a23 = b1110.0111101000100011, 20 bits)
+	exp. 14.477112 (~same)
+log2_l(n2)
+	got: 14. 4306 (=Lf:14.430664 = 945728 = xe6e40 = b1110.0110111001000000, 20 bits)
+	exp. 14.430679 (~same)
+log2_l(n3)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n1)
+	got: 14. 4771 (=Lf:14.477127 = 948773 = xe7a25 = b1110.0111101000100101, 20 bits)
+	exp. 14.477112 (~same)
+log2_bkm(n2)
+	got: 14. 4306 (=Lf:14.430679 = 945729 = xe6e41 = b1110.0110111001000001, 20 bits)
+	exp. 14.430679 (~same)
+log2_bkm(n3)
+	got: UNDEF
+	exp. UNDEF (~same)
+
+Random Test #2 for 16 frac bits:
+n1 = -20550.-7095 (=Lf:-20550.709610 = -1346811305 = x(-)5046b5a9 = b(-)101000001000110.1011010110101001, 31 bits)
+n2 = 23944. 5391 (=Lf:23944.539185 = 1569229320 = x5d888a08 = b101110110001000.1000101000001000, 31 bits)
+n3 = 0. 3377 (=Lf:0.337769 = 22136 = x5678 = b.0101011001111000, 15 bits)( n3 always in (-1,1) )
+add   (n1+n2)
+	got: 3393. 8295 (=Lf:3393.829575 = 222418015 = xd41d45f = b110101000001.1101010001011111, 28 bits)
+	exp. 3393.829575 (~same)
+add_l (n1+n2)
+	got: 3393. 8295 (=Lf:3393.829575 = 222418015 = xd41d45f = b110101000001.1101010001011111, 28 bits)
+	exp. 3393.829575 (~same)
+add   (n1+n3)
+	got: -20550.-3718 (=Lf:-20550.371841 = -1346789169 = x(-)50465f31 = b(-)101000001000110.0101111100110001, 31 bits)
+	exp. -20550.371841 (~same)
+add_l (n1+n3)
+	got: -20550.-3718 (=Lf:-20550.371841 = -1346789169 = x(-)50465f31 = b(-)101000001000110.0101111100110001, 31 bits)
+	exp. -20550.371841 (~same)
+mul   (n1*n2)
+	got: -INF
+	exp. -INF (~same)
+mul_l (n1*n2)
+	got: -INF
+	exp. -INF (~same)
+mul   (n1*n3)
+	got: -6941.-3834 (=Lf:-6941.383469 = -454910507 = x(-)1b1d622b = b(-)1101100011101.0110001000101011, 29 bits)
+	exp. -6941.383469 (~same)
+mul_l (n1*n3)
+	got: -6941.-3834 (=Lf:-6941.383469 = -454910507 = x(-)1b1d622b = b(-)1101100011101.0110001000101011, 29 bits)
+	exp. -6941.383469 (~same)
+div_l (n1/n2)
+	got: 0.-8582 (=Lf:-0.858261 = -56247 = x(-)dbb7 = b(-).1101101110110111, 16 bits)
+	exp. -0.858261 (~same)
+div   (n1/n2)
+	got: 0.-8582 (=Lf:-0.858261 = -56247 = x(-)dbb7 = b(-).1101101110110111, 16 bits)
+	exp. -0.858261 (~same)
+div_l (n1/n3)
+	got: -INF
+	exp. -INF (~same)
+div   (n1/n3)
+	got: -INF
+	exp. -INF (~same)
+log2_l(n1)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_l(n2)
+	got: 14. 5473 (=Lf:14.547394 = 953378 = xe8c22 = b1110.1000110000100010, 20 bits)
+	exp. 14.547394 (~same)
+log2_l(n3)
+	got: -1.-5658 (=Lf:-1.565903 = -102623 = x(-)190df = b(-)1.1001000011011111, 17 bits)
+	exp. -1.565887 (~same)
+log2_bkm(n1)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n2)
+	got: 14. 5473 (=Lf:14.547409 = 953379 = xe8c23 = b1110.1000110000100011, 20 bits)
+	exp. 14.547394 (~same)
+log2_bkm(n3)
+	got: -1.-5658 (=Lf:-1.565903 = -102623 = x(-)190df = b(-)1.1001000011011111, 17 bits)
+	exp. -1.565887 (~same)
+
+Random Test #3 for 16 frac bits:
+n1 = 22438. 1021 (=Lf:22438.102188 = 1470503465 = x57a61a29 = b101011110100110.0001101000101001, 31 bits)
+n2 = 21401. 7746 (=Lf:21401.774719 = 1402586708 = x5399c654 = b101001110011001.1100011001010100, 31 bits)
+n3 = 0. 2039 (=Lf:0.203949 = 13366 = x3436 = b.0011010000110110, 14 bits)( n3 always in (-1,1) )
+add   (n1+n2)
+	got: +INF
+	exp. +INF (~same)
+add_l (n1+n2)
+	got: +INF
+	exp. +INF (~same)
+add   (n1+n3)
+	got: 22438. 3061 (=Lf:22438.306137 = 1470516831 = x57a64e5f = b101011110100110.0100111001011111, 31 bits)
+	exp. 22438.306137 (~same)
+add_l (n1+n3)
+	got: 22438. 3061 (=Lf:22438.306137 = 1470516831 = x57a64e5f = b101011110100110.0100111001011111, 31 bits)
+	exp. 22438.306137 (~same)
+mul   (n1*n2)
+	got: +INF
+	exp. +INF (~same)
+mul_l (n1*n2)
+	got: +INF
+	exp. +INF (~same)
+mul   (n1*n3)
+	got: 4576. 2279 (=Lf:4576.227921 = 299907673 = x11e03a59 = b1000111100000.0011101001011001, 29 bits)
+	exp. 4576.227921 (~same)
+mul_l (n1*n3)
+	got: 4576. 2279 (=Lf:4576.227921 = 299907673 = x11e03a59 = b1000111100000.0011101001011001, 29 bits)
+	exp. 4576.227921 (~same)
+div_l (n1/n2)
+	got: 1.  484 (=Lf:1.048416 = 68709 = x10c65 = b1.0000110001100101, 17 bits)
+	exp. 1.048416 (~same)
+div   (n1/n2)
+	got: 1.  484 (=Lf:1.048416 = 68709 = x10c65 = b1.0000110001100101, 17 bits)
+	exp. 1.048416 (~same)
+div_l (n1/n3)
+	got: +INF
+	exp. +INF (~same)
+div   (n1/n3)
+	got: +INF
+	exp. +INF (~same)
+log2_l(n1)
+	got: 14. 4536 (=Lf:14.453644 = 947234 = xe7422 = b1110.0111010000100010, 20 bits)
+	exp. 14.453659 (~same)
+log2_l(n2)
+	got: 14. 3854 (=Lf:14.385422 = 942763 = xe62ab = b1110.0110001010101011, 20 bits)
+	exp. 14.385437 (~same)
+log2_l(n3)
+	got: -2.-2937 (=Lf:-2.293732 = -150322 = x(-)24b32 = b(-)10.0100101100110010, 18 bits)
+	exp. -2.293716 (~same)
+log2_bkm(n1)
+	got: 14. 4536 (=Lf:14.453659 = 947235 = xe7423 = b1110.0111010000100011, 20 bits)
+	exp. 14.453659 (~same)
+log2_bkm(n2)
+	got: 14. 3854 (=Lf:14.385437 = 942764 = xe62ac = b1110.0110001010101100, 20 bits)
+	exp. 14.385437 (~same)
+log2_bkm(n3)
+	got: -2.-2937 (=Lf:-2.293732 = -150322 = x(-)24b32 = b(-)10.0100101100110010, 18 bits)
+	exp. -2.293716 (~same)
+
+Random Test #4 for 16 frac bits:
+n1 = 28750. 1165 (=Lf:28750.116531 = 1884167637 = x704e1dd5 = b111000001001110.0001110111010101, 31 bits)
+n2 = 22482. 9415 (=Lf:22482.941620 = 1473442062 = x57d2f10e = b101011111010010.1111000100001110, 31 bits)
+n3 = 0. 7268 (=Lf:0.726913 = 47639 = xba17 = b.1011101000010111, 16 bits)( n3 always in (-1,1) )
+add   (n1+n2)
+	got: +INF
+	exp. +INF (~same)
+add_l (n1+n2)
+	got: +INF
+	exp. +INF (~same)
+add   (n1+n3)
+	got: 28750. 8433 (=Lf:28750.843445 = 1884215276 = x704ed7ec = b111000001001110.1101011111101100, 31 bits)
+	exp. 28750.843445 (~same)
+add_l (n1+n3)
+	got: 28750. 8433 (=Lf:28750.843445 = 1884215276 = x704ed7ec = b111000001001110.1101011111101100, 31 bits)
+	exp. 28750.843445 (~same)
+mul   (n1*n2)
+	got: +INF
+	exp. +INF (~same)
+mul_l (n1*n2)
+	got: +INF
+	exp. +INF (~same)
+mul   (n1*n3)
+	got: 20898. 8463 (=Lf:20898.846451 = 1369626801 = x51a2d8b1 = b101000110100010.1101100010110001, 31 bits)
+	exp. 20898.846451 (~same)
+mul_l (n1*n3)
+	got: 20898. 8463 (=Lf:20898.846451 = 1369626801 = x51a2d8b1 = b101000110100010.1101100010110001, 31 bits)
+	exp. 20898.846451 (~same)
+div_l (n1/n2)
+	got: 1. 2787 (=Lf:1.278748 = 83804 = x1475c = b1.0100011101011100, 17 bits)
+	exp. 1.278748 (~same)
+div   (n1/n2)
+	got: 1. 2787 (=Lf:1.278748 = 83804 = x1475c = b1.0100011101011100, 17 bits)
+	exp. 1.278748 (~same)
+div_l (n1/n3)
+	got: +INF
+	exp. +INF (~same)
+div   (n1/n3)
+	got: +INF
+	exp. +INF (~same)
+log2_l(n1)
+	got: 14. 8112 (=Lf:14.811264 = 970671 = xecfaf = b1110.1100111110101111, 20 bits)
+	exp. 14.811279 (~same)
+log2_l(n2)
+	got: 14. 4564 (=Lf:14.456512 = 947422 = xe74de = b1110.0111010011011110, 20 bits)
+	exp. 14.456543 (~same)
+log2_l(n3)
+	got: 0.-4601 (=Lf:-0.460159 = -30157 = x(-)75cd = b(-).0111010111001101, 15 bits)
+	exp. -0.460144 (~same)
+log2_bkm(n1)
+	got: 14. 8112 (=Lf:14.811279 = 970672 = xecfb0 = b1110.1100111110110000, 20 bits)
+	exp. 14.811279 (~same)
+log2_bkm(n2)
+	got: 14. 4565 (=Lf:14.456543 = 947424 = xe74e0 = b1110.0111010011100000, 20 bits)
+	exp. 14.456543 (~same)
+log2_bkm(n3)
+	got: 0.-4601 (=Lf:-0.460144 = -30156 = x(-)75cc = b(-).0111010111001100, 15 bits)
+	exp. -0.460144 (~same)
+
+Random Test #5 for 16 frac bits:
+n1 = 19438. 3529 (=Lf:19438.352951 = 1273911899 = x4bee5a5b = b100101111101110.0101101001011011, 31 bits)
+n2 = 21841. 7263 (=Lf:21841.726364 = 1431419379 = x5551b9f3 = b101010101010001.1011100111110011, 31 bits)
+n3 = 0. 8144 (=Lf:0.814514 = 53380 = xd084 = b.1101000010000100, 16 bits)( n3 always in (-1,1) )
+add   (n1+n2)
+	got: +INF
+	exp. +INF (~same)
+add_l (n1+n2)
+	got: +INF
+	exp. +INF (~same)
+add   (n1+n3)
+	got: 19439. 1674 (=Lf:19439.167465 = 1273965279 = x4bef2adf = b100101111101111.0010101011011111, 31 bits)
+	exp. 19439.167465 (~same)
+add_l (n1+n3)
+	got: 19439. 1674 (=Lf:19439.167465 = 1273965279 = x4bef2adf = b100101111101111.0010101011011111, 31 bits)
+	exp. 19439.167465 (~same)
+mul   (n1*n2)
+	got: +INF
+	exp. +INF (~same)
+mul_l (n1*n2)
+	got: +INF
+	exp. +INF (~same)
+mul   (n1*n3)
+	got: 15832. 8136 (=Lf:15832.813721 = 1037619280 = x3dd8d050 = b11110111011000.1101000001010000, 30 bits)
+	exp. 15832.813721 (~same)
+mul_l (n1*n3)
+	got: 15832. 8136 (=Lf:15832.813721 = 1037619280 = x3dd8d050 = b11110111011000.1101000001010000, 30 bits)
+	exp. 15832.813721 (~same)
+div_l (n1/n2)
+	got: 0. 8898 (=Lf:0.889954 = 58324 = xe3d4 = b.1110001111010100, 16 bits)
+	exp. 0.889954 (~same)
+div   (n1/n2)
+	got: 0. 8898 (=Lf:0.889954 = 58324 = xe3d4 = b.1110001111010100, 16 bits)
+	exp. 0.889954 (~same)
+div_l (n1/n3)
+	got: 23864. 9661 (=Lf:23864.966248 = 1564014428 = x5d38f75c = b101110100111000.1111011101011100, 31 bits)
+	exp. 23864.966248 (~same)
+div   (n1/n3)
+	got: 23864. 9661 (=Lf:23864.966248 = 1564014428 = x5d38f75c = b101110100111000.1111011101011100, 31 bits)
+	exp. 23864.966248 (~same)
+log2_l(n1)
+	got: 14. 2465 (=Lf:14.246597 = 933665 = xe3f21 = b1110.0011111100100001, 20 bits)
+	exp. 14.246613 (~same)
+log2_l(n2)
+	got: 14. 4147 (=Lf:14.414764 = 944686 = xe6a2e = b1110.0110101000101110, 20 bits)
+	exp. 14.414795 (~same)
+log2_l(n3)
+	got: 0.-2959 (=Lf:-0.296005 = -19399 = x(-)4bc7 = b(-).0100101111000111, 15 bits)
+	exp. -0.295975 (~same)
+log2_bkm(n1)
+	got: 14. 2466 (=Lf:14.246613 = 933666 = xe3f22 = b1110.0011111100100010, 20 bits)
+	exp. 14.246613 (~same)
+log2_bkm(n2)
+	got: 14. 4147 (=Lf:14.414795 = 944688 = xe6a30 = b1110.0110101000110000, 20 bits)
+	exp. 14.414795 (~same)
+log2_bkm(n3)
+	got: 0.-2959 (=Lf:-0.295990 = -19398 = x(-)4bc6 = b(-).0100101111000110, 15 bits)
+	exp. -0.295975 (~same)
+
+Random Test #6 for 16 frac bits:
+n1 = 6217. 7601 (=Lf:6217.760178 = 407487131 = x1849c29b = b1100001001001.1100001010011011, 29 bits)
+n2 = -32255.-6133 (=Lf:-32255.613419 = -2113903881 = x(-)7dff9d09 = b(-)111110111111111.1001110100001001, 31 bits)
+n3 = 0.-2645 (=Lf:-0.264511 = -17335 = x(-)43b7 = b(-).0100001110110111, 15 bits)( n3 always in (-1,1) )
+add   (n1+n2)
+	got: -26037.-8531 (=Lf:-26037.853241 = -1706416750 = x(-)65b5da6e = b(-)110010110110101.1101101001101110, 31 bits)
+	exp. -26037.853241 (~same)
+add_l (n1+n2)
+	got: -26037.-8531 (=Lf:-26037.853241 = -1706416750 = x(-)65b5da6e = b(-)110010110110101.1101101001101110, 31 bits)
+	exp. -26037.853241 (~same)
+add   (n1+n3)
+	got: 6217. 4956 (=Lf:6217.495667 = 407469796 = x18497ee4 = b1100001001001.0111111011100100, 29 bits)
+	exp. 6217.495667 (~same)
+add_l (n1+n3)
+	got: 6217. 4956 (=Lf:6217.495667 = 407469796 = x18497ee4 = b1100001001001.0111111011100100, 29 bits)
+	exp. 6217.495667 (~same)
+mul   (n1*n2)
+	got: -INF
+	exp. -INF (~same)
+mul_l (n1*n2)
+	got: -INF
+	exp. -INF (~same)
+mul   (n1*n3)
+	got: -1644.-6665 (=Lf:-1644.666626 = -107784872 = x(-)66caaa8 = b(-)11001101100.1010101010101000, 27 bits)
+	exp. -1644.666626 (~same)
+mul_l (n1*n3)
+	got: -1644.-6665 (=Lf:-1644.666626 = -107784872 = x(-)66caaa8 = b(-)11001101100.1010101010101000, 27 bits)
+	exp. -1644.666626 (~same)
+div_l (n1/n2)
+	got: 0.-1927 (=Lf:-0.192764 = -12633 = x(-)3159 = b(-).0011000101011001, 14 bits)
+	exp. -0.192764 (~same)
+div   (n1/n2)
+	got: 0.-1927 (=Lf:-0.192764 = -12633 = x(-)3159 = b(-).0011000101011001, 14 bits)
+	exp. -0.192764 (~same)
+div_l (n1/n3)
+	got: -23506.-6126 (=Lf:-23506.612686 = -1540529369 = x(-)5bd29cd9 = b(-)101101111010010.1001110011011001, 31 bits)
+	exp. -23506.612686 (~same)
+div   (n1/n3)
+	got: -23506.-6126 (=Lf:-23506.612686 = -1540529369 = x(-)5bd29cd9 = b(-)101101111010010.1001110011011001, 31 bits)
+	exp. -23506.612686 (~same)
+log2_l(n1)
+	got: 12. 6021 (=Lf:12.602158 = 825895 = xc9a27 = b1100.1001101000100111, 20 bits)
+	exp. 12.602173 (~same)
+log2_l(n2)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_l(n3)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n1)
+	got: 12. 6021 (=Lf:12.602173 = 825896 = xc9a28 = b1100.1001101000101000, 20 bits)
+	exp. 12.602173 (~same)
+log2_bkm(n2)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n3)
+	got: UNDEF
+	exp. UNDEF (~same)
+
+Random Test #7 for 16 frac bits:
+n1 = -14303.-1335 (=Lf:-14303.133591 = -937370163 = x(-)37df2233 = b(-)11011111011111.0010001000110011, 30 bits)
+n2 = 31412. 6159 (=Lf:31412.615952 = 2058657199 = x7ab49daf = b111101010110100.1001110110101111, 31 bits)
+n3 = 0. 9703 (=Lf:0.970398 = 63596 = xf86c = b.1111100001101100, 16 bits)( n3 always in (-1,1) )
+add   (n1+n2)
+	got: 17109. 4823 (=Lf:17109.482361 = 1121287036 = x42d57b7c = b100001011010101.0111101101111100, 31 bits)
+	exp. 17109.482361 (~same)
+add_l (n1+n2)
+	got: 17109. 4823 (=Lf:17109.482361 = 1121287036 = x42d57b7c = b100001011010101.0111101101111100, 31 bits)
+	exp. 17109.482361 (~same)
+add   (n1+n3)
+	got: -14302.-1631 (=Lf:-14302.163193 = -937306567 = x(-)37de29c7 = b(-)11011111011110.0010100111000111, 30 bits)
+	exp. -14302.163193 (~same)
+add_l (n1+n3)
+	got: -14302.-1631 (=Lf:-14302.163193 = -937306567 = x(-)37de29c7 = b(-)11011111011110.0010100111000111, 30 bits)
+	exp. -14302.163193 (~same)
+mul   (n1*n2)
+	got: -INF
+	exp. -INF (~same)
+mul_l (n1*n2)
+	got: -INF
+	exp. -INF (~same)
+mul   (n1*n3)
+	got: -13879.-7314 (=Lf:-13879.731491 = -909622083 = x(-)3637bb43 = b(-)11011000110111.1011101101000011, 30 bits)
+	exp. -13879.731491 (~same)
+mul_l (n1*n3)
+	got: -13879.-7314 (=Lf:-13879.731491 = -909622083 = x(-)3637bb43 = b(-)11011000110111.1011101101000011, 30 bits)
+	exp. -13879.731491 (~same)
+div_l (n1/n2)
+	got: 0.-4552 (=Lf:-0.455322 = -29840 = x(-)7490 = b(-).0111010010010000, 15 bits)
+	exp. -0.455322 (~same)
+div   (n1/n2)
+	got: 0.-4552 (=Lf:-0.455322 = -29840 = x(-)7490 = b(-).0111010010010000, 15 bits)
+	exp. -0.455322 (~same)
+div_l (n1/n3)
+	got: -14739.-4515 (=Lf:-14739.451584 = -965964699 = x(-)3993739b = b(-)11100110010011.0111001110011011, 30 bits)
+	exp. -14739.451584 (~same)
+div   (n1/n3)
+	got: -14739.-4515 (=Lf:-14739.451584 = -965964699 = x(-)3993739b = b(-)11100110010011.0111001110011011, 30 bits)
+	exp. -14739.451584 (~same)
+log2_l(n1)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_l(n2)
+	got: 14. 9389 (=Lf:14.939041 = 979045 = xef065 = b1110.1111000001100101, 20 bits)
+	exp. 14.939056 (~same)
+log2_l(n3)
+	got: 0. -433 (=Lf:-0.043365 = -2842 = x(-)b1a = b(-).0000101100011010, 12 bits)
+	exp. -0.043350 (~same)
+log2_bkm(n1)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n2)
+	got: 14. 9389 (=Lf:14.939056 = 979046 = xef066 = b1110.1111000001100110, 20 bits)
+	exp. 14.939056 (~same)
+log2_bkm(n3)
+	got: 0. -433 (=Lf:-0.043365 = -2842 = x(-)b1a = b(-).0000101100011010, 12 bits)
+	exp. -0.043350 (~same)
+
+Random Test #8 for 16 frac bits:
+n1 = -22471.-8287 (=Lf:-22471.828812 = -1472713773 = x(-)57c7d42d = b(-)101011111000111.1101010000101101, 31 bits)
+n2 = 12577. 4049 (=Lf:12577.404984 = 824272813 = x312167ad = b11000100100001.0110011110101101, 30 bits)
+n3 = 0.-7809 (=Lf:-0.780991 = -51183 = x(-)c7ef = b(-).1100011111101111, 16 bits)( n3 always in (-1,1) )
+add   (n1+n2)
+	got: -9894.-4238 (=Lf:-9894.423828 = -648440960 = x(-)26a66c80 = b(-)10011010100110.0110110010000000, 30 bits)
+	exp. -9894.423828 (~same)
+add_l (n1+n2)
+	got: -9894.-4238 (=Lf:-9894.423828 = -648440960 = x(-)26a66c80 = b(-)10011010100110.0110110010000000, 30 bits)
+	exp. -9894.423828 (~same)
+add   (n1+n3)
+	got: -22472.-6097 (=Lf:-22472.609802 = -1472764956 = x(-)57c89c1c = b(-)101011111001000.1001110000011100, 31 bits)
+	exp. -22472.609802 (~same)
+add_l (n1+n3)
+	got: -22472.-6097 (=Lf:-22472.609802 = -1472764956 = x(-)57c89c1c = b(-)101011111001000.1001110000011100, 31 bits)
+	exp. -22472.609802 (~same)
+mul   (n1*n2)
+	got: -INF
+	exp. -INF (~same)
+mul_l (n1*n2)
+	got: -INF
+	exp. -INF (~same)
+mul   (n1*n3)
+	got: 17550. 2870 (=Lf:17550.287079 = 1150175614 = x448e497e = b100010010001110.0100100101111110, 31 bits)
+	exp. 17550.287079 (~same)
+mul_l (n1*n3)
+	got: 17550. 2870 (=Lf:17550.287079 = 1150175614 = x448e497e = b100010010001110.0100100101111110, 31 bits)
+	exp. 17550.287079 (~same)
+div_l (n1/n2)
+	got: -1.-7866 (=Lf:-1.786682 = -117092 = x(-)1c964 = b(-)1.1100100101100100, 17 bits)
+	exp. -1.786682 (~same)
+div   (n1/n2)
+	got: -1.-7866 (=Lf:-1.786682 = -117092 = x(-)1c964 = b(-)1.1100100101100100, 17 bits)
+	exp. -1.786682 (~same)
+div_l (n1/n3)
+	got: 28773. 4945 (=Lf:28773.494568 = 1885699740 = x70657e9c = b111000001100101.0111111010011100, 31 bits)
+	exp. 28773.494568 (~same)
+div   (n1/n3)
+	got: 28773. 4945 (=Lf:28773.494568 = 1885699740 = x70657e9c = b111000001100101.0111111010011100, 31 bits)
+	exp. 28773.494568 (~same)
+log2_l(n1)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_l(n2)
+	got: 13. 6184 (=Lf:13.618530 = 892504 = xd9e58 = b1101.1001111001011000, 20 bits)
+	exp. 13.618546 (~same)
+log2_l(n3)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n1)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n2)
+	got: 13. 6185 (=Lf:13.618546 = 892505 = xd9e59 = b1101.1001111001011001, 20 bits)
+	exp. 13.618546 (~same)
+log2_bkm(n3)
+	got: UNDEF
+	exp. UNDEF (~same)
+
+Random Test #9 for 16 frac bits:
+n1 = 6669. 8678 (=Lf:6669.867950 = 437116466 = x1a0dde32 = b1101000001101.1101111000110010, 29 bits)
+n2 = -26006.-5472 (=Lf:-26006.547302 = -1704365084 = x(-)65968c1c = b(-)110010110010110.1000110000011100, 31 bits)
+n3 = 0. 5158 (=Lf:0.515900 = 33810 = x8412 = b.1000010000010010, 16 bits)( n3 always in (-1,1) )
+add   (n1+n2)
+	got: -19336.-6793 (=Lf:-19336.679352 = -1267248618 = x(-)4b88adea = b(-)100101110001000.1010110111101010, 31 bits)
+	exp. -19336.679352 (~same)
+add_l (n1+n2)
+	got: -19336.-6793 (=Lf:-19336.679352 = -1267248618 = x(-)4b88adea = b(-)100101110001000.1010110111101010, 31 bits)
+	exp. -19336.679352 (~same)
+add   (n1+n3)
+	got: 6670. 3838 (=Lf:6670.383850 = 437150276 = x1a0e6244 = b1101000001110.0110001001000100, 29 bits)
+	exp. 6670.383850 (~same)
+add_l (n1+n3)
+	got: 6670. 3838 (=Lf:6670.383850 = 437150276 = x1a0e6244 = b1101000001110.0110001001000100, 29 bits)
+	exp. 6670.383850 (~same)
+mul   (n1*n2)
+	got: -INF
+	exp. -INF (~same)
+mul_l (n1*n2)
+	got: -INF
+	exp. -INF (~same)
+mul   (n1*n3)
+	got: 3440. 9825 (=Lf:3440.982590 = 225508235 = xd70fb8b = b110101110000.1111101110001011, 28 bits)
+	exp. 3440.982590 (~same)
+mul_l (n1*n3)
+	got: 3440. 9825 (=Lf:3440.982590 = 225508235 = xd70fb8b = b110101110000.1111101110001011, 28 bits)
+	exp. 3440.982590 (~same)
+div_l (n1/n2)
+	got: 0.-2564 (=Lf:-0.256454 = -16807 = x(-)41a7 = b(-).0100000110100111, 15 bits)
+	exp. -0.256454 (~same)
+div   (n1/n2)
+	got: 0.-2564 (=Lf:-0.256454 = -16807 = x(-)41a7 = b(-).0100000110100111, 15 bits)
+	exp. -0.256454 (~same)
+div_l (n1/n3)
+	got: 12928. 6147 (=Lf:12928.614777 = 847289698 = x32809d62 = b11001010000000.1001110101100010, 30 bits)
+	exp. 12928.614777 (~same)
+div   (n1/n3)
+	got: 12928. 6147 (=Lf:12928.614777 = 847289698 = x32809d62 = b11001010000000.1001110101100010, 30 bits)
+	exp. 12928.614777 (~same)
+log2_l(n1)
+	got: 12. 7033 (=Lf:12.703415 = 832531 = xcb413 = b1100.1011010000010011, 20 bits)
+	exp. 12.703430 (~same)
+log2_l(n2)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_l(n3)
+	got: 0.-9547 (=Lf:-0.954849 = -62577 = x(-)f471 = b(-).1111010001110001, 16 bits)
+	exp. -0.954834 (~same)
+log2_bkm(n1)
+	got: 12. 7034 (=Lf:12.703445 = 832533 = xcb415 = b1100.1011010000010101, 20 bits)
+	exp. 12.703430 (~same)
+log2_bkm(n2)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n3)
+	got: 0.-9547 (=Lf:-0.954849 = -62577 = x(-)f471 = b(-).1111010001110001, 16 bits)
+	exp. -0.954834 (~same)
+
+Some transcendental numbers as fxp's (16 frac bits):
+e  as fxp: 2. 7182 (=Lf:2.718277 = 178145 = x2b7e1 = b10.1011011111100001, 18 bits)
+pi as fxp: 3. 1415 (=Lf:3.141586 = 205887 = x3243f = b11.0010010000111111, 18 bits)
+ln2 as fxp: 0. 6931 (=Lf:0.693146 = 45426 = xb172 = b.1011000101110010, 16 bits)
+log2e as fxp: 1. 4426 (=Lf:1.442688 = 94548 = x17154 = b1.0111000101010100, 17 bits)
+
+log2_l(+INF): +INF
+log2_l(2): 1.    0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
+log2_l(1): 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+log2_l(0): -INF
+ln(e): 0. 9999 (=Lf:0.999969 = 65534 = xfffe = b.1111111111111110, 16 bits)
+ln(1): 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+ln(0): -INF
+log2_l(-INF): UNDEF
+log2_l(UNDEF): UNDEF
+
+log2_bkm(+INF): +INF
+log2_bkm(2): 1.    0 (=Lf:1.000000 = 65536 = x10000 = b1.0000000000000000, 17 bits)
+log2_bkm(1): 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+log2_bkm(0): -INF
+ln_bkm(e): 0. 9999 (=Lf:0.999985 = 65535 = xffff = b.1111111111111111, 16 bits)
+ln_bkm(1): 0.    0 (=Lf:0.000000 = 0 = x0 = b.0000000000000000, 0 bits)
+ln_bkm(0): -INF
+log2_bkm(-INF): UNDEF
+log2_bkm(UNDEF): UNDEF
+
+0 Warnings for 16 frac bits.
+All tests passed using 16-bit fracs, and '9999' as max decimal frac.
 
 
 ========================
@@ -8233,8 +8733,8 @@ frac max  : 2147483646 (->decimals: .9999999)
 whole min : 0
 -INF      : -2147483647 (x80000001,  wh,fr values: 0, -2147483647,  Lf eq.:-1.000000)
 UNDEF     : -2147483648 (x80000000,  wh,fr values: 0, -2147483648,  Lf eq.:-1.100000)
-warn_delta: 1.396984E-09
-max_warn_delta: 1.862645E-09
+warn_delta: 2.793968E-09
+max_warn_delta: 1.676381E-08
 
 Checking extreme int values, part I:
 +Inf
@@ -9307,6 +9807,20 @@ div_l (n1/n3)
 div   (n1/n3)
 	got: +INF
 	exp. +INF (~same)
+log2_bkm(n1)
+	got: 0.-1943295 (=Lf:-0.194330 = -417319482 = x(-)18dfca3a = b(-).0011000110111111100101000111010, 29 bits)
+	exp. -0.194330
+***** Warning 1: delta=5.59E-09 (>2.79E-09, max allowed 1.68E-08 for 31 f.bits)
+
+Updating largest delta: 0.000000
+log2_bkm(n2)
+	got: -INF
+	exp. -INF (~same)
+log2_bkm(n3)
+	got: 0.-7953594 (=Lf:-0.795360 = -1708021652 = x(-)65ce5794 = b(-).1100101110011100101011110010100, 31 bits)
+	exp. -0.795360
+***** Warning 2: delta=5.12E-09 (>2.79E-09, max allowed 1.68E-08 for 31 f.bits)
+
 
 Random Test #1 for 31 frac bits:
 n1 = 0.-4923987 (=Lf:-0.492399 = -1057418418 = x(-)3f06ecb2 = b(-).0111111000001101110110010110010, 30 bits)
@@ -9348,6 +9862,15 @@ div_l (n1/n3)
 div   (n1/n3)
 	got: 0. 5800145 (=Lf:0.580015 = 1245571800 = x4a3dead8 = b.1001010001111011110101011011000, 31 bits)
 	exp. 0.580015 (~same)
+log2_bkm(n1)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n2)
+	got: -INF
+	exp. -INF (~same)
+log2_bkm(n3)
+	got: UNDEF
+	exp. UNDEF (~same)
 
 Random Test #2 for 31 frac bits:
 n1 = 0. 6841783 (=Lf:0.684178 = 1469262009 = x579328b9 = b.1010111100100110010100010111001, 31 bits)
@@ -9389,6 +9912,20 @@ div_l (n1/n3)
 div   (n1/n3)
 	got: -INF
 	exp. -INF (~same)
+log2_bkm(n1)
+	got: 0.-5475553 (=Lf:-0.547555 = -1175866368 = x(-)46164c00 = b(-).1000110000101100100110000000000, 31 bits)
+	exp. -0.547555
+***** Warning 3: delta=8.85E-09 (>2.79E-09, max allowed 1.68E-08 for 31 f.bits)
+
+Updating largest delta: 0.000000
+log2_bkm(n2)
+	got: 0.-4588810 (=Lf:-0.458881 = -985439720 = x(-)3abc9de8 = b(-).0111010101111001001110111101000, 30 bits)
+	exp. -0.458881
+***** Warning 4: delta=6.05E-09 (>2.79E-09, max allowed 1.68E-08 for 31 f.bits)
+
+log2_bkm(n3)
+	got: UNDEF
+	exp. UNDEF (~same)
 
 Random Test #3 for 31 frac bits:
 n1 = 0. 7242519 (=Lf:0.724252 = 1555319301 = x5cb44a05 = b.1011100101101000100101000000101, 31 bits)
@@ -9430,6 +9967,17 @@ div_l (n1/n3)
 div   (n1/n3)
 	got: +INF
 	exp. +INF (~same)
+log2_bkm(n1)
+	got: 0.-4654363 (=Lf:-0.465436 = -999516948 = x(-)3b936b14 = b(-).0111011100100110110101100010100, 30 bits)
+	exp. -0.465436
+***** Warning 5: delta=6.52E-09 (>2.79E-09, max allowed 1.68E-08 for 31 f.bits)
+
+log2_bkm(n2)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n3)
+	got: -INF
+	exp. -INF (~same)
 
 Random Test #4 for 31 frac bits:
 n1 = 0.-3604425 (=Lf:-0.360443 = -774044599 = x(-)2e22fbb7 = b(-).0101110001000101111101110110111, 30 bits)
@@ -9471,6 +10019,15 @@ div_l (n1/n3)
 div   (n1/n3)
 	got: 0. 3867844 (=Lf:0.386784 = 830613272 = x31822718 = b.0110001100000100010011100011000, 30 bits)
 	exp. 0.386784 (~same)
+log2_bkm(n1)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n2)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n3)
+	got: UNDEF
+	exp. UNDEF (~same)
 
 Random Test #5 for 31 frac bits:
 n1 = 0.-8181275 (=Lf:-0.818128 = -1756915667 = x(-)68b867d3 = b(-).1101000101110000110011111010011, 31 bits)
@@ -9510,6 +10067,15 @@ div_l (n1/n3)
 	got: -INF
 	exp. -INF (~same)
 div   (n1/n3)
+	got: -INF
+	exp. -INF (~same)
+log2_bkm(n1)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n2)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n3)
 	got: -INF
 	exp. -INF (~same)
 
@@ -9553,6 +10119,15 @@ div_l (n1/n3)
 div   (n1/n3)
 	got: -INF
 	exp. -INF (~same)
+log2_bkm(n1)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n2)
+	got: -INF
+	exp. -INF (~same)
+log2_bkm(n3)
+	got: -INF
+	exp. -INF (~same)
 
 Random Test #7 for 31 frac bits:
 n1 = 0. 2882694 (=Lf:0.288270 = 619054081 = x24e60401 = b.0100100111001100000010000000001, 30 bits)
@@ -9594,6 +10169,15 @@ div_l (n1/n3)
 div   (n1/n3)
 	got: +INF
 	exp. +INF (~same)
+log2_bkm(n1)
+	got: -INF
+	exp. -INF (~same)
+log2_bkm(n2)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n3)
+	got: -INF
+	exp. -INF (~same)
 
 Random Test #8 for 31 frac bits:
 n1 = 0. 2654612 (=Lf:0.265461 = 570073850 = x21faa2fa = b.0100001111110101010001011111010, 30 bits)
@@ -9635,6 +10219,17 @@ div_l (n1/n3)
 div   (n1/n3)
 	got: 0. 3484760 (=Lf:0.348476 = 748346623 = x2c9adcff = b.0101100100110101101110011111111, 30 bits)
 	exp. 0.348476 (~same)
+log2_bkm(n1)
+	got: -INF
+	exp. -INF (~same)
+log2_bkm(n2)
+	got: 0.-6022043 (=Lf:-0.602204 = -1293224110 = x(-)4d1508ae = b(-).1001101000101010000100010101110, 31 bits)
+	exp. -0.602204
+***** Warning 6: delta=5.59E-09 (>2.79E-09, max allowed 1.68E-08 for 31 f.bits)
+
+log2_bkm(n3)
+	got: 0.-3925577 (=Lf:-0.392558 = -843011532 = x(-)323f55cc = b(-).0110010001111110101010111001100, 30 bits)
+	exp. -0.392558 (~same)
 
 Random Test #9 for 31 frac bits:
 n1 = 0. 6256652 (=Lf:0.625665 = 1343606042 = x5015cd1a = b.1010000000101011100110100011010, 31 bits)
@@ -9676,15 +10271,36 @@ div_l (n1/n3)
 div   (n1/n3)
 	got: +INF
 	exp. +INF (~same)
+log2_bkm(n1)
+	got: 0.-6765368 (=Lf:-0.676537 = -1452852048 = x(-)5698c350 = b(-).1010110100110001100001101010000, 31 bits)
+	exp. -0.676537 (~same)
+log2_bkm(n2)
+	got: UNDEF
+	exp. UNDEF (~same)
+log2_bkm(n3)
+	got: -INF
+	exp. -INF (~same)
 
 Some transcendental numbers as fxp's (31 frac bits):
 e  as fxp: +INF
 pi as fxp: +INF
 ln2 as fxp: 0. 6931471 (=Lf:0.693147 = 1488522236 = x58b90bfc = b.1011000101110010000101111111100, 31 bits)
 log2e as fxp: +INF
-Only 1 whole bit(s) -> skipping log2_l tests
+Only 1 whole bit(s) -> skipping log2_l tests (>2 whole bits needed)
 
-0 Warnings for 31 frac bits.
+log2_bkm(+INF): +INF
+log2_bkm(2): +INF
+log2_bkm(1): +INF
+log2_bkm(0): -INF
+ln_bkm(e): +INF
+ln_bkm(1): +INF
+ln_bkm(0): -INF
+log2_bkm(-INF): UNDEF
+log2_bkm(UNDEF): UNDEF
+
+6 Warnings for 31 frac bits.
+Largest delta was: 8.85E-09 (max allowed: 1.68E-08)
 All tests passed using 31-bit fracs, and '9999999' as max decimal frac.
 
-Grand total of 0 warnings checking 6 configurations.
+Grand total of 6 warnings checking 6 configurations.
+Largest warning delta: 8.8476E-09 (max allowed:1.6764E-08, using 31 frac bits)
