@@ -60,5 +60,5 @@ Clearly faster than the log2_l implementation, taking only ~28.5%
 the runtime time, and with 30 bit-frac precision (log2_l's precision
 is max 29 bit). log2_bkm can also compute the logarithms when the fxp
 configuration is using only 1 whole bit (the sign one,) so
-under 31 frac bits. The rester requires relaxing the delta tolerance
+under 31 frac bits. The tester requires relaxing the delta tolerance
 in this case.
