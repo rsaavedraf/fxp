@@ -74,13 +74,13 @@ int fxp_div_l(int fxp1, int fxp2);
 int fxp_get_e();
 int fxp_get_pi();
 int fxp_get_ln2();
-int fxp_get_log2e();
-
-int fxp_log2(int fxp);
-int fxp_log2_l(int fxp);
-int fxp_log2_mul(int fxp);
-int fxp_ln_l(int fxp);
+int fxp_get_lg2e();
+int fxp_lg2(int fxp);
+int fxp_lg2_l(int fxp);
+int fxp_lg2_mul(int fxp);
+int fxp_lg2_mul_l(int fxp);
 int fxp_ln(int fxp);
+int fxp_ln_l(int fxp);
 
 // Still to implement
 //int fxp_exp(int fxp);

@@ -14,6 +14,15 @@
 #include "fxp.h"
 #include "fxp_aux.h"
 
+long double dfxp_max_ld()
+{
+    return dfxp(FXP_MAX);
+}
+
+long double dfxp_min_ld()
+{
+    return dfxp(FXP_MIN);
+}
 
 /*
  * Returns the exact fraction value from an fxp as
@@ -43,6 +52,9 @@ long double int_to_frac(long frac_value)
  */
 long double lim_frac(long double x, int fbp)
 {
+    if (x <= FXP_UNDEF_LD) return FXP_UNDEF_LD;
+    if (x < dfxp_min_ld()) return FXP_NEG_INF_LD;
+    if (x > dfxp_max_ld()) return FXP_POS_INF_LD;
     long shift = pow(2, fbp);
     long double px = (x < 0)? -x: x;
     long pxwhole = trunc(px);
@@ -66,11 +78,12 @@ long double lim_frac(long double x, int fbp)
  */
 int fxp_from_ldouble(long double x)
 {
+    if (x <= FXP_UNDEF_LD) return FXP_UNDEF;
+    if (x < dfxp_min_ld()) return FXP_NEG_INF;
+    if (x > dfxp_max_ld()) return FXP_POS_INF;
     long shift = pow(2, fxp_get_frac_bits());
     long double px = (x < 0)? -x: x;
     long plwhole = trunc(px);
-    if (plwhole > ((long) fxp_get_whole_max()))
-        return x > 0? FXP_POS_INF: FXP_NEG_INF;
     long double pdfrac = px - ((long double) plwhole);
     long plfrac = trunc(pdfrac * shift);
     if (plwhole > 0)
@@ -83,45 +96,22 @@ int fxp_from_ldouble(long double x)
 
 
 /*
- * Returns a double value corresponding to a given fxp.
- * Now here we make sure we return different enough
- * values for FXP_UNDEF and FXP_NEG_INF
+ * Returns a long double value corresponding to a given fxp
  */
 long double dfxp(int fxp)
 {
-    if (fxp <= FXP_NEG_INF) {
-            int maxfrac = (1 << fxp_get_frac_bits()) - 1;
-            long double wd = (long double) -fxp_get_whole_max();
-            long double fd = int_to_frac(maxfrac);
-            long double x = wd - fd - (fxp == FXP_UNDEF? 0.1: 0.0);
-            return x;
-    } else {
-            long wi = fxp_get_whole_part(fxp);
-            long fi = fxp_get_bin_frac(fxp);
-            //printf("\nfxp long  whole & frac parts: %ld, %ld\n", wi, fi);
-            long double wd = (long double) wi;
-            long double fd = int_to_frac(fi);
-            //printf("fxp Lf whole & frac parts: %Lf, %Lf\n", wd, fd);
-            long double x = wd + fd;
-            return x;
-    }
+    if (fxp == FXP_UNDEF) return FXP_UNDEF_LD;
+    if (fxp == FXP_NEG_INF) return FXP_NEG_INF_LD;
+    if (fxp == FXP_POS_INF) return FXP_POS_INF_LD;
+    long wi = fxp_get_whole_part(fxp);
+    long fi = fxp_get_bin_frac(fxp);
+    //printf("\nfxp long  whole & frac parts: %ld, %ld\n", wi, fi);
+    long double wd = (long double) wi;
+    long double fd = int_to_frac(fi);
+    //printf("fxp Lf whole & frac parts: %Lf, %Lf\n", wd, fd);
+    long double x = wd + fd;
+    return x;
 }
-
-long double dfxp_pos_inf()
-{
-    return lim_frac(dfxp(FXP_POS_INF), fxp_get_frac_bits());
-}
-
-long double dfxp_neg_inf()
-{
-    return lim_frac(dfxp(FXP_NEG_INF), fxp_get_frac_bits());
-}
-
-long double dfxp_undef()
-{
-    return lim_frac(dfxp(FXP_UNDEF), fxp_get_frac_bits());
-}
-
 
 void print_int_as_bin(int n, int width)
 {
@@ -304,4 +294,16 @@ void trace_fxp_div( char * msg,
     printf("  (x%x, %d bits)   (bidx:%d, pd-bit:%d -> next m:x%x)\n",
             (unsigned int) difference, fxp_nbits(difference),
             bindex, nxpdbit, ((difference << 1) | nxpdbit));
+}
+
+void print_type_sizes()
+{
+        printf("\nNum type sizes in this system:\n");
+        printf("char        has a size of %zd bytes.\n", sizeof(char));
+        printf("int         has a size of %zd bytes.\n", sizeof(int));
+        printf("long        has a size of %zd bytes.\n", sizeof(long));
+        printf("long long   has a size of %zd bytes.\n", sizeof(long long));
+        printf("float       has a size of %zd bytes.\n", sizeof(float));
+        printf("double      has a size of %zd bytes.\n", sizeof(double));
+        printf("long double has a size of %zd bytes.\n", sizeof(long double));
 }
