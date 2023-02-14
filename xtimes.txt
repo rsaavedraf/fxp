@@ -1,23 +1,51 @@
-[H[2J[3J================================================
+[H[2J[3J=================================================
 Relative Execution Times of FXP operations
-================================================
-MAX INT is 2147483646
-  0 %
- 10 %
- 20 %
- 30 %
- 40 %
- 50 %
- 60 %
- 70 %
- 80 %
- 90 %
-100 %
-add     : 1.000000
-add_l   : 1.001424
-mul     : 8.934389
-mul_l   : 1.425173
-div     : 15.245576
-div_l   : 3.242095
-log2_l  : 18.049780
-log2_bkm: 5.156109
+=================================================
+
+Number of frac bits: 8
+10%  20%  30%  40%  50%  60%  70%  80%  90%  100%  
+add      :   1.00
+mul      :   8.36
+mul_l    :   1.46
+div      :  13.79
+div_l    :   3.26
+lg2      :   6.13  (BKM, only ints)
+lg2_l    :   3.44  (BKM, longs)
+lg2_mul  :  45.68  (with mult., only ints)
+lg2_mul_l:   9.38  (with mult., longs)
+
+Number of frac bits: 16
+10%  20%  30%  40%  50%  60%  70%  80%  90%  100%  
+add      :   1.00
+mul      :   9.12
+mul_l    :   1.42
+div      :  15.35
+div_l    :   3.25
+lg2      :  10.95  (BKM, only ints)
+lg2_l    :   5.71  (BKM, longs)
+lg2_mul  :  95.92  (with mult., only ints)
+lg2_mul_l:  17.78  (with mult., longs)
+
+Number of frac bits: 24
+10%  20%  30%  40%  50%  60%  70%  80%  90%  100%  
+add      :   1.00
+mul      :  10.45
+mul_l    :   1.43
+div      :  12.91
+div_l    :   3.22
+lg2      :  16.05  (BKM, only ints)
+lg2_l    :   8.11  (BKM, longs)
+lg2_mul  : 155.54  (with mult., only ints)
+lg2_mul_l:  26.51  (with mult., longs)
+
+Number of frac bits: 28
+10%  20%  30%  40%  50%  60%  70%  80%  90%  100%  
+add      :   1.00
+mul      :  11.13
+mul_l    :   1.43
+div      :  12.86
+div_l    :   3.21
+lg2      :  19.17  (BKM, only ints)
+lg2_l    :   9.49  (BKM, longs)
+lg2_mul  : 184.84  (with mult., only ints)
+lg2_mul_l:  31.40  (with mult., longs)
