@@ -127,8 +127,8 @@ static int fxp_lg2e = FXP_LOG2E_I32 >> (FXP_DEF_SHIFT + 1);
 static int fxp_ln2 = FXP_LN2_I32 >> (FXP_DEF_SHIFT + 2);
 
 #define FXP_BKM_PREC (FXP_INT_BITS - 2)
-#define FXP_BKM_MSHIFT (FXP_INT_BITS - 8)
-#define FXP_BKM_MMASK (0xF << FXP_BKM_MSHIFT)
+//#define FXP_BKM_MSHIFT (FXP_INT_BITS - 8)
+//#define FXP_BKM_MMASK (0xF << FXP_BKM_MSHIFT)
 #define FXP_BKM_PREC_L ((sizeof(long) * 8) - 2)
 #define FXP_BKM_L_CLZSHIFT (FXP_BKM_PREC_L - FXP_BKM_PREC - 1)
 static const int FXP_BKM_ONE = (1 << FXP_BKM_PREC);
@@ -147,9 +147,10 @@ static int fxp_one = 1 << FXP_FRAC_BITS_DEF;
 static int fxp_two = 1 << (FXP_FRAC_BITS_DEF + 1);
 static int fxp_lg2_l_maxloops = FXP_FRAC_BITS_DEF + 1;
 static int fxp_lg2_l_shift = FXP_BKM_PREC_L - FXP_FRAC_BITS_DEF;
-static int fxp_lg2_shift = FXP_BKM_PREC - FXP_FRAC_BITS_DEF;
 static int fxp_lg2_maxloops = FXP_FRAC_BITS_DEF;
-static int fxp_lg2_mbmask = 0;
+static int fxp_lg2_yashift = FXP_BKM_PREC - FXP_FRAC_BITS_DEF;
+static int fxp_lg2_ybmask = 0;
+static int fxp_lg2_ybshift = 0;
 
 int fxp_get_frac_bits() {
         return fxp_frac_bits;
@@ -270,17 +271,21 @@ int fxp_set_frac_bits(int nfracbits)
         fxp_one = fxp(1);
         fxp_half = fxp_one >> 1;
         fxp_two = fxp_one << 1;
-
-        // for lg2_l
         fxp_lg2_l_maxloops = MIN(FXP_INT_BITS, fxp_frac_bits + 1);
-        fxp_lg2_maxloops = fxp_frac_bits;
         fxp_lg2_l_shift = FXP_BKM_PREC_L - fxp_frac_bits;
-        fxp_lg2_shift = FXP_BKM_PREC - fxp_frac_bits;
-        // When lg2_shift is negative, lg2_mbmask is equal to
-        // a number of 1's == -lg2_shift, shifted to the
-        // left-most bits of an int
-        fxp_lg2_mbmask = (fxp_lg2_shift >= 0)? 0: \
-                ((1 << (-fxp_lg2_shift)) - 1) << (FXP_INT_BITS + fxp_lg2_shift);
+        fxp_lg2_maxloops = fxp_frac_bits + 1;
+        fxp_lg2_yashift = FXP_BKM_PREC - fxp_frac_bits;
+        if (fxp_lg2_yashift >= 0) {
+            fxp_lg2_ybshift = 0;
+            fxp_lg2_ybmask = 0;
+        } else {
+            // When lg2_shift is negative, lg2_ybmask is equal to
+            // a number of 1's == -lg2_shift, shifted to the
+            // left-most bits of an int
+            fxp_lg2_ybshift = FXP_INT_BITS + fxp_lg2_yashift;
+            fxp_lg2_ybmask = ((1 << (-fxp_lg2_yashift)) - 1) \
+                    << fxp_lg2_ybshift;
+        }
 
         return fxp_frac_bits;
 }
@@ -548,8 +553,10 @@ int fxp_add(int fxp1, int fxp2)
 
 /*
  * Safe implementation of fxp1 + fxp2 using longs.
- * Only applicable for systems in which sizeof(long) > sizeof(int)
- */
+ * Always ends up very slightly slower than fxp_add
+ * at least on an intel i7, so there is no benefit
+ * in using this at all over fxp_add. Commenting it out
+ *
 int fxp_add_l(int fxp1, int fxp2)
 {
         // Check for undef or infinity arguments
@@ -568,6 +575,7 @@ int fxp_add_l(int fxp1, int fxp2)
         // No overflow, return the sum
         return ((int) sum);
 }
+*/
 
 /*
  * Safe fxp1 - fxp2 just using the safe add functions :)
@@ -580,6 +588,7 @@ int fxp_sub(int fxp1, int fxp2)
         return fxp_add(fxp1, -fxp2);
 }
 
+/*
 int fxp_sub_l(int fxp1, int fxp2)
 {
         // Conservative check to never attempt to change sign
@@ -587,6 +596,7 @@ int fxp_sub_l(int fxp1, int fxp2)
         if (fxp2 == FXP_UNDEF) return FXP_UNDEF;
         return fxp_add_l(fxp1, -fxp2);
 }
+*/
 
 /*
  * Safe implementation of fxp multiplication using longs,
@@ -1038,10 +1048,6 @@ int fxp_ln_l(int fxp1)
  * Requires the fxp configuration to have 3 or more whole bits.
  * Needs no pre-calculated table of log values in any range, but
  * requires one multiplication per mantissa bit.
- * Operates within the current fxp's settings, so # effective
- * mantissa bits calculated == current # frac bits. This favor
- * execution time for fewer frac bit configurations, but
- * the more frac bits in use, the more time it takes.
  *
  * Adapted to fxps from the general algorithm to calculate
  * binary logarithms explained by Clay Turner in IEEE Signal
@@ -1118,7 +1124,7 @@ int fxp_lg2_mul(int fxp1)
 /*
  * Same lg2 implementation as above using multiplication, but
  * here a long multiplication for speed. Therefore, only applicable
- * for systems in which sizeof(long) > sizeof(int)
+ * for systems in which sizeof(long) >= 2 * sizeof(int)
  * Requires the fxp configuration to have 3 or more whole bits.
  * Needs no pre-calculated table of log values in any range.
  */
@@ -1164,7 +1170,8 @@ int fxp_lg2_mul_l(int fxp1)
 
 /*
  * Default log2 calculation using only ints and the BKM algorithm.
- * Requires a table of pre-calculated values (FXP_BKM_LOGS[]).
+ * Requires tables of pre-calculated values (FXP_BKM_LOGS[], and
+ * FXP_BKM_LOGS_XTRA[]
  * For more details on BKM:
  * https://en.wikipedia.org/wiki/BKM_algorithm
  */
@@ -1181,74 +1188,85 @@ int fxp_lg2(int fxp1)
                     (nbx - fxp_frac_bits - 1): 0;
         //printf("fxp:%x, clz:%d, nbx:%d, c:%d\n", fxp1, clz, nbx, c);
 
-        //printf("Proceeding with BKM loop for mantissa:\n");
-        // Here we have already calculated the log characteristic c
-        // Now lshifting the original number to have it as unsigned
-        // fxp with 30 frac bits (same as the pre-calculated values
-        // in our bkm table of logs)
+        // Here simulating longs with two ints a and b, i.e.
+        // a long K as two ints (ka, kb), ka being the most
+        // significant int, and kb the least significant int
+        unsigned int za = ((unsigned int) fxp1) << (clz - 1);
+        //unsigned int zb = 0; // <- zb not really needed, will remain 0
 
-        // Here we are just simulating a long K with two ints:
-        // k_a (most signif.), and k_b (least signif.)
-        unsigned int z_a = ((unsigned int) fxp1) << (clz - 1);
-        //unsigned int z_b = 0; // <- Not needed, will remain zero
-        //printf("fpx:%x, z:%lx\n", fxp1, z);
-        unsigned int x_a = FXP_BKM_ONE, x_b = (FXP_BKM_ONE >> 2);
-        unsigned int x_a_prev = x_a;
-        unsigned int xs_a = 0, xs_b = 0;
-        unsigned int zz_a, zz_b;
-        unsigned int m_a = 0, m_b = 0; // starting mantissa
-        unsigned int aux = 0;
+        //printf("lg2   start:  c:%d,  fxp:%x,  z:%8X%8X\n", \
+        //        c, fxp1, za, 0);
+                                                    // Simulated long
+        unsigned int xa = FXP_BKM_ONE, xb = 0;      // x
+        unsigned int zza, zzb;                      // zz
+        unsigned int xsa = 0, xsb = 0;              // xs
+        unsigned int ya = 0, yb = 0;                // y
+        unsigned int auxa, auxb;                    // aux
+        unsigned int a_bits;
+        unsigned int ab_mask = 1;
         for (int shift=1; shift <= fxp_lg2_maxloops; shift++) {
+
                 //unsigned long xs = (x >> shift);
-                if (shift < FXP_INT_BITS_M1) {
-                    xs_a = (x_a >> shift);
-                    // Any bit coming from x_a into xs_b, we bring it not
-                    // into the MSB of xs_b, but to the right of it, so as
-                    // to have room for carry overs when adding it with x_b
-                    xs_b = (((x_a >> (shift - 1)) & 1)? FXP_BKM_MSB1: 0) \
-                            | (xs_b >> 1);
-                } else if (shift == FXP_INT_BITS_M1) {
-                    xs_a = 0;
-                    xs_b = (((x_a >> (shift - 1)) & 1)? FXP_BKM_MSB1: 0) \
-                            | (xs_b >> 1);
+                // Here we must r-shift the combo (xa, xb) by shift units
+                // leaving the results in combo (xsa, xsb)
+                if (shift < FXP_INT_BITS) {
+                        a_bits = (xa & ab_mask);
+                        xsa = (xa >> shift);
+                        xsb = (a_bits << (FXP_INT_BITS - shift)) | (xb >> shift);
+                        ab_mask = (ab_mask << 1) | 1;
                 } else {
-                    xs_b = (xs_b >>1);
+                        xsa = 0;
+                        xsb = (xa >> (shift - FXP_INT_BITS));
                 }
-                printf("shift:%2d,  xs_a:%8x,  xs_b:%8x\n", shift, xs_a, xs_b);
+
                 // zz = x + xs;
-                zz_a = x_a + xs_a;
-                zz_b = x_b + xs_b;
-                if (xs_b > FXP_BKM_MAXU - x_b) zz_a++; // There is carry over, bring it to zz_a
+                zza = xa + xsa;
+                if (xsb > FXP_BKM_MAXU - xb)
+                    // Carry over from zzb into zza
+                    zza++;
+                zzb = xb + xsb;
+
+                //printf("lg2 %2d: x :%8X-%8X\n", shift, xa, xb);
+                //printf("        xs:%8X-%8X\n", xsa, xsb);
+                //printf("        zz:%8X-%8X\n", zza, zzb);
+
                 // if (zz <= z) {
-                if ((zz_a < z_a) || ((zz_a == z_a) && (zz_b == 0))) {
+                if ((zza < za) || ((zza == za) && (zzb == 0))) {
+                        //printf("\tUPDATING X AND M.\n");
+
                         // x = zz;
-                        x_a = zz_a;
-                        x_b = zz_b;
+                        xa = zza;
+                        xb = zzb;
+
                         // y += FXP_BKM_LOGS_L[shift];
-                        m_a += FXP_BKM_LOGS[shift];
-                        aux = FXP_BKM_LOGS_XTRA[shift];
-                        if (m_b > FXP_BKM_MAXU - aux) {
-                            m_a++;
-                            printf("\tcarry over adding m_b and the array:\n");
-                        }
-                        unsigned old_m_b = m_b;
-                        m_b += aux;
-                        printf("\told_m_b:%u,  aux:%u,  new m_b:%u\n", \
-                            old_m_b, aux, m_b);
+                        auxa = FXP_BKM_LOGS[shift];
+                        auxb = FXP_BKM_LOGS_XTRA[shift];
+                        ya += auxa;
+                        if (yb > FXP_BKM_MAXU - auxb)
+                            // Carry from yb into ya
+                            ya++;
+                        yb += auxb;
+                        //printf("\told_m_b:%u,  aux:%u,  new m_b:%u\n", \
+
+                        //    old_m_b, aux, m_b);
                 }
+                //printf("lg2   %2d:  zz:%8X%8X  x:%8X-%8X  xs:%8X-%8X  m:%8X%8X  %d\n",
+                //        shift, zz_a, zz_b, \
+                //        x_a, x_b, xs_a, xs_b, \
+                //        m_a, m_b, shift);
+                //if (shift == 12) exit(-3);
         }
         // Include any carry overs from summing the xtra bits together
         // Now y has the mantissa, shift it adjusting for final fxp
         int m;
-        if (fxp_lg2_shift >= 0)
-                m = m_a >> fxp_lg2_shift;
+        if (fxp_lg2_yashift >= 0)
+                m = ya >> fxp_lg2_yashift;
         else {
-                printf("SHIFTING TO THE LEFT BY %d!\n", fxp_lg2_shift);
                 // If shifted the mantissa to the left, we can pull the
-                // left-most bits from m_b
-                m = (m_a << (-fxp_lg2_shift)) |
-                        ((m_b & fxp_lg2_mbmask) >> FXP_INT_BITS + fxp_lg2_shift);
-                printf("m_a:%x,  m_b:%x ---> m:%x\n", m_a, m_b, m);
+                // left-most bits from yb
+                m = (ya << (-fxp_lg2_yashift)) |
+                        ((yb & fxp_lg2_ybmask) >> fxp_lg2_ybshift);
+                //printf("ma:%x,  mb:%x ---> m:%x\n", ya, yb, m);
         }
         //printf("Final mantissa after %d shift from lg2: %x\n", fxp_lg2_shift, m);
         // Return the complete logarithm (c + m) as fxp
@@ -1295,19 +1313,24 @@ int fxp_lg2_l(int fxp1)
         // in our bkm table of logs)
         unsigned long z = ((unsigned long) fxp1) << \
                             (clz + FXP_BKM_L_CLZSHIFT);
-        //printf("fpx:%x, z:%lx\n", fxp1, z);
+        //printf("lg2_l start:  c:%d,  fpx:%x,  z:%lx\n", c, fxp1, z);
         unsigned long x = FXP_BKM_ONE_L;
         unsigned long zz;
         unsigned long y = 0; // starting mantissa
         for (int shift=1; shift <= fxp_lg2_l_maxloops; shift++) {
                 unsigned long xs = (x >> shift);
                 zz = x + xs;
-                //printf("zz:%lu,  z:%lu,  ,  x:%lu,  xs:%lu\n",
-                //        zz, z, x, xs);
+                //printf("lg2_l %2d: x :%16lX\n", shift, x);
+                //printf("          xs:%16lX\n", xs);
+                //printf("          zz:%16lX\n", zz);
                 if (zz <= z) {
+                        unsigned long aux = FXP_BKM_LOGS_L[shift];
+                        //printf("\tUPDATING X AND Y, array: %lX\n", aux);
                         x = zz;
-                        y += FXP_BKM_LOGS_L[shift];
+                        y += aux;
                 }
+                //printf("lg2_l %2d:  zz:%16lX  x:%16lX  xs:%16lX  m:%16lX  %d\n",
+                //        shift, zz, x, xs, y, shift);
         }
         // Now y has the mantissa, shift it adjusting for final fxp
         long m;

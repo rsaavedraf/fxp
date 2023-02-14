@@ -65,8 +65,8 @@ int fxp_mul(int fxp1, int fxp2);
 int fxp_div(int fxp1, int fxp2);
 
 // Safe implementations using longs
-int fxp_add_l(int fxp1, int fxp2);
-int fxp_sub_l(int fxp1, int fxp2);
+//int fxp_add_l(int fxp1, int fxp2);
+//int fxp_sub_l(int fxp1, int fxp2);
 int fxp_mul_l(int fxp1, int fxp2);
 int fxp_div_l(int fxp1, int fxp2);
 
@@ -83,6 +83,5 @@ int fxp_ln(int fxp);
 int fxp_ln_l(int fxp);
 
 // Still to implement
-//int fxp_exp(int fxp);
 //int fxp_sqrt(int fxp);
 //int fxp_pow(int fxp_base, int fxp_exponent);
