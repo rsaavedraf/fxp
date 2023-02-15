@@ -1123,7 +1123,7 @@ int fxp_lg2_mul(int fxp1)
 
 /*
  * Same lg2 implementation as above using multiplication, but
- * here a long multiplication for speed. Therefore, only applicable
+ * here a long multiplication. Only applicable
  * for systems in which sizeof(long) >= 2 * sizeof(int)
  * Requires the fxp configuration to have 3 or more whole bits.
  * Needs no pre-calculated table of log values in any range.
@@ -1291,7 +1291,7 @@ int fxp_lg2(int fxp1)
 }
 
 /*
- * Default log2 calculation using longs and the BKM algorithm
+ * log2 calculation using longs and the BKM algorithm
  */
 int fxp_lg2_l(int fxp1)
 {

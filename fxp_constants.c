@@ -15,10 +15,10 @@
 #include <float.h>
 #include <time.h>
 #include <math.h>
-//#include <mpfr.h>   // Not yet installed
 #include "fxp.h"
 #include "fxp_aux.h"
 #include "fxp_constants.h"
+
 
 #define DASHES "========================\n"
 
@@ -557,6 +557,9 @@ int main(void)
 {
         printf("%sfxp_constants.c\n%s", DASHES, DASHES);
 
+
+        printf("\nSystem details:\n");
+        system("cat /proc/cpuinfo | grep CPU | head -1");
         print_type_sizes();
 
         //printf("\ntest1 %llx\n", bex_from_bin(STR_TEST1, 16, 1));

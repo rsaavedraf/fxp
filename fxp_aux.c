@@ -52,7 +52,7 @@ long double int_to_frac(long frac_value)
  */
 long double lim_frac(long double x, int fbp)
 {
-    if (x <= FXP_UNDEF_LD) return FXP_UNDEF_LD;
+    if (x == FXP_UNDEF_LD) return FXP_UNDEF_LD;
     if (x < dfxp_min_ld()) return FXP_NEG_INF_LD;
     if (x > dfxp_max_ld()) return FXP_POS_INF_LD;
     long shift = pow(2, fbp);
@@ -298,7 +298,7 @@ void trace_fxp_div( char * msg,
 
 void print_type_sizes()
 {
-        printf("\nNum type sizes in this system:\n");
+        printf("\nNum type sizes:\n");
         printf("char        has a size of %zd bytes.\n", sizeof(char));
         printf("int         has a size of %zd bytes.\n", sizeof(int));
         printf("long        has a size of %zd bytes.\n", sizeof(long));

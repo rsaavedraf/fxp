@@ -63,3 +63,12 @@ more memory: needs a table of 32 ints with some pre-calculated log values
 2023-02-11: Debugging implementations of log2, and exploring the largest 
 errors incurred. Also moving these last updates out of the README and into
 this separate file.
+
+2023-02-14: lg2 implemented and debugged. 4 versions:
+lg2():      BKM using only ints. Excellent accuracy, fast.
+lg2_l():    BKM using longs. Excellent accuracy, fastest.
+lg2_mul():  Uses multiplication, and only ints. This is the slowest, but
+            requires no table of pre-calculated values like BKM does.
+            Not as accurate as the BKM-based functions.
+lg2_mul_l(): Uses multiplication and longs, no table of pre-calculated
+            values required. Not as accurate as the BKM-based functions.
