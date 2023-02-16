@@ -5,20 +5,19 @@
  * Shows relavite execution times (smaller is better)
  * for the different fxp operations and functions.
  * Example part of the ouput, for a system with an
- * Intel i7-6700K cpu, run on 2023-02-14:
+ * Intel i7-6700K cpu, run on 2023-02-15:
  *
 
 Number of frac bits: 16
 10%  20%  30%  40%  50%  60%  70%  80%  90%  100%
 add      :   1.00
-mul      :   9.12
-mul_l    :   1.42
-div      :  15.35
-div_l    :   3.25
-lg2      :  10.95  (BKM, only ints)
-lg2_l    :   5.71  (BKM, longs)
-lg2_mul  :  95.92  (with mult., only ints)
-lg2_mul_l:  17.78  (with mult., longs)
+mul      :   8.88
+mul_l    :   1.40
+div      :  15.04
+div_l    :   3.20
+lg2      :  22.43  (BKM, only ints)
+lg2_l    :  11.67  (about  0.52x lg2, using BKM and longs)
+lg2_mul_l:  34.44  (about  1.54x lg2, using mult. and longs)
 
  *
  */
@@ -27,10 +26,11 @@ lg2_mul_l:  17.78  (with mult., longs)
 #include <stdlib.h>
 #include <time.h>
 #include "fxp.h"
+#include "fxp_aux.h"
 
 #define DASHES "=================================================\n"
 #define MAX_NUMS 1000
-#define MAX_OPS  500
+#define MAX_OPS  100
 
 int main(void) {
 
@@ -52,7 +52,9 @@ int main(void) {
 
         srand((unsigned int) time(0));  // randomize seed
 
-        printf("%sRelative Execution Times of FXP operations\n%s", DASHES, DASHES);
+        printf("\n%sRelative Execution Times of FXP operations\n%s", DASHES, DASHES);
+        print_sys_info();
+
         for (int nc = 0; nc < nconfigs; nc++) {
                 int nfb = fracbit_configs[nc];
                 fxp_set_frac_bits(nfb);
@@ -152,15 +154,20 @@ int main(void) {
                         t1= clock();
                         tdiv_l += ((double) t1 - t0);
 
+                        // To measure the lg execution use only + arguments
+                        if (n1 < 0) n1 = -n1;
+                        if (n2 < 0) n2 = -n2;
+                        if (n3 < 0) n3 = -n3;
+
                         t0 = clock();
                         for (int i = 0; i < MAX_OPS; i++) {
                                 x = fxp_lg2(n1);
                                 x = fxp_lg2(n2);
                                 for (int j = 0; j < nvals; j++) {
                                         y = val[j];
+                                        x = fxp_lg2(n1);
+                                        x = fxp_lg2(n2);
                                         x = fxp_lg2(n3);
-                                        x = fxp_lg2(y);
-                                        x = fxp_lg2(y);
                                 }
                         }
                         t1= clock();
@@ -172,9 +179,9 @@ int main(void) {
                                 x = fxp_lg2_l(n2);
                                 for (int j = 0; j < nvals; j++) {
                                         y = val[j];
+                                        x = fxp_lg2_l(n1);
+                                        x = fxp_lg2_l(n2);
                                         x = fxp_lg2_l(n3);
-                                        x = fxp_lg2_l(y);
-                                        x = fxp_lg2_l(y);
                                 }
                         }
                         t1= clock();
@@ -182,27 +189,13 @@ int main(void) {
 
                         t0 = clock();
                         for (int i = 0; i < MAX_OPS; i++) {
-                                x = fxp_lg2_mul(n1);
-                                x = fxp_lg2_mul(n2);
-                                for (int j = 0; j < nvals; j++) {
-                                        y = val[j];
-                                        x = fxp_lg2_mul(n3);
-                                        x = fxp_lg2_mul(y);
-                                        x = fxp_lg2_mul(y);
-                                }
-                        }
-                        t1= clock();
-                        tlg2_mul += ((double) t1 - t0);
-
-                        t0 = clock();
-                        for (int i = 0; i < MAX_OPS; i++) {
                                 x = fxp_lg2_mul_l(n1);
                                 x = fxp_lg2_mul_l(n2);
                                 for (int j = 0; j < nvals; j++) {
                                         y = val[j];
+                                        x = fxp_lg2_mul_l(n1);
+                                        x = fxp_lg2_mul_l(n2);
                                         x = fxp_lg2_mul_l(n3);
-                                        x = fxp_lg2_mul_l(y);
-                                        x = fxp_lg2_mul_l(y);
                                 }
                         }
                         t1= clock();
@@ -215,10 +208,12 @@ int main(void) {
                 printf("mul_l    : %6.2lf\n", tmul_l / tadd);
                 printf("div      : %6.2lf\n", tdiv / tadd);
                 printf("div_l    : %6.2lf\n", tdiv_l / tadd);
-                printf("lg2      : %6.2lf  (BKM, only ints)\n", tlg2 / tadd);
-                printf("lg2_l    : %6.2lf  (BKM, longs)\n", tlg2_l / tadd);
-                printf("lg2_mul  : %6.2lf  (with mult., only ints)\n", tlg2_mul / tadd);
-                printf("lg2_mul_l: %6.2lf  (with mult., longs)\n", tlg2_mul_l / tadd);
+                printf("lg2      : %6.2lf  (BKM, only ints)\n", \
+                            tlg2 / tadd);
+                printf("lg2_l    : %6.2lf  (about %5.2lfx lg2, using BKM and longs)\n", \
+                            tlg2_l / tadd, tlg2_l / tlg2);
+                printf("lg2_mul_l: %6.2lf  (about %5.2lfx lg2, using mult. and longs)\n", \
+                             tlg2_mul_l / tadd, tlg2_mul_l / tlg2);
 
         }
         return 0;

@@ -72,3 +72,29 @@ lg2_mul():  Uses multiplication, and only ints. This is the slowest, but
             Not as accurate as the BKM-based functions.
 lg2_mul_l(): Uses multiplication and longs, no table of pre-calculated
             values required. Not as accurate as the BKM-based functions.
+
+2023-02-15: Measuring execution times of the different lg2
+implementations more accurately passing only + arguments.
+Average ratio of their relative exec times using 8, 16, 24 and 28
+frac bits. Are all relative to fxp_lg2 itself here (not to fxp_add()):
+fxp_lg2:		1
+fxp_lg2_l:		0.51x
+fxp_lg2_mul_l:	1.54x
+fxp_lg2_mul:	9.3x
+fxp_lg2_mul() is quite the odd man out: at least using current
+implementation of fxp_mul() (which takes ~6x the time of _mul_l()).
+It takes fxp_lg2_mul() ~9x the time fxp_lg2() takes to run.
+Almost an order of magnitude slower!
+Only in some extremely memory-limited scenarios would it
+make sense to be ok with such loss in speed, compared to just having
+to hold the arrays of pre-calculated values in memory for the
+BKM-based lg2, a total of only ~66 int values. And that could be
+even cut in half by eliminating the _xtra array, so only ~33 int
+values. Not processing those _xtra[] values would mean losing ultimate
+precision, but it would make lg2 simpler and also faster actually.
+So for now eliminating the lg2_mul() implementation. If worth
+considering, it's the same as lg2_mul_l() after all, only the call
+to  fxp_mul_l() in its loop would need to get replaced with a call
+to fxp_mul().
+Added some system info at the beginning of the outputs.
+Added ln() and log10(), also tests for them.

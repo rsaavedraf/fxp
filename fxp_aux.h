@@ -45,4 +45,4 @@ void trace_fxp_div( char * msg,
 
 int fxp_from_ldouble(long double x);
 
-void print_type_sizes();
+void print_sys_info();

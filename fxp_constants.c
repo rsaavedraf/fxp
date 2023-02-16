@@ -30,21 +30,29 @@
 
 // Euler's constant (e) in decimal and binary
 #define STR_E_DEC  "2.7182818284590452353602874713526624977572470936999595749669676277240766303535475945713821785251664274"
-#define STR_E_BIN "10.1011011111100001010100010110001010001010111011010010101001101010101111110111000101011000100000001001"
+#define STR_E_BIN "101011011111100001010100010110001010001010111011010010101001101010101111110111000101011000100000001001"
 
-// Pi in decimanl and binary
-#define STR_PI_DEC  "3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825342117067"
-#define STR_PI_BIN "11.001001000011111101101010100010001000010110100011000010001101001100010011000110011000101000101110000"
-
-// log2(e)
-#define STR_LOG2E_DEC "1.4426950408889634073599246810019"
+// Pi in decimal and binary
+#define STR_PI_DEC  "3.1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679"
+#define STR_PI_BIN  "110010010000111111011010101000100010000101101000110000100011010011000100110001100110001010001011100000"
 
 // ln(2)
-#define STR_LN2_DEC ".69314718055994530941723212145818"
+#define STR_LN_2_DEC ".693147180559945309417232121458176568075500134360255254120680009493393621969694715605863326996418687"
+
+// log10(2)
+#define STR_LG10_2_DEC ".301029995663981195213738894724493026768189881462108541310427461127108189274424509486927252118186172040684"
+
+// log2(e)
+//#define STR_LG2_E_DEC   "1.4426950408889634073599246810018921374266459541529859341354494069311092191811850798855266228935063444"
+
+// log2(10)
+//#define STR_LG2_10_DEC "3.32192809488736234787031942948939017586483139302458061205475639581593477660862521585013974335937015"
+
+
 
 // Sqrt(2)
-#define STR_SQRT2_BIN "1.01101010000010011110011001100111111100111011110011001001000010001011001011111011000100110110011011"
-#define STR_SQRT2_DEC "1.41421356237309504880168872420969807856967187537694807317667973799073247846210703885038753432764157"
+//#define STR_SQRT2_BIN "1.01101010000010011110011001100111111100111011110011001001000010001011001011111011000100110110011011"
+//#define STR_SQRT2_DEC "1.41421356237309504880168872420969807856967187537694807317667973799073247846210703885038753432764157"
 
 #define ZERO 1.0E-124
 
@@ -289,10 +297,10 @@ static const unsigned long BKM_HEX_LOGS[] = {
 unsigned long long bex_from_bin(char * pbinnum, int wbits, int fbits, int rounded)
 {
         char * p = pbinnum;
-        unsigned long long bnum = 0;
-        if (wbits <= 0) wbits = 31;
-        if (fbits <= 0) fbits = 32;
+        if ((wbits <= 0) || (wbits > 31)) wbits = 31;
+        if ((fbits <= 0) || (fbits + wbits > 64)) fbits = 63 - wbits;
         int roomleft = wbits + fbits;
+        unsigned long long bnum = 0;
         while ((roomleft > 0) && (*p != '\0')) {
             char cbit = *p;
             //printf("%c", cbit);
@@ -325,8 +333,8 @@ unsigned long long bex_from_bin(char * pbinnum, int wbits, int fbits, int rounde
 unsigned long long bex_from_dec(char * pdecnum, int wbits, int fbits, int rounded)
 {
         char * p = pdecnum;
-        if (wbits <= 0) wbits = 31;
-        if (fbits <= 0) fbits = 32;
+        if ((wbits < 0) || (wbits > 31)) wbits = 31;
+        if ((fbits < 0) || (fbits + wbits > 64)) fbits = 63 - wbits;
         // Process whole part first
         int nwd = 0;
         int ptens = 1;
@@ -555,12 +563,8 @@ long double my_log2_bkm(long double x, int nbits)
 
 int main(void)
 {
-        printf("%sfxp_constants.c\n%s", DASHES, DASHES);
-
-
-        printf("\nSystem details:\n");
-        system("cat /proc/cpuinfo | grep CPU | head -1");
-        print_type_sizes();
+        printf("\n%sfxp_constants.c\n%s", DASHES, DASHES);
+        print_sys_info();
 
         //printf("\ntest1 %llx\n", bex_from_bin(STR_TEST1, 16, 1));
         //printf("\ntest2 %llx\n", bex_from_bin(STR_TEST2, 16, 1));
@@ -582,24 +586,26 @@ int main(void)
                 MY_E_BIN, (MY_E_BIN - E_EXPL));
         printf("e from expl()    : %.64LE (- expl(): %1.4LE)\n",
                 E_EXPL, (E_EXPL - E_EXPL));
-        printf("'True' e         : %s\n", STR_E_DEC);
+        printf("'True' e         : %s\n\n", STR_E_DEC);
 
-        /*
-        printf("My e (31 bits) %llx\n", bex_from_bin(STR_E_BIN, 2, 29, 1));
-        printf("My e (63 bits) %llx\n\n", bex_from_bin(STR_E_BIN, 2, 61, 1));
+        printf("e as binary: %s\n", STR_E_BIN);
+        printf("e as fxp (31 bits) %llx\n", bex_from_bin(STR_E_BIN, 2, 29, 1));
+        printf("e as fxp (63 bits) %llx\n\n", bex_from_bin(STR_E_BIN, 2, 61, 1));
 
-        printf("pi (31 bits) %llx\n", bex_from_bin(STR_PI_BIN, 2, 29, 1));
-        printf("pi (63 bits) %llx\n\n", bex_from_bin(STR_PI_BIN, 2, 61, 1));
+        printf("pi as binary: %s\n", STR_PI_BIN);
+        printf("pi as fxp (31 bits) %llx\n", bex_from_bin(STR_PI_BIN, 2, 29, 1));
+        printf("pi as fxp (63 bits) %llx\n\n", bex_from_bin(STR_PI_BIN, 2, 61, 1));
 
-        printf("log2(e) (31 bits) %llx\n", bex_from_dec(STR_LOG2E_DEC, 1, 30, 1));
-        printf("log2(e) (63 bits) %llx\n\n", bex_from_dec(STR_LOG2E_DEC, 1, 62, 1));
+        printf("ln(2) as decimal: %s\n", STR_LN_2_DEC);
+        printf("ln(2) as fxp (31 bits) %llx\n", bex_from_dec(STR_LN_2_DEC, 0, 31, 1));
+        printf("ln(2) as fxp (63 bits) %llx\n\n", bex_from_dec(STR_LN_2_DEC, 0, 63, 1));
 
-        printf("ln(2) (31 bits) %llx\n", bex_from_dec(STR_LN2_DEC, 0, 31, 1));
-        printf("ln(2) (63 bits) %llx\n\n", bex_from_dec(STR_LN2_DEC, 0, 63, 1));
+        printf("lg10(2) as decimal: %s\n", STR_LG10_2_DEC);
+        printf("lg10(2) as fxp (31 bits) %llx\n", bex_from_dec(STR_LG10_2_DEC, 0, 31, 1));
+        printf("lg10(2) as fxp (63 bits) %llx\n\n", bex_from_dec(STR_LG10_2_DEC, 0, 63, 1));
 
         // Generate fxp's for the logs table of numbers to be used
         // by BKM algorithm
-        */
 
         /*
         int nfbits = 62;
@@ -628,6 +634,7 @@ int main(void)
         //printf("Sum of values in log table: %1.5LE\n", sumlogs2);
         */
 
+        /*
         printf("\nPrecision of long double log2 calculations using BKM:\n");
         long double invln2 = 1 / logl(2);
         for (int bkmd = 27; bkmd <= 35; bkmd++) {
@@ -647,6 +654,7 @@ int main(void)
                                 mylg2_bkm, mylg2_bkm - tgt);
                 }
         }
+        */
 
 
         return 0;

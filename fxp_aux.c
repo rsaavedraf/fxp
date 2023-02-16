@@ -175,47 +175,49 @@ void print_fxp_as_bin(int n, int width)
  */
 void print_fxp(int fxp)
 {
-        if (fxp == FXP_POS_INF || fxp == FXP_NEG_INF || fxp == FXP_UNDEF)
+        if (fxp == FXP_POS_INF || fxp == FXP_NEG_INF || fxp == FXP_UNDEF) {
                 printf(fxp==FXP_UNDEF? "UNDEF":
-                      (fxp==FXP_POS_INF? "+INF": "-INF"));
-        else {
-                long double n = lim_frac(dfxp(fxp), fxp_get_frac_bits());
-                int whole = fxp_get_whole_part(fxp);
-                int nbits;
-                if (fxp_get_frac_max_dec() <= 9999) {
-                    if (fxp < 0) {
-                        int pfxp = -fxp;
-                        nbits = fxp_nbits(pfxp);
-                        printf("%d.%5d (=Lf:%Lf = %d = x(-)%x = b",
-                                whole,
-                                fxp_get_dec_frac(fxp),
-                                n, fxp, pfxp);
-                    } else {
-                        nbits = fxp_nbits(fxp);
-                        printf("%d.%5d (=Lf:%Lf = %d = x%x = b",
-                                whole,
-                                fxp_get_dec_frac(fxp),
-                                n, fxp, fxp);
-                    }
-                } else {
-                    if (fxp < 0) {
-                        int pfxp = -fxp;
-                        nbits = fxp_nbits(pfxp);
-                        printf("%d.%8d (=LE:%1.2LE = %d = x(-)%x = b",
-                                whole,
-                                fxp_get_dec_frac(fxp),
-                                n, fxp, pfxp);
-                    } else {
-                        nbits = fxp_nbits(fxp);
-                        printf("%d.%8d (=LE:%1.2LE = %d = x%x = b",
-                                whole,
-                                fxp_get_dec_frac(fxp),
-                                n, fxp, fxp);
-                    }
-                }
-                print_fxp_as_bin(fxp, 0);
-                printf(", %d bits)", nbits);
+                          (fxp==FXP_POS_INF? "+INF": "-INF"));
+                return;
         }
+        //printf("\ninput fxp is: %d", fxp);
+        long double n = lim_frac(dfxp(fxp), fxp_get_frac_bits());
+        //printf("long double n = %Lf\n", n);
+        int whole = fxp_get_whole_part(fxp);
+        int nbits;
+        if (fxp_get_frac_max_dec() <= 9999) {
+            if (fxp < 0) {
+                int pfxp = -fxp;
+                nbits = fxp_nbits(pfxp);
+                printf("%d.%5d (=Lf:%Lf = %d = x(-)%x = b",
+                        whole,
+                        fxp_get_dec_frac(fxp),
+                        n, fxp, pfxp);
+            } else {
+                nbits = fxp_nbits(fxp);
+                printf("%d.%5d (=Lf:%Lf = %d = x%x = b",
+                        whole,
+                        fxp_get_dec_frac(fxp),
+                        n, fxp, fxp);
+            }
+        } else {
+            if (fxp < 0) {
+                int pfxp = -fxp;
+                nbits = fxp_nbits(pfxp);
+                printf("%d.%8d (=LE:%1.2LE = %d = x(-)%x = b",
+                        whole,
+                        fxp_get_dec_frac(fxp),
+                        n, fxp, pfxp);
+            } else {
+                nbits = fxp_nbits(fxp);
+                printf("%d.%8d (=LE:%1.2LE = %d = x%x = b",
+                        whole,
+                        fxp_get_dec_frac(fxp),
+                        n, fxp, fxp);
+            }
+        }
+        print_fxp_as_bin(fxp, 0);
+        printf(", %d bits)", nbits);
 }
 
 void print_fxp_div(int startmask, int nmaskbits, int n, int frac_bits)
@@ -296,8 +298,13 @@ void trace_fxp_div( char * msg,
             bindex, nxpdbit, ((difference << 1) | nxpdbit));
 }
 
-void print_type_sizes()
+void print_sys_info()
 {
+        fflush( stdout );
+        printf("\nSystem details:\n");
+        system("hostnamectl | grep -e 'Operating System' -e 'Architecture'");
+        system("cat /proc/cpuinfo | grep -e 'CPU' -e 'model name' -e 'Model' | sort -r | head -1");
+
         printf("\nNum type sizes:\n");
         printf("char        has a size of %zd bytes.\n", sizeof(char));
         printf("int         has a size of %zd bytes.\n", sizeof(int));

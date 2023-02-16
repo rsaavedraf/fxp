@@ -73,14 +73,19 @@ int fxp_div_l(int fxp1, int fxp2);
 // Beyond the basic four arithmetic ops
 int fxp_get_e();
 int fxp_get_pi();
-int fxp_get_ln2();
-int fxp_get_lg2e();
+int fxp_get_ln_2();
+int fxp_get_lg10_2();
+
 int fxp_lg2(int fxp);
 int fxp_lg2_l(int fxp);
-int fxp_lg2_mul(int fxp);
 int fxp_lg2_mul_l(int fxp);
+
 int fxp_ln(int fxp);
 int fxp_ln_l(int fxp);
+
+int fxp_lg10(int fxp);
+int fxp_lg10_l(int fxp);
+
 
 // Still to implement
 //int fxp_sqrt(int fxp);

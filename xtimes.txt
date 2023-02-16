@@ -1,51 +1,62 @@
-[H[2J[3J=================================================
+[H[2J[3J
+=================================================
 Relative Execution Times of FXP operations
 =================================================
+  Operating System: Ubuntu 20.04.5 LTS
+      Architecture: x86-64
+model name	: Intel(R) Core(TM) i7-6700K CPU @ 4.00GHz
+
+System details:
+
+Num type sizes:
+char        has a size of 1 bytes.
+int         has a size of 4 bytes.
+long        has a size of 8 bytes.
+long long   has a size of 8 bytes.
+float       has a size of 4 bytes.
+double      has a size of 8 bytes.
+long double has a size of 16 bytes.
 
 Number of frac bits: 8
 10%  20%  30%  40%  50%  60%  70%  80%  90%  100%  
 add      :   1.00
-mul      :   8.36
-mul_l    :   1.46
-div      :  13.79
-div_l    :   3.26
-lg2      :   6.13  (BKM, only ints)
-lg2_l    :   3.44  (BKM, longs)
-lg2_mul  :  45.68  (with mult., only ints)
-lg2_mul_l:   9.38  (with mult., longs)
+mul      :   8.17
+mul_l    :   1.44
+div      :  13.57
+div_l    :   3.21
+lg2      :  12.23  (BKM, only ints)
+lg2_l    :   6.71  (about  0.55x lg2, using BKM and longs)
+lg2_mul_l:  18.02  (about  1.47x lg2, using mult. and longs)
 
 Number of frac bits: 16
 10%  20%  30%  40%  50%  60%  70%  80%  90%  100%  
 add      :   1.00
-mul      :   9.12
-mul_l    :   1.42
-div      :  15.35
-div_l    :   3.25
-lg2      :  10.95  (BKM, only ints)
-lg2_l    :   5.71  (BKM, longs)
-lg2_mul  :  95.92  (with mult., only ints)
-lg2_mul_l:  17.78  (with mult., longs)
+mul      :   8.90
+mul_l    :   1.40
+div      :  15.06
+div_l    :   3.20
+lg2      :  22.46  (BKM, only ints)
+lg2_l    :  11.75  (about  0.52x lg2, using BKM and longs)
+lg2_mul_l:  34.87  (about  1.55x lg2, using mult. and longs)
 
 Number of frac bits: 24
 10%  20%  30%  40%  50%  60%  70%  80%  90%  100%  
 add      :   1.00
-mul      :  10.45
-mul_l    :   1.43
-div      :  12.91
-div_l    :   3.22
-lg2      :  16.05  (BKM, only ints)
-lg2_l    :   8.11  (BKM, longs)
-lg2_mul  : 155.54  (with mult., only ints)
-lg2_mul_l:  26.51  (with mult., longs)
+mul      :  10.20
+mul_l    :   1.42
+div      :  12.71
+div_l    :   3.19
+lg2      :  32.93  (BKM, only ints)
+lg2_l    :  16.80  (about  0.51x lg2, using BKM and longs)
+lg2_mul_l:  52.50  (about  1.59x lg2, using mult. and longs)
 
 Number of frac bits: 28
 10%  20%  30%  40%  50%  60%  70%  80%  90%  100%  
 add      :   1.00
-mul      :  11.13
-mul_l    :   1.43
-div      :  12.86
-div_l    :   3.21
-lg2      :  19.17  (BKM, only ints)
-lg2_l    :   9.49  (BKM, longs)
-lg2_mul  : 184.84  (with mult., only ints)
-lg2_mul_l:  31.40  (with mult., longs)
+mul      :  10.79
+mul_l    :   1.41
+div      :  12.59
+div_l    :   3.15
+lg2      :  37.97  (BKM, only ints)
+lg2_l    :  19.21  (about  0.51x lg2, using BKM and longs)
+lg2_mul_l:  61.08  (about  1.61x lg2, using mult. and longs)
