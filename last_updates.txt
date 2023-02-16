@@ -98,3 +98,8 @@ to  fxp_mul_l() in its loop would need to get replaced with a call
 to fxp_mul().
 Added some system info at the beginning of the outputs.
 Added ln() and log10(), also tests for them.
+
+2023-02-16: trying to get 128-bit precision for the long double
+constants on an Intel-based pc. Only way seems to be to resort
+to using quadmath.h, little program test_quad.c checks this.
+Cleaning up comments. Also simplified the testing of lg10 and ln.
