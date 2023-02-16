@@ -30,11 +30,11 @@
 
 // Euler's constant (e) in decimal and binary
 #define STR_E_DEC  "2.7182818284590452353602874713526624977572470936999595749669676277240766303535475945713821785251664274"
-#define STR_E_BIN "101011011111100001010100010110001010001010111011010010101001101010101111110111000101011000100000001001"
+#define STR_E_BIN "10.1011011111100001010100010110001010001010111011010010101001101010101111110111000101011000100000001001"
 
 // Pi in decimal and binary
 #define STR_PI_DEC  "3.1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679"
-#define STR_PI_BIN  "110010010000111111011010101000100010000101101000110000100011010011000100110001100110001010001011100000"
+#define STR_PI_BIN  "11.0010010000111111011010101000100010000101101000110000100011010011000100110001100110001010001011100000"
 
 // ln(2)
 #define STR_LN_2_DEC ".693147180559945309417232121458176568075500134360255254120680009493393621969694715605863326996418687"
@@ -298,14 +298,15 @@ unsigned long long bex_from_bin(char * pbinnum, int wbits, int fbits, int rounde
 {
         char * p = pbinnum;
         if ((wbits <= 0) || (wbits > 31)) wbits = 31;
-        if ((fbits <= 0) || (fbits + wbits > 64)) fbits = 63 - wbits;
+        if ((fbits <= 0) || (fbits + wbits > 63)) fbits = 63 - wbits;
         int roomleft = wbits + fbits;
         unsigned long long bnum = 0;
         while ((roomleft > 0) && (*p != '\0')) {
             char cbit = *p;
-            //printf("%c", cbit);
-            bnum = (bnum << 1) | ((cbit == '1')? 1: 0);
-            roomleft--;
+            if (cbit != '.') {
+                bnum = (bnum << 1) | ((cbit == '1')? 1: 0);
+                roomleft--;
+            }
             p++;
         }
         if (roomleft > 0) {
