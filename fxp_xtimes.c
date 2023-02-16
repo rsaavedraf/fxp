@@ -11,13 +11,13 @@
 Number of frac bits: 16
 10%  20%  30%  40%  50%  60%  70%  80%  90%  100%
 add      :   1.00
-mul      :   8.88
+mul      :   8.90
 mul_l    :   1.40
-div      :  15.04
+div      :  15.06
 div_l    :   3.20
-lg2      :  22.43  (BKM, only ints)
-lg2_l    :  11.67  (about  0.52x lg2, using BKM and longs)
-lg2_mul_l:  34.44  (about  1.54x lg2, using mult. and longs)
+lg2      :  22.46  (BKM, only ints)
+lg2_l    :  11.75  (about  0.52x lg2, using BKM and longs)
+lg2_mul_l:  34.87  (about  1.55x lg2, using mult. and longs)
 
  *
  */
