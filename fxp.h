@@ -12,7 +12,6 @@
 
 #define FXP_INT_BITS ((int) (sizeof(int) * 8))
 #define FXP_INT_BITS_M1 (FXP_INT_BITS - 1)
-//#define FXP_INT_BITS_HALF (FXP_INT_BITS / 2)
 
 // Infinity constants and Max and min fxp valid values
 #define FXP_POS_INF INT_MAX
@@ -65,8 +64,6 @@ int fxp_mul(int fxp1, int fxp2);
 int fxp_div(int fxp1, int fxp2);
 
 // Safe implementations using longs
-//int fxp_add_l(int fxp1, int fxp2);
-//int fxp_sub_l(int fxp1, int fxp2);
 int fxp_mul_l(int fxp1, int fxp2);
 int fxp_div_l(int fxp1, int fxp2);
 
@@ -86,7 +83,7 @@ int fxp_ln_l(int fxp);
 int fxp_lg10(int fxp);
 int fxp_lg10_l(int fxp);
 
-
-// Still to implement
-//int fxp_sqrt(int fxp);
+// TODO:
+//int exp(int fxp);
 //int fxp_pow(int fxp_base, int fxp_exponent);
+//int fxp_sqrt(int fxp);
