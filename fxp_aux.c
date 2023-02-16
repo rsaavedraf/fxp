@@ -306,11 +306,11 @@ void print_sys_info()
         system("cat /proc/cpuinfo | grep -e 'CPU' -e 'model name' -e 'Model' | sort -r | head -1");
 
         printf("\nNum type sizes:\n");
-        printf("char        has a size of %zd bytes.\n", sizeof(char));
-        printf("int         has a size of %zd bytes.\n", sizeof(int));
-        printf("long        has a size of %zd bytes.\n", sizeof(long));
-        printf("long long   has a size of %zd bytes.\n", sizeof(long long));
-        printf("float       has a size of %zd bytes.\n", sizeof(float));
-        printf("double      has a size of %zd bytes.\n", sizeof(double));
-        printf("long double has a size of %zd bytes.\n", sizeof(long double));
+        printf("char        has a size of %zu bytes.\n", sizeof(char));
+        printf("int         has a size of %zu bytes.\n", sizeof(int));
+        printf("long        has a size of %zu bytes.\n", sizeof(long));
+        printf("long long   has a size of %zu bytes.\n", sizeof(long long));
+        printf("float       has a size of %zu bytes.\n", sizeof(float));
+        printf("double      has a size of %zu bytes.\n", sizeof(double));
+        printf("long double has a size of %zu bytes.\n", sizeof(long double));
 }

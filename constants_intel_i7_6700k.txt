@@ -2,8 +2,8 @@
 ========================
 fxp_constants.c
 ========================
-  Operating System: Ubuntu 20.04.5 LTS
-      Architecture: x86-64
+Operating System: Ubuntu 22.04.1 LTS
+    Architecture: x86-64
 model name	: Intel(R) Core(TM) i7-6700K CPU @ 4.00GHz
 
 System details:
