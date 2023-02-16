@@ -2,7 +2,6 @@
  * fxp_constants.c
  * By Raul Saavedra, Bonn, Germany
  *
- * v1: 2023-02-05
  */
 
 // Important constants as fxps
@@ -31,7 +30,6 @@
 #define FXP_PI_I64 0x6487ed5110b4611a
 // Values of pi at different precision levels:
 // Bits Expansion
-//         7    6    5    4    3    2    1    0
 // 32   0110 0100 1000 0111 1110 1101 0101 0001
 // 64   0110 0100 1000 0111 1110 1101 0101 0001 0001 0000 1011 0100 0110 0001 0001 1010
 // For more details, or even more precise versions of Pi:
@@ -50,20 +48,6 @@
 #define FXP_LG10_2_I64 0x268826a13ef3fe80
 //  https://oeis.org/A007524
 
-
-// lg2(10) = 3.32192809488736234787031942948939017586483139302458061205475639581593477660862521585013974335937015
-//#define FXP_LG2_10_I32 0x0
-//#define FXP_LG2_10_I64 0x0
-// Bits Expansion
-//  https://oeis.org/A020862
-
-// lg2(e) = 1.4426950408889634073599246810019
-//#define FXP_LOG2E_I32 0x5c551d95
-//#define FXP_LOG2E_I64 0x5c551d94ae0bf8cf
-// Bits Expansion
-// 32   0-101 1100 0101 0101 0001 1101 1001 0101  (<== last bit here rounded)
-// 64   0-101 1100 0101 0101 0001 1101 1001 0100 1010 1110 0000 1011 1111 1000 1100 1111
-// https://oeis.org/A007525/constant
 
 // sqrt(2) = 1.414213562373095048801688724209698078569671875376948073176679737990732478462107038...
 //#define FXP_SQRT2_I32 0x5a82799a

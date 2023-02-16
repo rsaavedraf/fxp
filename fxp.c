@@ -11,21 +11,17 @@
  *
  * By Raul Saavedra, Bonn, Germany
  *
- * v0.1: 2022-11-13
- * v0.2: 2023-01-08: runtime-modifiable number of frac bits to use.
- * v0.3: 2023-01-30: fxp_mul avoiding precision loss!
- * v0.4: 2023-02-09: first version of fxp_lg2_l implemented
- * v0.5: 2023-02-14: first version of fxp_lg2 implemented
  */
 
 #include "fxp.h"
 #include "fxp_constants.h"
+#include "fxp_aux.h"
 //#include <stdio.h>
 //#include <stdlib.h>
 //#include <assert.h>
 
-//Used when testing and debugging when trying to optimize division
-#include "fxp_aux.h"
+//Used while testing and debugging trying to optimize division
+//#include "fxp_aux.h"
 //#define VERBOSE 1
 
 #define FXP_FRAC_BITS_MIN 4
@@ -33,7 +29,7 @@
 // Allowing for no whole part, so other than the sign bit,
 // all bits used for fraction part. This use case represents
 // the range [-0.999..., 0.999...], or equivalently: (-1, 1)
-// (so actual bits -1 and 1 not included)
+// (so actual values -1 and 1 not included)
 #define FXP_FRAC_BITS_MAX FXP_INT_BITS_M1
 #define FXP_FRAC_MAX_DEC 9999999
 
@@ -87,8 +83,8 @@ static const unsigned long FXP_BKM_LOGS_L[] = {
 //        0x5C5, 0x2E2, 0x171, 0xB8,
 //        0x5C, 0x2E, 0x17, 0xB,
 //        0x5, 0x2, 0x1
-        // Starting with the row marked with the *, each entry is exactly
-        // a 4 -bit right-shift of the value 4 positions earlier
+// Starting with the row marked with the *, each entry is exactly
+// a 4 -bit right-shift of the value 4 positions earlier
 };
 
 // For the BKM log calculation when using only ints.
@@ -188,30 +184,30 @@ int fxp_get_whole_min()
  */
 int fxp_change_nfracbits(int fxp, int x, int y)
 {
-    if ((fxp <= FXP_NEG_INF) || (fxp == FXP_POS_INF))
-            return fxp;
-    if (y < FXP_FRAC_BITS_MIN)
-            y = FXP_FRAC_BITS_MIN;
-    else if (y > FXP_FRAC_BITS_MAX)
-            y = FXP_FRAC_BITS_MAX;
-    int pfxp = (fxp > 0? fxp: -fxp);
-    int shift = x - y;
-    if (shift <= 0) {
-        if (fxp_nbits(pfxp) - shift > FXP_INT_BITS_M1) {
-            return (fxp > 0)? FXP_POS_INF: FXP_NEG_INF;
+        if ((fxp <= FXP_NEG_INF) || (fxp == FXP_POS_INF))
+                return fxp;
+        if (y < FXP_FRAC_BITS_MIN)
+                y = FXP_FRAC_BITS_MIN;
+        else if (y > FXP_FRAC_BITS_MAX)
+                y = FXP_FRAC_BITS_MAX;
+        int pfxp = (fxp > 0? fxp: -fxp);
+        int shift = x - y;
+        if (shift <= 0) {
+                if (fxp_nbits(pfxp) - shift > FXP_INT_BITS_M1) {
+                        return (fxp > 0)? FXP_POS_INF: FXP_NEG_INF;
+                }
+                return (fxp << (-shift));
         }
-        return (fxp << (-shift));
-    }
-    int mask = (1 << shift) - 1;
-    int frac_lost = pfxp & mask;
-    int shifted = pfxp >> shift;
-    // Round number by adding one to truncated value if the
-    // magnitude in lost bits is >= half the largest number
-    // representable in those lost bits
-    int rounded = shifted + ((frac_lost >= ((mask + 1) / 2))? 1: 0);
-    //printf("pfxp:%x, shift:%d, mask:%x, frac_lost:%x, shifted:%x, rounded:%x\n", \
-    //        pfxp, shift, mask, frac_lost, shifted, rounded);
-    return (fxp >= 0)? rounded: -rounded;
+        int mask = (1 << shift) - 1;
+        int frac_lost = pfxp & mask;
+        int shifted = pfxp >> shift;
+        // Round number by adding one to truncated value if the
+        // magnitude in lost bits is >= half the largest number
+        // representable in those lost bits
+        int rounded = shifted + ((frac_lost >= ((mask + 1) / 2))? 1: 0);
+        //printf("pfxp:%x, shift:%d, mask:%x, frac_lost:%x, shifted:%x, rounded:%x\n", \
+        //        pfxp, shift, mask, frac_lost, shifted, rounded);
+        return (fxp >= 0)? rounded: -rounded;
 }
 
 /*
@@ -238,9 +234,9 @@ int fxp_set_frac_bits(int nfracbits)
         // full multiplication of the frac parts avoiding
         // precision loss
         if (fxp_frac_bits == FXP_INT_BITS_M1) {
-            fxp_frac_mshift = (FXP_INT_BITS_M1 - 1) / 2;
+                fxp_frac_mshift = (FXP_INT_BITS_M1 - 1) / 2;
         } else {
-            fxp_frac_mshift = (fxp_frac_bits / 2) + (fxp_frac_bits % 2);
+                fxp_frac_mshift = (fxp_frac_bits / 2) + (fxp_frac_bits % 2);
         }
         fxp_frac_maskr = (1 << fxp_frac_mshift) - 1;
         fxp_frac_maskl = fxp_frac_maskr << fxp_frac_mshift;
@@ -422,7 +418,7 @@ int fxp_get_whole_part(int fxp)
                         // Technically, the whole part of -INF would
                         // still be -INF, and both the whole and frac
                         // parts of UNDEF would still be UNDEF. But here
-                        // returning just what our whole-part bits of
+                        // returning just what our whole-part values for
                         // -INF (and also UNDEF) actually correspond to.
                         // However, see also the comment in
                         // fxp_get_bin_frac()
@@ -442,8 +438,8 @@ int fxp_get_bin_frac(int fxp)
                 if (fxp <= FXP_NEG_INF)
                         // In the whole-part function above we are
                         // returning the same whole parts for both -INF
-                        // and UNDEF. Here for -INF we return the actual
-                        // bits used, but for UNDEF something different
+                        // and UNDEF. Here for -INF we return the value
+                        // used, but for UNDEF something different
                         // and odd in order to enable differenciating
                         // -INF from UNDEF when checking their whole and
                         // frac constituents. It must be something that
@@ -490,13 +486,7 @@ int fxp_get_dec_frac(int fxp)
         }
         ldivision = num / denom;
         if (ldivision > fxp_frac_max_dec) ldivision = fxp_frac_max_dec;
-        int idivision = (int) ldivision;
-        //printf("\n+frac is %d\n", positive_frac);
-        //printf("Num   is %ld\n", num);
-        //printf("Denom is %ld\n", denom);
-        //printf("LDiv  is %ld\n", ldivision);
-        //printf("iDiv  is %d\n", idivision);
-        return idivision;
+        return (int) ldivision;
 }
 
 /*
@@ -633,18 +623,7 @@ int fxp_nbits(unsigned int x)
  *          pf2 = frac_part(b * x)
  *          pf3 = ((x' * y') >> frac_bits)
  *
- * Notice that a*y and b*x can each never overflow the number of
- * bits in an int. Yet when frac_bits >= half the size of an int,
- * pf3 alone could overflow. But we process the calculation of pf3
- * itself with a distributive approach as well, not using whole vs.
- * frac parts, but left vs. right chunks.
- *
- * Notice that the final fraction part will be just the frac part
- * of the sum of the pfi's, because any carry over into the whole
- * part becomes pw4 (one of the components to build up the whole
- * part, see below).
- *
- * Notice also, when all bits (except sign one) are used for the
+ * Notice when all bits (except sign one) are used for the
  * frac part, the entire multiplication is effectively just pf3
  * (everything else will be zero.) Calculating pf3 avoiding
  * precision loss is particularly important for that case.
@@ -879,8 +858,6 @@ int fxp_div(int fxp1, int fxp2)
         }
         //if (VERBOSE) printf("\td: starting m: %d (%d bits)\n", m, bidx);
         int q = 0;
-        //printf("bidx processed while <= bmax: %d\n", bmax);
-        //int loops = 0, difference = 0, ba;
         // bidx is (from left to right) the highest bit # we are
         // currently processing, so we loop till bidx exceeds the
         // right-most bit in the full (left-shifted) dividend
@@ -1036,7 +1013,6 @@ int fxp_lg10_l(int fxp1) {
  * Seminumerical Algorithms", 2nd ed., 1981 (pages 441 - 446) is
  * the one and only reference in that short article, so that's the
  * effective reference.
- *
  */
 int fxp_lg2_mul_l(int fxp1)
 {
@@ -1096,17 +1072,14 @@ int fxp_lg2(int fxp1)
         // c is characteristic
         int c = ((fxp1 < fxp_one) || (fxp1 >= fxp_two))?
                     (nbx - fxp_frac_bits - 1): 0;
-        //printf("fxp:%x, clz:%d, nbx:%d, c:%d\n", fxp1, clz, nbx, c);
 
-        // Here simulating longs with two ints a and b, i.e.
-        // a long K as two ints (ka, kb), ka being the most
-        // significant int, kb the least significant int
+        // Here we replicate what the lg2_l implementation does,
+        // but simulating longs with two ints a and b, so
+        // instead of a K of type long, two ints (ka, kb),
+        // ka the most significant, kb the least one
         unsigned int za = ((unsigned int) fxp1) << (clz - 1);
         //unsigned int zb = 0; // <- zb not really needed, will remain 0
 
-        //printf("lg2   start:  c:%d,  fxp:%x,  z:%8X%8X\n", \
-        //        c, fxp1, za, 0);
-                                                    // Simulated long
         unsigned int xa = FXP_BKM_ONE, xb = 0;      // x
         unsigned int zza, zzb;                      // zz
         unsigned int xsa = 0, xsb = 0;              // xs
@@ -1136,10 +1109,6 @@ int fxp_lg2(int fxp1)
                     zza++;
                 zzb = xb + xsb;
 
-                //printf("lg2 %2d: x :%8X-%8X\n", shift, xa, xb);
-                //printf("        xs:%8X-%8X\n", xsa, xsb);
-                //printf("        zz:%8X-%8X\n", zza, zzb);
-
                 // if (zz <= z) {
                 if ((zza < za) || ((zza == za) && (zzb == 0))) {
 
@@ -1164,13 +1133,11 @@ int fxp_lg2(int fxp1)
         if (fxp_lg2_yashift >= 0)
                 m = ya >> fxp_lg2_yashift;
         else {
-                // If shifted the mantissa to the left, we can pull the
-                // left-most bits from yb
+                // Shifting the mantissa to the left, so we should pull
+                // the left-most bits from yb
                 m = (ya << (-fxp_lg2_yashift)) |
                         ((yb & fxp_lg2_ybmask) >> fxp_lg2_ybshift);
-                //printf("ma:%x,  mb:%x ---> m:%x\n", ya, yb, m);
         }
-        //printf("Final mantissa after %d shift from lg2: %x\n", fxp_lg2_shift, m);
         // Return the complete logarithm (c + m) as fxp
         if (c < fxp_whole_min) {
                 if ((c + 1 == fxp_whole_min) && (m > 0)) {
@@ -1183,8 +1150,6 @@ int fxp_lg2(int fxp1)
                 // Overflow: the characteristic of the logarithm
                 // will not fit in the whole bits part of our
                 // current fxp settings
-                //printf("\n\nReturning -INF here: c:%d, whole_min:%d, m:%d!!!!!\n\n", \
-                //            c, fxp_whole_min, m);
                 return FXP_NEG_INF;
         }
         if (c >= 0)
@@ -1208,34 +1173,25 @@ int fxp_lg2_l(int fxp1)
         // c is characteristic
         int c = ((fxp1 < fxp_one) || (fxp1 >= fxp_two))?
                     (nbx - fxp_frac_bits - 1): 0;
-        //printf("fxp:%x, clz:%d, nbx:%d, c:%d\n", fxp1, clz, nbx, c);
 
-        //printf("Proceeding with BKM loop for mantissa:\n");
         // Here we have already calculated the log characteristic c
         // Now lshifting the original number to have it as unsigned
         // long with 61 frac bits (same as the pre-calculated values
         // in our bkm table of logs)
         unsigned long z = ((unsigned long) fxp1) << \
                             (clz + FXP_BKM_L_CLZSHIFT);
-        //printf("lg2_l start:  c:%d,  fpx:%x,  z:%lx\n", c, fxp1, z);
         unsigned long x = FXP_BKM_ONE_L;
         unsigned long zz;
         unsigned long y = 0; // starting mantissa
         for (int shift=1; shift <= fxp_lg2_l_maxloops; shift++) {
                 unsigned long xs = (x >> shift);
                 zz = x + xs;
-                //printf("lg2_l %2d: x :%16lX\n", shift, x);
-                //printf("          xs:%16lX\n", xs);
-                //printf("          zz:%16lX\n", zz);
                 if (zz <= z) {
                         // Here we use the precalculated values
                         unsigned long aux = FXP_BKM_LOGS_L[shift];
-                        //printf("\tUPDATING X AND Y, array: %lX\n", aux);
                         x = zz;
                         y += aux;
                 }
-                //printf("lg2_l %2d:  zz:%16lX  x:%16lX  xs:%16lX  m:%16lX  %d\n",
-                //        shift, zz, x, xs, y, shift);
         }
         // Now y has the mantissa, shift it adjusting for final fxp
         long m;
@@ -1245,7 +1201,6 @@ int fxp_lg2_l(int fxp1)
                 m = y << (-fxp_lg2_l_shift);
         }
         int im = (int) m;
-        //printf("Final mantissa from lg2_l: %x\n", im);
         // Return the complete logarithm (c + m) as fxp
         if (c < fxp_whole_min) {
                 if ((c + 1 == fxp_whole_min) && (im > 0)) {
@@ -1258,7 +1213,6 @@ int fxp_lg2_l(int fxp1)
                 // Overflow: the characteristic of the logarithm
                 // will not fit in the whole bits part of our
                 // current fxp settings
-                //printf("\n\nReturning -INF here: c:%d, whole_min:%d, m:%d!!!!!\n\n", c, fxp_whole_min, m);
                 return FXP_NEG_INF;
         }
         if (c >= 0)

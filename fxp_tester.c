@@ -2,7 +2,8 @@
  * fxp_tester.c
  * Tests the implementation of binary fixed point numbers
  * and arithmetic operations (fxp.c)
- * By Raul Saavedra, 2022-11-13, Bonn Germany
+ *
+ * By Raul Saavedra, Bonn Germany
  */
 
 #include <stdio.h>
@@ -18,7 +19,7 @@
 #define DASHES "========================\n"
 
 // Set to 0 in order to be able to replicate runs
-#define SET_RAND_SEED 0
+#define SET_RAND_SEED 1
 
 #define TEST_WITH_RANDS 1
 #define MAX_RAND_NUMS 5
@@ -30,18 +31,18 @@
 // forgiving WDELTA_MAX factor, e.g. 6, otherwise the
 // errors (getting those logs from the calculated
 // lg2) can trigger the assert.
-// If only log2 is being tested, this factor
-// can be as low as 2 and still all tests pass
+// When only log2 is being tested, this factor
+// can be as low as 2 yet no assert gets triggered
 #define WDELTA_MAX 6
 
 static int fracbit_configs[] = {4, 11, 16, 24, 29, 30, 31};
-//static int fracbit_configs[] = {31};
-
+//static int fracbit_configs[] = {16};
 /*
 static int fracbit_configs[] = {4, 5, 6, 7, 8, 9, 10,
                                 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
                                 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31};
 */
+
 static long double max_warn_delta = 0.0;
 static long double larger_delta = 0.0;
 static long double largest_delta = 0.0;
@@ -127,12 +128,15 @@ static long double get_lg_target(int x, char base)
     if (x < 0) return FXP_UNDEF_LD;
     if (x == 0) return FXP_NEG_INF_LD;
     if (x == FXP_POS_INF) return FXP_POS_INF_LD;
-    if (base == '2')        // log base 2
-        return get_target(log2l(dfxp(x)));
-    else if (base == 'a')   // logs base 10
-        return get_target(log10l(dfxp(x)));
-    else // if not base 2 or 10, then logs base e
-        return get_target(logl(dfxp(x)));
+    long double l2 = get_target(log2l(dfxp(x)));
+    if ((base == '2') || (l2 == FXP_UNDEF_LD) \
+            || (l2 == FXP_NEG_INF_LD) \
+            || (l2 == FXP_POS_INF_LD))
+            return l2;
+    if (base == 'a')   // logs base 10
+            return get_target(log10l(dfxp(x)));
+    // if not base 2 or 10, then natural logs
+    return get_target(logl(dfxp(x)));
 }
 
 static long double get_div_target(int x, int y)
@@ -648,28 +652,11 @@ void test_fxp_from_ldouble()
 
 }
 
-
-int adjust_4ologs(int x, int minv, int maxv)
-{
-    if (x < minv) return x + (int) (((long) minv + (long) maxv) / 2);
-    if (x > maxv) return x - (int) (((long) minv + (long) maxv) / 2);
-    return x;
-}
-
 void test_ops_with_rand_nums()
 {
         int sign1, sign2, sign3, n1, n2, n3, n4, fxp1, fxp2;
         long double ldx, ldy, ldz, tgt1, tgt2, tgt3;
 
-        int max_4ologs = ((fxp_get_whole_max() / 100) << frac_bits) \
-                        | (fxp_get_frac_max() );
-        int min_4ologs = 10 + fxp_get_frac_max() / \
-                        (1 << (1 + (whole_bits-1)));;
-        //printf("\n\nmin und max 4 logs:\n");
-        //printf("\tfmax:\t%d\n\tmin:\t%d\n\tmax:\t%d\n", \
-          //      fxp_get_frac_max(), min_4ologs, max_4ologs);
-        //printf("\nVerifying different op ");
-        //printf("implementations using random numbers:\n");
         for (int i=0; i < MAX_RAND_NUMS; i++) {
                 sign1 = rand() % 2 == 1? -1: 1;
                 sign2 = rand() % 2 == 1? -1: 1;
@@ -749,19 +736,6 @@ void test_ops_with_rand_nums()
                 test_fxp("lg2_l(n1)", fxp_lg2_l(n1), tgt1);
                 test_fxp("lg2_l(n2)", fxp_lg2_l(n2), tgt2);
                 test_fxp("lg2_l(n3)", fxp_lg2_l(n3), tgt3);
-
-                // Restricting magnitude of the inputs for the other
-                // log bases to avoid the overflowing risk coming from the
-                // calculation of the logs base 2
-                n1 = adjust_4ologs(n1, min_4ologs, max_4ologs);
-                n2 = adjust_4ologs(n2, min_4ologs, max_4ologs);
-                n3 = adjust_4ologs(n3, min_4ologs, max_4ologs);
-
-                printf("\nAdjusted numbers for logs with base <> 2, ");
-                printf("frac bits: %d\n", frac_bits);
-                printf("n1 = "); print_fxp(n1);
-                printf("\nn2 = "); print_fxp(n2);
-                printf("\nn3 = "); print_fxp(n3); printf("\n\n");
 
                 tgt1 = get_lg_target(n1, 'e');
                 tgt2 = get_lg_target(n2, 'e');
@@ -940,7 +914,7 @@ int main(void)
 
                 test_ops_with_whole_bits();
 
-                //test_ops_with_values_of_interest();
+                test_ops_with_values_of_interest();
 
                 test_fxp_from_ldouble();
 

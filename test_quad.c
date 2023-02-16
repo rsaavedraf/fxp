@@ -26,7 +26,7 @@ int main ()
         char buf[128];
 
         printf("Testing usage of quadmath.h on an Intel-based PC.\n");
-        printf("33 decimal digits of e should now be correct here:\n\n");
+        printf("33 decimal digits of e should be correct in the fractional part here:\n\n");
         printf("            ----*----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8----*----9----*----0\n");
         printf("'True' e: %s\n", STR_E_DEC);
 
