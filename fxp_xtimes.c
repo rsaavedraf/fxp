@@ -25,8 +25,8 @@ lg2_mul_l:  34.87  (about  1.55x lg2, using mult. and longs)
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include "fxp.h"
 #include "fxp_aux.h"
+#include "fxp_l.h"
 
 #define DASHES "=================================================\n"
 #define MAX_NUMS 1000
@@ -35,9 +35,13 @@ lg2_mul_l:  34.87  (about  1.55x lg2, using mult. and longs)
 int main(void) {
 
         int s1, s2, s3, n1, n2, n3, x, y, n, lastp;
-        double tadd, tadd_l, tmul, tmul_l, tmul_d;
-        double tdiv, tdiv_l, tlg2, tlg2_l, tlg2_mul, tlg2_mul_l;
-        clock_t t0, t1;
+        long double tadd, tadd_l, tmul, tmul_l, tmul_d;
+        long double tdiv, tdiv_l, tlg2, tlg2_l, tlg2_mul, tlg2_mul_l;
+        long double avgadd, avgadd_l, avgmul, avgmul_l, avgmul_d;
+        long double avgdiv, avgdiv_l, avglg2, avglg2_l, avglg2_mul;
+        long double avglg2_mul_l;
+
+        clock_t t0, t1, dt;
         int val[] = {FXP_UNDEF, FXP_MIN, \
                         FXP_MIN/3, -3333333, -300000, -30000, -3000, -300,
                         -200, -100, -50, -30, \
@@ -47,7 +51,7 @@ int main(void) {
                         30, 50, 100, 200,
                         300, 3000, 30000, 300000, 3333333, FXP_MAX/3, FXP_MAX};
         int nvals = (int) (sizeof(val) / sizeof(int));
-        int fracbit_configs[] = {8, 16, 24, 28};
+        int fracbit_configs[] = {8, 12, 16, 20, 24, 28};
         int nconfigs = sizeof(fracbit_configs) / sizeof(fracbit_configs[0]);
 
         srand((unsigned int) time(0));  // randomize seed
@@ -55,6 +59,16 @@ int main(void) {
         printf("\n%sRelative Execution Times of FXP operations\n%s", DASHES, DASHES);
         print_sys_info();
 
+        avgadd = 0;
+        avgmul = 0;
+        avgmul_l = 0;
+        avgmul_d = 0;
+        avgdiv = 0;
+        avgdiv_l = 0;
+        avglg2 = 0;
+        avglg2_l = 0;
+        avglg2_mul = 0;
+        avglg2_mul_l = 0;
         for (int nc = 0; nc < nconfigs; nc++) {
                 int nfb = fracbit_configs[nc];
                 fxp_set_frac_bits(nfb);
@@ -96,7 +110,9 @@ int main(void) {
                                 }
                         }
                         t1 = clock();
-                        tadd += ((double) t1 - t0);
+                        dt = ((double) t1 - t0);
+                        tadd += dt;
+                        avgadd += dt;
 
                         t0 = clock();
                         for (int i = 0; i < MAX_OPS; i++) {
@@ -110,7 +126,9 @@ int main(void) {
                                 }
                         }
                         t1 = clock();
-                        tmul += ((double) t1 - t0);
+                        dt = ((double) t1 - t0);
+                        tmul += dt;
+                        avgmul += dt;
 
                         t0 = clock();
                         for (int i = 0; i < MAX_OPS; i++) {
@@ -124,7 +142,9 @@ int main(void) {
                                 }
                         }
                         t1 = clock();
-                        tmul_l += ((double) t1 - t0);
+                        dt = ((double) t1 - t0);
+                        tmul_l += dt;
+                        avgmul_l += dt;
 
                         t0 = clock();
                         for (int i = 0; i < MAX_OPS; i++) {
@@ -138,7 +158,9 @@ int main(void) {
                                 }
                         }
                         t1= clock();
-                        tdiv += ((double) t1 - t0);
+                        dt = ((double) t1 - t0);
+                        tdiv += dt;
+                        avgdiv += dt;
 
                         t0 = clock();
                         for (int i = 0; i < MAX_OPS; i++) {
@@ -152,7 +174,9 @@ int main(void) {
                                 }
                         }
                         t1= clock();
-                        tdiv_l += ((double) t1 - t0);
+                        dt = ((double) t1 - t0);
+                        tdiv_l += dt;
+                        avgdiv_l += dt;
 
                         // To measure the lg execution use only + arguments
                         if (n1 < 0) n1 = -n1;
@@ -171,7 +195,9 @@ int main(void) {
                                 }
                         }
                         t1= clock();
-                        tlg2 += ((double) t1 - t0);
+                        dt = ((double) t1 - t0);
+                        tlg2 += dt;
+                        avglg2 += dt;
 
                         t0 = clock();
                         for (int i = 0; i < MAX_OPS; i++) {
@@ -185,7 +211,9 @@ int main(void) {
                                 }
                         }
                         t1= clock();
-                        tlg2_l += ((double) t1 - t0);
+                        dt = ((double) t1 - t0);
+                        tlg2_l += dt;
+                        avglg2_l += dt;
 
                         t0 = clock();
                         for (int i = 0; i < MAX_OPS; i++) {
@@ -199,22 +227,53 @@ int main(void) {
                                 }
                         }
                         t1= clock();
-                        tlg2_mul_l += ((double) t1 - t0);
+                        dt = ((double) t1 - t0);
+                        tlg2_mul_l += dt;
+                        avglg2_mul_l += dt;
 
                 }
 
                 printf("\nadd      : %6.2lf\n", 1.0);
-                printf("mul      : %6.2lf\n", tmul / tadd);
-                printf("mul_l    : %6.2lf\n", tmul_l / tadd);
-                printf("div      : %6.2lf\n", tdiv / tadd);
-                printf("div_l    : %6.2lf\n", tdiv_l / tadd);
-                printf("lg2      : %6.2lf  (BKM, only ints)\n", \
+                printf("mul      : %6.2Lf\n", tmul / tadd);
+                printf("mul_l    : %6.2Lf\n", tmul_l / tadd);
+                printf("div      : %6.2Lf\n", tdiv / tadd);
+                printf("div_l    : %6.2Lf\n", tdiv_l / tadd);
+                printf("lg2      : %6.2Lf  (BKM, only ints)\n", \
                             tlg2 / tadd);
-                printf("lg2_l    : %6.2lf  (about %5.2lfx lg2, using BKM and longs)\n", \
+                printf("lg2_l    : %6.2Lf  (about %5.2Lfx lg2, using BKM and longs)\n", \
                             tlg2_l / tadd, tlg2_l / tlg2);
-                printf("lg2_mul_l: %6.2lf  (about %5.2lfx lg2, using mult. and longs)\n", \
+                printf("lg2_mul_l: %6.2Lf  (about %5.2Lfx lg2, using mult. and longs)\n", \
                              tlg2_mul_l / tadd, tlg2_mul_l / tlg2);
 
         }
+
+        printf("\n\n%sXtime averages for frac bit configurations {", DASHES);
+        for (int nc = 0; nc < nconfigs; nc++) {
+                printf("%d", fracbit_configs[nc]);
+                printf((nc + 1 == nconfigs? "}": ", "));
+        }
+        printf("\n%s", DASHES);
+        avgadd /= nconfigs;
+        avgmul /= nconfigs;
+        avgmul_l /= nconfigs;
+        avgdiv /= nconfigs;
+        avgdiv_l /= nconfigs;
+        avglg2 /= nconfigs;
+        avglg2_l /= nconfigs;
+        avglg2_mul_l /= nconfigs;
+        printf("add      : %6.2lf\n", 1.0);
+        printf("mul      : %6.2Lf\n", avgmul / avgadd);
+        printf("mul_l    : %6.2Lf\n", avgmul_l / avgadd);
+        printf("div      : %6.2Lf\n", avgdiv / avgadd);
+        printf("div_l    : %6.2Lf\n", avgdiv_l / avgadd);
+        printf("lg2      : %6.2Lf  (BKM, only ints)\n", \
+                    avglg2 / avgadd);
+        printf("lg2_l    : %6.2Lf  (about %5.2Lfx lg2, using BKM and longs)\n", \
+                    avglg2_l / avgadd, avglg2_l / avglg2);
+        printf("lg2_mul_l: %6.2Lf  (about %5.2Lfx lg2, using mult. and longs)\n", \
+                    avglg2_mul_l / avgadd, \
+                    avglg2_mul_l / avglg2);
+        printf("%s", DASHES);
+
         return 0;
 }

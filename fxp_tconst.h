@@ -1,10 +1,10 @@
 /*
- * fxp_constants.c
- * By Raul Saavedra, Bonn, Germany
+ * fxp_tconst.h
  *
+ * Some important transcendental constants as fxps
+ *
+ * By Raul Saavedra, Bonn, Germany
  */
-
-// Important constants as fxps
 
 //            ----*----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8----*----9----*----0
 // e:       2.7182818284590452353602874713526624977572470936999595749669676277240766303535475945713821785251664274

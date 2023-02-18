@@ -14,12 +14,13 @@
 #include <time.h>
 #include <math.h>
 #include "fxp.h"
+#include "fxp_l.h"
 #include "fxp_aux.h"
 
 #define DASHES "========================\n"
 
 // Set to 0 in order to be able to replicate runs
-#define SET_RAND_SEED 1
+#define SET_RAND_SEED 0
 
 #define TEST_WITH_RANDS 1
 #define MAX_RAND_NUMS 5
@@ -39,8 +40,8 @@ static int fracbit_configs[] = {4, 11, 16, 24, 29, 30, 31};
 //static int fracbit_configs[] = {16};
 /*
 static int fracbit_configs[] = {4, 5, 6, 7, 8, 9, 10,
-                                11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-                                21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31};
+                        11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+                        21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31};
 */
 
 static long double max_warn_delta = 0.0;
@@ -70,21 +71,21 @@ void test_fxp(char *s, int fxp1, long double d_assert_val)
         long double avplim = lim_frac(d_assert_val, frac_bits);
         if (d_assert_val == FXP_UNDEF_LD)
             printf("UNDEF");
-        else if (d_assert_val == FXP_NEG_INF_LD)
+        else if (d_assert_val == FXP_NINF_LD)
             printf("-INF");
-        else if (d_assert_val == FXP_POS_INF_LD)
+        else if (d_assert_val == FXP_PINF_LD)
             printf("+INF");
         else
             printf("%.7Lf", avplim);
         if (((fxp1 == FXP_UNDEF) && (d_assert_val == FXP_UNDEF_LD)) \
-            || ((fxp1 == FXP_NEG_INF) && (d_assert_val == FXP_NEG_INF_LD)) \
-            || ((fxp1 == FXP_POS_INF) && (d_assert_val == FXP_POS_INF_LD))) {
+            || ((fxp1 == FXP_NEG_INF) && (d_assert_val == FXP_NINF_LD)) \
+            || ((fxp1 == FXP_POS_INF) && (d_assert_val == FXP_PINF_LD))) {
             printf(" (~same)\n");
             return;
         }
 
         long avlimw = (long) avplim;
-        long double df = dfxp(fxp1);
+        long double df = fxp2ld(fxp1);
         long double delta = (df >= avplim)?
                         df - avplim:
                         avplim - df;
@@ -117,26 +118,26 @@ void test_fxp(char *s, int fxp1, long double d_assert_val)
 static long double get_target(long double x)
 {
     long double y = lim_frac(x, frac_bits);
-    if (y == FXP_UNDEF_LD) return FXP_UNDEF_LD;
-    if (y > dfxp_max_ld()) return FXP_POS_INF_LD;
-    if (y < dfxp_min_ld()) return FXP_NEG_INF_LD;
+    if (y <= FXP_UNDEF_LD) return FXP_UNDEF_LD;
+    if (y < fxp_get_min_ld()) return FXP_NINF_LD;
+    if (y > fxp_get_max_ld()) return FXP_PINF_LD;
     return y;
 }
 
 static long double get_lg_target(int x, char base)
 {
     if (x < 0) return FXP_UNDEF_LD;
-    if (x == 0) return FXP_NEG_INF_LD;
-    if (x == FXP_POS_INF) return FXP_POS_INF_LD;
-    long double l2 = get_target(log2l(dfxp(x)));
+    if (x == 0) return FXP_NINF_LD;
+    if (x == FXP_POS_INF) return FXP_PINF_LD;
+    long double l2 = get_target(log2l(fxp2ld(x)));
     if ((base == '2') || (l2 == FXP_UNDEF_LD) \
-            || (l2 == FXP_NEG_INF_LD) \
-            || (l2 == FXP_POS_INF_LD))
+            || (l2 == FXP_NINF_LD) \
+            || (l2 == FXP_PINF_LD))
             return l2;
     if (base == 'a')   // logs base 10
-            return get_target(log10l(dfxp(x)));
+            return get_target(log10l(fxp2ld(x)));
     // if not base 2 or 10, then natural logs
-    return get_target(logl(dfxp(x)));
+    return get_target(logl(fxp2ld(x)));
 }
 
 static long double get_div_target(int x, int y)
@@ -153,25 +154,25 @@ static long double get_div_target(int x, int y)
         if (((x > 0) && (y == 0)) \
             || ((x == FXP_POS_INF) && (y > 0)) \
             || ((x == FXP_NEG_INF) && (y < 0))) {
-            target = FXP_POS_INF_LD;
+            target = FXP_PINF_LD;
         } else {
             if (((x < 0) && (y == 0)) \
                 || ((x == FXP_NEG_INF) && (y > 0)) \
                 || ((x == FXP_POS_INF) && (y < 0))) {
-                target = FXP_NEG_INF_LD;
+                target = FXP_NINF_LD;
             } else {
                 if ((y == FXP_POS_INF) || (y == FXP_NEG_INF)) {
                     target = 0;
                 } else {
-                    long double ldx = dfxp(x);
-                    long double ldy = dfxp(y);
+                    long double ldx = fxp2ld(x);
+                    long double ldy = fxp2ld(y);
                     target = lim_frac(ldx, frac_bits) / lim_frac(ldy, frac_bits);
                     target = lim_frac(target, frac_bits);
-                    if (target > dfxp_max_ld()) {
-                        target = FXP_POS_INF_LD;
+                    if (target > fxp_get_max_ld()) {
+                        target = FXP_PINF_LD;
                     } else {
-                        if (target < dfxp_min_ld()) {
-                            target = FXP_NEG_INF_LD;
+                        if (target < fxp_get_min_ld()) {
+                            target = FXP_NINF_LD;
                         }
                     }
                 }
@@ -196,17 +197,17 @@ void tests_01()
 {
         printf("\nChecking extreme int values, part I, ");
         printf("frac bits: %d\n", frac_bits);
-        test_fxp("+Inf", FXP_POS_INF, FXP_POS_INF_LD);
-        test_fxp("Largest", fxp_largest, dfxp(FXP_MAX));
-        test_fxp("HalfMax", fxp_halfmax, dfxp(FXP_MAX)/2);
-        test_fxp("Largest frac", frac_max, dfxp(fxp_bin(0, frac_max)));
+        test_fxp("+Inf", FXP_POS_INF, FXP_PINF_LD);
+        test_fxp("Largest", fxp_largest, fxp2ld(FXP_MAX));
+        test_fxp("HalfMax", fxp_halfmax, fxp2ld(FXP_MAX)/2);
+        test_fxp("Largest frac", frac_max, fxp2ld(fxp_bin(0, frac_max)));
         test_fxp("tiniest", FXP_TINIEST, dfxp_tiniest);
         test_fxp("0.5", fxp_p5, ((long double) 0.5));
         test_fxp("zero", fxp_bin(0, 0), 0.0);
-        test_fxp("-tiniest", -FXP_TINIEST, dfxp(-FXP_TINIEST));
-        test_fxp("-Largest frac", -frac_max, dfxp(-frac_max));
-        test_fxp("Most negative", -fxp_largest, dfxp(FXP_MIN));
-        test_fxp("-Inf", FXP_NEG_INF, FXP_NEG_INF_LD);
+        test_fxp("-tiniest", -FXP_TINIEST, fxp2ld(-FXP_TINIEST));
+        test_fxp("-Largest frac", -frac_max, fxp2ld(-frac_max));
+        test_fxp("Most negative", -fxp_largest, fxp2ld(FXP_MIN));
+        test_fxp("-Inf", FXP_NEG_INF, FXP_NINF_LD);
         test_fxp("Undefined", FXP_UNDEF, FXP_UNDEF_LD);
 }
 
@@ -217,7 +218,7 @@ void tests_02()
 
         test_fxp("Almost most negative",
                         fxp_add(-fxp_largest, FXP_TINIEST),
-                        dfxp(-fxp_largest) + dfxp_tiniest);
+                        fxp2ld(-fxp_largest) + dfxp_tiniest);
         test_fxp(" Largest -Largest",
                         fxp_add(fxp_largest, -fxp_largest),
                         0.0);
@@ -226,52 +227,52 @@ void tests_02()
                         0.0);
         test_fxp("Largest + 0",
                         fxp_add(fxp_largest, zero),
-                        dfxp(fxp_largest));
+                        fxp2ld(fxp_largest));
         test_fxp("-Largest - 0",
                         fxp_add(-fxp_largest, -zero),
-                        dfxp(-fxp_largest));
+                        fxp2ld(-fxp_largest));
         test_fxp("Largest - tiniest",
                         fxp_sub(fxp_largest, FXP_TINIEST),
-                        dfxp(fxp_largest) - dfxp_tiniest);
+                        fxp2ld(fxp_largest) - dfxp_tiniest);
         test_fxp("Largest + tiniest safe",
                         fxp_add(fxp_largest, FXP_TINIEST),
-                        FXP_POS_INF_LD);
+                        FXP_PINF_LD);
         test_fxp("Largest + tiniest unsafe",
                         fxp_unsafe_add(fxp_largest, FXP_TINIEST),
-                        FXP_POS_INF_LD);
+                        FXP_PINF_LD);
         test_fxp("-(+inf)",
                         -FXP_POS_INF,
-                        FXP_NEG_INF_LD);
+                        FXP_NINF_LD);
         test_fxp("-(-inf)",
                         -FXP_NEG_INF,
-                        FXP_POS_INF_LD);
+                        FXP_PINF_LD);
         test_fxp("+inf + +inf",
                         fxp_add(FXP_POS_INF, FXP_POS_INF),
-                        FXP_POS_INF_LD);
+                        FXP_PINF_LD);
         test_fxp("-inf - +inf",
                         fxp_sub(FXP_NEG_INF, FXP_POS_INF),
-                        FXP_NEG_INF_LD);
+                        FXP_NINF_LD);
         test_fxp("+inf + -inf",
                         fxp_add(FXP_POS_INF, FXP_NEG_INF),
                         FXP_UNDEF_LD);
         test_fxp("-inf + -inf",
                         fxp_add(FXP_NEG_INF, FXP_NEG_INF),
-                        FXP_NEG_INF_LD);
+                        FXP_NINF_LD);
         test_fxp("-inf - -inf",
                         fxp_sub(FXP_NEG_INF, FXP_NEG_INF),
                         FXP_UNDEF_LD);
         test_fxp("+inf * -inf",
                         fxp_mul(FXP_POS_INF, FXP_NEG_INF),
-                        FXP_NEG_INF_LD);
+                        FXP_NINF_LD);
         test_fxp("+inf - 0.5",
                         fxp_sub(FXP_POS_INF, fxp_p5),
-                        FXP_POS_INF_LD);
+                        FXP_PINF_LD);
         test_fxp("-inf + 0.5",
                         fxp_add(FXP_NEG_INF, fxp_p5),
-                        FXP_NEG_INF_LD);
+                        FXP_NINF_LD);
         test_fxp("+num / zero",
                         fxp_div(fxp_largest, zero),
-                        FXP_POS_INF_LD);
+                        FXP_PINF_LD);
         test_fxp("zero / zero",
                         fxp_div(zero, zero),
                         FXP_UNDEF_LD);
@@ -289,7 +290,7 @@ void tests_02()
                         FXP_UNDEF_LD);
         test_fxp("-num / zero",
                         fxp_div(-fxp_largest, zero),
-                        FXP_NEG_INF_LD);
+                        FXP_NINF_LD);
         test_fxp("zero * +inf",
                         fxp_mul(zero, FXP_POS_INF),
                         FXP_UNDEF_LD);
@@ -310,7 +311,7 @@ void tests_02()
                         FXP_UNDEF_LD);
         test_fxp("tiniest * inf",
                         fxp_mul(FXP_TINIEST, FXP_POS_INF),
-                        FXP_POS_INF_LD);
+                        FXP_PINF_LD);
 }
 
 void tests_03()
@@ -319,67 +320,67 @@ void tests_03()
         printf("frac bits: %d\n", frac_bits);
         test_fxp("Way Too Large whole part!",
                         fxp_add(fxp(whole_max), fxp(5)),
-                        FXP_POS_INF_LD);
+                        FXP_PINF_LD);
         test_fxp("Largest * 1",
                         fxp_mul(fxp_largest,  fxp_one),
-                        dfxp(fxp_mul(fxp_largest, fxp(1))));
+                        fxp2ld(fxp_mul(fxp_largest, fxp(1))));
         test_fxp("Largest * -1",
                         fxp_mul(fxp_largest,  -fxp_one),
-                        dfxp(fxp_mul(fxp_largest, fxp(-1))));
+                        fxp2ld(fxp_mul(fxp_largest, fxp(-1))));
         test_fxp("Largest + two safe",
                         fxp_add(fxp_largest, fxp_two),
-                        FXP_POS_INF_LD);
+                        FXP_PINF_LD);
         test_fxp("Largest + two unsafe",
                         fxp_unsafe_add(fxp_largest, fxp_two),
-                        dfxp(fxp_largest + fxp_two));
+                        fxp2ld(fxp_largest + fxp_two));
         test_fxp("Safe Too neg substraction",
                         fxp_sub( -fxp_largest, fxp_p5),
-                        FXP_NEG_INF_LD);
+                        FXP_NINF_LD);
         test_fxp("Unsafe Too neg substraction",
                         fxp_unsafe_sub( -fxp_largest, fxp_p5),
-                        dfxp(-fxp_largest - fxp_p5));
+                        fxp2ld(-fxp_largest - fxp_p5));
         test_fxp("Largest + 0.5",
                         fxp_add(fxp_largest, fxp_p5),
-                        FXP_POS_INF_LD);
+                        FXP_PINF_LD);
         test_fxp("-Largest - 0.5",
                         fxp_add(-fxp_largest, -fxp_p5),
-                        FXP_NEG_INF_LD);
+                        FXP_NINF_LD);
         test_fxp("+HalfMax + HMaxp2",
                         fxp_add(fxp_halfmax, fxp_halfp2),
-                        FXP_POS_INF_LD);
+                        FXP_PINF_LD);
         test_fxp("-HalfMax - HMaxp2",
                         fxp_add(-fxp_halfmax, -fxp_halfp2),
-                        FXP_NEG_INF_LD);
+                        FXP_NINF_LD);
         test_fxp("HalfMax + HalfMax",
                         fxp_add(fxp_halfmax, fxp_halfmax),
-                        dfxp(fxp_halfmax + fxp_halfmax));
+                        fxp2ld(fxp_halfmax + fxp_halfmax));
         test_fxp("FXP_MAX - HalfMax",
                         fxp_sub(FXP_MAX, fxp_halfmax),
-                        dfxp(FXP_MAX - fxp_halfmax));
+                        fxp2ld(FXP_MAX - fxp_halfmax));
         test_fxp("HalfMax + FXP_MAX",
                         fxp_add(fxp_halfmax, FXP_MAX),
-                        FXP_POS_INF_LD);
+                        FXP_PINF_LD);
         test_fxp("-FXP_MAX - HalfMax",
                         fxp_sub(-FXP_MAX, fxp_halfmax),
-                        FXP_NEG_INF_LD);
+                        FXP_NINF_LD);
         test_fxp("HalfMax * 2",
                         fxp_mul(fxp_halfmax, fxp(2)),
-                        dfxp(fxp_mul(fxp_halfmax, fxp(2))));
+                        fxp2ld(fxp_mul(fxp_halfmax, fxp(2))));
         test_fxp("HalfMax * 2 (long)",
                         fxp_mul_l(fxp_halfmax, fxp(2)),
-                        dfxp(fxp_mul_l(fxp_halfmax, fxp(2))));
+                        fxp2ld(fxp_mul_l(fxp_halfmax, fxp(2))));
         test_fxp("HalfMax * 3",
                         fxp_mul(fxp_halfmax, fxp(3)),
-                        FXP_POS_INF_LD);
+                        FXP_PINF_LD);
         test_fxp("-HalfMax * 3",
                         fxp_mul(-fxp_halfmax, fxp(3)),
-                        FXP_NEG_INF_LD);
+                        FXP_NINF_LD);
         test_fxp("(HalfMax+0.5)*2",
                         fxp_mul(fxp_add(fxp_halfmax, fxp_p5), fxp(2)),
-                        FXP_POS_INF_LD);
+                        FXP_PINF_LD);
         test_fxp("(HalfMax+0.5)*2 (long)",
                         fxp_mul_l(fxp_add(fxp_halfmax, fxp_p5), fxp(2)),
-                        FXP_POS_INF_LD);
+                        FXP_PINF_LD);
 }
 
 void test_decbin_mappings()
@@ -388,7 +389,7 @@ void test_decbin_mappings()
         printf("frac bits: %d\n", frac_bits);
         int fmbin = frac_max;
         int fmdec = frac_max_dec;
-        printf("\nMax frac dec: %d (bin %d)", fmdec, fmbin);
+        printf("Max frac dec: %d (bin %d)", fmdec, fmbin);
         for (int i = 0; i <= 5; i++) {
                 printf("\nShowing fxp for 0.%3d: ", i);
                 int vf = fxp_dec(0, i);
@@ -423,7 +424,7 @@ void test_fracs()
         int fmdec = fxp_get_frac_max_dec();
 
         fxp_set_frac_max_dec(999);
-        warn_delta = lim_frac(dfxp(fxp_dec(0,100)), frac_bits);
+        warn_delta = lim_frac(fxp2ld(fxp_dec(0,100)), frac_bits);
         max_warn_delta = lim_frac(warn_delta * 2, frac_bits);
 
         test_fxp("-0.(+)500", fxp_dec(-0, 500), 0.5);
@@ -443,17 +444,17 @@ void test_fracs()
 
         printf("\nChecking extreme frac values, ");
         printf("frac bits: %d\n", frac_bits);
-        test_fxp("maxfrac", frac_max, dfxp(frac_max));
+        test_fxp("maxfrac", frac_max, fxp2ld(frac_max));
         test_fxp("0.5 + maxfrac",
                 fxp_add(fxp_p5, frac_max),
-                whole_bits > 1? 0.5 + dfxp(frac_max):
-                dfxp(FXP_POS_INF));
+                whole_bits > 1? 0.5 + fxp2ld(frac_max):
+                fxp2ld(FXP_POS_INF));
         test_fxp("maxfrac +tiniest",
                 fxp_add(frac_max, FXP_TINIEST),
-                dfxp(fxp_one));
+                fxp2ld(fxp_one));
         test_fxp("-maxfrac -tiniest",
                 fxp_add(-frac_max, -FXP_TINIEST),
-                dfxp(-fxp_one));
+                fxp2ld(-fxp_one));
         test_fxp("maxfrac - maxfrac",
                 fxp_add(frac_max, -frac_max),
                 0.0);
@@ -469,17 +470,17 @@ void test_ops_with_whole_bits()
         int dec_frac = fxp_get_dec_frac(num);
         int fxp1 = num;
         int fxp2 = fxp(2);
-        long double dnum = dfxp(num);
+        long double dnum = fxp2ld(num);
         test_fxp(" 1 + 1",
-                    fxp_add(fxp_one, fxp_one), dfxp(fxp2));
+                    fxp_add(fxp_one, fxp_one), fxp2ld(fxp2));
         test_fxp("-1 - 1",
-                    fxp_add(-fxp_one, -fxp_one), dfxp(-fxp2));
+                    fxp_add(-fxp_one, -fxp_one), fxp2ld(-fxp2));
         test_fxp("Ok sum == 2",
                     fxp_add(-fxp_halfmax, fxp_halfp2),
-                    dfxp(fxp_add(-fxp_halfmax, fxp_halfp2)));
+                    fxp2ld(fxp_add(-fxp_halfmax, fxp_halfp2)));
         test_fxp("Ok sum == -2",
                     fxp_add(fxp_halfmax, -fxp_halfp2),
-                    dfxp(fxp_add(fxp_halfmax, -fxp_halfp2)));
+                    fxp2ld(fxp_add(fxp_halfmax, -fxp_halfp2)));
         test_fxp(" num", fxp1,  dnum);
         test_fxp(" num +  2",
                     fxp_add(fxp1, fxp2), dnum + 2.0);
@@ -544,13 +545,13 @@ void test_ops_with_values_of_interest()
                 for (int j=0; j<ndr; j++) {
                         x = ax[i];
                         y = ay[j];
-                        ldx = dfxp(x);
-                        ldy = dfxp(y);
+                        ldx = fxp2ld(x);
+                        ldy = fxp2ld(y);
                         printf("x: "); print_fxp(x);
                         printf("\ny: "); print_fxp(y);
 
                         //For multiplication
-                        tgt1 = dfxp (fxp_mul_l(x, y));
+                        tgt1 = fxp2ld(fxp_mul_l(x, y));
                         n1 = fxp_mul(x, y);
                         test_fxp("\nmul  (x*y)", n1, tgt1);
 
@@ -600,7 +601,7 @@ void test_fxp_from_ldouble()
                 printf("lg2_mul_l(-INF) : ");
                         print_fxp(fxp_lg2_mul_l(FXP_NEG_INF)); printf("\n");
                 printf("lg2_mul_l(UNDEF): ");
-                        print_fxp(fxp_lg2_mul_l(FXP_UNDEF)); printf("\n\n");
+                        print_fxp(fxp_lg2_mul_l(FXP_UNDEF)); printf("\n");
         } else {
                 printf("Skipping lg2_mul_l() tests ");
                 printf("(only %d whole bit(s); 3 or more needed)\n", \
@@ -669,9 +670,9 @@ void test_ops_with_rand_nums()
                         n3 %= frac_max;
                 }
 
-                ldx = dfxp(n1);
-                ldy = dfxp(n2);
-                ldz = dfxp(n3);
+                ldx = fxp2ld(n1);
+                ldy = fxp2ld(n2);
+                ldz = fxp2ld(n3);
 
                 printf("\nRandom Test #%d, ", i);
                 printf("frac bits: %d\n", frac_bits);
@@ -716,7 +717,7 @@ void test_ops_with_rand_nums()
                 n2 = n2 < 0? -n2: n2;
                 n3 = n3 < 0? -n3: n3;
                 printf("\nTesting lg2 implementations, ");
-                printf("frac bits: %d\n", frac_bits);
+                printf("frac bits: %d", frac_bits);
                 printf("\nn1 = "); print_fxp(n1);
                 printf("\nn2 = "); print_fxp(n2);
                 printf("\nn3 = "); print_fxp(n3); printf("\n");
@@ -864,10 +865,10 @@ int main(void)
                                 FXP_POS_INF, FXP_POS_INF, \
                                 fxp_get_whole_part(FXP_POS_INF), \
                                 fxp_get_bin_frac(FXP_POS_INF), \
-                                FXP_POS_INF_LD);
+                                FXP_PINF_LD);
                 printf("largest   : %d (fxp Lf ~ %1.3LE)\n", \
                                 (FXP_POS_INF - 1),
-                                dfxp_max_ld());
+                                fxp_get_max_ld());
                 printf("whole max : %d\n", whole_max);
                 printf("frac mask : %d\n", frac_mask);
                 printf("frac max  : %d (->decimals: .%d)\n",
@@ -876,31 +877,24 @@ int main(void)
                 printf("whole min : %d\n", whole_min);
                 printf("smallest  : %d (fxp Lf ~ %1.3LE)\n", \
                                 (FXP_NEG_INF + 1),
-                                dfxp_min_ld());
+                                fxp_get_min_ld());
                 printf("-INF      : %d (x%x,  wh,fr values: %d, %d,  Lf ~ %1.3LE)\n", \
                                 FXP_NEG_INF, FXP_NEG_INF, \
                                 fxp_get_whole_part(FXP_NEG_INF), \
                                 fxp_get_bin_frac(FXP_NEG_INF), \
-                                FXP_NEG_INF_LD);
+                                FXP_NINF_LD);
                 printf("UNDEF     : %d (x%x,  wh,fr values: %d, %d,  Lf ~ %1.3LE)\n", \
                                 FXP_UNDEF, FXP_UNDEF, \
                                 fxp_get_whole_part(FXP_UNDEF), \
                                 fxp_get_bin_frac(FXP_UNDEF), \
                                 FXP_UNDEF_LD);
-                dfxp_tiniest = dfxp(FXP_TINIEST);
+                dfxp_tiniest = fxp2ld(FXP_TINIEST);
                 printf("tiniest   : "); print_fxp(FXP_TINIEST); printf("\n");
                 printf("warn_delta: %LE (== %1.1Lfx tiniest)\n", warn_delta, warn_delta/dfxp_tiniest);
                 printf("max_warn_d: %LE (== %1.1Lfx tiniest)\n", max_warn_delta, max_warn_delta/dfxp_tiniest);
-
-                /*
-                printf("\nChecking conversion between fxp and lim-prec long doubles:");
-                test_fxp("fraction", 0, int_to_frac(0));
-                int max = fxp_get_frac_max() >> (frac_bits < FXP_INT_BITS_M1? 0: 1);
-                for (int frac = 1; frac <= max; frac = frac << 1) {
-                    int fxpfr = fxp_bin(0, frac);
-                    test_fxp("fraction", fxpfr, int_to_frac(frac));
-                }
-                */
+                printf("+INF_LD   : %LE\n", FXP_PINF_LD);
+                printf("-INF_LD   : %LE\n", FXP_NINF_LD);
+                printf("UNDEF_LD  : %LE\n", FXP_UNDEF_LD);
 
                 tests_01();
 

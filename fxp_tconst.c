@@ -1,11 +1,10 @@
 /*
- * fxp_constants.c
+ * fxp_tconst.c
  *
  * Auxiliary program to generate fxp versions of some
  * important/transcendental constants
  *
  * By Raul Saavedra, Bonn Germany
- * v1. 2023-02-05
  */
 
 #include <stdio.h>
@@ -17,7 +16,7 @@
 #include <math.h>
 #include "fxp.h"
 #include "fxp_aux.h"
-#include "fxp_constants.h"
+#include "fxp_tconst.h"
 
 
 #define DASHES "========================\n"
@@ -488,7 +487,7 @@ long double Lf_from_bin(char * pbinnum)
 long double my_log2(long double x)
 {
         if (x < 0.0) return FXP_UNDEF_LD;
-        if (x <= ZERO) return FXP_NEG_INF_LD;
+        if (x <= ZERO) return FXP_NINF_LD;
         long double z = x;
         int c = 0; // characteristic
         while (z >= 2.0) {
@@ -528,7 +527,7 @@ long double my_log2(long double x)
 long double my_log2_bkm(long double x, int nbits)
 {
         if (x < 0.0) return FXP_UNDEF_LD;
-        if (x <= ZERO) return FXP_NEG_INF_LD;
+        if (x <= ZERO) return FXP_NINF_LD;
         long double z = x;
         int c = 0; // characteristic
         while (z >= 2.0) {
@@ -564,7 +563,7 @@ long double my_log2_bkm(long double x, int nbits)
 
 int main(void)
 {
-        printf("\n%sfxp_constants.c\n%s", DASHES, DASHES);
+        printf("\n%sfxp_tconst.c\n%s", DASHES, DASHES);
         print_sys_info();
 
         //printf("\ntest1 %llx\n", bex_from_bin(STR_TEST1, 16, 1));

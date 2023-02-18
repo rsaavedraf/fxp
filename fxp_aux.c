@@ -1,7 +1,7 @@
 /*
  * fxp_aux.c
  *
- * By Raul Saavedra, 2023-01-28, Bonn Germany
+ * By Raul Saavedra, Bonn Germany
  */
 
 #include <stdio.h>
@@ -11,106 +11,32 @@
 #include <float.h>
 #include <time.h>
 #include <math.h>
-#include "fxp.h"
 #include "fxp_aux.h"
-
-long double dfxp_max_ld()
-{
-    return dfxp(FXP_MAX);
-}
-
-long double dfxp_min_ld()
-{
-    return dfxp(FXP_MIN);
-}
-
-/*
- * Returns the exact fraction value from an fxp as
- * a long double
- */
-long double int_to_frac(long frac_value)
-{
-    long double bfsum = 0.0;
-    long twopower = pow(2, fxp_get_frac_bits());
-    long abs_frac = (frac_value < 0)? -frac_value: frac_value;
-    while (abs_frac > 0) {
-        long bit = abs_frac & 1;
-        if (bit)
-            bfsum += ((long double) 1.0) / twopower;
-        abs_frac = abs_frac >> 1;
-        twopower = twopower >> 1;
-    }
-    return (frac_value < 0)? -bfsum: bfsum;
-}
 
 /*
  * Limits the precision of a double to the specified
- * number of fractional bits. This eases the
+ * number of fractional bits. This eases the tester
  * comparisons between results from (precision limited)
- * fxp operations vs. long double operations used
- * as the reference
+ * fxp operations vs. long double operation results
+ * used as the reference
  */
 long double lim_frac(long double x, int fbp)
 {
-    if (x == FXP_UNDEF_LD) return FXP_UNDEF_LD;
-    if (x < dfxp_min_ld()) return FXP_NEG_INF_LD;
-    if (x > dfxp_max_ld()) return FXP_POS_INF_LD;
-    long shift = pow(2, fbp);
+    if (x <= FXP_UNDEF_LD) return FXP_UNDEF_LD;
+    if (x < FXP_min_ld) return FXP_NINF_LD;
+    if (x > FXP_max_ld) return FXP_PINF_LD;
+    // get whole part
     long double px = (x < 0)? -x: x;
-    long pxwhole = trunc(px);
-    long double dfrac = px - ((long double) pxwhole);
-    long lfrac = trunc(dfrac * shift);
-    //printf("Whole part: %ld, frac part: %ld (fbp:%d, shift:%ld)\n", pxwhole, lfrac, fbp, shift);
-    long double bfsum = int_to_frac( lfrac );
-    long double xpreclim;
-    if (x < 0) {
-        xpreclim = -pxwhole - bfsum;
-    } else {
-        xpreclim = pxwhole + bfsum;
-    }
-    //printf("Orig. long double: %Lf\n", x);
-    //printf("Limited frac prec: %Lf (%d frac bits)\n", xpreclim, fbp);
-    return xpreclim;
-}
-
-/*
- * Creates an fxp given a long double value
- */
-int fxp_from_ldouble(long double x)
-{
-    if (x <= FXP_UNDEF_LD) return FXP_UNDEF;
-    if (x < dfxp_min_ld()) return FXP_NEG_INF;
-    if (x > dfxp_max_ld()) return FXP_POS_INF;
-    long shift = pow(2, fxp_get_frac_bits());
-    long double px = (x < 0)? -x: x;
-    long plwhole = trunc(px);
-    long double pdfrac = px - ((long double) plwhole);
-    long plfrac = trunc(pdfrac * shift);
-    if (plwhole > 0)
-        return fxp_bin((int) plwhole, (int) plfrac);
-    else if (plwhole < 0)
-        return fxp_bin((int) -plwhole, (int) plfrac);
+    long double pxw = truncl(px);
+    // keep only up to fbp fraction bits in frac part
+    long double dfrac = px - pxw;
+    long long shift = ((unsigned int) 1) << fbp;
+    dfrac = truncl(dfrac * shift);
+    dfrac = dfrac / shift;
+    if (x < 0)
+        return -pxw - dfrac;
     else
-        return fxp_bin(0, (int) -plfrac);
-}
-
-
-/*
- * Returns a long double value corresponding to a given fxp
- */
-long double dfxp(int fxp)
-{
-    if (fxp == FXP_UNDEF) return FXP_UNDEF_LD;
-    if (fxp == FXP_NEG_INF) return FXP_NEG_INF_LD;
-    if (fxp == FXP_POS_INF) return FXP_POS_INF_LD;
-    long wi = fxp_get_whole_part(fxp);
-    long fi = fxp_get_bin_frac(fxp);
-    //printf("\nfxp long  whole & frac parts: %ld, %ld\n", wi, fi);
-    long double wd = (long double) wi;
-    long double fd = int_to_frac(fi);
-    //printf("fxp Lf whole & frac parts: %Lf, %Lf\n", wd, fd);
-    long double x = wd + fd;
-    return x;
+        return pxw + dfrac;
 }
 
 void print_int_as_bin(int n, int width)
@@ -170,9 +96,6 @@ void print_fxp_as_bin(int n, int width)
     }
 }
 
-/*
- * Prints out an fxp
- */
 void print_fxp(int fxp)
 {
         if (fxp == FXP_POS_INF || fxp == FXP_NEG_INF || fxp == FXP_UNDEF) {
@@ -181,7 +104,7 @@ void print_fxp(int fxp)
                 return;
         }
         //printf("\ninput fxp is: %d", fxp);
-        long double n = lim_frac(dfxp(fxp), fxp_get_frac_bits());
+        long double n = fxp2ld(fxp);
         //printf("long double n = %Lf\n", n);
         int whole = fxp_get_whole_part(fxp);
         int nbits;
@@ -248,7 +171,6 @@ void print_fxp_div(int startmask, int nmaskbits, int n, int frac_bits)
         i--;
     }
 }
-
 
 void trace_fxp_div( char * msg,
             int iteration, int frac_bits, int bindex, \

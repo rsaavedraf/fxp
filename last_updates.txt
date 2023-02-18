@@ -103,3 +103,13 @@ Added ln() and log10(), also tests for them.
 constants on an Intel-based pc. Only way seems to be to resort
 to using quadmath.h, little program test_quad.c checks this.
 Cleaning up comments. Also simplified the testing of lg10 and ln.
+
+2023-02-18: separated the functions using longs into a separate
+fxp_l.* files.  
+A new file fxp_conv.c with utility conversion functions between 
+fxp and float, double, and long double.
+Adjusted code in all programs to use some variables as externals
+from some of the other files.
+Improved fxp_xtimes to show at the end the averages of configs
+with 8, 12, 16, 20, 24, and 28 frac bits.
+

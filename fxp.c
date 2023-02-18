@@ -1,9 +1,9 @@
 /*
  * fxp.c
+ *
  * An implementation of Binary Fixed Point numbers
  * encoding them into integers, together with their
- * arithmetic operations +, -, *, and /,
- * also log2, ln, and others.
+ * arithmetic operations +, -, *, and /, and more.
  *
  * Safe arithmetic operations for the fxp's compliant
  * with INT32-C, as in:
@@ -14,8 +14,8 @@
  */
 
 #include "fxp.h"
-#include "fxp_constants.h"
-#include "fxp_aux.h"
+#include "fxp_tconst.h"
+//#include "fxp_aux.h"
 //#include <stdio.h>
 //#include <stdlib.h>
 //#include <assert.h>
@@ -26,66 +26,64 @@
 
 #define FXP_FRAC_BITS_MIN 4
 #define FXP_FRAC_BITS_DEF 16
+
 // Allowing for no whole part, so other than the sign bit,
 // all bits used for fraction part. This use case represents
 // the range [-0.999..., 0.999...], or equivalently: (-1, 1)
-// (so actual values -1 and 1 not included)
+// (e.g. actual whole values -1 and 1 outside the valid range)
 #define FXP_FRAC_BITS_MAX FXP_INT_BITS_M1
+
 #define FXP_FRAC_MAX_DEC 9999999
 
 // Default number of bits to use for the frac part.
+int FXP_frac_bits = FXP_FRAC_BITS_DEF;
+static int FXP_frac_bits_mod2 = FXP_FRAC_BITS_DEF % 2;
 // Can be changed dynamically calling fxp_set_frac_bits()
-static int fxp_frac_bits = FXP_FRAC_BITS_DEF;
+// but it remains unchanged until calling that function
+// again. All such static variables which will only change
+// if modifying the number of frac bits are named here
+// starting with "FXP_" (uppercase,) but the rest of the
+// variable name in lowercase
 
 // For improved-precision version of fxp_mul
-static int fxp_frac_mshift = FXP_FRAC_BITS_DEF / 2;
-static int fxp_frac_maskl = 4032;
-static int fxp_frac_maskr = 63;
+static int FXP_frac_mshift = FXP_FRAC_BITS_DEF / 2;
+static int FXP_frac_maskl = 4032;
+static int FXP_frac_maskr = 63;
 
 // Default number of bits for the whole (including sign) part
-static int fxp_whole_bits = FXP_INT_BITS - FXP_FRAC_BITS_DEF;
-static int fxp_whole_bits_m1 = FXP_INT_BITS - FXP_FRAC_BITS_DEF - 1;
+static int FXP_whole_bits = FXP_INT_BITS - FXP_FRAC_BITS_DEF;
+static int FXP_whole_bits_m1 = FXP_INT_BITS - FXP_FRAC_BITS_DEF - 1;
 
-// FXP_FRAC_MAX should correspond to 2^FXP_FRAC_BITS - 1
-// Also used as mask for binary frac part of the int
-static int fxp_frac_mask = ((1 << FXP_FRAC_BITS_DEF) - 1);
-static int fxp_frac_max = ((1 << FXP_FRAC_BITS_DEF) - 1);
+// FXP_FRAC_MASK should correspond to 2^FXP_FRAC_BITS - 1
+static int FXP_frac_mask = ((1 << FXP_FRAC_BITS_DEF) - 1);
+static int FXP_frac_max = ((1 << FXP_FRAC_BITS_DEF) - 1);
 
-// Default desired max frac decimal value
-// (can be changed dynamically calling set_[auto_]frac_max_dec
-static int fxp_frac_max_dec = 9999;
+// Default max and min valid values for the whole part of the fxp's
+static int FXP_whole_max = FXP_MAX >> FXP_FRAC_BITS_DEF;
+int FXP_whole_min = -(FXP_MAX >> FXP_FRAC_BITS_DEF);
 
-static long int fxp_max_lshifted = (FXP_MAX_L) << FXP_FRAC_BITS_DEF;
+// Default max and min valid values for the conversion types
+float FXP_max_f = ((float) (FXP_MAX >> FXP_FRAC_BITS_DEF)) \
+                        + (((float) ((1 << FXP_FRAC_BITS_DEF) - 1)) \
+                            / (((unsigned int) 1) << FXP_FRAC_BITS_DEF));
+float FXP_min_f = -((float) (FXP_MAX >> FXP_FRAC_BITS_DEF)) \
+                        - (((float) ((1 << FXP_FRAC_BITS_DEF) - 1)) \
+                            / (((unsigned int) 1) << FXP_FRAC_BITS_DEF));
 
-// Max and min valid values for the whole part of the fxp's
-static int fxp_whole_max = FXP_MAX >> FXP_FRAC_BITS_DEF;
-static int fxp_whole_min = -(FXP_MAX >> FXP_FRAC_BITS_DEF);
+double FXP_max_d = ((double) (FXP_MAX >> FXP_FRAC_BITS_DEF)) \
+                        + (((double) ((1 << FXP_FRAC_BITS_DEF) - 1)) \
+                            / (((unsigned long) 1) << FXP_FRAC_BITS_DEF));
+double FXP_min_d = -((double) (FXP_MAX >> FXP_FRAC_BITS_DEF)) \
+                        - (((double) ((1 << FXP_FRAC_BITS_DEF) - 1)) \
+                            / (((unsigned long) 1) << FXP_FRAC_BITS_DEF));
 
-/*
- * For the BKM log calculation when using longs.
- * Values in this array are: a[k] = log2(1 + 1/2^k) represented as
- * unsigned long fxp's (8 bytes,) with 62 frac bits
- */
-static const unsigned long FXP_BKM_LOGS_L[] = {
-        0x4000000000000000, 0x2570068E7EF5A27D, 0x149A784BCD1B8B50, 0xAE00D1CFDEB43FB,
-        0x598FDBEB244C5B5, 0x2D75A6EB1DFB0F1, 0x16E79685C2D229E, 0xB7F285B778428E,
-        0x5C2711B5EAB1DE, 0x2E1F07FE14EACA, 0x1712653743F454, 0xB89EB17BCABE1,
-        0x5C523B0A86FF2, 0x2E29D623F4A6C, 0x1715193B17D35, 0xB8A982801725,
-        0x5C54EF6A3E08, 0x2E2A833FB72C, 0x171544828311, 0xB8AA2F9EB95,
-        0x5C551AB2053, 0x2E2A8E11ACC, 0x1715473700F, 0xB8AA3A70B1,
-        0x5C551D6683, 0x2E2A8EBECC, 0x1715476248, 0xB8AA3B1DD,
-        0x5C551D91C, 0x2E2A8EC99, 0x17154764F, 0xB8AA3B28,
-        0x5C551D94, 0x2E2A8ECA, 0x17154765, 0xB8AA3B2,
-//        0x5C551D9, 0x2E2A8EC, 0x1715476, 0xB8AA3B,      // <---- *
-//        0x5C551D, 0x2E2A8E, 0x171547, 0xB8AA3,
-//        0x5C551, 0x2E2A8, 0x17154, 0xB8AA,
-//        0x5C55, 0x2E2A, 0x1715, 0xB8A,
-//        0x5C5, 0x2E2, 0x171, 0xB8,
-//        0x5C, 0x2E, 0x17, 0xB,
-//        0x5, 0x2, 0x1
-// Starting with the row marked with the *, each entry is exactly
-// a 4 -bit right-shift of the value 4 positions earlier
-};
+long double FXP_max_ld = ((long double) (FXP_MAX >> FXP_FRAC_BITS_DEF)) \
+                        + (((long double) ((1 << FXP_FRAC_BITS_DEF) - 1)) \
+                            / (((unsigned long long) 1) << FXP_FRAC_BITS_DEF));
+
+long double FXP_min_ld = -((long double) (FXP_MAX >> FXP_FRAC_BITS_DEF)) \
+                        - (((long double) ((1 << FXP_FRAC_BITS_DEF) - 1)) \
+                            / (((unsigned long long) 1) << FXP_FRAC_BITS_DEF));
 
 // For the BKM log calculation when using only ints.
 // Values in this array are: a[k] = log2(1 + 1/2^k) represented as
@@ -118,65 +116,102 @@ static const unsigned int FXP_BKM_LOGS_XTRA[] = {
 // fxp rounded representations of transcendental constants using
 // the default number of frac bits
 #define FXP_DEF_SHIFT (FXP_INT_BITS_M1 - FXP_FRAC_BITS_DEF)
-static int fxp_e = FXP_E_I32 >> (FXP_DEF_SHIFT - 2);
-static int fxp_pi = FXP_PI_I32 >> (FXP_DEF_SHIFT - 2);
-static int fxp_ln_2 = FXP_LN_2_I32 >> FXP_DEF_SHIFT;
-static int fxp_lg10_2 = FXP_LG10_2_I32 >> FXP_DEF_SHIFT;
+int FXP_shifted_e = FXP_E_I32 >> (FXP_DEF_SHIFT - 2);
+int FXP_shifted_pi = FXP_PI_I32 >> (FXP_DEF_SHIFT - 2);
+int FXP_shifted_ln_2 = FXP_LN_2_I32 >> FXP_DEF_SHIFT;
+int FXP_shifted_lg10_2 = FXP_LG10_2_I32 >> FXP_DEF_SHIFT;
 
 #define FXP_BKM_PREC (FXP_INT_BITS - 2)
-//#define FXP_BKM_MSHIFT (FXP_INT_BITS - 8)
-//#define FXP_BKM_MMASK (0xF << FXP_BKM_MSHIFT)
-#define FXP_BKM_PREC_L ((sizeof(long) * 8) - 2)
-#define FXP_BKM_L_CLZSHIFT (FXP_BKM_PREC_L - FXP_BKM_PREC - 1)
 static const int FXP_BKM_ONE = (1 << FXP_BKM_PREC);
-static const unsigned long FXP_BKM_ONE_L = \
-                            ((unsigned long) 1) << FXP_BKM_PREC_L;
 static const unsigned int FXP_BKM_HALF = (FXP_BKM_ONE >> 1);
 static const unsigned int FXP_BKM_MSB1 = (1 << (FXP_INT_BITS - 1));
 static const unsigned int FXP_BKM_IMSB1 = ~FXP_BKM_MSB1;
 static const unsigned int FXP_BKM_NMSB1 = (FXP_BKM_MSB1 >> 1);
 static const unsigned int FXP_BKM_MAXU = ~((unsigned int) 0);
-static const unsigned long FXP_BKM_HALF_L = (FXP_BKM_ONE_L >> 1);
 
 // Auxiliary variables used in the lg2 implementations
-static int fxp_half = 1 << (FXP_FRAC_BITS_DEF - 1);
-static int fxp_one = 1 << FXP_FRAC_BITS_DEF;
-static int fxp_two = 1 << (FXP_FRAC_BITS_DEF + 1);
-static int fxp_lg2_l_maxloops = FXP_FRAC_BITS_DEF + 1;
-static int fxp_lg2_l_shift = FXP_BKM_PREC_L - FXP_FRAC_BITS_DEF;
-static int fxp_lg2_maxloops = FXP_FRAC_BITS_DEF;
-static int fxp_lg2_yashift = FXP_BKM_PREC - FXP_FRAC_BITS_DEF;
-static int fxp_lg2_ybmask = 0;
-static int fxp_lg2_ybshift = 0;
+int FXP_half = 1 << (FXP_FRAC_BITS_DEF - 1);
+int FXP_one = 1 << FXP_FRAC_BITS_DEF;
+int FXP_two = 1 << (FXP_FRAC_BITS_DEF + 1);
+static int FXP_lg2_maxloops = FXP_FRAC_BITS_DEF;
+static int FXP_lg2_yashift = FXP_BKM_PREC - FXP_FRAC_BITS_DEF;
+static int FXP_lg2_ybmask = 0;
+static int FXP_lg2_ybshift = 0;
+
+// Default desired max frac decimal value
+// (can be changed dynamically calling set_[auto_]frac_max_dec
+static int fxp_frac_max_dec = 9999;
+
+// Auxiliary variables for the implementations that use longs (fxp_l.c)
+const int FXP_BKM_PREC_L = ((sizeof(long) * 8) - 2);
+const int FXP_BKM_L_CLZSHIFT = (FXP_BKM_PREC_L - FXP_BKM_PREC - 1);
+const unsigned long FXP_BKM_ONE_L = \
+                            ((unsigned long) 1) << FXP_BKM_PREC_L;
+const unsigned long FXP_BKM_HALF_L = (FXP_BKM_ONE_L >> 1);
+unsigned long FXP_max_lshifted = (FXP_MAX_L) << FXP_FRAC_BITS_DEF;
+int FXP_lg2_l_maxloops = FXP_FRAC_BITS_DEF + 1;
+int FXP_lg2_l_shift = FXP_BKM_PREC_L - FXP_FRAC_BITS_DEF;
 
 int fxp_get_frac_bits() {
-        return fxp_frac_bits;
+        return FXP_frac_bits;
 }
 
 int fxp_get_whole_bits()
 {
-        return fxp_whole_bits;
+        return FXP_whole_bits;
 }
 
 int fxp_get_frac_mask()
 {
-        return fxp_frac_mask;
+        return FXP_frac_mask;
 }
 
 int fxp_get_frac_max()
 {
-        return fxp_frac_max;
+        return FXP_frac_max;
 }
 
 int fxp_get_whole_max()
 {
-        return fxp_whole_max;
+        return FXP_whole_max;
 }
 
 int fxp_get_whole_min()
 {
-        return fxp_whole_min;
+        return FXP_whole_min;
 }
+
+float fxp_get_max_f()
+{
+        return FXP_max_f;
+}
+
+float fxp_get_min_f()
+{
+        return FXP_min_f;
+}
+
+double fxp_get_max_d()
+{
+        return FXP_max_d;
+}
+
+double fxp_get_min_d()
+{
+        return FXP_min_d;
+}
+
+long double fxp_get_max_ld()
+{
+        return FXP_max_ld;
+}
+
+
+long double fxp_get_min_ld()
+{
+        return FXP_min_ld;
+}
+
 
 /*
  * Given an fxp with x number of frac bits, returns
@@ -220,71 +255,85 @@ int fxp_change_nfracbits(int fxp, int x, int y)
  */
 int fxp_set_frac_bits(int nfracbits)
 {
-        fxp_frac_bits = (nfracbits < FXP_FRAC_BITS_MIN? FXP_FRAC_BITS_MIN:
+        FXP_frac_bits = (nfracbits < FXP_FRAC_BITS_MIN? FXP_FRAC_BITS_MIN:
                             (nfracbits > FXP_FRAC_BITS_MAX?
                                 FXP_FRAC_BITS_MAX: nfracbits));
+        FXP_frac_bits_mod2 = FXP_frac_bits % 2;
 
-        fxp_whole_bits = FXP_INT_BITS - fxp_frac_bits;
-        fxp_whole_bits_m1 = fxp_whole_bits - 1;
+        FXP_whole_bits = FXP_INT_BITS - FXP_frac_bits;
+        FXP_whole_bits_m1 = FXP_whole_bits - 1;
 
         // fxp_frac_mask should correspond to 2^FXP_FRAC_BITS - 1
-        fxp_frac_mask = (1 << fxp_frac_bits) - 1;
+        FXP_frac_mask = (1 << FXP_frac_bits) - 1;
 
         // Variables used in fxp_mul to process the
         // full multiplication of the frac parts avoiding
         // precision loss
-        if (fxp_frac_bits == FXP_INT_BITS_M1) {
-                fxp_frac_mshift = (FXP_INT_BITS_M1 - 1) / 2;
+        if (FXP_frac_bits == FXP_INT_BITS_M1) {
+                FXP_frac_mshift = (FXP_INT_BITS_M1 - 1) / 2;
         } else {
-                fxp_frac_mshift = (fxp_frac_bits / 2) + (fxp_frac_bits % 2);
+                FXP_frac_mshift = (FXP_frac_bits / 2) + (FXP_frac_bits % 2);
         }
-        fxp_frac_maskr = (1 << fxp_frac_mshift) - 1;
-        fxp_frac_maskl = fxp_frac_maskr << fxp_frac_mshift;
+        FXP_frac_maskr = (1 << FXP_frac_mshift) - 1;
+        FXP_frac_maskl = FXP_frac_maskr << FXP_frac_mshift;
 
         // When using all bits for frac (except for the sign bit),
         // then our max valid frac cannot be equal to frac_mask
         // (because in that case that value is already the largest
         // positive integer == POS_INF), so we must substract one
         // from the frac mask to get the largest valid frac value
-        fxp_frac_max = fxp_frac_mask - (fxp_whole_bits == 1? 1: 0);
+        FXP_frac_max = FXP_frac_mask - (FXP_whole_bits == 1? 1: 0);
 
-        fxp_max_lshifted = ((FXP_MAX_L) << fxp_frac_bits);
+        // Auxiliary variables for fxp_l.c implementations
+        FXP_max_lshifted = ((FXP_MAX_L) << FXP_frac_bits);
 
         // Max and min valid values for the whole part of the fxp's
-        fxp_whole_max = FXP_MAX >> fxp_frac_bits;
-        fxp_whole_min = (-fxp_whole_max);
+        FXP_whole_max = FXP_MAX >> FXP_frac_bits;
+        FXP_whole_min = (-FXP_whole_max);
+
+        // Max and min floating-point conversion values
+        FXP_max_f = ((float) FXP_whole_max) + \
+                        ((float) FXP_frac_max) / \
+                            ((float) (((unsigned int) 1) << FXP_frac_bits));
+        FXP_max_d = ((double) FXP_whole_max) + \
+                        ((double) FXP_frac_max) / \
+                            ((double) (((unsigned int) 1) << FXP_frac_bits));
+        FXP_max_ld = (long double) FXP_max_d;
+        FXP_min_f = -FXP_max_f;
+        FXP_min_d = -FXP_max_d;
+        FXP_min_ld = -FXP_max_ld;
 
         // Adjust precision of e, pi, etc. to the frac bits in use
-        fxp_e = fxp_change_nfracbits(FXP_E_I32, \
-                        FXP_INT_BITS_M1 - 2, fxp_frac_bits);
-        fxp_pi = fxp_change_nfracbits(FXP_PI_I32, \
-                        FXP_INT_BITS_M1 - 2, fxp_frac_bits);
-        fxp_ln_2 = fxp_change_nfracbits(FXP_LN_2_I32, \
-                        FXP_INT_BITS_M1, fxp_frac_bits);
-        fxp_lg10_2 = fxp_change_nfracbits(FXP_LG10_2_I32, \
-                        FXP_INT_BITS_M1, fxp_frac_bits);
+        FXP_shifted_e = fxp_change_nfracbits(FXP_E_I32, \
+                        FXP_INT_BITS_M1 - 2, FXP_frac_bits);
+        FXP_shifted_pi = fxp_change_nfracbits(FXP_PI_I32, \
+                        FXP_INT_BITS_M1 - 2, FXP_frac_bits);
+        FXP_shifted_ln_2 = fxp_change_nfracbits(FXP_LN_2_I32, \
+                        FXP_INT_BITS_M1, FXP_frac_bits);
+        FXP_shifted_lg10_2 = fxp_change_nfracbits(FXP_LG10_2_I32, \
+                        FXP_INT_BITS_M1, FXP_frac_bits);
 
         // Auxiliary variables used for lg2 calculations
-        fxp_one = fxp(1);
-        fxp_half = fxp_one >> 1;
-        fxp_two = fxp_one << 1;
-        fxp_lg2_l_maxloops = MIN(FXP_INT_BITS, fxp_frac_bits + 1);
-        fxp_lg2_l_shift = FXP_BKM_PREC_L - fxp_frac_bits;
-        fxp_lg2_maxloops = fxp_frac_bits + 1;
-        fxp_lg2_yashift = FXP_BKM_PREC - fxp_frac_bits;
-        if (fxp_lg2_yashift >= 0) {
-            fxp_lg2_ybshift = 0;
-            fxp_lg2_ybmask = 0;
+        FXP_one = fxp(1);
+        FXP_half = FXP_one >> 1;
+        FXP_two = FXP_one << 1;
+        FXP_lg2_l_maxloops = MIN(FXP_INT_BITS, FXP_frac_bits + 1);
+        FXP_lg2_l_shift = FXP_BKM_PREC_L - FXP_frac_bits;
+        FXP_lg2_maxloops = FXP_frac_bits + 1;
+        FXP_lg2_yashift = FXP_BKM_PREC - FXP_frac_bits;
+        if (FXP_lg2_yashift >= 0) {
+            FXP_lg2_ybshift = 0;
+            FXP_lg2_ybmask = 0;
         } else {
             // When lg2_shift is negative, lg2_ybmask is equal to
             // a number of 1's == -lg2_shift, shifted to the
             // left-most bits of an int
-            fxp_lg2_ybshift = FXP_INT_BITS + fxp_lg2_yashift;
-            fxp_lg2_ybmask = ((1 << (-fxp_lg2_yashift)) - 1) \
-                    << fxp_lg2_ybshift;
+            FXP_lg2_ybshift = FXP_INT_BITS + FXP_lg2_yashift;
+            FXP_lg2_ybmask = ((1 << (-FXP_lg2_yashift)) - 1) \
+                    << FXP_lg2_ybshift;
         }
 
-        return fxp_frac_bits;
+        return FXP_frac_bits;
 }
 
 /*
@@ -294,7 +343,7 @@ int fxp_set_frac_bits(int nfracbits)
  */
 int fxp_set_auto_frac_max_dec()
 {
-        int nnines = fxp_frac_bits / 4;
+        int nnines = FXP_frac_bits / 4;
         fxp_frac_max_dec = 9;
         for (int i=1; i < nnines; i++) {
             fxp_frac_max_dec = (fxp_frac_max_dec * 10) + 9;
@@ -337,14 +386,14 @@ int fxp_bin(int whole, int bin_frac)
 {
         if ((whole == FXP_UNDEF) || (bin_frac == FXP_UNDEF))
                 return FXP_UNDEF;
-        if (whole > fxp_whole_max)
+        if (whole > FXP_whole_max)
                 return FXP_POS_INF;
-        if (whole < fxp_whole_min)
+        if (whole < FXP_whole_min)
                 return FXP_NEG_INF;
-        if (bin_frac > fxp_frac_max)
-                bin_frac = fxp_frac_max;
-        else if (bin_frac < -fxp_frac_max)
-                bin_frac = -fxp_frac_max;
+        if (bin_frac > FXP_frac_max)
+                bin_frac = FXP_frac_max;
+        else if (bin_frac < -FXP_frac_max)
+                bin_frac = -FXP_frac_max;
         int sign = 1;
         if ((whole == 0) && (bin_frac < 0)) {
                 // Special case for negative numbers when whole part is
@@ -361,7 +410,7 @@ int fxp_bin(int whole, int bin_frac)
                         bin_frac = -bin_frac;
                 }
         }
-        int positive_fxp = (whole << fxp_frac_bits) | bin_frac;
+        int positive_fxp = (whole << FXP_frac_bits) | bin_frac;
         return (sign == 1)? positive_fxp: -positive_fxp;
 }
 
@@ -386,9 +435,9 @@ int fxp_dec(int whole, int dec_frac)
 {
         if ((whole == FXP_UNDEF) || (dec_frac == FXP_UNDEF))
                 return FXP_UNDEF;
-        if (whole > fxp_whole_max)
+        if (whole > FXP_whole_max)
                 return FXP_POS_INF;
-        if (whole < fxp_whole_min)
+        if (whole < FXP_whole_min)
                 return FXP_NEG_INF;
         int frac_sign = 1;
         if (dec_frac < 0) {
@@ -406,7 +455,7 @@ int fxp_dec(int whole, int dec_frac)
         // Using longs here because of this
         //int bin_frac = (trunc_frac * fxp_frac_max) / fxp_frac_max_dec ;
         int bin_frac = (int) (((long) trunc_frac * \
-                                (long) fxp_frac_max) / \
+                                (long) FXP_frac_max) / \
                                     (long) (fxp_frac_max_dec));
         return fxp_bin(whole, ((frac_sign == 1)? bin_frac: -bin_frac));
 }
@@ -422,11 +471,11 @@ int fxp_get_whole_part(int fxp)
                         // -INF (and also UNDEF) actually correspond to.
                         // However, see also the comment in
                         // fxp_get_bin_frac()
-                        return -fxp_whole_max;
+                        return -FXP_whole_max;
                 else
-                        return -((-fxp) >> fxp_frac_bits);
+                        return -((-fxp) >> FXP_frac_bits);
         else
-                return (fxp >> fxp_frac_bits);
+                return (fxp >> FXP_frac_bits);
 }
 
 /*
@@ -453,11 +502,11 @@ int fxp_get_bin_frac(int fxp)
                         // UNDEF this way. Conveniently, when the
                         // # of frac bits is 31, this scheme returns
                         // the full FXP_UNDEF as the frac part.
-                        return -fxp_frac_mask - (fxp == FXP_UNDEF? 1: 0);
+                        return -FXP_frac_mask - (fxp == FXP_UNDEF? 1: 0);
                 else
-                        return -((-fxp) & fxp_frac_mask);
+                        return -((-fxp) & FXP_frac_mask);
         else
-                return (fxp & fxp_frac_mask);
+                return (fxp & FXP_frac_mask);
 }
 
 /*
@@ -470,16 +519,16 @@ int fxp_get_dec_frac(int fxp)
         // the chosen frac_bits is large, and the frac_max_dec
         // value is also large. Using longs here because of this
         long num, denom, ldivision;
-        denom = (long) fxp_frac_max;
+        denom = (long) FXP_frac_max;
         int positive_frac;
         if (fxp < 0) {
-                positive_frac = (-fxp) & fxp_frac_mask;
+                positive_frac = (-fxp) & FXP_frac_mask;
                 if (positive_frac == 0) return 0;
                 num = -(((long) positive_frac + 1) * \
                                 ((long) fxp_frac_max_dec));
         }
         else {
-                positive_frac = fxp & fxp_frac_mask;
+                positive_frac = fxp & FXP_frac_mask;
                 if (positive_frac == 0) return 0;
                 num = ((long) positive_frac + 1)
                                 * ((long) fxp_frac_max_dec);
@@ -506,12 +555,12 @@ int fxp_unsafe_sub(int fxp1, int fxp2)
 int fxp_unsafe_mul(int fxp1, int fxp2)
 {
         long p = ((long) fxp1) * fxp2;
-        return (int) (p >> fxp_frac_bits);
+        return (int) (p >> FXP_frac_bits);
 }
 
 int fxp_unsafe_div(int fxp1, int fxp2)
 {
-        long n1 = ((long) fxp1) << fxp_frac_bits;
+        long n1 = ((long) fxp1) << FXP_frac_bits;
         long div = n1 / fxp2;
         return ((int) div);
 }
@@ -551,45 +600,6 @@ int fxp_sub(int fxp1, int fxp2)
         // to the true most negative int (aka. FXP_UNDEF)
         if (fxp2 == FXP_UNDEF) return FXP_UNDEF;
         return fxp_add(fxp1, -fxp2);
-}
-
-/*
- * Safe implementation of fxp multiplication using longs,
- * and no divisions.
- * Only applicable for systems in which sizeof(long) >= 2 * sizeof(int)
- */
-int fxp_mul_l(int fxp1, int fxp2)
-{
-        if (fxp1 == FXP_UNDEF || fxp2 == FXP_UNDEF)
-                return FXP_UNDEF;
-        if (fxp1 == FXP_POS_INF || fxp2 == FXP_POS_INF) {
-                if (fxp1 == 0 || fxp2 == 0)
-                        return FXP_UNDEF;
-                else
-                        return (fxp1 < 0 || fxp2 < 0)?
-                                FXP_NEG_INF: FXP_POS_INF;
-        }
-        if (fxp1 == FXP_NEG_INF || fxp2 == FXP_NEG_INF) {
-                if (fxp1 == 0 || fxp2 == 0)
-                        return FXP_UNDEF;
-                return (fxp1 > 0 || fxp2 > 0)?
-                                FXP_NEG_INF: FXP_POS_INF;
-        }
-        int v1, v2;
-        v1 = (fxp1 >= 0)? fxp1: -fxp1;
-        v2 = (fxp2 >= 0)? fxp2: -fxp2;
-
-        unsigned long product = ((unsigned long) v1) * v2;
-        if (product > fxp_max_lshifted) {
-                // Overflow, return infinity with the appropriate sign
-                return ((fxp1 >= 0 && fxp2 >= 0) || \
-                            (fxp1 < 0 && fxp2 < 0))?
-                                FXP_POS_INF: FXP_NEG_INF;
-        }
-        // No overflow, return result as int with appropriate sign
-        product = product >> fxp_frac_bits;
-        return ((fxp1 >= 0 && fxp2 >= 0) || (fxp1 < 0 && fxp2 < 0))?
-                        (int) product: -((int) product);
 }
 
 /*
@@ -676,7 +686,7 @@ int fxp_mul(int fxp1, int fxp2)
         nbb = fxp_nbits(b);
 
         //printf("a:%d (%d bits),  b:%d (%d bits)\n", a, nba, b, nbb);
-        if (nba + nbb > fxp_whole_bits) {
+        if (nba + nbb > FXP_whole_bits) {
                 // The product will for sure overflow just by
                 // multiplying the whole parts.
                 // Return appropriately signed infinity
@@ -699,7 +709,7 @@ int fxp_mul(int fxp1, int fxp2)
         int pf3;
         if (nbx + nby <= FXP_INT_BITS_M1) {
             // We have room to simply multiply x * y, then shift
-            pf3 = (x * y) >> fxp_frac_bits;
+            pf3 = (x * y) >> FXP_frac_bits;
         } else {
             /*
              * Below an improved method to compute pf3 when we do not
@@ -728,36 +738,37 @@ int fxp_mul(int fxp1, int fxp2)
              * significant part of the product of the frac parts
              */
             int submaskl, submaskr, subshift;
-            int oddnfb = fxp_frac_bits % 2;
-            if (fxp_frac_bits == FXP_INT_BITS_M1) {
+            int oddnfb;
+            if (FXP_frac_bits == FXP_INT_BITS_M1) {
                 // Eliminate the very lowest significant bit of each
                 // operand to make sure none of the subchunk products
                 // ever exceed FXP_INT_BITS_M1 bits.
                 // (We must shift back this lost bit in the final pf3)
+                oddnfb = -1;
                 x = x >> 1;
                 y = y >> 1;
-                oddnfb = -1;
             } else {
+                oddnfb = FXP_frac_bits_mod2;
                 x = x << oddnfb;
                 y = y << oddnfb;
             }
             // Variables fxp_frac_maskl, _maskr, and _mshift are
             // all preinitialized for the default # of frac bits to use,
             // and readjusted when fxp_set_frac_bits() gets called
-            int xl = (x & fxp_frac_maskl) >> fxp_frac_mshift;
-            int xr = (x & fxp_frac_maskr);
-            int yl = (y & fxp_frac_maskl) >> fxp_frac_mshift;
-            int yr = (y & fxp_frac_maskr);
+            int xl = (x & FXP_frac_maskl) >> FXP_frac_mshift;
+            int xr = (x & FXP_frac_maskr);
+            int yl = (y & FXP_frac_maskl) >> FXP_frac_mshift;
+            int yr = (y & FXP_frac_maskr);
             int xlyr = xl * yr;
             int ylxr = yl * xr;
-            int qr1 = xlyr & fxp_frac_maskr;
-            int qr2 = ylxr & fxp_frac_maskr;
-            int qr3 = (xr * yr) >> fxp_frac_mshift;
+            int qr1 = xlyr & FXP_frac_maskr;
+            int qr2 = ylxr & FXP_frac_maskr;
+            int qr3 = (xr * yr) >> FXP_frac_mshift;
             int qrsum = qr1 + qr2 + qr3;
             int ql1 = xl * yl;
-            int ql2 = (xlyr & fxp_frac_maskl) >> fxp_frac_mshift;
-            int ql3 = (ylxr & fxp_frac_maskl) >> fxp_frac_mshift;
-            int ql4 = (qrsum & fxp_frac_maskl) >> fxp_frac_mshift;
+            int ql2 = (xlyr & FXP_frac_maskl) >> FXP_frac_mshift;
+            int ql3 = (ylxr & FXP_frac_maskl) >> FXP_frac_mshift;
+            int ql4 = (qrsum & FXP_frac_maskl) >> FXP_frac_mshift;
             pf3 = ql1 + ql2 + ql3 + ql4;
             // Now final adjustment shift depending on value of oddnfb
             if (oddnfb > 0) {
@@ -782,7 +793,7 @@ int fxp_mul(int fxp1, int fxp2)
         int pw4 = fxp_get_whole_part(pfsum);
         // Sum all whole parts safely
         int pwsum = pw1 + pw2 + pw3 + pw4;
-        if (pwsum > fxp_whole_max) {
+        if (pwsum > FXP_whole_max) {
                 // Overflow.
                 // Return appropriately signed infinity
                 return ((fxp1 >= 0 && fxp2 >= 0) || (fxp1 < 0 && fxp2 < 0))?
@@ -819,7 +830,7 @@ int fxp_div(int fxp1, int fxp2)
                 return ((fxp1 > 0 && fxp2 > 0) || (fxp1 < 0 && fxp2 < 0))?
                                 FXP_POS_INF: FXP_NEG_INF;
 
-        if ((y <= fxp_frac_mask) &&
+        if ((y <= FXP_frac_mask) &&
                 (x > fxp_mul(FXP_MAX, y))) {
                 return ((fxp1 > 0 && fxp2 > 0) || (fxp1 < 0 && fxp2 < 0))?
                                 FXP_POS_INF: FXP_NEG_INF;
@@ -829,7 +840,7 @@ int fxp_div(int fxp1, int fxp2)
         int by = fxp_nbits(y);
 
         int m, next_bit_mask;
-        int bmax = bx + fxp_frac_bits;
+        int bmax = bx + FXP_frac_bits;
         if (by == FXP_INT_BITS_M1) {
                 // Border case, we need to shrink the divisor so that
                 // the minuend can still have 1 more bit for the cases
@@ -898,74 +909,24 @@ int fxp_div(int fxp1, int fxp2)
                         q: -q;
 }
 
-/*
- * Safe implementation of fxp division using longs.
- * Only applicable for systems in which sizeof(long) >= 2 * sizeof(int)
- */
-int fxp_div_l(int fxp1, int fxp2)
-{
-        if (fxp1 == FXP_UNDEF || fxp2 == FXP_UNDEF)
-                return FXP_UNDEF;
-        if (fxp2 == 0)
-                return (fxp1 > 0)? FXP_POS_INF:
-                                (fxp1 < 0)? FXP_NEG_INF: FXP_UNDEF;
-        // Positive values of the arguments
-        int x = (fxp1 >= 0)? fxp1: -fxp1;
-        int y = (fxp2 >  0)? fxp2: -fxp2;
-        if (y == FXP_POS_INF)
-                return (x == FXP_POS_INF)? FXP_UNDEF: 0;
-        if (x == FXP_POS_INF)
-                return ((fxp1 > 0 && fxp2 > 0) || (fxp1 < 0 && fxp2 < 0))?
-                                FXP_POS_INF: FXP_NEG_INF;
-        // Compute positive division
-        long numerator = ((long) x) << fxp_frac_bits;
-        long division = numerator / y;
-
-        if (division > FXP_MAX_L) {
-                // Overflow -> Return properly signed infinity
-                return ((fxp1 >= 0 && fxp2 > 0) || (fxp1 < 0 && fxp2 < 0))?
-                                FXP_POS_INF: FXP_NEG_INF;
-        }
-        // No overflow -> return properly signed int
-        return ((fxp1 >= 0 && fxp2 > 0) || (fxp1 < 0 && fxp2 < 0))?
-                        (int) division: -((int) division);
-}
-
 int fxp_get_e()
 {
-        return fxp_e;
+        return FXP_shifted_e;
+}
+
+int fxp_get_pi()
+{
+        return FXP_shifted_pi;
 }
 
 int fxp_get_ln_2()
 {
-        return fxp_ln_2;
+        return FXP_shifted_ln_2;
 }
 
 int fxp_get_lg10_2()
 {
-        return fxp_lg10_2;
-}
-
-
-int fxp_get_pi()
-{
-        return fxp_pi;
-}
-
-
-int fxp_exp(int fxp1)
-{
-        // TODO
-        return 0;
-}
-
-/*
- * Square root implementation
- */
-int fxp_sqrt(int fxp1)
-{
-        // TODO
-        return 0;
+        return FXP_shifted_lg10_2;
 }
 
 /*
@@ -974,7 +935,7 @@ int fxp_sqrt(int fxp1)
  */
 int fxp_ln(int fxp1)
 {
-        return fxp_mul(fxp_lg2(fxp1), fxp_ln_2);
+        return fxp_mul(fxp_lg2(fxp1), FXP_shifted_ln_2);
 }
 
 /*
@@ -983,75 +944,7 @@ int fxp_ln(int fxp1)
  */
 int fxp_lg10(int fxp1)
 {
-        return fxp_mul(fxp_lg2(fxp1), fxp_lg10_2);
-}
-
-/*
- * Implementation of ln and lg10 using longs
- */
-int fxp_ln_l(int fxp1)
-{
-        return fxp_mul_l(fxp_lg2_l(fxp1), fxp_ln_2);
-}
-
-int fxp_lg10_l(int fxp1) {
-        return fxp_mul_l(fxp_lg2(fxp1), fxp_lg10_2);
-}
-
-/*
- * Alternative lg2 of an fxp using multiplication. Only applicable
- * for systems in which sizeof(long) >= 2 * sizeof(int)
- *
- * Requires the fxp configuration to have 3 or more whole bits.
- * Needs no pre-calculated table of log values in any range, but
- * requires one multiplication per mantissa bit (expensive.)
- *
- * Adapted to fxps from the general algorithm to calculate
- * binary logarithms explained by Clay Turner in IEEE Signal
- * Processing Magazine, Sep/2010.
- * D. E. Knuth's "The Art of Computer Programming Vol 2:
- * Seminumerical Algorithms", 2nd ed., 1981 (pages 441 - 446) is
- * the one and only reference in that short article, so that's the
- * effective reference.
- */
-int fxp_lg2_mul_l(int fxp1)
-{
-        if (fxp1 <= 0) return ((fxp1 == 0)? FXP_NEG_INF: FXP_UNDEF);
-        if (fxp1 == FXP_POS_INF) return FXP_POS_INF;
-        int c = 0; // characteristic
-        int nx;
-        int nbx = fxp_nbits(fxp1);
-        if (fxp1 < fxp_one) {
-                c = nbx - fxp_frac_bits - 1;
-                nx = fxp1 << (-c);
-        } else if (fxp1 >= fxp_two) {
-                c = nbx - fxp_frac_bits - 1;
-                nx = fxp1 >> c;
-        } else {
-                nx = fxp1;
-        }
-        // Mantissa calculation:
-        int m = 0;
-        int b = fxp_half;
-        while (b > 0) {
-                nx = fxp_mul_l(nx, nx);
-                if (nx >= fxp_two) {
-                        nx = nx >> 1;
-                        m |= b;
-                }
-                b = b >> 1;
-        }
-        // Return the calculated logarithm as fxp
-        if (c < fxp_whole_min) {
-                if ((c + 1 == fxp_whole_min) && (m > 0)) {
-                    return INT_MIN + m;
-                }
-                return FXP_NEG_INF;
-        }
-        if (c >= 0)
-            return (c << fxp_frac_bits) + m;
-        else
-            return -(-c << fxp_frac_bits) + m;
+        return fxp_mul(fxp_lg2(fxp1), FXP_shifted_lg10_2);
 }
 
 /*
@@ -1070,8 +963,8 @@ int fxp_lg2(int fxp1)
         // clz > 0 since at least sign bit == 0
         int nbx = FXP_INT_BITS - clz;
         // c is characteristic
-        int c = ((fxp1 < fxp_one) || (fxp1 >= fxp_two))?
-                    (nbx - fxp_frac_bits - 1): 0;
+        int c = ((fxp1 < FXP_one) || (fxp1 >= FXP_two))?
+                    (nbx - FXP_frac_bits - 1): 0;
 
         // Here we replicate what the lg2_l implementation does,
         // but simulating longs with two ints a and b, so
@@ -1087,7 +980,7 @@ int fxp_lg2(int fxp1)
         unsigned int auxa, auxb;                    // aux
         unsigned int a_bits;
         unsigned int ab_mask = 1;
-        for (int shift=1; shift <= fxp_lg2_maxloops; shift++) {
+        for (int shift=1; shift <= FXP_lg2_maxloops; shift++) {
 
                 //unsigned long xs = (x >> shift);
                 // Here we must r-shift the combo (xa, xb) by shift units
@@ -1130,17 +1023,17 @@ int fxp_lg2(int fxp1)
         // Include any carry overs from summing the xtra bits together
         // Now y has the mantissa, shift it adjusting for final fxp
         int m;
-        if (fxp_lg2_yashift >= 0)
-                m = ya >> fxp_lg2_yashift;
+        if (FXP_lg2_yashift >= 0)
+                m = ya >> FXP_lg2_yashift;
         else {
                 // Shifting the mantissa to the left, so we should pull
                 // the left-most bits from yb
-                m = (ya << (-fxp_lg2_yashift)) |
-                        ((yb & fxp_lg2_ybmask) >> fxp_lg2_ybshift);
+                m = (ya << (-FXP_lg2_yashift)) |
+                        ((yb & FXP_lg2_ybmask) >> FXP_lg2_ybshift);
         }
         // Return the complete logarithm (c + m) as fxp
-        if (c < fxp_whole_min) {
-                if ((c + 1 == fxp_whole_min) && (m > 0)) {
+        if (c < FXP_whole_min) {
+                if ((c + 1 == FXP_whole_min) && (m > 0)) {
                         // Special case: in spite of not enough whole
                         // bits available for c, there are for c + 1,
                         // which is what this logarithm will return as
@@ -1153,70 +1046,35 @@ int fxp_lg2(int fxp1)
                 return FXP_NEG_INF;
         }
         if (c >= 0)
-            return (c << fxp_frac_bits) + m;
+            return (c << FXP_frac_bits) + m;
         else
-            return -(-c << fxp_frac_bits) + m;
+            return -(-c << FXP_frac_bits) + m;
+}
+
+int fxp_pow2(int fxp1)
+{
+        // TODO:
+        return 0;
+}
+
+int fxp_pow(int x, int y)
+{
+        // TODO
+        return 0;
+}
+
+int fxp_exp(int fxp1)
+{
+        // TODO
+        return 0;
 }
 
 /*
- * log2 calculation using the BKM algorithm, and longs.
- * Only applicable for systems in which sizeof(long) >= 2 * sizeof(int)
+ * Square root implementation
  */
-int fxp_lg2_l(int fxp1)
+int fxp_sqrt(int fxp1)
 {
-        if (fxp1 <= 0) return ((fxp1 == 0)? FXP_NEG_INF: FXP_UNDEF);
-        if (fxp1 == FXP_POS_INF) return FXP_POS_INF;
-        // Here fxp1 for sure > 0
-        int clz = __builtin_clz((unsigned int) fxp1);
-        // clz > 0 since at least sign bit == 0
-        int nbx = FXP_INT_BITS - clz;
-        // c is characteristic
-        int c = ((fxp1 < fxp_one) || (fxp1 >= fxp_two))?
-                    (nbx - fxp_frac_bits - 1): 0;
-
-        // Here we have already calculated the log characteristic c
-        // Now lshifting the original number to have it as unsigned
-        // long with 61 frac bits (same as the pre-calculated values
-        // in our bkm table of logs)
-        unsigned long z = ((unsigned long) fxp1) << \
-                            (clz + FXP_BKM_L_CLZSHIFT);
-        unsigned long x = FXP_BKM_ONE_L;
-        unsigned long zz;
-        unsigned long y = 0; // starting mantissa
-        for (int shift=1; shift <= fxp_lg2_l_maxloops; shift++) {
-                unsigned long xs = (x >> shift);
-                zz = x + xs;
-                if (zz <= z) {
-                        // Here we use the precalculated values
-                        unsigned long aux = FXP_BKM_LOGS_L[shift];
-                        x = zz;
-                        y += aux;
-                }
-        }
-        // Now y has the mantissa, shift it adjusting for final fxp
-        long m;
-        if (fxp_lg2_l_shift >= 0) {
-                m = y >> fxp_lg2_l_shift;
-        } else {
-                m = y << (-fxp_lg2_l_shift);
-        }
-        int im = (int) m;
-        // Return the complete logarithm (c + m) as fxp
-        if (c < fxp_whole_min) {
-                if ((c + 1 == fxp_whole_min) && (im > 0)) {
-                        // Special case: in spite of not enough whole
-                        // bits available for c, there are for c + 1,
-                        // which is what this logarithm will return as
-                        // whole part
-                        return INT_MIN + im;
-                }
-                // Overflow: the characteristic of the logarithm
-                // will not fit in the whole bits part of our
-                // current fxp settings
-                return FXP_NEG_INF;
-        }
-        if (c >= 0)
-            return (c << fxp_frac_bits) + im;
-        else
-            return -(-c << fxp_frac_bits) + im;
+        // TODO
+        return 0;
 }
+
