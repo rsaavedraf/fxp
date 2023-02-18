@@ -82,7 +82,7 @@ void print_fxp_as_bin(int n, int width)
         width--;
     }
     if (signspace) printf("(-)");
-    int frbits = fxp_get_frac_bits();
+    int frbits = FXP_frac_bits;
     int i = MAX(frbits, (nbn == 0)? 1: nbn);
     while (i > 0) {
         if (i == frbits) printf(".");
@@ -184,7 +184,7 @@ void trace_fxp_div( char * msg,
     if (iteration == 0) {
         printf("\n%s frac_bits:%d  bindex:%2d\n", \
                 msg, frac_bits, bindex);
-        print_fxp_div(bindex - bmc, bmc, dividend, fxp_get_frac_bits());
+        print_fxp_div(bindex - bmc, bmc, dividend, FXP_frac_bits);
         printf("    \ty: ");
         print_int_as_bin(divisor, 0);
         printf(" (%d, x%x, %d bits)\n", \

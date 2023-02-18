@@ -13,6 +13,8 @@
 extern const long double FXP_UNDEF_LD;
 extern const long double FXP_NINF_LD;
 extern const long double FXP_PINF_LD;
+extern int FXP_frac_bits;
+extern int FXP_frac_max;
 
 long double lim_frac(long double x, int fbp);
 void print_int_as_bin(int n, int width);

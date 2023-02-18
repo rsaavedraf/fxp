@@ -72,7 +72,7 @@ int main(void) {
         for (int nc = 0; nc < nconfigs; nc++) {
                 int nfb = fracbit_configs[nc];
                 fxp_set_frac_bits(nfb);
-                printf("\nNumber of frac bits: %d\n", fxp_get_frac_bits());
+                printf("\nNumber of frac bits: %d\n", FXP_frac_bits);
                 tadd = 0;
                 tmul = 0;
                 tmul_l = 0;
@@ -97,7 +97,7 @@ int main(void) {
                         n1 = s1 * rand();
                         n2 = s2 * rand();
                         // n3 is a number in (-1, 1)
-                        n3 = s3 * (rand() % fxp_get_frac_max());
+                        n3 = s3 * (rand() % FXP_frac_max);
                         t0 = clock();
                         for (int i = 0; i < MAX_OPS; i++) {
                                 x = fxp_add(n1, n2);

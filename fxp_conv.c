@@ -82,7 +82,7 @@ float fxp2f(int fxp)
     if (fxp == FXP_UNDEF) return FXP_UNDEF_F;
     if (fxp == FXP_NEG_INF) return FXP_NINF_F;
     if (fxp == FXP_POS_INF) return FXP_PINF_F;
-    unsigned int twopower = 1 << fxp_get_frac_bits();
+    unsigned int twopower = 1 << FXP_frac_bits;
     int frac = fxp_get_bin_frac(fxp);
     if (frac < 0) frac = -frac;
     float ffrac = 0.0;
@@ -132,7 +132,7 @@ double fxp2d(int fxp)
     if (fxp == FXP_UNDEF) return FXP_UNDEF_D;
     if (fxp == FXP_NEG_INF) return FXP_NINF_D;
     if (fxp == FXP_POS_INF) return FXP_PINF_D;
-    unsigned int twopower = 1 << fxp_get_frac_bits();
+    unsigned int twopower = 1 << FXP_frac_bits;
     int frac = fxp_get_bin_frac(fxp);
     if (frac < 0) frac = -frac;
     double dfrac = 0.0;

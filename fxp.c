@@ -51,15 +51,15 @@ static int FXP_frac_maskl = 4032;
 static int FXP_frac_maskr = 63;
 
 // Default number of bits for the whole (including sign) part
-static int FXP_whole_bits = FXP_INT_BITS - FXP_FRAC_BITS_DEF;
+int FXP_whole_bits = FXP_INT_BITS - FXP_FRAC_BITS_DEF;
 static int FXP_whole_bits_m1 = FXP_INT_BITS - FXP_FRAC_BITS_DEF - 1;
 
 // FXP_FRAC_MASK should correspond to 2^FXP_FRAC_BITS - 1
-static int FXP_frac_mask = ((1 << FXP_FRAC_BITS_DEF) - 1);
-static int FXP_frac_max = ((1 << FXP_FRAC_BITS_DEF) - 1);
+int FXP_frac_mask = ((1 << FXP_FRAC_BITS_DEF) - 1);
+int FXP_frac_max = ((1 << FXP_FRAC_BITS_DEF) - 1);
 
 // Default max and min valid values for the whole part of the fxp's
-static int FXP_whole_max = FXP_MAX >> FXP_FRAC_BITS_DEF;
+int FXP_whole_max = FXP_MAX >> FXP_FRAC_BITS_DEF;
 int FXP_whole_min = -(FXP_MAX >> FXP_FRAC_BITS_DEF);
 
 // Default max and min valid values for the conversion types
@@ -140,7 +140,7 @@ static int FXP_lg2_ybshift = 0;
 
 // Default desired max frac decimal value
 // (can be changed dynamically calling set_[auto_]frac_max_dec
-static int fxp_frac_max_dec = 9999;
+int fxp_frac_max_dec = 9999;
 
 // Auxiliary variables for the implementations that use longs (fxp_l.c)
 const int FXP_BKM_PREC_L = ((sizeof(long) * 8) - 2);
@@ -151,67 +151,6 @@ const unsigned long FXP_BKM_HALF_L = (FXP_BKM_ONE_L >> 1);
 unsigned long FXP_max_lshifted = (FXP_MAX_L) << FXP_FRAC_BITS_DEF;
 int FXP_lg2_l_maxloops = FXP_FRAC_BITS_DEF + 1;
 int FXP_lg2_l_shift = FXP_BKM_PREC_L - FXP_FRAC_BITS_DEF;
-
-int fxp_get_frac_bits() {
-        return FXP_frac_bits;
-}
-
-int fxp_get_whole_bits()
-{
-        return FXP_whole_bits;
-}
-
-int fxp_get_frac_mask()
-{
-        return FXP_frac_mask;
-}
-
-int fxp_get_frac_max()
-{
-        return FXP_frac_max;
-}
-
-int fxp_get_whole_max()
-{
-        return FXP_whole_max;
-}
-
-int fxp_get_whole_min()
-{
-        return FXP_whole_min;
-}
-
-float fxp_get_max_f()
-{
-        return FXP_max_f;
-}
-
-float fxp_get_min_f()
-{
-        return FXP_min_f;
-}
-
-double fxp_get_max_d()
-{
-        return FXP_max_d;
-}
-
-double fxp_get_min_d()
-{
-        return FXP_min_d;
-}
-
-long double fxp_get_max_ld()
-{
-        return FXP_max_ld;
-}
-
-
-long double fxp_get_min_ld()
-{
-        return FXP_min_ld;
-}
-
 
 /*
  * Given an fxp with x number of frac bits, returns

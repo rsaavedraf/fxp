@@ -17,6 +17,13 @@
 #include "fxp_l.h"
 #include "fxp_aux.h"
 
+extern int FXP_frac_bits;
+extern int FXP_whole_bits;
+extern int FXP_whole_max;
+extern int FXP_frac_mask;
+extern int FXP_frac_max;
+extern int fxp_frac_max_dec;
+
 #define DASHES "========================\n"
 
 // Set to 0 in order to be able to replicate runs
@@ -119,8 +126,8 @@ static long double get_target(long double x)
 {
     long double y = lim_frac(x, frac_bits);
     if (y <= FXP_UNDEF_LD) return FXP_UNDEF_LD;
-    if (y < fxp_get_min_ld()) return FXP_NINF_LD;
-    if (y > fxp_get_max_ld()) return FXP_PINF_LD;
+    if (y < FXP_min_ld) return FXP_NINF_LD;
+    if (y > FXP_max_ld) return FXP_PINF_LD;
     return y;
 }
 
@@ -168,10 +175,10 @@ static long double get_div_target(int x, int y)
                     long double ldy = fxp2ld(y);
                     target = lim_frac(ldx, frac_bits) / lim_frac(ldy, frac_bits);
                     target = lim_frac(target, frac_bits);
-                    if (target > fxp_get_max_ld()) {
+                    if (target > FXP_max_ld) {
                         target = FXP_PINF_LD;
                     } else {
-                        if (target < fxp_get_min_ld()) {
+                        if (target < FXP_min_ld) {
                             target = FXP_NINF_LD;
                         }
                     }
@@ -801,7 +808,7 @@ int main(void)
 
         // Make sure starting trascendental constants still have exactly
         // the same values after resetting the # of frac bits to default
-        int nfb = fxp_get_frac_bits();
+        int nfb = FXP_frac_bits;
         int e = fxp_get_e();
         int pi = fxp_get_pi();
         int ln2 = fxp_get_ln_2();
@@ -833,13 +840,13 @@ int main(void)
                 fxp_set_frac_bits(fracbit_configs[nfb]);
                 fxp_set_auto_frac_max_dec();
 
-                frac_bits = fxp_get_frac_bits();
-                whole_bits = fxp_get_whole_bits();
-                frac_mask = fxp_get_frac_mask();
-                frac_max = fxp_get_frac_max();
-                frac_max_dec = fxp_get_frac_max_dec();
-                whole_max = fxp_get_whole_max();
-                whole_min = fxp_get_whole_min();
+                frac_bits = FXP_frac_bits;
+                whole_bits = FXP_whole_bits;
+                frac_mask = FXP_frac_mask;
+                frac_max = FXP_frac_max;
+                frac_max_dec = fxp_frac_max_dec;
+                whole_max = FXP_whole_max;
+                whole_min = FXP_whole_min;
 
                 zero = fxp(0);
                 fxp_ten = fxp_bin(10, 0);
@@ -868,7 +875,7 @@ int main(void)
                                 FXP_PINF_LD);
                 printf("largest   : %d (fxp Lf ~ %1.3LE)\n", \
                                 (FXP_POS_INF - 1),
-                                fxp_get_max_ld());
+                                FXP_max_ld);
                 printf("whole max : %d\n", whole_max);
                 printf("frac mask : %d\n", frac_mask);
                 printf("frac max  : %d (->decimals: .%d)\n",
@@ -877,7 +884,7 @@ int main(void)
                 printf("whole min : %d\n", whole_min);
                 printf("smallest  : %d (fxp Lf ~ %1.3LE)\n", \
                                 (FXP_NEG_INF + 1),
-                                fxp_get_min_ld());
+                                FXP_min_ld);
                 printf("-INF      : %d (x%x,  wh,fr values: %d, %d,  Lf ~ %1.3LE)\n", \
                                 FXP_NEG_INF, FXP_NEG_INF, \
                                 fxp_get_whole_part(FXP_NEG_INF), \
