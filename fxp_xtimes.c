@@ -4,21 +4,21 @@
  *
  * Shows relavite execution times (smaller is better)
  * for the different fxp operations and functions.
- * Example part of the ouput, for a system with an
- * Intel i7-6700K cpu, run on 2023-02-15:
+ * Example end of the ouput, for a system with an
+ * Intel i7-6700K cpu, run on 2023-02-19:
  *
-
-Number of frac bits: 16
-10%  20%  30%  40%  50%  60%  70%  80%  90%  100%
+=================================================
+Xtime averages for frac bit configurations {8, 12, 16, 20, 24, 28}
+=================================================
 add      :   1.00
-mul      :   8.90
-mul_l    :   1.40
-div      :  15.06
-div_l    :   3.20
-lg2      :  22.46  (BKM, only ints)
-lg2_l    :  11.75  (about  0.52x lg2, using BKM and longs)
-lg2_mul_l:  34.87  (about  1.55x lg2, using mult. and longs)
-
+mul      :   9.44
+mul_l    :   1.41
+div      :  13.85
+div_l    :   3.11
+lg2      :  25.66  (BKM, only ints)
+lg2_l    :  12.96  (about  0.50x lg2, using BKM and longs)
+lg2_mul_l:  36.84  (about  1.44x lg2, using mult. and longs)
+=================================================
  *
  */
 

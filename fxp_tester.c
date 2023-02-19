@@ -16,6 +16,7 @@
 #include "fxp.h"
 #include "fxp_l.h"
 #include "fxp_aux.h"
+#include "fxp_conv.h"
 
 extern int FXP_frac_bits;
 extern int FXP_whole_bits;
@@ -33,7 +34,7 @@ extern int fxp_frac_max_dec;
 #define MAX_RAND_NUMS 5
 //#define MAX_RAND_NUMS 10000
 
-#define WDELTA 2
+#define WDELTA 2.0
 
 // Testing the logs with bases e and 10 needs a more
 // forgiving WDELTA_MAX factor, e.g. 6, otherwise the
@@ -41,14 +42,15 @@ extern int fxp_frac_max_dec;
 // lg2) can trigger the assert.
 // When only log2 is being tested, this factor
 // can be as low as 2 yet no assert gets triggered
-#define WDELTA_MAX 6
+#define WDELTA_MAX 6.0
 
 static int fracbit_configs[] = {4, 11, 16, 24, 29, 30, 31};
 //static int fracbit_configs[] = {16};
+
 /*
-static int fracbit_configs[] = {4, 5, 6, 7, 8, 9, 10,
-                        11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-                        21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31};
+static int fracbit_configs[] = {4, 5, 6, 7, 8, 9, 10,   \
+            11, 12, 13, 14, 15, 16, 17, 18, 19, 20,     \
+            21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31};
 */
 
 static long double max_warn_delta = 0.0;
@@ -83,7 +85,7 @@ void test_fxp(char *s, int fxp1, long double d_assert_val)
         else if (d_assert_val == FXP_PINF_LD)
             printf("+INF");
         else
-            printf("%.7Lf", avplim);
+            printf("%.7LE", avplim);
         if (((fxp1 == FXP_UNDEF) && (d_assert_val == FXP_UNDEF_LD)) \
             || ((fxp1 == FXP_NEG_INF) && (d_assert_val == FXP_NINF_LD)) \
             || ((fxp1 == FXP_POS_INF) && (d_assert_val == FXP_PINF_LD))) {
@@ -187,6 +189,15 @@ static long double get_div_target(int x, int y)
         }
     }
     return target;
+}
+
+static long double get_f_target(int x)
+{
+        float fx = fxp2f(x);
+        if (fx <= FXP_UNDEF_F) return FXP_UNDEF_LD;
+        if (fx <= FXP_NINF_F) return FXP_NINF_LD;
+        if (fx >= FXP_PINF_F) return FXP_PINF_LD;
+        return (long double) fx;
 }
 
 static int FXP_TINIEST = 1;
@@ -543,19 +554,28 @@ void test_ops_with_values_of_interest()
                     fxp_dec(33333, 333), fxp_dec(33, 33),
                     fxp(2), fxp(1), 0, fxp(-1), fxp(-2),
                     fxp_dec(-33, 33), fxp_dec(-33333, 333),
-                    FXP_MIN, FXP_NEG_INF, FXP_UNDEF};
+                    FXP_MIN, FXP_NEG_INF};
         int ay[] = {FXP_UNDEF, FXP_POS_INF, FXP_NEG_INF, 0, fxp(1), fxp(2)};
         int x, y, posx, posy;
         int ndd = (int) (sizeof(ax) / sizeof(int));
         int ndr = (int) (sizeof(ay) / sizeof(int));
         for (int i=0; i<ndd; i++) {
+                x = ax[i];
+                fflush( stdout );
+                // Test that round trip conversions fxp -> double or
+                // long double -> fxp result in exactly the same fxp
+                assert( d2fxp(fxp2d(x)) == x );
+                assert( ld2fxp(fxp2ld(x)) == x );
+                // With float conversions we cannot expect perfect
+                // accurary, but we can check that the
+                // conversion keeps values very close
+                //long double fx = get_f_target(fxp2f(x));
+                test_fxp("x: ", f2fxp(fxp2f(x)), get_f_target(x));
                 for (int j=0; j<ndr; j++) {
-                        x = ax[i];
                         y = ay[j];
                         ldx = fxp2ld(x);
                         ldy = fxp2ld(y);
-                        printf("x: "); print_fxp(x);
-                        printf("\ny: "); print_fxp(y);
+                        printf("y: "); print_fxp(y);
 
                         //For multiplication
                         tgt1 = fxp2ld(fxp_mul_l(x, y));
@@ -663,6 +683,7 @@ void test_fxp_from_ldouble()
 void test_ops_with_rand_nums()
 {
         int sign1, sign2, sign3, n1, n2, n3, n4, fxp1, fxp2;
+        int vn1, vn2, vn3;
         long double ldx, ldy, ldz, tgt1, tgt2, tgt3;
 
         for (int i=0; i < MAX_RAND_NUMS; i++) {
@@ -683,12 +704,31 @@ void test_ops_with_rand_nums()
 
                 printf("\nRandom Test #%d, ", i);
                 printf("frac bits: %d\n", frac_bits);
-                printf("n1 = "); print_fxp(n1);
-                printf("\nn2 = "); print_fxp(n2);
-                printf("\nn3 = "); print_fxp(n3);
-                printf(" (n3 always in (-1,1))");
-                if (n3 == 0) printf(" == 0");
-                printf("\n");
+                //printf("n1 = "); print_fxp(n1);
+                //printf("\nn2 = "); print_fxp(n2);
+                //printf("\nn3 = "); print_fxp(n3);
+                //printf(" (n3 always in (-1,1))");
+                //if (n3 == 0) printf(" == 0");
+                //printf("\n");
+
+                // Test that roundtrip conversions from fxp
+                // to double or long double, then back to fxp
+                // results in exactly the same original fxp
+                fflush( stdout );
+                assert( d2fxp(fxp2d(n1)) == n1 );
+                assert( d2fxp(fxp2d(n2)) == n2 );
+                assert( d2fxp(fxp2d(n3)) == n3 );
+
+                assert( ld2fxp(fxp2ld(n1)) == n1 );
+                assert( ld2fxp(fxp2ld(n2)) == n2 );
+                assert( ld2fxp(fxp2ld(n3)) == n3 );
+
+                // Test that roundtrip conversions from fxp
+                // to float and back to fxp remains very close
+                // to the original
+                test_fxp("n1: ", f2fxp(fxp2f(n1)), get_f_target(n1));
+                test_fxp("n2: ", f2fxp(fxp2f(n2)), get_f_target(n2));
+                test_fxp("n3: ", f2fxp(fxp2f(n3)), get_f_target(n3));
 
                 fxp1 = fxp_add(n1, n2);
                 tgt1 = get_target(lim_frac(ldx + ldy, frac_bits));
@@ -856,7 +896,11 @@ int main(void)
                 fxp_halfmax = FXP_MAX / 2;
                 fxp_halfp2 = fxp_add(fxp_halfmax, fxp_two);
 
-                warn_delta = ((long double) MIN(frac_bits/2, WDELTA)) / frac_max;
+                //warn_delta = ((long double) MIN(frac_bits/2, WDELTA)) / frac_max;
+                warn_delta = ((long double) frac_bits) / 2.0;
+                if (WDELTA < warn_delta) warn_delta = WDELTA;
+                warn_delta /= ((long double) frac_max);
+
                 max_warn_delta = lim_frac(warn_delta * WDELTA_MAX,
                                             frac_bits);
                 warn_delta = lim_frac(warn_delta, frac_bits);
@@ -873,18 +917,18 @@ int main(void)
                                 fxp_get_whole_part(FXP_POS_INF), \
                                 fxp_get_bin_frac(FXP_POS_INF), \
                                 FXP_PINF_LD);
-                printf("largest   : %d (fxp Lf ~ %1.3LE)\n", \
+                printf("largest   : %d (fxp lf ~ %1.3le)\n", \
                                 (FXP_POS_INF - 1),
-                                FXP_max_ld);
+                                FXP_max_d);
                 printf("whole max : %d\n", whole_max);
                 printf("frac mask : %d\n", frac_mask);
                 printf("frac max  : %d (->decimals: .%d)\n",
                                 frac_max,
                                 frac_max_dec);
                 printf("whole min : %d\n", whole_min);
-                printf("smallest  : %d (fxp Lf ~ %1.3LE)\n", \
+                printf("smallest  : %d (fxp lf ~ %1.3le)\n", \
                                 (FXP_NEG_INF + 1),
-                                FXP_min_ld);
+                                FXP_min_d);
                 printf("-INF      : %d (x%x,  wh,fr values: %d, %d,  Lf ~ %1.3LE)\n", \
                                 FXP_NEG_INF, FXP_NEG_INF, \
                                 fxp_get_whole_part(FXP_NEG_INF), \
@@ -904,24 +948,15 @@ int main(void)
                 printf("UNDEF_LD  : %LE\n", FXP_UNDEF_LD);
 
                 tests_01();
-
                 tests_02();
-
                 tests_03();
-
                 test_decbin_mappings();
-
                 test_fracs();
-
                 test_ops_with_whole_bits();
-
                 test_ops_with_values_of_interest();
-
                 test_fxp_from_ldouble();
-
                 if (TEST_WITH_RANDS)
                         test_ops_with_rand_nums();
-
 
                 printf("\n%d Warnings for %d frac bits.\n", \
                             nwarnings, frac_bits);

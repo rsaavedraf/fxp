@@ -82,10 +82,11 @@ void print_fxp_as_bin(int n, int width)
         width--;
     }
     if (signspace) printf("(-)");
-    int frbits = FXP_frac_bits;
-    int i = MAX(frbits, (nbn == 0)? 1: nbn);
+    //int i = MAX(frbits, (nbn == 0)? 1: nbn);
+    int i = (nbn == 0)? 1: nbn;
+    if (FXP_frac_bits > i) i = FXP_frac_bits;
     while (i > 0) {
-        if (i == frbits) printf(".");
+        if (i == FXP_frac_bits) printf(".");
         if (i <= nbn) {
             int bit = (an & (1 << (i - 1))) >> (i - 1);
             printf("%d", bit);

@@ -256,9 +256,10 @@ int fxp_set_frac_bits(int nfracbits)
         FXP_one = fxp(1);
         FXP_half = FXP_one >> 1;
         FXP_two = FXP_one << 1;
-        FXP_lg2_l_maxloops = MIN(FXP_INT_BITS, FXP_frac_bits + 1);
-        FXP_lg2_l_shift = FXP_BKM_PREC_L - FXP_frac_bits;
         FXP_lg2_maxloops = FXP_frac_bits + 1;
+        //FXP_lg2_l_maxloops = MIN(FXP_INT_BITS, FXP_frac_bits + 1);
+        FXP_lg2_l_maxloops = FXP_lg2_maxloops;
+        FXP_lg2_l_shift = FXP_BKM_PREC_L - FXP_frac_bits;
         FXP_lg2_yashift = FXP_BKM_PREC - FXP_frac_bits;
         if (FXP_lg2_yashift >= 0) {
             FXP_lg2_ybshift = 0;

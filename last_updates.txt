@@ -113,3 +113,8 @@ from some of the other files.
 Improved fxp_xtimes to show at the end the averages of configs
 with 8, 12, 16, 20, 24, and 28 frac bits.
 
+2023-02-19: removed macros MIN and MAX from fxp.h
+Bug fix in the new fxp2ld conversion: it was using truncf() instead of
+truncl().
+Added tests for all roundtrip conversions, fxp -> floating-point ->
+back to fxp.

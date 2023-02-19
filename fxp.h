@@ -9,9 +9,6 @@
 
 #include <limits.h>
 
-#define MIN(X,Y) ((X) < (Y) ? (X) : (Y))
-#define MAX(X,Y) ((X) > (Y) ? (X) : (Y))
-
 #define FXP_INT_BITS ((int) (sizeof(int) * 8))
 #define FXP_INT_BITS_M1 (FXP_INT_BITS - 1)
 
