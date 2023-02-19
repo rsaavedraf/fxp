@@ -28,53 +28,6 @@ const long double FXP_UNDEF_LD = -(LDBL_MAX * FXP_UCOEF);
 const long double FXP_NINF_LD = (FXP_UNDEF_LD * FXP_NICOEF);
 
 /*
-float fxp_get_undef_f()
-{
-        return FXP_UNDEF_F;
-}
-
-float fxp_get_neg_inf_f()
-{
-        return FXP_NINF_F;
-}
-
-float fxp_get_pos_inf_f()
-{
-        return FXP_PINF_F;
-}
-
-double fxp_get_undef_d()
-{
-        return FXP_UNDEF_D;
-}
-
-double fxp_get_neg_inf_d()
-{
-        return FXP_NINF_D;
-}
-
-double fxp_get_pos_inf_d()
-{
-        return FXP_PINF_D;
-}
-
-long double fxp_get_undef_ld()
-{
-        return FXP_UNDEF_LD;
-}
-
-long double fxp_get_neg_inf_ld()
-{
-        return FXP_NINF_LD;
-}
-
-long double fxp_get_pos_inf_ld()
-{
-        return FXP_PINF_LD;
-}
-*/
-
-/*
  * Returns a float value corresponding to an fxp
  */
 float fxp2f(int fxp)
@@ -186,7 +139,7 @@ long double fxp2ld(int fxp)
     if (frac < 0) frac = -frac;
     long double ldfrac = 0.0;
     while (frac > 0) {
-        if (frac & 1) ldfrac += ((long double) 1.0 / twopower);
+        if (frac & 1) ldfrac += ((long double) 1.0) / twopower;
         frac = frac >> 1;
         twopower = twopower >> 1;
     }
@@ -208,7 +161,7 @@ int ld2fxp(long double x)
     long double pwld = truncl(px);
     long double frac = px - pwld;
     unsigned int shift = 1 << FXP_frac_bits;
-    int pfrac_i = (int) truncf(frac * shift);
+    int pfrac_i = (int) truncl(frac * shift);
     int pwhole_i = (int) pwld;
     if (pwhole_i > 0)
         if (x > 0.0)
