@@ -2,7 +2,11 @@
  * fxp_tconst.c
  *
  * Auxiliary program to generate fxp versions of some
- * important/transcendental constants
+ * important/transcendental constants.
+ *
+ * Also includes initial BKM implementations of lg2 and pow2
+ * using long doubles (with a long double A_2[] array)
+ * before tackling their implementations for fxp's
  *
  * By Raul Saavedra, Bonn Germany
  */
@@ -17,7 +21,6 @@
 #include "fxp.h"
 #include "fxp_aux.h"
 #include "fxp_tconst.h"
-
 
 #define DASHES "========================\n"
 
@@ -288,7 +291,6 @@ static const unsigned long BKM_HEX_LOGS[] = {
     // a 4 -bit right-shift of the value 4 positions earlier
 };
 
-
 /*
  * Return binary expansion (up to nbits) of a string representation
  * of a binary number, with last bit either verbatim or rounded
@@ -301,27 +303,27 @@ unsigned long long bex_from_bin(char * pbinnum, int wbits, int fbits, int rounde
         int roomleft = wbits + fbits;
         unsigned long long bnum = 0;
         while ((roomleft > 0) && (*p != '\0')) {
-            char cbit = *p;
-            if (cbit != '.') {
-                bnum = (bnum << 1) | ((cbit == '1')? 1: 0);
-                roomleft--;
-            }
-            p++;
+                char cbit = *p;
+                if (cbit != '.') {
+                        bnum = (bnum << 1) | ((cbit == '1')? 1: 0);
+                        roomleft--;
+                }
+                p++;
         }
         if (roomleft > 0) {
-            bnum = bnum << roomleft;
-            // Source string with too few bits to need any rounding,
-            // so return already
-            return bnum;
+                bnum = bnum << roomleft;
+                // Source string with too few bits to need any rounding,
+                // so return already
+                return bnum;
         }
         if (rounded) {
-            //printf("  (Next bit:");
-            int nextbit = 0;
-            char cbit = *p;
-            //printf("%c", cbit);
-            int rbit = ((cbit  == '1')? 1: 0);
-            //printf(") -> adding %d", rbit);
-            bnum += rbit;
+                //printf("  (Next bit:");
+                int nextbit = 0;
+                char cbit = *p;
+                //printf("%c", cbit);
+                int rbit = ((cbit  == '1')? 1: 0);
+                //printf(") -> adding %d", rbit);
+                bnum += rbit;
         }
         return bnum;
 }
@@ -339,27 +341,27 @@ unsigned long long bex_from_dec(char * pdecnum, int wbits, int fbits, int rounde
         int nwd = 0;
         int ptens = 1;
         while (*p != '.') {
-            p++;
-            ptens *= 10;
-            nwd++;
+                p++;
+                ptens *= 10;
+                nwd++;
         }
         int wnum = 0;
         p = pdecnum;
         while (*p != '.') {
-            char cdigit = *p;
-            ptens /= 10;
-            wnum += ((int) cdigit - '0') * ptens;
-            p++;
+                char cdigit = *p;
+                ptens /= 10;
+                wnum += ((int) cdigit - '0') * ptens;
+                p++;
         }
         //printf("Whole part is d:%d (%d dec digits)\n", wnum, nwd);
         long long binnum = 0;
         int nb = 0;
         while (wnum > 0) {
-            int r = wnum % 2;
-            //printf("Appending a %d to the whole part\n", r);
-            binnum = (r << nb) | binnum;
-            nb++; // here count the whole bits
-            wnum /= 2;
+                int r = wnum % 2;
+                //printf("Appending a %d to the whole part\n", r);
+                binnum = (r << nb) | binnum;
+                nb++; // here count the whole bits
+                wnum /= 2;
         }
         //printf("binnum: (x:%llx. , %d bits)\n", binnum, nb);
 
@@ -370,34 +372,34 @@ unsigned long long bex_from_dec(char * pdecnum, int wbits, int fbits, int rounde
         long double frac = 0;
         int ndig = 0;
         while (*p != '\0') { //&& (ftens > ZERO)) {
-            char cdigit = *p;
-            frac += ((int) cdigit - '0') * ftens;
-            ftens /= 10;
-            ndig++;
-            ndd++;
-            p++;
+                char cdigit = *p;
+                frac += ((int) cdigit - '0') * ftens;
+                ftens /= 10;
+                ndig++;
+                ndd++;
+                p++;
         }
         //printf("From %d decimal frac digits, fraction is: %1.20Lf \n", ndig, frac);
         int roomleft = fbits;
         long double m;
         while (roomleft > 0) {
-            m = frac * 2.0;
-            if (m >= 1.0) {
-                binnum = ((binnum << 1) | 1);
-                frac = m - 1.0;
-                //printf("1");
-            } else {
-                binnum = (binnum << 1);
-                frac = m;
-                //printf("0");
-            }
-            roomleft--;
+                m = frac * 2.0;
+                if (m >= 1.0) {
+                        binnum = ((binnum << 1) | 1);
+                        frac = m - 1.0;
+                        //printf("1");
+                } else {
+                        binnum = (binnum << 1);
+                        frac = m;
+                        //printf("0");
+                }
+                roomleft--;
         }
         if (rounded) {
-            m = frac * 2.0;
-            int rbit = ((m >= 1.0)? 1: 0);
-            binnum += rbit;
-            //printf(" (+ round bit %d)", rbit);
+                m = frac * 2.0;
+                int rbit = ((m >= 1.0)? 1: 0);
+                binnum += rbit;
+                //printf(" (+ round bit %d)", rbit);
         }
         //printf("\n");
         return binnum;
@@ -413,17 +415,17 @@ long double Lf_from_dec(char * pdecnum)
         int nwd = 0;
         int ptens = 1;
         while (*p != '.') {
-            p++;
-            ptens *= 10;
-            nwd++;
+                p++;
+                ptens *= 10;
+                nwd++;
         }
         long double num = 0.0;
         p = pdecnum;
         while (*p != '.') {
-            char cdigit = *p;
-            ptens /= 10;
-            num += ((int) cdigit - '0') * ptens;
-            p++;
+                char cdigit = *p;
+                ptens /= 10;
+                num += ((int) cdigit - '0') * ptens;
+                p++;
         }
 
         // Process fractional part
@@ -431,10 +433,10 @@ long double Lf_from_dec(char * pdecnum)
         long double tenth = 1.0 / 10.0;
         long double ftens = tenth;
         while (*p != '\0') {
-            char cdigit = *p;
-            num += ((int) cdigit - '0') * ftens;
-            ftens *= tenth;
-            p++;
+                char cdigit = *p;
+                num += ((int) cdigit - '0') * ftens;
+                ftens *= tenth;
+                p++;
         }
         return num;
 }
@@ -446,17 +448,17 @@ long double Lf_from_bin(char * pbinnum)
         int nwd = 0;
         int ptwo = 1;
         while (*p != '.') {
-            p++;
-            ptwo *= 2;
-            nwd++;
+                p++;
+                ptwo *= 2;
+                nwd++;
         }
         long double num = 0.0;
         p = pbinnum;
         while (*p != '.') {
-            char cdigit = *p;
-            ptwo /= 2;
-            num += ((int) cdigit - '0') * ptwo;
-            p++;
+                char cdigit = *p;
+                ptwo /= 2;
+                num += ((int) cdigit - '0') * ptwo;
+                p++;
         }
 
         // Process fractional part
@@ -464,10 +466,10 @@ long double Lf_from_bin(char * pbinnum)
         long double half = 0.5;
         long double frac = half;
         while (*p != '\0') {
-            char cdigit = *p;
-            num += ((int) cdigit - '0') * frac;
-            frac *= half;
-            p++;
+                char cdigit = *p;
+                num += ((int) cdigit - '0') * frac;
+                frac *= half;
+                p++;
         }
         return num;
 }
@@ -491,12 +493,12 @@ long double my_log2(long double x)
         long double z = x;
         int c = 0; // characteristic
         while (z >= 2.0) {
-            c++;
-            z /= 2;
+                c++;
+                z /= 2;
         }
         while (z < 1.0) {
-            c--;
-            z *= 2;
+                c--;
+                z *= 2;
         }
         // Here we have already calculated the log characteristic c, and
         // we have z satisfying: 1 <= z < 2, so we can use it to calculate
@@ -506,13 +508,13 @@ long double my_log2(long double x)
         long double b = 0.5;
         int nb = 64; // desired number of mantissa bits to process
         while (nb > 0) {
-            z = z * z;
-            if (z >= 2.0) {
-                z /= 2;
-                m += b;
-            }
-            b = b/2;
-            nb--;
+                z = z * z;
+                if (z >= 2.0) {
+                        z /= 2;
+                        m += b;
+                }
+                b = b/2;
+                nb--;
         }
         // Here we have already calculated the mantissa down to
         // nb bits of precision
@@ -532,12 +534,12 @@ long double my_log2_bkm(long double x, int nbits)
         long double z = x;
         int c = 0; // characteristic
         while (z >= 2.0) {
-            c++;
-            z /= 2;
+                c++;
+                z /= 2;
         }
         while (z < 1.0) {
-            c--;
-            z *= 2;
+                c--;
+                z *= 2;
         }
         // Here we have already calculated the log characteristic c, and
         // we have z satisfying: 1 <= z < 2
@@ -573,11 +575,11 @@ long double my_pow2(long double n, int nbits)
         long double pow2w;
         long double Argument;
         if (n >= 0) {
-            pow2w = (long double) (1 << w);
-            Argument = frac;
+                pow2w = (long double) (((long) 1) << w);
+                Argument = frac;
         } else {
-            pow2w = 1.0 / ((long double) (1 << (-w + 1)));
-            Argument = 1 + frac; // Notice Argument is >= 0
+                pow2w = 1.0 / ((long double) (((long) 1) << (-w + 1)));
+                Argument = 1 + frac; // Notice Argument is >= 0
         }
         // The BKM algorithm in E-Mode (for exponential)
         // calculates pow2(f), f in [0, 1)
@@ -591,7 +593,7 @@ long double my_pow2(long double n, int nbits)
                 s *= 0.5;
         }
         // Here x == 2^Argument == pow2(f)
-        //printf("\nn:%.3Lf,  w:%lld,  x: %.3Lf", n, w, x);
+        printf("\nn:%.3Lf,  w:%lld,  pow2w:%.3Lf  x: %.3Lf", n, w, pow2w, x);
         // Calculate the full 2^n = pow2w * pow2f
         long double full_pow2 = pow2w * x;
         return full_pow2;
@@ -643,9 +645,11 @@ int main(void)
 
         printf("\nPrecision of long double pow2 calculations using BKM:\n");
         long double invln2 = 1 / logl(2);
-        for (int bkmd = 31; bkmd <= 31; bkmd++) {
+        for (int bkmd = 29; bkmd <= 31; bkmd++) {
                 printf("\nChecking BKM depth %d\n", bkmd);
-                long double nums[] = {0.0, 1.0, 1.5, 2.0, 2.5, 3.0, -1.0, -2.0, -2.5, -4.473};
+                // Making sure it works as expected even beyond 32 bits
+                long double nums[] = {0.0, 1.0, 2.0, 3.1, 31.1, 40.1, \
+                                    -1.0, -2.0, -3.1, -31.1, -40.1};
                 int n = sizeof(nums) / sizeof(nums[0]);
                 for (int i=0; i < n; i++) {
                         long double tgt = powl(2.0, nums[i]);
@@ -670,21 +674,21 @@ int main(void)
         int j = 1;
         long double sumlogs2 = 0;
         for (int i=0; i < n; i++) {
-            unsigned long long num = bex_from_dec(str_A_2[i], 0, nfbits, 0);
-            long double numld = Lf_from_dec(str_A_2[i]);
-            //printf("%d:\t0x%llX \t(%LE)\n", i, num, numld);
-            sumlogs2 += numld;
-            // The full long:
-            //printf("%16llX, \n", num);
-            unsigned long long msb, lsb;
-            msb = (num & 0xFFFFFFFF00000000) >> 32;
-            lsb = (num & 0x00000000FFFFFFFF);
-            // bytes in the long
-            //printf("0x%llX, \n", msb);
-            printf("0x%8llX, \n", lsb);
-            //printf("%8llX-%8llX\n", msb, lsb);
-            //if (j % 4 == 0) printf("\n");
-            j++;
+                unsigned long long num = bex_from_dec(str_A_2[i], 0, nfbits, 0);
+                long double numld = Lf_from_dec(str_A_2[i]);
+                //printf("%d:\t0x%llX \t(%LE)\n", i, num, numld);
+                sumlogs2 += numld;
+                // The full long:
+                //printf("%16llX, \n", num);
+                unsigned long long msb, lsb;
+                msb = (num & 0xFFFFFFFF00000000) >> 32;
+                lsb = (num & 0x00000000FFFFFFFF);
+                // bytes in the long
+                //printf("0x%llX, \n", msb);
+                printf("0x%8llX, \n", lsb);
+                //printf("%8llX-%8llX\n", msb, lsb);
+                //if (j % 4 == 0) printf("\n");
+                j++;
         }
         //printf("Sum of values in log table: %1.5LE\n", sumlogs2);
         */
@@ -710,7 +714,6 @@ int main(void)
                 }
         }
         */
-
 
         return 0;
 }
