@@ -522,7 +522,8 @@ long double my_log2(long double x)
         return full_log;
 }
 
-// Implementation of the bkm algorithm using long doubles:
+
+// Implementation of the bkm algorithm for log2 calculation using long doubles:
 // https://en.wikipedia.org/wiki/BKM_algorithm
 long double my_log2_bkm(long double x, int nbits)
 {
@@ -559,6 +560,41 @@ long double my_log2_bkm(long double x, int nbits)
         long double full_log = ((long double) c) + yy;
         //printf("log(%Lf) = c + m = %Lf\n", x, full_log);
         return full_log;
+}
+
+// Implementation of the bkm algorithm for 2^n calculation using long doubles:
+long double my_pow2(long double n, int nbits)
+{
+        // Notice that 2^n == 2^(whole(n) + frac(n)) ==
+        // 2^whole(n) * 2^frac(n) = pow2(w) * pow2(f)
+        long long w = truncl(n);
+        long double frac = n - w;
+        // Calculate pow2(w), and prepare argument for BKM
+        long double pow2w;
+        long double Argument;
+        if (n >= 0) {
+            pow2w = (long double) (1 << w);
+            Argument = frac;
+        } else {
+            pow2w = 1.0 / ((long double) (1 << (-w + 1)));
+            Argument = 1 + frac; // Notice Argument is >= 0
+        }
+        // The BKM algorithm in E-Mode (for exponential)
+        // calculates pow2(f), f in [0, 1)
+        long double x = 1.0, y = 0.0, s = 1.0;
+        for (int k = 0; k < nbits; k++) {
+                double const  z = y + A_2[k];
+                if (z <= Argument) {
+                        y = z;
+                        x = x + x*s;
+                }
+                s *= 0.5;
+        }
+        // Here x == 2^Argument == pow2(f)
+        //printf("n:%.3Lf,  w:%lld,  x: %.3Lf\n", n, whole, x);
+        // Calculate the full 2^n = pow2w * pow2f
+        long double full_pow2 = pow2w * x;
+        return full_pow2;
 }
 
 int main(void)
@@ -603,6 +639,25 @@ int main(void)
         printf("lg10(2) as decimal: %s\n", STR_LG10_2_DEC);
         printf("lg10(2) as fxp (31 bits) %llx\n", bex_from_dec(STR_LG10_2_DEC, 0, 31, 1));
         printf("lg10(2) as fxp (63 bits) %llx\n\n", bex_from_dec(STR_LG10_2_DEC, 0, 63, 1));
+
+
+        printf("\nPrecision of long double pow2 calculations using BKM:\n");
+        long double invln2 = 1 / logl(2);
+        for (int bkmd = 31; bkmd <= 31; bkmd++) {
+                printf("\nChecking BKM depth %d\n", bkmd);
+                long double nums[] = {0.0, 1.0, 1.5, 2.0, 2.5, 3.0, -1.0, -2.0, -2.5, -4.473};
+                int n = sizeof(nums) / sizeof(nums[0]);
+                for (int i=0; i < n; i++) {
+                        long double tgt = powl(2.0, nums[i]);
+                        long double mypow2 = my_pow2(nums[i], bkmd);
+                        printf("\n\tref: pow(2, %.3LE) = %.20LE\n",
+                                nums[i], tgt);
+                        printf("\tmy_pow2(%.3LE)     = %.20LE (- ref: %1.2LE)\n",
+                                nums[i], mypow2, (mypow2 - tgt));
+                }
+        }
+
+
 
         // Generate fxp's for the logs table of numbers to be used
         // by BKM algorithm
