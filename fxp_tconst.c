@@ -591,7 +591,7 @@ long double my_pow2(long double n, int nbits)
                 s *= 0.5;
         }
         // Here x == 2^Argument == pow2(f)
-        //printf("n:%.3Lf,  w:%lld,  x: %.3Lf\n", n, whole, x);
+        //printf("\nn:%.3Lf,  w:%lld,  x: %.3Lf", n, w, x);
         // Calculate the full 2^n = pow2w * pow2f
         long double full_pow2 = pow2w * x;
         return full_pow2;
