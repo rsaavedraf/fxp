@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: MIT */
 /*
  * fxp_xtimes.c
  * By Raul Saavedra, 2023-01-09
@@ -25,8 +26,9 @@ lg2_mul_l:  36.84  (about  1.44x lg2, using mult. and longs)
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include "fxp_aux.h"
+#include "fxp.h"
 #include "fxp_l.h"
+#include "fxp_aux.h"
 
 #define DASHES "=================================================\n"
 #define MAX_NUMS 1000
@@ -35,11 +37,15 @@ lg2_mul_l:  36.84  (about  1.44x lg2, using mult. and longs)
 int main(void) {
 
         int s1, s2, s3, n1, n2, n3, x, y, n, lastp;
+
         long double tadd, tadd_l, tmul, tmul_l, tmul_d;
         long double tdiv, tdiv_l, tlg2, tlg2_l, tlg2_mul, tlg2_mul_l;
         long double avgadd, avgadd_l, avgmul, avgmul_l, avgmul_d;
         long double avgdiv, avgdiv_l, avglg2, avglg2_l, avglg2_mul;
         long double avglg2_mul_l;
+        // Times for the system's native operations
+        long double tadd_sys, tmul_sys, tdiv_sys;
+        long double avgadd_sys, avgmul_sys, avgdiv_sys;
 
         clock_t t0, t1, dt;
         int val[] = {FXP_UNDEF, FXP_MIN, \
@@ -69,6 +75,9 @@ int main(void) {
         avglg2_l = 0;
         avglg2_mul = 0;
         avglg2_mul_l = 0;
+        avgadd_sys = 0;
+        avgmul_sys = 0;
+        avgdiv_sys = 0;
         for (int nc = 0; nc < nconfigs; nc++) {
                 int nfb = fracbit_configs[nc];
                 fxp_set_frac_bits(nfb);
@@ -84,6 +93,9 @@ int main(void) {
                 tlg2_mul = 0;
                 tlg2_mul_l = 0;
                 lastp = -1;
+                tadd_sys = 0;
+                tmul_sys = 0;
+                tdiv_sys = 0;
                 for (int n = 0; n < MAX_NUMS; n++) {
                         int p = (int) (((float) (n+1) * 100) / MAX_NUMS);
                         if (((p % 10) == 0) && (p != lastp) && (p != 0)) {
@@ -98,6 +110,25 @@ int main(void) {
                         n2 = s2 * rand();
                         // n3 is a number in (-1, 1)
                         n3 = s3 * (rand() % FXP_frac_max);
+
+                        // System's native sum of ints
+                        t0 = clock();
+                        for (int i = 0; i < MAX_OPS; i++) {
+                                x = n1 + n2;
+                                x = n3 + n2;
+                                for (int j = 0; j < nvals; j++) {
+                                        y = val[j];
+                                        x = n1 + y;
+                                        x = n2 + y;
+                                        x = n3 + y;
+                                }
+                        }
+                        t1 = clock();
+                        dt = ((double) t1 - t0);
+                        tadd_sys += dt;
+                        avgadd_sys += dt;
+
+                        // Sums of fxp's
                         t0 = clock();
                         for (int i = 0; i < MAX_OPS; i++) {
                                 x = fxp_add(n1, n2);
@@ -114,6 +145,24 @@ int main(void) {
                         tadd += dt;
                         avgadd += dt;
 
+                        // System's native multiplication of ints
+                        t0 = clock();
+                        for (int i = 0; i < MAX_OPS; i++) {
+                                x = n1 * n2;
+                                x = n3 * n2;
+                                for (int j = 0; j < nvals; j++) {
+                                        y = val[j];
+                                        x = n1 * y;
+                                        x = n2 * y;
+                                        x = n3 * y;
+                                }
+                        }
+                        t1 = clock();
+                        dt = ((double) t1 - t0);
+                        tmul_sys += dt;
+                        avgmul_sys += dt;
+
+                        // Multiplication of fxp's
                         t0 = clock();
                         for (int i = 0; i < MAX_OPS; i++) {
                                 x = fxp_mul(n1, n2);
@@ -130,6 +179,7 @@ int main(void) {
                         tmul += dt;
                         avgmul += dt;
 
+                        // Multiplication of fxp's using longs
                         t0 = clock();
                         for (int i = 0; i < MAX_OPS; i++) {
                                 x = fxp_mul_l(n1, n2);
@@ -146,6 +196,27 @@ int main(void) {
                         tmul_l += dt;
                         avgmul_l += dt;
 
+                        // Temporarily replace 0 with 1 in val[] for divisions
+                        val[18] = 1;
+
+                        // System's native division of ints
+                        t0 = clock();
+                        for (int i = 0; i < MAX_OPS; i++) {
+                                x = n1 / n2;
+                                x = n3 / n2;
+                                for (int j = 0; j < nvals; j++) {
+                                        y = val[j];
+                                        x = n1 / y;
+                                        x = n2 / y;
+                                        x = n3 / y;
+                                }
+                        }
+                        t1 = clock();
+                        dt = ((double) t1 - t0);
+                        tdiv_sys += dt;
+                        avgdiv_sys += dt;
+
+                        // Division of fxp's
                         t0 = clock();
                         for (int i = 0; i < MAX_OPS; i++) {
                                 x = fxp_div(n1, n2);
@@ -162,6 +233,7 @@ int main(void) {
                         tdiv += dt;
                         avgdiv += dt;
 
+                        // Division of fxp's using longs
                         t0 = clock();
                         for (int i = 0; i < MAX_OPS; i++) {
                                 x = fxp_div_l(n1, n2);
@@ -178,11 +250,14 @@ int main(void) {
                         tdiv_l += dt;
                         avgdiv_l += dt;
 
+                        val[18] = 0;
+
                         // To measure the lg execution use only + arguments
                         if (n1 < 0) n1 = -n1;
                         if (n2 < 0) n2 = -n2;
                         if (n3 < 0) n3 = -n3;
 
+                        // Calculation of lg2 of fxp's
                         t0 = clock();
                         for (int i = 0; i < MAX_OPS; i++) {
                                 x = fxp_lg2(n1);
@@ -199,6 +274,7 @@ int main(void) {
                         tlg2 += dt;
                         avglg2 += dt;
 
+                        // Calculation of lg2 of fxp's using longs
                         t0 = clock();
                         for (int i = 0; i < MAX_OPS; i++) {
                                 x = fxp_lg2_l(n1);
@@ -215,6 +291,8 @@ int main(void) {
                         tlg2_l += dt;
                         avglg2_l += dt;
 
+                        // Calculation of lg2 of fxp's using the
+                        // multiplication-based algorithm, and longs
                         t0 = clock();
                         for (int i = 0; i < MAX_OPS; i++) {
                                 x = fxp_lg2_mul_l(n1);
@@ -233,6 +311,7 @@ int main(void) {
 
                 }
 
+                // Results for this configuration of frag bits
                 printf("\nadd      : %6.2lf\n", 1.0);
                 printf("mul      : %6.2Lf\n", tmul / tadd);
                 printf("mul_l    : %6.2Lf\n", tmul_l / tadd);
@@ -247,12 +326,16 @@ int main(void) {
 
         }
 
+        // Overall results
         printf("\n\n%sXtime averages for frac bit configurations {", DASHES);
         for (int nc = 0; nc < nconfigs; nc++) {
                 printf("%d", fracbit_configs[nc]);
                 printf((nc + 1 == nconfigs? "}": ", "));
         }
         printf("\n%s", DASHES);
+        avgadd_sys /= nconfigs;
+        avgmul_sys /= nconfigs;
+        avgdiv_sys /= nconfigs;
         avgadd /= nconfigs;
         avgmul /= nconfigs;
         avgmul_l /= nconfigs;
@@ -261,11 +344,16 @@ int main(void) {
         avglg2 /= nconfigs;
         avglg2_l /= nconfigs;
         avglg2_mul_l /= nconfigs;
-        printf("add      : %6.2lf\n", 1.0);
-        printf("mul      : %6.2Lf\n", avgmul / avgadd);
-        printf("mul_l    : %6.2Lf\n", avgmul_l / avgadd);
-        printf("div      : %6.2Lf\n", avgdiv / avgadd);
-        printf("div_l    : %6.2Lf\n", avgdiv_l / avgadd);
+        printf("add      : %6.2Lf  (%6.2Lfx system's native addition of ints)\n", \
+                    1.0L, avgadd / avgadd_sys);
+        printf("mul      : %6.2Lf  (%6.2Lfx system's native multiplication of ints)\n", \
+                    avgmul / avgadd, avgmul / avgmul_sys);
+        printf("mul_l    : %6.2Lf  (%6.2Lfx system's native multiplication of ints)\n", \
+                    avgmul_l / avgadd, avgmul_l / avgmul_sys);
+        printf("div      : %6.2Lf  (%6.2Lfx system's native division of ints)\n", \
+                    avgdiv / avgadd, avgdiv / avgdiv_sys);
+        printf("div_l    : %6.2Lf  (%6.2Lfx system's native division of ints)\n", \
+                    avgdiv_l / avgadd, avgdiv_l / avgdiv_sys);
         printf("lg2      : %6.2Lf  (BKM, only ints)\n", \
                     avglg2 / avgadd);
         printf("lg2_l    : %6.2Lf  (about %5.2Lfx lg2, using BKM and longs)\n", \
@@ -273,6 +361,7 @@ int main(void) {
         printf("lg2_mul_l: %6.2Lf  (about %5.2Lfx lg2, using mult. and longs)\n", \
                     avglg2_mul_l / avgadd, \
                     avglg2_mul_l / avglg2);
+
         printf("%s", DASHES);
 
         return 0;

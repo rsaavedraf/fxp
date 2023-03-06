@@ -1,12 +1,13 @@
+/* SPDX-License-Identifier: MIT */
 /*
- * fxp_tconst.c
+ * bkm.c
  *
- * Auxiliary program to generate fxp versions of some
- * important/transcendental constants.
+ * Initial implementations of lg2 and pow2 using long doubles.
+ * Written to test the implemented algorithms in general,
+ * before tailoring them for fxp's
  *
- * Also includes initial BKM implementations of lg2 and pow2
- * using long doubles (with a long double A_2[] array,)
- * written before tackling their implementations for fxp's
+ * Also generates the tables of pre-calculated values for
+ * long and int fxp implementations of BKM-based lg2 and pow2
  *
  * By Raul Saavedra, Bonn Germany
  */
@@ -15,6 +16,9 @@
 #include <stdlib.h>
 #include <float.h>
 #include <math.h>
+#include "fxp_extern.h"
+
+const long double FXP_ZERO_LD = 1.0E-124;
 
 #define DASHES "=========================================\n"
 
@@ -121,6 +125,145 @@ static const long double A_2[] = {
     0.0000000000000000000000000000022761714318270646273745024223029238091160103901
 };
 
+/*
+ * Calculate the log2 of a long double number
+ * (Implementing and testing the logarithm algorithm first
+ * with floating points, before implementing it for fxp's)
+ *
+ * Based on the general algorithm to calculate binary logarithms
+ * explained by Clay Turner in IEEE Signal Processing Magazine,
+ * Sep/2010. His short article has D. E. Knuth's "The Art of
+ * Computer Programming Vol 2: Seminumerical Algorithms",
+ * 2nd ed., 1981 (pages 441 - 446) as the only reference.
+ * Additional useful resources: CORDIC and/or BKM algorithms
+ */
+long double my_log2(long double x)
+{
+        if (x < 0.0) return FXP_UNDEF_LD;
+        if (x <= FXP_ZERO_LD) return FXP_NINF_LD;
+        long double z = x;
+        int c = 0; // characteristic
+        while (z >= 2.0) {
+                c++;
+                z /= 2;
+        }
+        while (z < 1.0) {
+                c--;
+                z *= 2;
+        }
+        // Here we have already calculated the log characteristic c, and
+        // we have z satisfying: 1 <= z < 2, so we can use it to calculate
+        // the mantissa
+        //printf("log c: %d\n", c);
+        long double m = 0.0; // mantissa
+        long double b = 0.5;
+        int nb = 64; // desired number of mantissa bits to process
+        while (nb > 0) {
+                z = z * z;
+                if (z >= 2.0) {
+                        z /= 2;
+                        m += b;
+                }
+                b = b/2;
+                nb--;
+        }
+        // Here we have already calculated the mantissa down to
+        // nb bits of precision
+        //printf("log m: %Lf\n", m);
+        long double full_log = ((long double) c) + m;
+        //printf("log(%Lf) = c + m = %Lf\n", x, full_log);
+        return full_log;
+}
+
+/*
+ * Implementation of the BKM L-Mode algorithm for log2 calculation
+ * using long doubles:
+ * https://en.wikipedia.org/wiki/BKM_algorithm
+ */
+long double my_log2_bkm(long double x, int nbits)
+{
+        if (x < 0.0) return FXP_UNDEF_LD;
+        if (x <= FXP_ZERO_LD) return FXP_NINF_LD;
+        long double z = x;
+        int c = 0; // characteristic
+        while (z >= 2.0) {
+                c++;
+                z /= 2;
+        }
+        while (z < 1.0) {
+                c--;
+                z *= 2;
+        }
+        // Here we have already calculated the log characteristic c, and
+        // we have z satisfying: 1 <= z < 2
+        long double xx = 1.0;
+        long double yy = 0.0;
+        long double ss = 0.5;
+        // Notice ss starting with 0.5. Skipping the 1.0 because we know
+        // zz < 2, so that first test if (zz < z) when ss == 1.0 would be
+        // false for sure
+        long double zz;
+        for (int k = 1; k < nbits; k++) {
+                // Notice that z is for sure in [1, 2), and yy
+                // will remain in the range of log(z), and that is:
+                // [0, 1), but zz can in fact get bigger than 2
+                // repeatedly in these iterations, even if not by much.
+                zz = xx + xx * ss;
+                printf("\tlg2 bkm iteration %d, zz:%0.5LE\n", k, zz);
+                if (zz <= z) {
+                        xx = zz;
+                        yy += A_2[k];
+                        printf("\t\tUpdating yy:%0.5LE\n", yy);
+                }
+                ss *= 0.5;
+        }
+        long double full_log = ((long double) c) + yy;
+        printf("log(%.5LE) = c (%d)+ m (%.5LE) = %.5LE\n", x, c, yy, full_log);
+        return full_log;
+}
+
+/*
+ * Implementation of the BKM E-Mode algorithm for 2^n calculation
+ * using long doubles
+ */
+long double my_pow2_bkm(long double n, int nbits)
+{
+        // Notice that 2^n == 2^(whole(n) + frac(n)) ==
+        // 2^whole(n) * 2^frac(n) = pow2(w) * pow2(f)
+        long long w = truncl(n);
+        long double frac = n - w;
+        // Calculate pow2(w), and prepare argument for BKM
+        long double pow2w;
+        long double argument;
+        if (n >= 0) {
+                pow2w = (long double) (1l << w);
+                argument = frac;
+        } else {
+                pow2w = 1.0 / ((long double) (1l << (-w + 1)));
+                argument = 1 + frac; // Notice Argument is >= 0
+        }
+        printf("n:%.5Lf,  w:%lld,  argument:%.5LE\n", n, w, argument);
+        // The BKM algorithm in E-Mode (for exponential)
+        // calculates pow2(argument), argument in [0, 1) here
+        long double x = 1.0, y = 0.0, s = 1.0;
+        for (int k = 0; k < nbits; k++) {
+                long double const  z = y + A_2[k];
+                printf("\tpow2 bkm iteration %d, zz:%.5LE, x:%.5LE\n", \
+                            k, z, x);
+                if (z <= argument) {
+                        y = z;
+                        x = x + x*s;
+                        printf("\t\tUpdating y:%.5LE x:%.5LE\n", y, x);
+                }
+                s *= 0.5;
+        }
+        // Here x == 2^argument == pow2(f)
+        // Calculate the full 2^n = pow2w * pow2f
+        long double full_pow2 = pow2w * x;
+        printf("pow2(%.5Lf) = %.5Lf\n\n", n, full_pow2);
+        return full_pow2;
+}
+
 int main(void)
 {
         printf("\n%sGenerate table of log values for BKM.c\n%s", DASHES, DASHES);
@@ -167,5 +310,33 @@ int main(void)
                 if (((i + 1) % 4) == 0) printf("\n");
         }
         printf("\n};\n");
-        return 0;
+
+        //long double x1 = my_log2_bkm(1.9999999999, 31);
+        //long double x2 = my_log2_bkm(0.9999999999, 31);
+
+        long double x3 = my_pow2_bkm(0, 31);
+        //long double x4 = my_pow2_bkm(1.5, 31);
+        //long double x5 = my_pow2_bkm(2.0, 31);
+        //long double x6 = my_pow2_bkm(2.5, 31);
+
+/*
+        printf("\nPrecision of long double pow2() calculations using BKM:\n");
+        long double invln2 = 1 / logl(2);
+        for (int bkmd = 29; bkmd <= 31; bkmd++) {
+                printf("\nChecking BKM depth %d\n", bkmd);
+                // Making sure it works as expected even beyond 32 bits
+                long double nums[] = {0.0, 0.25, 0.5, 1.0, 2.0, 3.1, 31.1, 40.1, \
+                                    -0.25, -0.5, -1.0, -2.0, -3.1, -31.1, -40.1};
+                int n = sizeof(nums) / sizeof(nums[0]);
+                for (int i=0; i < n; i++) {
+                        long double tgt = powl(2.0, nums[i]);
+                        long double mypow2 = my_pow2_bkm(nums[i], bkmd);
+                        printf("\n\tref: pow(2, %.3LE) = %.20LE\n",
+                                nums[i], tgt);
+                        printf("\tmy_pow2(%.3LE)     = %.20LE (- ref: %1.2LE)\n",
+                                nums[i], mypow2, (mypow2 - tgt));
+                }
+        }
+*/
+
 }

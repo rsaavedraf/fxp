@@ -118,3 +118,34 @@ Bug fix in the new fxp2ld conversion: it was using truncf() instead of
 truncl().
 Added tests for all roundtrip conversions, fxp -> floating-point ->
 back to fxp.
+
+2023-02-23:
+Replacing #define statements with constant declarations in the 
+program files.
+Defining the transcendental constants with unsigned ints
+Updated the 64 bit unsigned long versions of the transcendental 
+constants with more accurate calculations (using 128 bit long doubles 
+in Arm) down to the last bit rounded
+Removing fxp_tconst.h
+
+2023-02-25:
+Writing a core multiplication function for two frac parts using the 
+distributive scheme on its halves (words): mul_distrib(). This can be 
+called from the fxp_mul() to compute pf3, but also after calculating 
+a log2 or pow2 mantissa, to multiply it by the factors for base e or 
+base 10 logarithms at full possible precision within ints, before any 
+r-shifting. This way we avoid significant precision loss for those
+functions.
+
+2023-03-06:
+Simplified fxp_mul calling mul_distrib() for pf3
+Preliminaries for the new scheme to multiply mantissas by lg and pow 
+factors at full precision.
+Improved fxp_get_dec_frac() for the cases when
+FXP_frac_mask is < fxp_frac_max_dec
+Minor debuggin of division in one border case where it was returning 
+FXP_UNDEF when it should have returned FXP_NEG_INF. This was related to 
+the overflow check at the beginning of the division, which uses 
+multiplication. Fox x = fxp(1), and y = 2 (so y = tiniest+1), FXP_MAX * y 
+was exactly == x, yet the division was calculating x / y and returning 
+FXP_UNDEF in the end (all one bits).

@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: MIT */
 /*
  * fxp_aux.h
  *
@@ -8,19 +9,8 @@
  */
 
 #include "fxp.h"
+#include "fxp_extern.h"
 #include "fxp_conv.h"
-
-extern const float FXP_UNDEF_F;
-extern const float FXP_NINF_F;
-extern const float FXP_PINF_F;
-extern const double FXP_UNDEF_D;
-extern const double FXP_NINF_D;
-extern const double FXP_PINF_D;
-extern const long double FXP_UNDEF_LD;
-extern const long double FXP_NINF_LD;
-extern const long double FXP_PINF_LD;
-extern int FXP_frac_bits;
-extern int FXP_frac_max;
 
 long double lim_frac(long double x, int fbp);
 void print_int_as_bin(int n, int width);

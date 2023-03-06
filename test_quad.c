@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: MIT */
 /*
  * test_quad.c
  *
@@ -9,7 +10,6 @@
  *
  * By Raul Saavedra, Bonn Germany
  * 2023-02-16
- *
  */
 
 #include <quadmath.h>
@@ -18,7 +18,7 @@
 
 #define STR_E_DEC  "2.7182818284590452353602874713526624977572470936999595749669676277240766303535475945713821785251664274"
 
-int main ()
+int main()
 {
         __float128 r;
         int prec = 35;

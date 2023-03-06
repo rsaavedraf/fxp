@@ -70,3 +70,37 @@ static const unsigned int FXP_BKM_LOGS_XTRA[] = {
 0xB, 0x5, 0x2, 0x1, 
 0x0
 };
+n:0.00000,  w:0,  argument:0.00000E+00
+	pow2 bkm iteration 0, zz:1.00000E+00, x:1.00000E+00
+	pow2 bkm iteration 1, zz:5.84963E-01, x:1.00000E+00
+	pow2 bkm iteration 2, zz:3.21928E-01, x:1.00000E+00
+	pow2 bkm iteration 3, zz:1.69925E-01, x:1.00000E+00
+	pow2 bkm iteration 4, zz:8.74628E-02, x:1.00000E+00
+	pow2 bkm iteration 5, zz:4.43941E-02, x:1.00000E+00
+	pow2 bkm iteration 6, zz:2.23678E-02, x:1.00000E+00
+	pow2 bkm iteration 7, zz:1.12273E-02, x:1.00000E+00
+	pow2 bkm iteration 8, zz:5.62455E-03, x:1.00000E+00
+	pow2 bkm iteration 9, zz:2.81502E-03, x:1.00000E+00
+	pow2 bkm iteration 10, zz:1.40819E-03, x:1.00000E+00
+	pow2 bkm iteration 11, zz:7.04269E-04, x:1.00000E+00
+	pow2 bkm iteration 12, zz:3.52177E-04, x:1.00000E+00
+	pow2 bkm iteration 13, zz:1.76099E-04, x:1.00000E+00
+	pow2 bkm iteration 14, zz:8.80524E-05, x:1.00000E+00
+	pow2 bkm iteration 15, zz:4.40269E-05, x:1.00000E+00
+	pow2 bkm iteration 16, zz:2.20136E-05, x:1.00000E+00
+	pow2 bkm iteration 17, zz:1.10068E-05, x:1.00000E+00
+	pow2 bkm iteration 18, zz:5.50343E-06, x:1.00000E+00
+	pow2 bkm iteration 19, zz:2.75172E-06, x:1.00000E+00
+	pow2 bkm iteration 20, zz:1.37586E-06, x:1.00000E+00
+	pow2 bkm iteration 21, zz:6.87930E-07, x:1.00000E+00
+	pow2 bkm iteration 22, zz:3.43965E-07, x:1.00000E+00
+	pow2 bkm iteration 23, zz:1.71983E-07, x:1.00000E+00
+	pow2 bkm iteration 24, zz:8.59913E-08, x:1.00000E+00
+	pow2 bkm iteration 25, zz:4.29957E-08, x:1.00000E+00
+	pow2 bkm iteration 26, zz:2.14978E-08, x:1.00000E+00
+	pow2 bkm iteration 27, zz:1.07489E-08, x:1.00000E+00
+	pow2 bkm iteration 28, zz:5.37446E-09, x:1.00000E+00
+	pow2 bkm iteration 29, zz:2.68723E-09, x:1.00000E+00
+	pow2 bkm iteration 30, zz:1.34361E-09, x:1.00000E+00
+pow2(0.00000) = 1.00000
+

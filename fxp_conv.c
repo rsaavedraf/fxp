@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: MIT */
 /*
  * fxp_conv.c
  *
@@ -6,26 +7,26 @@
  *
  */
 
+#include <stdio.h>
 #include "fxp_conv.h"
 
-// The largest valid negative values of each type are used
-// as the special values for 'undef' for the purposes of
-// conversion into and from fxp's.
-// Negating those largest values here assumes symmetry in the
-// floating-point implementations. If that does not hold on
-// the target platform, then FXP_UCOEF can simply be
-// made slighty < 1.0
-#define FXP_UCOEF 1.0
-#define FXP_NICOEF (FXP_UCOEF - 0.01)
-const float FXP_PINF_F = FXP_MAX;
+// Preserving these relationship as they stand for fxp's:
+// UNDEF < -INF == -(+INF)
+// FXP_UCOEF and FXP_NICOEF can always be adjusted
+// (ie. FXP_UCOEF made slighty < 1.0,) if there is no
+// +/- symmetry in the target floating-point
+// implementation/platform
+const long double FXP_UCOEF = 1.0;
+const long double FXP_NICOEF = FXP_UCOEF - 0.01;
 const float FXP_UNDEF_F = -(FLT_MAX * FXP_UCOEF);
-const float FXP_NINF_F = (FXP_UNDEF_F * FXP_NICOEF);
-const double FXP_PINF_D = DBL_MAX;
-const double FXP_UNDEF_D = -(DBL_MAX * FXP_UCOEF);
-const double FXP_NINF_D = (FXP_UNDEF_D * FXP_NICOEF);
-const long double FXP_PINF_LD = LDBL_MAX;
-const long double FXP_UNDEF_LD = -(LDBL_MAX * FXP_UCOEF);
-const long double FXP_NINF_LD = (FXP_UNDEF_LD * FXP_NICOEF);
+const float FXP_NINF_F = FXP_UNDEF_F * FXP_NICOEF;
+const float FXP_PINF_F = -FXP_NINF_F;
+const double FXP_UNDEF_D = -DBL_MAX * FXP_UCOEF;
+const double FXP_NINF_D = FXP_UNDEF_D * FXP_NICOEF;
+const double FXP_PINF_D = -FXP_NINF_D;
+const long double FXP_UNDEF_LD = -LDBL_MAX * FXP_UCOEF;
+const long double FXP_NINF_LD = FXP_UNDEF_LD * FXP_NICOEF;
+const long double FXP_PINF_LD = -FXP_NINF_LD;
 
 /*
  * Returns a float value corresponding to an fxp
@@ -35,16 +36,31 @@ float fxp2f(int fxp)
     if (fxp == FXP_UNDEF) return FXP_UNDEF_F;
     if (fxp == FXP_NEG_INF) return FXP_NINF_F;
     if (fxp == FXP_POS_INF) return FXP_PINF_F;
-    unsigned int twopower = 1 << FXP_frac_bits;
+    // An IEEE-754 float uses 24 bits for the
+    // mantissa part (first implicit, 23 explicit)
+    // So we will round up that last bit in it
+    int pfxp = fxp < 0? -fxp: fxp;
+    int nbits = fxp_nbits(pfxp);
+    int pw = fxp_get_whole_part(fxp);
     int frac = fxp_get_bin_frac(fxp);
     if (frac < 0) frac = -frac;
+    unsigned int twopower = 1 << FXP_frac_bits;
     float ffrac = 0.0;
+    int rbit = 0;
     while (frac > 0) {
-        if (frac & 1) ffrac += ((float) 1.0 / twopower);
-        frac = frac >> 1;
-        twopower = twopower >> 1;
+            int bit = frac & 1;
+            if (nbits >= 25) {
+                    rbit = bit;
+            } else {
+                    if ((frac & 1) || rbit)
+                            ffrac += ((float) 1.0 / twopower);
+                    rbit = 0;
+            }
+            frac = frac >> 1;
+            nbits--;
+            twopower = twopower >> 1;
     }
-    float wf = (float) fxp_get_whole_part(fxp);
+    float wf = (float) pw;
     return wf + ((fxp < 0)? -ffrac: ffrac);
 }
 
@@ -56,8 +72,8 @@ int f2fxp(float x)
     if (isnan(x)) return FXP_UNDEF;
     if (isinf(x)) return (signbit(x)? FXP_NEG_INF: FXP_POS_INF);
     if (x <= FXP_UNDEF_F) return FXP_UNDEF;
-    if (x < FXP_min_f) return FXP_NEG_INF;
-    if (x > FXP_max_f) return FXP_POS_INF;
+    if ((x <= FXP_NINF_F) || (x < FXP_min_f)) return FXP_NEG_INF;
+    if ((x >= FXP_PINF_F) || (x > FXP_max_f)) return FXP_POS_INF;
     float px = (x < 0)? -x: x;
     float pwf = truncf(px);
     float frac = px - pwf;
@@ -75,7 +91,6 @@ int f2fxp(float x)
         else
             return fxp_bin(0, -pfrac_i);
 }
-
 
 /*
  * Returns the double value corresponding to an fxp
