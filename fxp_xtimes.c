@@ -6,19 +6,19 @@
  * Shows relavite execution times (smaller is better)
  * for the different fxp operations and functions.
  * Example end of the ouput, for a system with an
- * Intel i7-6700K cpu, run on 2023-02-19:
+ * Intel i7-6700K cpu, run on 2023-03-06:
  *
 =================================================
 Xtime averages for frac bit configurations {8, 12, 16, 20, 24, 28}
 =================================================
-add      :   1.00
-mul      :   9.44
-mul_l    :   1.41
-div      :  13.85
-div_l    :   3.11
-lg2      :  25.66  (BKM, only ints)
-lg2_l    :  12.96  (about  0.50x lg2, using BKM and longs)
-lg2_mul_l:  36.84  (about  1.44x lg2, using mult. and longs)
+add      :   1.00  (  4.88x system's native addition of ints)
+mul      :  11.11  ( 49.27x system's native multiplication of ints)
+mul_l    :   1.62  (  7.20x system's native multiplication of ints)
+div      :  15.68  ( 30.68x system's native division of ints)
+div_l    :   2.97  (  5.80x system's native division of ints)
+lg2      :  25.40  (BKM, only ints)
+lg2_l    :  20.78  (about  0.82x lg2, using BKM and longs)
+lg2_mul_l:  47.27  (about  1.86x lg2, using mult. and longs)
 =================================================
  *
  */
