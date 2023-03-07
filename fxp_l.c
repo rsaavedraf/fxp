@@ -269,6 +269,38 @@ int fxp_lg2_l(int fxp1)
             return -(-c << FXP_frac_bits) + im;
 }
 
+
+/*
+ * Analogougs to mul_distrib in fxp.c, but here using longs
+ */
+unsigned long mul_distrib_l( unsigned long x,
+                             unsigned long y)
+{
+        unsigned long xa, xb, ya, yb, xaya, xayb, yaxb, xbyb;
+        unsigned long qr1, qr2, qr3, qrsum, ql1, ql2, ql3, product;
+        xa = x >> FXP_INT_BITS;
+        xb = (x & FXP_RINT_MASK);
+        ya = y >> FXP_INT_BITS;
+        yb = (y & FXP_RINT_MASK);
+        //printf("\txa:%X, xb:%X, ya:%X, yb:%X\n", xa, xb, ya, yb);
+        xayb = xa * yb;
+        yaxb = ya * xb;
+        qr1 = xayb & FXP_RINT_MASK;
+        qr2 = yaxb & FXP_RINT_MASK;
+        qr3 = xbyb >> FXP_INT_BITS;
+        //int rbit = ((unsigned int) (xbyb >> FXP_INT_BITS_M1)) & 1;
+        qrsum = qr1 + qr2 + qr3; // + rbit;
+        xaya = xa * ya;
+        xbyb = xb * yb;
+        ql1 = xayb >> FXP_INT_BITS;
+        ql2 = yaxb >> FXP_INT_BITS;
+        //rbit = ((unsigned int) (qrsum >> FXP_INT_BITS_M1)) & 1;
+        ql3 = (qrsum >> FXP_INT_BITS); // + rbit;
+        product = xaya + ql1 + ql2 + ql3;
+        return product;
+
+}
+
 /*
  * pow2 calculation (2^fxp1) using the BKM (E-mode) algorithm
  * Analogous to implementation in bkm.c,
@@ -277,53 +309,71 @@ int fxp_lg2_l(int fxp1)
 int fxp_pow2_l(int fxp1)
 {
         if (fxp1 == FXP_UNDEF) return FXP_UNDEF;
+        if (fxp1 == FXP_NEG_INF) return 0;
+        if (fxp1 == FXP_POS_INF) return FXP_POS_INF;
         int w = fxp_get_whole_part(fxp1);
         int f = fxp_get_bin_frac(fxp1);
+        //printf("pow2_l(%X)  w:%X  f:%X\n", fxp1, w, f);
         unsigned long pow2w, argument;
         if (fxp1 >= 0) {
                 if (w >= FXP_whole_bits_m1) {
                         return FXP_POS_INF;
                 }
-                pow2w = ((unsigned long) FXP_one) << w;
+                pow2w = FXP_one_l << w + 2;
+                // Argument will be in [0, 1)
                 argument = ((unsigned long) f) << FXP_lg2_l_mshift;
         } else {
-                if (w <= -FXP_INT_BITS_M1) {
+                if (w <= FXP_INT_BITS_M1_NEG) {
                         return 0;
                 }
-                pow2w = (long) (FXP_one >> (-w + 1));
+                //pow2w = (long) (FXP_one >> (-w + 1));
+                if (w < 0)
+                        pow2w = FXP_one_l >> (-w - 1);
+                else
+                        pow2w = FXP_one_l << 1;
+                // Notice argument is >= 0, in (0, 1]
                 argument = ((unsigned long) (FXP_one + f)) \
                                 << FXP_lg2_l_mshift;
         }
 
-        //printf("\nfxp:%d. %d(/%d), pow2w:%lu, argument:%lu\n", \
-                    w, f, FXP_frac_max, pow2w, argument);
+        printf("\nfxp:%d. %d(x%X), pow2w:%lX, argument:%lX\n", \
+                    w, f, ((unsigned int) fxp1), pow2w, argument);
 
+        // Watch out we are using two different shifted
+        // configurations simultaneously, but independently:
+        // - x aligned with FXP_BKM_ONE_L: 2 whole and 62 frac bits
+        //   (we needed at least 2 whole bits for the BKM log algorithm).
+        // - However argument, y and the BKM_LOGS array values
+        //   have 1 whole and 63 frac bits for more accuracy
         unsigned long x = FXP_BKM_ONE_L, y = 0;
         //for (int k = 0; k < FXP_lg2_maxloops; k++) {
         for (int k = 0; k < FXP_INT_BITS; k++) {
                 unsigned long const  z = y + FXP_BKM_LOGS_L[k];
-                //printf("\tpow2_l iteration %d,  z:%lX,  x:%lX\n", \
-                            k, z, x);
+                //printf("\tpow2_l iter. %d,  z:%lX,  x:%lX\n", \
+                //            k, z, x);
                 if (z <= argument) {
                         y = z;
                         x = x + (x >> k);
-                        //printf("\t\tUpdating y:%lu  x:%lu\n", y, x);
+                        //printf("\t\tUpdating y:%lX  x:%lX\n", y, x);
                 }
         }
-
-        // Watch out we are using two different shifted configurations:
-        // x is aligned with FXP_BKM_ONE_L: 2 whole and 62 frac bits
-        // (we need at least 2 whole bits for the log algorithm).
-        // y and the BKM_LOG values have 1 whole and 63 frac bits
-        // for more accuracy
-        unsigned int rbit = (x >> FXP_pow2_l_xshiftm1) & 1l;
-        x = (x >> FXP_pow2_l_xshift) + rbit;
-        //printf("pow2w:%lX  rounded x: %lX\n", pow2w, x);
-        unsigned long product = pow2w * x;
-        rbit = (product >> (FXP_frac_bits - 1)) & 1l;
-        int finalpow2 = ((int) (product >> FXP_frac_bits)) + rbit;
-        int pw = fxp_get_whole_part(finalpow2);
-        int pf = fxp_get_bin_frac(finalpow2);
+        //unsigned int up2w = (unsigned int) pow2w;
+        // Rounding x
+        //unsigned int rbit = (unsigned int) ((x >> FXP_INT_BITS_M1) & 1l);
+        //unsigned int ux = (unsigned int) (x >> FXP_INT_BITS) + rbit;
+        //printf("up2w:%X  ux:%X\n", up2w, ux);
+        //unsigned int muldist = mul_distrib(up2w, ux) << 2;
+        //pow2w <<= 2;
+        unsigned int muldist = mul_distrib_l(pow2w, x);
+        //rbit = (x >> FXP_pow2_l_xshiftm1) & 1l;
+        //x = (x >> FXP_pow2_l_xshift) + rbit;
+        //unsigned long product = fxp_mul_l(pow2w, x);
+        //int finalpow2 = (int) product; //+ rbit;
+        //printf("product:%X\n", finalpow2);
+        //printf("muldist:%X\n", muldist);
+        //int pw = fxp_get_whole_part(finalpow2);
+        //int pf = fxp_get_bin_frac(finalpow2);
         //printf("pow2() = %d. %d(/max frac)\n", pw, pf);
-        return finalpow2;
+        //return finalpow2;
+        return (int) muldist;
 }

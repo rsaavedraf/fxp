@@ -10,6 +10,7 @@
 
 extern const int FXP_INT_BITS;
 extern const int FXP_INT_BITS_M1;
+extern const int FXP_INT_BITS_M1_NEG;
 extern const int FXP_POS_INF;
 extern const int FXP_NEG_INF;
 extern const int FXP_MAX;
@@ -63,8 +64,11 @@ extern int FXP_lg2_l_mshiftm1;
 extern int FXP_pow2_l_xshift;
 extern int FXP_pow2_l_xshiftm1;
 extern unsigned long FXP_max_lshifted;
+extern unsigned long FXP_one_l;
 
 extern const int FXP_WORD_BITS;
 extern const int FXP_WORD_BITS_M1;
 extern const unsigned int FXP_LWORD_MASK;
 extern const unsigned int FXP_RWORD_MASK;
+extern const unsigned long FXP_LINT_MASK;
+extern const unsigned long FXP_RINT_MASK;

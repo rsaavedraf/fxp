@@ -1,3 +1,4 @@
+
 /* SPDX-License-Identifier: MIT */
 /*
  * bkm.c
@@ -237,12 +238,13 @@ long double my_pow2_bkm(long double n, int nbits)
         long double argument;
         if (n >= 0) {
                 pow2w = (long double) (1l << w);
-                argument = frac;
+                argument = frac;    // argument >= 0
         } else {
                 pow2w = 1.0 / ((long double) (1l << (-w + 1)));
-                argument = 1 + frac; // Notice Argument is >= 0
+                argument = 1 + frac; // Notice argument in (0, 1]
         }
-        printf("n:%.5Lf,  w:%lld,  argument:%.5LE\n", n, w, argument);
+        printf("n:%.5Lf,  w:%lld,  pow2w:%LE,  argument:%.5LE\n", \
+                    n, w, pow2w, argument);
         // The BKM algorithm in E-Mode (for exponential)
         // calculates pow2(argument), argument in [0, 1) here
         long double x = 1.0, y = 0.0, s = 1.0;
@@ -314,7 +316,7 @@ int main(void)
         //long double x1 = my_log2_bkm(1.9999999999, 31);
         //long double x2 = my_log2_bkm(0.9999999999, 31);
 
-        long double x3 = my_pow2_bkm(0, 31);
+        long double x3 = my_pow2_bkm(0.5, 31);
         //long double x4 = my_pow2_bkm(1.5, 31);
         //long double x5 = my_pow2_bkm(2.0, 31);
         //long double x6 = my_pow2_bkm(2.5, 31);

@@ -149,3 +149,7 @@ the overflow check at the beginning of the division, which uses
 multiplication. Fox x = fxp(1), and y = 2 (so y = tiniest+1), FXP_MAX * y 
 was exactly == x, yet the division was calculating x / y and returning 
 FXP_UNDEF in the end (all one bits).
+
+2023-03-07:
+mul_distrib_l() implemented in fxp_l.c
+fxp_pow2_l() implemented using mul_distrib_l(), running tests for it

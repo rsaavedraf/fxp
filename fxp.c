@@ -27,6 +27,7 @@
 
 const int FXP_INT_BITS = (int) (sizeof(int) * 8);
 const int FXP_INT_BITS_M1 = FXP_INT_BITS - 1;
+const int FXP_INT_BITS_M1_NEG = -FXP_INT_BITS_M1;
 const int FXP_INT_BITS_M2 = FXP_INT_BITS - 2;
 const int FXP_POS_INF = INT_MAX;
 const int FXP_NEG_INF = -INT_MAX;
@@ -43,6 +44,10 @@ const int FXP_WORD_BITS_M1 = FXP_WORD_BITS - 1;
 const unsigned int FXP_RWORD_MASK = ((1 << FXP_WORD_BITS) - 1);
 const unsigned int FXP_LWORD_MASK = FXP_RWORD_MASK \
                                     << FXP_WORD_BITS;
+const unsigned long FXP_RINT_MASK = ((1l << FXP_INT_BITS) - 1);
+const unsigned long FXP_LINT_MASK = FXP_RINT_MASK \
+                                    << FXP_INT_BITS;
+
 
 // Allowing for no whole part, so other than the sign bit,
 // all bits used for fraction part. This use case represents
@@ -133,6 +138,7 @@ int FXP_half = 1 << (FXP_FRAC_BITS_DEF - 1);
 int FXP_one = 1 << FXP_FRAC_BITS_DEF;
 int FXP_two = 1 << (FXP_FRAC_BITS_DEF + 1);
 int FXP_lg2_maxloops = FXP_FRAC_BITS_DEF + 1;
+unsigned long FXP_one_l =  1ul << FXP_FRAC_BITS_DEF;
 
 // TODO: can it be removed? seems exactly == FXP_whole_bits_m1
 static int FXP_lg2_yashift = FXP_INT_BITS_M1 - FXP_FRAC_BITS_DEF;
@@ -308,6 +314,7 @@ int fxp_set_frac_bits(int nfracbits)
 
         // Auxiliary variables used for lg2 calculations
         FXP_one = 1 << FXP_frac_bits;
+        FXP_one_l = (unsigned long) FXP_one;
         FXP_half = FXP_one >> 1;
         FXP_two = FXP_one << 1;
         FXP_lg2_maxloops = FXP_frac_bits + 1;
@@ -658,7 +665,7 @@ unsigned int mul_distrib( unsigned int x,
                           unsigned int y)
 {
         unsigned int xa, xb, ya, yb, xaya, xayb, yaxb, xbyb;
-        unsigned int qr1, qr2, qr3, qrsum, ql1, ql2, ql3;
+        unsigned int qr1, qr2, qr3, qrsum, ql1, ql2, ql3, product;
         xa = x >> FXP_WORD_BITS;
         xb = (x & FXP_RWORD_MASK);
         ya = y >> FXP_WORD_BITS;
@@ -678,7 +685,7 @@ unsigned int mul_distrib( unsigned int x,
         //int rbit = ((qrsum & FXP_LWORD_MASK) \
         //              >> FXP_WORD_BITS_M1) & 1;
         ql3 = (qrsum >> FXP_WORD_BITS); // + rbit;
-        unsigned int product = xaya + ql1 + ql2 + ql3;
+        product = xaya + ql1 + ql2 + ql3;
         return product;
 }
 

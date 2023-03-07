@@ -52,6 +52,7 @@ int fxp_nbits(unsigned int n);
 int fxp_add(int fxp1, int fxp2);
 int fxp_sub(int fxp1, int fxp2);
 int fxp_mul(int fxp1, int fxp2);
+unsigned int mul_distrib(unsigned int x, unsigned int y);
 int fxp_mul_wrefs(int fxp1, int fxp2, int * rw, int * rf);
 int fxp_div(int fxp1, int fxp2);
 
