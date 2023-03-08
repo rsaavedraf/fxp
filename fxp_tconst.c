@@ -20,7 +20,6 @@
 #include <math.h>
 #include "fxp.h"
 #include "fxp_aux.h"
-//#include "fxp_tconst.h"
 
 #define DASHES "========================\n"
 

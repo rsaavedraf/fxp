@@ -71,17 +71,17 @@ static int FXP_frac_bits_mod2 = FXP_FRAC_BITS_DEF % 2;
 
 // For improved-precision version of fxp_mul
 static int FXP_frac_mshift = FXP_FRAC_BITS_DEF / 2;
-static int FXP_frac_maskl = 4032;
-static int FXP_frac_maskr = 63;
+static unsigned int FXP_frac_maskl = 4032;
+static unsigned int FXP_frac_maskr = 63;
 
 // Default number of bits for the whole part (includes sign bit)
 int FXP_whole_bits = FXP_INT_BITS - FXP_FRAC_BITS_DEF;
 int FXP_whole_bits_m1 = FXP_INT_BITS_M1 - FXP_FRAC_BITS_DEF;
 
 // FXP_FRAC_MASK should correspond to 2^FXP_FRAC_BITS - 1
-int FXP_frac_mask = ((1 << FXP_FRAC_BITS_DEF) - 1);
-int FXP_frac_max = ((1 << FXP_FRAC_BITS_DEF) - 1);
-int FXP_frac_max_p1 = (1 << FXP_FRAC_BITS_DEF);
+unsigned int FXP_frac_mask = ((1u << FXP_FRAC_BITS_DEF) - 1);
+int FXP_frac_max = ((1u << FXP_FRAC_BITS_DEF) - 1);
+long FXP_frac_max_p1 = (1l << FXP_FRAC_BITS_DEF);
 
 // Default max and min valid values for the whole part of the fxp's
 int FXP_whole_max = FXP_MAX >> FXP_FRAC_BITS_DEF;
@@ -135,9 +135,9 @@ unsigned int FXP_shifted_lg10_2 = (FXP_LG10_2_I32 >> FXP_DEF_SHIFT);
 
 // Auxiliary variables used in the lg2 implementations
 int FXP_half = 1 << (FXP_FRAC_BITS_DEF - 1);
-int FXP_one = 1 << FXP_FRAC_BITS_DEF;
 int FXP_two = 1 << (FXP_FRAC_BITS_DEF + 1);
 int FXP_lg2_maxloops = FXP_FRAC_BITS_DEF + 1;
+unsigned int FXP_one = 1 << FXP_FRAC_BITS_DEF;
 unsigned long FXP_one_l =  1ul << FXP_FRAC_BITS_DEF;
 
 // TODO: can it be removed? seems exactly == FXP_whole_bits_m1
@@ -256,7 +256,7 @@ int fxp_set_frac_bits(int nfracbits)
         FXP_whole_bits_m1 = FXP_whole_bits - 1;
 
         // fxp_frac_mask should correspond to 2^FXP_FRAC_BITS - 1
-        FXP_frac_mask = (1 << FXP_frac_bits) - 1;
+        FXP_frac_mask = (1u << FXP_frac_bits) - 1;
 
         // Variables used in fxp_mul to process the
         // full multiplication of the frac parts avoiding
@@ -267,7 +267,7 @@ int fxp_set_frac_bits(int nfracbits)
                 FXP_frac_mshift = (FXP_frac_bits / 2) \
                                     + (FXP_frac_bits % 2);
         }
-        FXP_frac_maskr = (1 << FXP_frac_mshift) - 1;
+        FXP_frac_maskr = (1u << FXP_frac_mshift) - 1;
         FXP_frac_maskl = FXP_frac_maskr << FXP_frac_mshift;
 
         // When using all bits for frac (except for the sign bit),
@@ -314,7 +314,7 @@ int fxp_set_frac_bits(int nfracbits)
 
         // Auxiliary variables used for lg2 calculations
         FXP_one = 1 << FXP_frac_bits;
-        FXP_one_l = (unsigned long) FXP_one;
+        FXP_one_l = 1l << FXP_frac_bits;
         FXP_half = FXP_one >> 1;
         FXP_two = FXP_one << 1;
         FXP_lg2_maxloops = FXP_frac_bits + 1;
@@ -523,41 +523,18 @@ int fxp_get_dec_frac(int fxp)
         // Watch out the bin to dec conversion itself can overflow when
         // the chosen frac_bits is large, and the frac_max_dec
         // value is also large. Using longs here because of this
-        long num, denom, ldiv;
-        int positive_frac;
-        /*
-        denom = (long) FXP_frac_max;
+        long num, ldiv;
+        long positive_frac;
         if (fxp < 0) {
                 positive_frac = (-fxp) & FXP_frac_mask;
-                if (positive_frac == 0) return 0;
-                num = -(((long) positive_frac + 1) * \
-                                ((long) fxp_frac_max_dec));
+                num = -(((long) positive_frac) \
+                            * fxp_frac_max_dec_p1);
         } else {
                 positive_frac = fxp & FXP_frac_mask;
-                if (positive_frac == 0) return 0;
-                num = ((long) positive_frac + 1)
-                                * ((long) fxp_frac_max_dec);
+                num = ((long) positive_frac) \
+                            * fxp_frac_max_dec_p1;
         }
-        ldiv = num / denom;
-        if (ldiv > fxp_frac_max_dec) ldiv = fxp_frac_max_dec;
-        */
-
-        //if (FXP_frac_mask < fxp_frac_max_dec) {
-            // This scheme seems slightly better particularly when
-            //      FXP_frac_mask < fxp_frac_max_dec
-            denom = (long) FXP_frac_max_p1;
-            if (fxp < 0) {
-                    positive_frac = (-fxp) & FXP_frac_mask;
-                    num = -(((long) positive_frac) \
-                                * ((long) fxp_frac_max_dec_p1));
-            } else {
-                    positive_frac = fxp & FXP_frac_mask;
-                    num = ((long) positive_frac) \
-                                * ((long) fxp_frac_max_dec_p1);
-            }
-            ldiv = num / denom;
-            //ldiv = (ldiv + ldiv2 + 1) / 2;
-        //}
+        ldiv = num / FXP_frac_max_p1;
         return (int) ldiv;
 }
 

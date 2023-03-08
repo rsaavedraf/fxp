@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include <assert.h>
+//#include <assert.h>
 #include <float.h>
 #include <time.h>
 #include <math.h>
@@ -99,48 +99,29 @@ void print_fxp_as_bin(int n, int width)
         }
 }
 
-void print_fxp(int fxp)
+void print_fxp(int x)
 {
-        if (fxp == FXP_POS_INF || fxp == FXP_NEG_INF \
-                || fxp == FXP_UNDEF) {
-                printf(fxp==FXP_UNDEF? "UNDEF":
-                          (fxp==FXP_POS_INF? "+INF": "-INF"));
+        if (x == FXP_POS_INF || x == FXP_NEG_INF \
+                || x == FXP_UNDEF) {
+                printf(x == FXP_UNDEF? "UNDEF":
+                          (x == FXP_POS_INF? "+INF": "-INF"));
                 return;
         }
-        //printf("\ninput fxp is: %d", fxp);
-        long double n = fxp2ld(fxp);
-        //printf("long double n = %Lf\n", n);
-        int whole = fxp_get_whole_part(fxp);
-        int frac = fxp_get_dec_frac(fxp);
-        int nbits;
-        if (fxp_get_frac_max_dec() <= 9999) {
-                if (fxp < 0) {
-                        int pfxp = -fxp;
-                        if (whole < 0) whole = -whole;
-                        if (frac < 0) frac = -frac;
-                        printf("-%d.%4d (=Lf:%Lf = %d = x(-)%x = b",
-                                whole, frac, n, fxp, pfxp);
-                } else {
-                        printf("%d.%4d (=Lf:%Lf = %d = x%x = b",
-                                whole,
-                                fxp_get_dec_frac(fxp),
-                                n, fxp, fxp);
-                }
+        long double n = fxp2ld(x);
+        int whole = fxp_get_whole_part(x);
+        int frac = fxp_get_dec_frac(x);
+        //printf("\nx:%d,  w:%d,  f:%d \n", x, whole, frac);
+        if (x < 0) {
+                int px = -x;
+                if (whole < 0) whole = -whole;
+                if (frac < 0) frac = -frac;
+                printf("-%d.%7d (=Lf:%Lf = %d = x(-)%x = b",
+                        whole, frac, n, x, px);
         } else {
-                if (fxp < 0) {
-                        int pfxp = -fxp;
-                        if (whole < 0) whole = -whole;
-                        if (frac < 0) frac = -frac;
-                        printf("-%d.%7d (=Lf:%Lf = %d = x(-)%x = b",
-                                whole, frac, n, fxp, pfxp);
-                } else {
-                        printf("%d.%7d (=LE:%1.2LE = %d = x%x = b",
-                                whole,
-                                fxp_get_dec_frac(fxp),
-                                n, fxp, fxp);
-                }
+                printf("%d.%7d (=Lf:%Lf = %d = x%x = b",
+                        whole, frac, n, x, x);
         }
-        print_fxp_as_bin(fxp, 0);
+        print_fxp_as_bin(x, 0);
         printf(")");
         //printf(", %d bits)", nbits);
 }
