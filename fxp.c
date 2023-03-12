@@ -16,7 +16,7 @@
 
 #include "fxp.h"
 //#include "fxp_aux.h"
-#include <float.h>
+//#include <float.h>
 #include <stdio.h>
 #include <stdlib.h>
 //#include <assert.h>
@@ -137,10 +137,11 @@ unsigned int FXP_shifted_lg10_2 = (FXP_LG10_2_I32 >> FXP_DEF_SHIFT);
 int FXP_half = 1 << (FXP_FRAC_BITS_DEF - 1);
 int FXP_two = 1 << (FXP_FRAC_BITS_DEF + 1);
 int FXP_lg2_maxloops = FXP_FRAC_BITS_DEF + 1;
-unsigned int FXP_one = 1 << FXP_FRAC_BITS_DEF;
+unsigned int FXP_one = 1u << FXP_FRAC_BITS_DEF;
 unsigned long FXP_one_l =  1ul << FXP_FRAC_BITS_DEF;
 
 // TODO: can it be removed? seems exactly == FXP_whole_bits_m1
+static int FXP_lg2_mshift = FXP_INT_BITS_M1 - FXP_FRAC_BITS_DEF;
 static int FXP_lg2_yashift = FXP_INT_BITS_M1 - FXP_FRAC_BITS_DEF;
 static int FXP_lg2_ybmask = 0;
 static int FXP_lg2_ybshift = 0;
@@ -318,8 +319,9 @@ int fxp_set_frac_bits(int nfracbits)
         FXP_half = FXP_one >> 1;
         FXP_two = FXP_one << 1;
         FXP_lg2_maxloops = FXP_frac_bits + 1;
+        FXP_lg2_mshift = FXP_INT_BITS_M1 - FXP_frac_bits;
         FXP_lg2_l_mshift = 2 * FXP_INT_BITS - 1 - FXP_frac_bits;
-        FXP_lg2_yashift = FXP_INT_BITS - 1 - FXP_frac_bits;
+        FXP_lg2_yashift = FXP_INT_BITS_M1 - FXP_frac_bits;
         if (FXP_lg2_yashift >= 0) {
             FXP_lg2_ybshift = 0;
             FXP_lg2_ybmask = 0;
@@ -659,7 +661,7 @@ unsigned int mul_distrib( unsigned int x,
         xbyb = xb * yb;
         ql1 = xayb >> FXP_WORD_BITS;
         ql2 = yaxb >> FXP_WORD_BITS;
-        //int rbit = ((qrsum & FXP_LWORD_MASK) \
+        //rbit = ((qrsum & FXP_LWORD_MASK) \
         //              >> FXP_WORD_BITS_M1) & 1;
         ql3 = (qrsum >> FXP_WORD_BITS); // + rbit;
         product = xaya + ql1 + ql2 + ql3;
@@ -1153,7 +1155,8 @@ int fxp_lg2(int fxp1)
         // Here we replicate what the lg2_l implementation does,
         // but simulating longs with two ints a and b, so
         // instead of a K of type long, two ints (ka, kb),
-        // ka the most significant, kb the least one
+        // ka the most significant, kb the least one.
+        // We do this for x, zz, xs, y, and aux
         unsigned int za = ((unsigned int) fxp1) << (clz - 1);
         //unsigned int zb = 0; // <- zb not really needed, will remain 0
 
@@ -1169,6 +1172,8 @@ int fxp_lg2(int fxp1)
                 //unsigned long xs = (x >> shift);
                 // Here we must r-shift the combo (xa, xb) by shift units
                 // leaving the results in combo (xsa, xsb)
+                // TODO: this can be slightly optimized separating into
+                // two for loops avoiding this if statement in the 1st one
                 if (shift < FXP_INT_BITS) {
                         a_bits = (xa & ab_mask);
                         xsa = (xa >> shift);
@@ -1182,8 +1187,8 @@ int fxp_lg2(int fxp1)
                 // zz = x + xs;
                 zza = xa + xsa;
                 if (xsb > FXP_BKM_MAXU - xb)
-                    // Carry over from zzb into zza
-                    zza++;
+                        // Carry over from zzb into zza
+                        zza++;
                 zzb = xb + xsb;
 
                 // if (zz <= z) {
@@ -1199,8 +1204,8 @@ int fxp_lg2(int fxp1)
                         auxb = FXP_BKM_LOGS_XTRA[shift];
                         ya += auxa;
                         if (yb > FXP_BKM_MAXU - auxb)
-                            // Carry from yb into ya
-                            ya++;
+                                // Carry from yb into ya
+                                ya++;
                         yb += auxb;
                 }
         }
@@ -1230,9 +1235,9 @@ int fxp_lg2(int fxp1)
                 return FXP_NEG_INF;
         }
         if (c >= 0)
-            return (c << FXP_frac_bits) + m;
+                return (c << FXP_frac_bits) + m;
         else
-            return -(-c << FXP_frac_bits) + m;
+                return -(-c << FXP_frac_bits) + m;
 }
 
 /*
@@ -1241,8 +1246,9 @@ int fxp_lg2(int fxp1)
  */
 int fxp_ln(int fxp1)
 {
+        return 0;
         int l = 0, c = 0 , ya = 0, m = 0;
-        l = fxp_lg2_ref(fxp1, &c, &ya);
+        //l = fxp_lg2_ref(fxp1, &c, &ya);
         unsigned int uya = ((unsigned int) ((ya < 0)? -ya: ya)) << 1;
         unsigned int f = 0; 
         f >>= FXP_whole_bits;
@@ -1252,7 +1258,6 @@ int fxp_ln(int fxp1)
         //                        &rw, &rf);
         //return fxp_add(rw, rf);
 
-        return 0;
         //return fxp_mul(fxp_lg2(fxp1), FXP_shifted_ln_2);
 }
 
@@ -1266,10 +1271,94 @@ int fxp_lg10(int fxp1)
 }
 
 
+/*
+ * Analogous to fxp_pow2_l but using only ints
+ */
 int fxp_pow2(int fxp1)
 {
-        // TODO:
-        return 0;
+        if (fxp1 == FXP_UNDEF) return FXP_UNDEF;
+        if (fxp1 == FXP_NEG_INF) return 0;
+        if (fxp1 == FXP_POS_INF) return FXP_POS_INF;
+        int w = fxp_get_whole_part(fxp1);
+        int f = fxp_get_bin_frac(fxp1);
+        unsigned int pow2w, argument;
+        if (fxp1 >= 0) {
+                if (w >= FXP_whole_bits_m1) {
+                        return FXP_POS_INF;
+                }
+                pow2w = FXP_one << (w + 1);
+                // Argument will be in [0, 1)
+                argument = ((unsigned int) f) << FXP_lg2_mshift;
+        } else {
+                if (w <= FXP_INT_BITS_M1_NEG) {
+                        return 0;
+                }
+                //if (w < 0)
+                //        pow2w = FXP_one >> (-w - 1);
+                //else
+                //        pow2w = FXP_one << 1;
+                if (w < 0)
+                        pow2w = FXP_one >> (-w);
+                else
+                        pow2w = FXP_one;
+                argument = (FXP_one + f) \
+                                << FXP_lg2_mshift;
+        }
+        //printf("pow2w:%X  argument:%X\n", pow2w, argument);
+        //unsigned int x = FXP_BKM_ONE, y = 0;
+        unsigned int xa = FXP_BKM_ONE, xb = 0;
+        unsigned int ya = 0, yb = 0;
+        unsigned int auxa, auxb, za, zb, xsa, xsb, a_bits, ab_mask;
+        for (int k = 0; k < FXP_INT_BITS; k++) {
+                //unsigned int const  z = y + FXP_BKM_LOGS[k];
+                auxa = FXP_BKM_LOGS[k];
+                auxb = FXP_BKM_LOGS_XTRA[k];
+                za = ya + auxa;
+                if (yb > FXP_BKM_MAXU - auxb)
+                        za++;
+                zb = yb + auxb;
+
+                //printf("k:%d,  z:%X-%X\n", k, za, zb);
+                //if (z <= argument) {
+                if ((za < argument) \
+                    || ((za == argument) && (zb == 0))) {
+                        //y = z;
+                        ya = za;
+                        yb = zb;
+
+                        //x = x + (x >> k);
+                        // Equivalent to:
+                        // xs = (x >> k);
+                        // x += xs;
+                        // Here we r-shift the combo (xa, xb) by k units
+                        // leaving the results in combo (xsa, xsb)
+                        //if (k < FXP_INT_BITS) {
+                                ab_mask = (1u << k) - 1;
+                                a_bits = (xa & ab_mask);
+                                xsa = (xa >> k);
+                                xsb = (a_bits << (FXP_INT_BITS - k)) \
+                                        | (xb >> k);
+                        //} else {
+                        //        xsa = 0;
+                        //        xsb = (xa >> (k - FXP_INT_BITS));
+                        //}
+                        xa += xsa;
+                        if (xsb > FXP_BKM_MAXU - xb)
+                                xa++;
+                        xb += xsb;
+                        //printf("\tUpdating y (%X-%X) und x (%X-%X)\n", \
+                        //        ya, yb, xa, xb);
+                }
+        }
+        unsigned int x;
+        if ((xa >> FXP_INT_BITS_M1) == 0 ) {
+                x = (xa << 1) | (xb >> FXP_INT_BITS_M1);
+        } else {
+                pow2w = pow2w << 1;
+        }
+        //printf("xa:%X, final x:%X\n", xa, x);
+        unsigned int md = mul_distrib(pow2w, x);
+        return (int) md;
 }
 
 int fxp_pow(int x, int y)

@@ -338,12 +338,15 @@ int fxp_pow2_l(int fxp1)
         //   (we needed at least 2 whole bits for the BKM log algorithm).
         // - However argument, y and the BKM_LOGS array values
         //   have 1 whole and 63 frac bits for more accuracy
+        //printf("\npow2_l: pow2w:%lX  argument:%lX\n", pow2w, argument);
         unsigned long x = FXP_BKM_ONE_L, y = 0;
         for (int k = 0; k < FXP_INT_BITS; k++) {
                 unsigned long const  z = y + FXP_BKM_LOGS_L[k];
+                //printf("k:%d,  z:%lX\n", k, z);
                 if (z <= argument) {
                         y = z;
                         x = x + (x >> k);
+                        //printf("\tUpdating y (%lX) und x (%lX)\n", y, x);
                 }
         }
         unsigned long md = mul_distrib_l(pow2w, x);

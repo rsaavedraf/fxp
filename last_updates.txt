@@ -154,3 +154,9 @@ FXP_UNDEF in the end (all one bits).
 mul_distrib_l() implemented in fxp_l.c
 fxp_pow2_l() implemented using mul_distrib_l()
 Tests for it now run with zero warnings!
+
+2023-03-12:
+mul_distrib() implemented in fxp.c,
+fxp_pow2() implemented using mul_distrib(), and
+tests for it now also running with zero warnings
+

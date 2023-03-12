@@ -115,10 +115,10 @@ void print_fxp(int x)
                 int px = -x;
                 if (whole < 0) whole = -whole;
                 if (frac < 0) frac = -frac;
-                printf("-%d.%7d (=Lf:%Lf = %d = x(-)%x = b",
+                printf("-%d.%7d (=Lf:%Lf = %d = x(-)%X = b",
                         whole, frac, n, x, px);
         } else {
-                printf("%d.%7d (=Lf:%Lf = %d = x%x = b",
+                printf("%d.%7d (=Lf:%Lf = %d = x%X = b",
                         whole, frac, n, x, x);
         }
         print_fxp_as_bin(x, 0);

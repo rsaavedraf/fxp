@@ -41,7 +41,7 @@
 #define WDELTA_MAX 6.0
 
 static int fracbit_configs[] = {8, 11, 13, 16, 24, 30, 31};
-//static int fracbit_configs[] = {31};
+//static int fracbit_configs[] = {16};
 /*
 static int fracbit_configs[] = {4, 8, 9, 10,   \
             11, 12, 13, 14, 15, 16, 17, 18, 19, 20,     \
@@ -794,48 +794,115 @@ void test_pow()
 
         test_fxp("\npow2_l(0):", fxp_pow2_l(x),
                     get_pow2_target(x));
+        test_fxp("\npow2(0):", fxp_pow2(x),
+                    get_pow2_target(x));
+
         x = 1 << FXP_frac_bits - 1;
         test_fxp("pow2_l(0.5):", fxp_pow2_l(x),
                     get_pow2_target(x));
+        test_fxp("pow2(0.5):", fxp_pow2(x),
+                    get_pow2_target(x));
+
         x = fxp(1);
         test_fxp("pow2_l(1):", fxp_pow2_l(x),
                     get_pow2_target(x));
+        test_fxp("pow2(1):", fxp_pow2(x),
+                    get_pow2_target(x));
+
         x = fxp(2);
         test_fxp("pow2_l(2):", fxp_pow2_l(x),
                     get_pow2_target(x));
+        test_fxp("pow2(2):", fxp_pow2(x),
+                    get_pow2_target(x));
+
         x = fxp_bin(3, FXP_frac_max / 2);
         test_fxp("pow2_l(3.5):", fxp_pow2_l(x),
                     get_pow2_target(x));
+        test_fxp("pow2(3.5):", fxp_pow2(x),
+                    get_pow2_target(x));
+
         x = fxp_bin(14, FXP_frac_max);
         test_fxp("pow2_l(14.999...):", fxp_pow2_l(x),
+                    get_pow2_target(x));
+        test_fxp("pow2(14.999...):", fxp_pow2(x),
                     get_pow2_target(x));
 
         x = d2fxp(-0.5);
         test_fxp("pow2_l(-0.5):", fxp_pow2_l(x),
                     get_pow2_target(x));
+        test_fxp("pow2(-0.5):", fxp_pow2(x),
+                    get_pow2_target(x));
+
         x = -fxp_bin(0, FXP_frac_mask);
         test_fxp("pow2_l(-0.999...):", fxp_pow2_l(x),
                     get_pow2_target(x));
+        test_fxp("pow2(-0.999...):", fxp_pow2(x),
+                    get_pow2_target(x));
+
         x = fxp(-1);
         test_fxp("pow2_l(-1):", fxp_pow2_l(x),
                     get_pow2_target(x));
+        test_fxp("pow2(-1):", fxp_pow2(x),
+                    get_pow2_target(x));
+
         x = fxp_bin(-1, 1);
         test_fxp("pow2_l(-1.0..01):", fxp_pow2_l(x),
                     get_pow2_target(x));
+        test_fxp("pow2(-1.0..01):", fxp_pow2(x),
+                    get_pow2_target(x));
+
         x = fxp(-2);
         test_fxp("pow2_l(-2):", fxp_pow2_l(x),
                     get_pow2_target(x));
+        test_fxp("pow2(-2):", fxp_pow2(x),
+                    get_pow2_target(x));
+
         x = d2fxp(-3.5);
         test_fxp("pow2_l(-3.5):", fxp_pow2_l(x),
                     get_pow2_target(x));
+        test_fxp("pow2(-3.5):", fxp_pow2(x),
+                    get_pow2_target(x));
+
         x = fxp(-8);
         test_fxp("pow2_l(-8):", fxp_pow2_l(x),
                     get_pow2_target(x));
+        test_fxp("pow2(-8):", fxp_pow2(x),
+                    get_pow2_target(x));
+
+        x = fxp(-16);
+        test_fxp("pow2_l(-16):", fxp_pow2_l(x),
+                    get_pow2_target(x));
+        test_fxp("pow2(-16):", fxp_pow2(x),
+                    get_pow2_target(x));
+
+        x = fxp(-30);
+        test_fxp("pow2_l(-30):", fxp_pow2_l(x),
+                    get_pow2_target(x));
+        test_fxp("pow2(-30):", fxp_pow2(x),
+                    get_pow2_target(x));
+
+        x = fxp(-31);
+        test_fxp("pow2_l(-31):", fxp_pow2_l(x),
+                    get_pow2_target(x));
+        test_fxp("pow2(-31):", fxp_pow2(x),
+                    get_pow2_target(x));
+
+        x = fxp(-32);
+        test_fxp("pow2_l(-32):", fxp_pow2_l(x),
+                    get_pow2_target(x));
+        test_fxp("pow2(-32):", fxp_pow2(x),
+                    get_pow2_target(x));
+
         x = fxp(-42);
         test_fxp("pow2_l(-42):", fxp_pow2_l(x),
                     get_pow2_target(x));
+        test_fxp("pow2(-42):", fxp_pow2(x),
+                    get_pow2_target(x));
+
         x = -fxp_largest;
         test_fxp("pow2_l(-most neg):", fxp_pow2_l(x),
+                    get_pow2_target(x));
+        test_fxp("pow2(-most neg):", fxp_pow2(x),
                     get_pow2_target(x));
 }
 
@@ -948,8 +1015,14 @@ void test_ops_with_rand_nums()
                 tgt2 = get_pow2_target(n3);
                 tgt3 = get_pow2_target(-n3);
                 test_fxp("pow2_l(-frac(n1))", fxp_pow2_l(n4), tgt1);
+                test_fxp("pow2(-frac(n1))", fxp_pow2(n4), tgt1);
+
                 test_fxp("pow2_l( n3)", fxp_pow2_l(n3), tgt2);
+                test_fxp("pow2( n3)", fxp_pow2(n3), tgt2);
+
                 test_fxp("pow2_l(-n3)", fxp_pow2_l(-n3), tgt3);
+                test_fxp("pow2(-n3)", fxp_pow2(-n3), tgt3);
+
 
                 // Tests for other logarithms still pending,
                 // will enable after all-bits frac multiplication
