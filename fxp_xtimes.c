@@ -6,21 +6,22 @@
  * Shows relavite execution times (smaller is better)
  * for the different fxp operations and functions.
  * Example end of the ouput, for a system with an
- * Intel i7-6700K cpu, run on 2023-03-06:
+ * Intel i7-6700K cpu, run on 2023-03-12:
  *
 =================================================
 Xtime averages for frac bit configurations {8, 12, 16, 20, 24, 28}
 =================================================
-add      :   1.00  (  4.88x system's native addition of ints)
-mul      :  11.11  ( 49.27x system's native multiplication of ints)
-mul_l    :   1.62  (  7.20x system's native multiplication of ints)
-div      :  15.68  ( 30.68x system's native division of ints)
-div_l    :   2.97  (  5.80x system's native division of ints)
-lg2      :  25.40  (BKM, only ints)
-lg2_l    :  20.78  (about  0.82x lg2, using BKM and longs)
-lg2_mul_l:  47.27  (about  1.86x lg2, using mult. and longs)
+add      :   1.00  (  4.92x system's native addition of ints)
+mul      :  11.11  ( 53.47x system's native multiplication of ints)
+mul_l    :   1.63  (  7.82x system's native multiplication of ints)
+div      :  15.66  ( 30.71x system's native division of ints)
+div_l    :   3.05  (  5.98x system's native division of ints)
+lg2      :  25.54  (BKM, only ints)
+lg2_l    :  20.74  (about  0.81x lg2, using BKM and longs)
+lg2_mul_l:  47.80  (about  1.87x lg2, using mult. and longs)
+pow2     :  34.20  (BKM, only ints)
+pow2_l   :  16.27  (about  0.48x pow2, using BKM and longs)
 =================================================
- *
  */
 
 #include <stdio.h>
@@ -40,9 +41,10 @@ int main(void) {
 
         long double tadd, tadd_l, tmul, tmul_l, tmul_d;
         long double tdiv, tdiv_l, tlg2, tlg2_l, tlg2_mul, tlg2_mul_l;
+        long double tpow2, tpow2_l;
         long double avgadd, avgadd_l, avgmul, avgmul_l, avgmul_d;
         long double avgdiv, avgdiv_l, avglg2, avglg2_l, avglg2_mul;
-        long double avglg2_mul_l;
+        long double avglg2_mul_l, avgpow2, avgpow2_l;
         // Times for the system's native operations
         long double tadd_sys, tmul_sys, tdiv_sys;
         long double avgadd_sys, avgmul_sys, avgdiv_sys;
@@ -73,6 +75,8 @@ int main(void) {
         avgdiv_l = 0;
         avglg2 = 0;
         avglg2_l = 0;
+        avgpow2 = 0;
+        avgpow2_l = 0;
         avglg2_mul = 0;
         avglg2_mul_l = 0;
         avgadd_sys = 0;
@@ -92,10 +96,14 @@ int main(void) {
                 tlg2_l = 0;
                 tlg2_mul = 0;
                 tlg2_mul_l = 0;
+                tpow2 = 0;
+                tpow2_l = 0;
                 lastp = -1;
                 tadd_sys = 0;
                 tmul_sys = 0;
                 tdiv_sys = 0;
+                int nwb = FXP_INT_BITS - nfb;
+                unsigned int mask_for_pow = (1u << ((nwb > 6? 6: nwb) + nfb - 1)) - 1;
                 for (int n = 0; n < MAX_NUMS; n++) {
                         int p = (int) (((float) (n+1) * 100) / MAX_NUMS);
                         if (((p % 10) == 0) && (p != lastp) && (p != 0)) {
@@ -309,6 +317,44 @@ int main(void) {
                         tlg2_mul_l += dt;
                         avglg2_mul_l += dt;
 
+                        // Calculation of pow2 of fxp's using
+                        // BKM and only ints
+                        n1 = n1 & mask_for_pow;
+                        n2 = -n3;
+                        t0 = clock();
+                        for (int i = 0; i < MAX_OPS; i++) {
+                                x = fxp_pow2(n1);
+                                x = fxp_pow2(n2);
+                                for (int j = 0; j < nvals; j++) {
+                                        y = val[j];
+                                        x = fxp_pow2(n1);
+                                        x = fxp_pow2(n2);
+                                        x = fxp_pow2(n3);
+                                }
+                        }
+                        t1= clock();
+                        dt = ((double) t1 - t0);
+                        tpow2 += dt;
+                        avgpow2 += dt;
+
+                        // Calculation of pow2_l of fxp's using
+                        // BKM and only ints
+                        t0 = clock();
+                        for (int i = 0; i < MAX_OPS; i++) {
+                                x = fxp_pow2_l(n1);
+                                x = fxp_pow2_l(n2);
+                                for (int j = 0; j < nvals; j++) {
+                                        y = val[j];
+                                        x = fxp_pow2_l(n1);
+                                        x = fxp_pow2_l(n2);
+                                        x = fxp_pow2_l(n3);
+                                }
+                        }
+                        t1= clock();
+                        dt = ((double) t1 - t0);
+                        tpow2_l += dt;
+                        avgpow2_l += dt;
+
                 }
 
                 // Results for this configuration of frag bits
@@ -322,8 +368,11 @@ int main(void) {
                 printf("lg2_l    : %6.2Lf  (about %5.2Lfx lg2, using BKM and longs)\n", \
                             tlg2_l / tadd, tlg2_l / tlg2);
                 printf("lg2_mul_l: %6.2Lf  (about %5.2Lfx lg2, using mult. and longs)\n", \
-                             tlg2_mul_l / tadd, tlg2_mul_l / tlg2);
-
+                            tlg2_mul_l / tadd, tlg2_mul_l / tlg2);
+                printf("pow2     : %6.2Lf  (BKM, only ints)\n", \
+                            tpow2 / tadd);
+                printf("pow2_l   : %6.2Lf  (about %5.2Lfx pow2, using BKM and longs)\n", \
+                            tpow2_l / tadd, tpow2_l / tpow2);
         }
 
         // Overall results
@@ -344,6 +393,8 @@ int main(void) {
         avglg2 /= nconfigs;
         avglg2_l /= nconfigs;
         avglg2_mul_l /= nconfigs;
+        avgpow2 /= nconfigs;
+        avgpow2_l /= nconfigs;
         printf("add      : %6.2Lf  (%6.2Lfx system's native addition of ints)\n", \
                     1.0L, avgadd / avgadd_sys);
         printf("mul      : %6.2Lf  (%6.2Lfx system's native multiplication of ints)\n", \
@@ -361,6 +412,11 @@ int main(void) {
         printf("lg2_mul_l: %6.2Lf  (about %5.2Lfx lg2, using mult. and longs)\n", \
                     avglg2_mul_l / avgadd, \
                     avglg2_mul_l / avglg2);
+        printf("pow2     : %6.2Lf  (BKM, only ints)\n", \
+                    avgpow2 / avgadd);
+        printf("pow2_l   : %6.2Lf  (about %5.2Lfx pow2, using BKM and longs)\n", \
+                    avgpow2_l / avgadd, \
+                    avgpow2_l / avgpow2);
 
         printf("%s", DASHES);
 

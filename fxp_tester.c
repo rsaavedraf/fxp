@@ -988,7 +988,7 @@ void test_ops_with_rand_nums()
                 n1 = n1 < 0? -n1: n1;
                 n2 = n2 < 0? -n2: n2;
                 n3 = n3 < 0? -n3: n3;
-                printf("\nTesting lg2 implementations, ");
+                printf("Testing lg2 and pow2 implementations, ");
                 printf("frac bits: %d", frac_bits);
                 printf("\nn1 = "); print_fxp(n1);
                 printf("\nn2 = "); print_fxp(n2);
