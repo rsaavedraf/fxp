@@ -1351,9 +1351,10 @@ int fxp_pow2(int fxp1)
                 }
         }
         unsigned int x;
-        if ((xa >> FXP_INT_BITS_M1) == 0 ) {
+        if ((xa >> FXP_INT_BITS_M1) == 0) {
                 x = (xa << 1) | (xb >> FXP_INT_BITS_M1);
         } else {
+                x = xa;
                 pow2w = pow2w << 1;
         }
         //printf("xa:%X, final x:%X\n", xa, x);
