@@ -181,46 +181,46 @@ long double my_log2(long double x)
  * using long doubles:
  * https://en.wikipedia.org/wiki/BKM_algorithm
  */
-long double my_log2_bkm(long double x, int nbits)
+long double my_log2_bkm(long double xin, int nbits)
 {
-        if (x < 0.0) return FXP_UNDEF_LD;
-        if (x <= FXP_ZERO_LD) return FXP_NINF_LD;
-        long double z = x;
+        if (xin < 0.0) return FXP_UNDEF_LD;
+        if (xin <= FXP_ZERO_LD) return FXP_NINF_LD;
+        long double argument = xin;
         int c = 0; // characteristic
-        while (z >= 2.0) {
+        while (argument >= 2.0) {
                 c++;
-                z /= 2;
+                argument /= 2;
         }
-        while (z < 1.0) {
+        while (argument < 1.0) {
                 c--;
-                z *= 2;
+                argument *= 2;
         }
         // Here we have already calculated the log characteristic c, and
         // we have z satisfying: 1 <= z < 2
-        long double xx = 1.0;
-        long double yy = 0.0;
-        long double ss = 0.5;
+        long double x = 1.0;
+        long double y = 0.0;
+        long double s = 0.5;
         // Notice ss starting with 0.5. Skipping the 1.0 because we know
         // zz < 2, so that first test if (zz < z) when ss == 1.0 would be
         // false for sure
-        long double zz;
+        long double z;
         for (int k = 1; k < nbits; k++) {
                 // Notice that z is for sure in [1, 2), and yy
                 // will remain in the range of log(z), and that is:
                 // [0, 1), but zz can in fact get bigger than 2
                 // repeatedly in these iterations, even if not by much.
-                zz = xx + xx * ss;
-                printf("\tlg2 bkm iteration %d, zz:%0.5LE\n", k, zz);
-                if (zz <= z) {
-                        xx = zz;
-                        yy += A_2[k];
-                        printf("\t\tUpdating yy:%0.5LE\n", yy);
+                z = x + x * s;
+                printf("\tlog2 bkm iteration %d, z:%0.5LE\n", k, z);
+                if (z <= argument) {
+                        x = z;
+                        y += A_2[k];
+                        printf("\t\tUpdating y:%0.5LE\n", y);
                 }
-                ss *= 0.5;
+                s *= 0.5;
         }
-        long double full_log = ((long double) c) + yy;
-        printf("log(%.5LE) = c (%d)+ m (%.5LE) = %.5LE\n", x, c, yy, full_log);
-        return full_log;
+        long double full_log2 = ((long double) c) + y;
+        printf("log2(%.5LE) = c (%d)+ m (%.5LE) = %.5LE\n", xin, c, y, full_log2);
+        return full_log2;
 }
 
 /*
@@ -250,7 +250,7 @@ long double my_pow2_bkm(long double n, int nbits)
         long double x = 1.0, y = 0.0, s = 1.0;
         for (int k = 0; k < nbits; k++) {
                 long double const  z = y + A_2[k];
-                printf("\tpow2 bkm iteration %d, zz:%.5LE, x:%.5LE\n", \
+                printf("\tpow2 bkm iteration %d, z:%.5LE, x:%.5LE\n", \
                             k, z, x);
                 if (z <= argument) {
                         y = z;
@@ -313,9 +313,10 @@ int main(void)
         }
         printf("\n};\n");
 
-        //long double x1 = my_log2_bkm(1.9999999999, 31);
-        //long double x2 = my_log2_bkm(0.9999999999, 31);
+        long double x1 = my_log2_bkm(1.9999999999, 31);
+        long double x2 = my_log2_bkm(0.9999999999, 31);
 
+        printf("\n");
         long double x3 = my_pow2_bkm(0.5, 31);
         //long double x4 = my_pow2_bkm(1.5, 31);
         //long double x5 = my_pow2_bkm(2.0, 31);

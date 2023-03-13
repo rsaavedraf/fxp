@@ -160,3 +160,16 @@ mul_distrib() implemented in fxp.c,
 fxp_pow2() implemented using mul_distrib(), and
 tests for it now also running with zero warnings
 
+2023-03-13:
+Calibrating lg2 against lg2_l making it also loop through all
+FXP_INT_BITS iterations, then also rounding last mantissa bit
+in lg2 exactly the same way lg2_l does.
+Then testing lg2 with exact same argument right after each test of lg2_l,
+now shows both with exact same result down to the very last bit.
+(Between pow2_l vs. pow2 at least for now there are ocassional differences
+in the very last bit, but this is always below the warning range anyway.)
+General aux variables cleanup, removed a few not really needed
+especially for lg2.
+Variable names now more consistent between int vs. long implementations
+of lg2 and pow2 functions.
+

@@ -60,9 +60,9 @@ extern int FXP_one;
 extern int FXP_two;
 extern int FXP_lg2_maxloops;
 extern int FXP_lg2_l_mshift;
-extern int FXP_lg2_l_mshiftm1;
+extern int FXP_lg2_l_mshift_m1;
 extern int FXP_pow2_l_xshift;
-extern int FXP_pow2_l_xshiftm1;
+extern int FXP_pow2_l_xshift_m1;
 extern unsigned long FXP_max_lshifted;
 extern unsigned long FXP_one_l;
 

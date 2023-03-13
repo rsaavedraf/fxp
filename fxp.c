@@ -1,3 +1,4 @@
+
 /* SPDX-License-Identifier: MIT */
 /*
  * fxp.c
@@ -6,17 +7,11 @@
  * encoding them into integers, together with their
  * arithmetic operations +, -, *, and /, and more.
  *
- * Safe arithmetic operations for the fxp's compliant
- * with INT32-C, as in:
- * https://wiki.sei.cmu.edu/confluence/display/c/INT32-C.+Ensure+that+operations+on+signed+integers+do+not+result+in+overflow
- *
  * By Raul Saavedra, Bonn, Germany
  *
  */
 
 #include "fxp.h"
-//#include "fxp_aux.h"
-//#include <float.h>
 #include <stdio.h>
 #include <stdlib.h>
 //#include <assert.h>
@@ -77,6 +72,7 @@ static unsigned int FXP_frac_maskr = 63;
 // Default number of bits for the whole part (includes sign bit)
 int FXP_whole_bits = FXP_INT_BITS - FXP_FRAC_BITS_DEF;
 int FXP_whole_bits_m1 = FXP_INT_BITS_M1 - FXP_FRAC_BITS_DEF;
+int FXP_whole_bits_m2 = FXP_INT_BITS_M1 - FXP_FRAC_BITS_DEF - 1;
 
 // FXP_FRAC_MASK should correspond to 2^FXP_FRAC_BITS - 1
 unsigned int FXP_frac_mask = ((1u << FXP_FRAC_BITS_DEF) - 1);
@@ -140,12 +136,6 @@ int FXP_lg2_maxloops = FXP_FRAC_BITS_DEF + 1;
 unsigned int FXP_one = 1u << FXP_FRAC_BITS_DEF;
 unsigned long FXP_one_l =  1ul << FXP_FRAC_BITS_DEF;
 
-// TODO: can it be removed? seems exactly == FXP_whole_bits_m1
-static int FXP_lg2_mshift = FXP_INT_BITS_M1 - FXP_FRAC_BITS_DEF;
-static int FXP_lg2_yashift = FXP_INT_BITS_M1 - FXP_FRAC_BITS_DEF;
-static int FXP_lg2_ybmask = 0;
-static int FXP_lg2_ybshift = 0;
-
 // Default desired max frac decimal value
 // (can be changed dynamically calling set_[auto_]frac_max_dec
 int fxp_frac_max_dec = 9999;
@@ -199,26 +189,17 @@ static const unsigned int FXP_BKM_LOGS_XTRA[] = {
 // BKM one is a 1 unsigned fxp with 2 whole bits
 static const unsigned int FXP_BKM_ONE = 1u << (FXP_INT_BITS - 2);
 static const unsigned int FXP_BKM_HALF = FXP_BKM_ONE >> 1;
-static const unsigned int FXP_BKM_MSB1 = 1u << (FXP_INT_BITS - 1);
-static const unsigned int FXP_BKM_IMSB1 = ~FXP_BKM_MSB1;
-// TODO: check if following constant can be removed
-// (same as FXP_BKM_HALF)
-static const unsigned int FXP_BKM_NMSB1 = FXP_BKM_MSB1 >> 1;
 static const unsigned int FXP_BKM_MAXU = ~(0u);
 
 // Auxiliary variables for the implementations that use longs (fxp_l.c)
 const unsigned long FXP_BKM_ONE_L = \
                     ((unsigned long) FXP_BKM_ONE) << FXP_INT_BITS;
-//const int FXP_BKM_L_CLZSHIFT = FXP_INT_BITS - 1;
 const unsigned long FXP_BKM_HALF_L = (FXP_BKM_ONE_L >> 1);
 
-//unsigned long FXP_max_lshifted = (FXP_MAX_L << FXP_FRAC_BITS_DEF);
 unsigned long FXP_max_lshifted = (FXP_MAX_L << FXP_FRAC_BITS_DEF) \
                     | (((1 << FXP_FRAC_BITS_DEF) - 1) / 2);
 int FXP_lg2_l_mshift = 2 * FXP_INT_BITS - 1 - FXP_FRAC_BITS_DEF;
-int FXP_lg2_l_mshiftm1 = 2 * FXP_INT_BITS - 2 - FXP_FRAC_BITS_DEF;
-int FXP_pow2_l_xshift = 2 * FXP_INT_BITS - 2 - FXP_FRAC_BITS_DEF;
-int FXP_pow2_l_xshiftm1 = 2 * FXP_INT_BITS - 3 - FXP_FRAC_BITS_DEF;
+int FXP_lg2_l_mshift_m1 = 2 * FXP_INT_BITS - 2 - FXP_FRAC_BITS_DEF;
 
 /*
  * Given an fxp with x number of frac bits, returns
@@ -231,8 +212,6 @@ static unsigned int fxp_rshift_tconst(unsigned int fxp, int x, int y)
 {
         int shift = x - y;
         if (shift <= 0) return (unsigned int) FXP_POS_INF;
-        //unsigned int mask = 1u << (shift - 1);
-        //unsigned int rbit = fxp & mask;
         unsigned int rbit = (fxp >> (shift - 1)) & 1u;
         return (fxp >> shift) + rbit;
 }
@@ -255,6 +234,7 @@ int fxp_set_frac_bits(int nfracbits)
 
         FXP_whole_bits = FXP_INT_BITS - FXP_frac_bits;
         FXP_whole_bits_m1 = FXP_whole_bits - 1;
+        FXP_whole_bits_m2 = FXP_whole_bits - 2;
 
         // fxp_frac_mask should correspond to 2^FXP_FRAC_BITS - 1
         FXP_frac_mask = (1u << FXP_frac_bits) - 1;
@@ -319,20 +299,8 @@ int fxp_set_frac_bits(int nfracbits)
         FXP_half = FXP_one >> 1;
         FXP_two = FXP_one << 1;
         FXP_lg2_maxloops = FXP_frac_bits + 1;
-        FXP_lg2_mshift = FXP_INT_BITS_M1 - FXP_frac_bits;
         FXP_lg2_l_mshift = 2 * FXP_INT_BITS - 1 - FXP_frac_bits;
-        FXP_lg2_yashift = FXP_INT_BITS_M1 - FXP_frac_bits;
-        if (FXP_lg2_yashift >= 0) {
-            FXP_lg2_ybshift = 0;
-            FXP_lg2_ybmask = 0;
-        } else {
-            // When lg2_shift is negative, lg2_ybmask is equal to
-            // a number of 1's == -lg2_shift, shifted to the
-            // left-most bits of an int
-            FXP_lg2_ybshift = FXP_INT_BITS + FXP_lg2_yashift;
-            FXP_lg2_ybmask = ((1 << (-FXP_lg2_yashift)) - 1) \
-                    << FXP_lg2_ybshift;
-        }
+        FXP_lg2_l_mshift_m1 = FXP_lg2_l_mshift - 1;
 
         return FXP_frac_bits;
 }
@@ -605,10 +573,10 @@ int fxp_sub(int fxp1, int fxp2)
 }
 
 /*
-Return number of bits used by x, that is,
-most significant bit in x that is a 1
-(returned value is between 0 and FXP_INT_BITS)
-*/
+ * Return number of bits used by x, that is,
+ * most significant bit in x that is a 1
+ * (returned value is between 0 and FXP_INT_BITS)
+ */
 int fxp_nbits(unsigned int x)
 {
     if (x == 0) return 0;
@@ -649,7 +617,7 @@ unsigned int mul_distrib( unsigned int x,
         xb = (x & FXP_RWORD_MASK);
         ya = y >> FXP_WORD_BITS;
         yb = (y & FXP_RWORD_MASK);
-        //printf("\txa:%X, xb:%X, ya:%X, yb:%X\n", xa, xb, ya, yb);
+        //if (VERBOSE) printf("\txa:%X, xb:%X, ya:%X, yb:%X\n", xa, xb, ya, yb);
         xayb = xa * yb;
         yaxb = ya * xb;
         qr1 = xayb & FXP_RWORD_MASK;
@@ -1034,112 +1002,6 @@ unsigned int fxp_get_lg10_2()
  * For more details on BKM:
  * https://en.wikipedia.org/wiki/BKM_algorithm
  */
-int fxp_lg2_ref(int fxp1, int * c, unsigned int *ya)
-{
-        if (fxp1 <= 0) return ((fxp1 == 0)? FXP_NEG_INF: FXP_UNDEF);
-        if (fxp1 == FXP_POS_INF) return FXP_POS_INF;
-        // Here fxp1 for sure > 0
-        int clz = __builtin_clz((unsigned int) fxp1);
-        // clz > 0 since at least sign bit == 0
-        int nbx = FXP_INT_BITS - clz;
-        // c is characteristic
-        *c = ((fxp1 < FXP_one) || (fxp1 >= FXP_two))?
-                    (nbx - FXP_frac_bits - 1): 0;
-
-        // Here we replicate what the lg2_l implementation does,
-        // but simulating longs with two ints a and b, so
-        // instead of a K of type long, two ints (ka, kb),
-        // ka the most significant, kb the least one
-        unsigned int za = ((unsigned int) fxp1) << (clz - 1);
-        //unsigned int zb = 0; // <- zb not really needed, will remain 0
-
-        unsigned int xa = FXP_BKM_ONE, xb = 0;      // x
-        unsigned int zza, zzb;                      // zz
-        unsigned int xsa = 0, xsb = 0;              // xs
-        unsigned int yb = 0;                        // (*ya, yb) for y
-        unsigned int auxa, auxb;                    // aux
-        unsigned int a_bits;
-        unsigned int ab_mask = 1;
-        for (int shift = 1; shift <= FXP_lg2_maxloops; shift++) {
-
-                //unsigned long xs = (x >> shift);
-                // Here we must r-shift the combo (xa, xb) by shift units
-                // leaving the results in combo (xsa, xsb)
-                if (shift < FXP_INT_BITS) {
-                        a_bits = (xa & ab_mask);
-                        xsa = (xa >> shift);
-                        xsb = (a_bits << (FXP_INT_BITS - shift)) | (xb >> shift);
-                        ab_mask = (ab_mask << 1) | 1;
-                } else {
-                        xsa = 0;
-                        xsb = (xa >> (shift - FXP_INT_BITS));
-                }
-
-                // zz = x + xs;
-                zza = xa + xsa;
-                if (xsb > FXP_BKM_MAXU - xb)
-                    // Carry over from zzb into zza
-                    zza++;
-                zzb = xb + xsb;
-
-                // if (zz <= z) {
-                if ((zza < za) || ((zza == za) && (zzb == 0))) {
-
-                        // x = zz;
-                        xa = zza;
-                        xb = zzb;
-
-                        // Here we use the precalculated values
-                        // y += FXP_BKM_LOGS_L[shift];
-                        auxa = FXP_BKM_LOGS[shift];
-                        auxb = FXP_BKM_LOGS_XTRA[shift];
-                        *ya += auxa;
-                        if (yb > FXP_BKM_MAXU - auxb)
-                            // Carry from yb into ya
-                            *ya++;
-                        yb += auxb;
-                }
-        }
-        // Now y has the mantissa, shift it adjusting for final fxp
-        int m;
-        if (FXP_lg2_yashift >= 0)
-                m = *ya >> FXP_lg2_yashift;
-        else {
-                // Shifting the mantissa to the left, so we should pull
-                // the left-most bits from yb
-                m = (*ya << (-FXP_lg2_yashift)) |
-                        ((yb & FXP_lg2_ybmask) >> FXP_lg2_ybshift);
-        }
-        // Return the complete logarithm (c + m) as fxp
-        if (*c < FXP_whole_min) {
-                if ((*c + 1 == FXP_whole_min) && (m > 0)) {
-                        // Special case: in spite of not enough whole
-                        // bits available for c, there are for c + 1,
-                        // which is what this logarithm will return as
-                        // whole part
-                        *c = FXP_whole_min;
-                        return INT_MIN + m;
-                }
-                // Overflow: the characteristic of the logarithm
-                // will not fit in the whole bits part of our
-                // current fxp settings
-                *c = FXP_NEG_INF;
-                *ya = FXP_NEG_INF;
-                return FXP_NEG_INF;
-        }
-        if (*c >= 0)
-            return (*c << FXP_frac_bits) + m;
-        else
-            return -(-(*c) << FXP_frac_bits) + m;
-}
-
-/*
- * Default log2 calculation using only ints and the BKM algorithm.
- * Requires table of pre-calculated values
- *
- * For more details on BKM:
- * https://en.wikipedia.org/wiki/BKM_algorithm
- */
 int fxp_lg2(int fxp1)
 {
         if (fxp1 <= 0) return ((fxp1 == 0)? FXP_NEG_INF: FXP_UNDEF);
@@ -1154,50 +1016,44 @@ int fxp_lg2(int fxp1)
 
         // Here we replicate what the lg2_l implementation does,
         // but simulating longs with two ints a and b, so
-        // instead of a K of type long, two ints (ka, kb),
+        // instead of a k of type long, two ints (ka, kb),
         // ka the most significant, kb the least one.
-        // We do this for x, zz, xs, y, and aux
-        unsigned int za = ((unsigned int) fxp1) << (clz - 1);
-        //unsigned int zb = 0; // <- zb not really needed, will remain 0
-
+        // We do this for x, z, xs, y, and aux
+        // (argumentb would always be 0, so we just need
+        // the a part for argument)
+        unsigned int argument = ((unsigned int) fxp1) << (clz - 1);
         unsigned int xa = FXP_BKM_ONE, xb = 0;      // x
-        unsigned int zza, zzb;                      // zz
+        unsigned int za, zb;                        // z
         unsigned int xsa = 0, xsb = 0;              // xs
         unsigned int ya = 0, yb = 0;                // y
         unsigned int auxa, auxb;                    // aux
         unsigned int a_bits;
         unsigned int ab_mask = 1;
-        for (int shift=1; shift <= FXP_lg2_maxloops; shift++) {
-
+        //printf("c:%d  argument:x%X\n", c, argument);
+        //for (int shift=1; shift <= FXP_INT_BITS; shift++) {
+        for (int shift=1; shift < FXP_INT_BITS; shift++) {
                 //unsigned long xs = (x >> shift);
                 // Here we must r-shift the combo (xa, xb) by shift units
                 // leaving the results in combo (xsa, xsb)
-                // TODO: this can be slightly optimized separating into
-                // two for loops avoiding this if statement in the 1st one
-                if (shift < FXP_INT_BITS) {
-                        a_bits = (xa & ab_mask);
-                        xsa = (xa >> shift);
-                        xsb = (a_bits << (FXP_INT_BITS - shift)) | (xb >> shift);
-                        ab_mask = (ab_mask << 1) | 1;
-                } else {
-                        xsa = 0;
-                        xsb = (xa >> (shift - FXP_INT_BITS));
-                }
+                a_bits = (xa & ab_mask);
+                xsa = (xa >> shift);
+                xsb = (a_bits << (FXP_INT_BITS - shift)) \
+                        | (xb >> shift);
+                ab_mask = (ab_mask << 1) | 1;
 
-                // zz = x + xs;
-                zza = xa + xsa;
+                // z = x + xs;
+                za = xa + xsa;
                 if (xsb > FXP_BKM_MAXU - xb)
-                        // Carry over from zzb into zza
-                        zza++;
-                zzb = xb + xsb;
+                        // Carry over from zb into za
+                        za++;
+                zb = xb + xsb;
 
-                // if (zz <= z) {
-                if ((zza < za) || ((zza == za) && (zzb == 0))) {
-
-                        // x = zz;
-                        xa = zza;
-                        xb = zzb;
-
+                // if (z <= argument) {
+                if ((za < argument) || \
+                    ((za == argument) && (zb == 0))) {
+                        // x = z;
+                        xa = za;
+                        xb = zb;
                         // Here we use the precalculated values
                         // y += FXP_BKM_LOGS_L[shift];
                         auxa = FXP_BKM_LOGS[shift];
@@ -1207,19 +1063,37 @@ int fxp_lg2(int fxp1)
                                 // Carry from yb into ya
                                 ya++;
                         yb += auxb;
+                        //printf("\tx:x%X-%X  Updating y:x%X-%X\n", \
+                        //        xa, xb, ya, yb);
                 }
         }
-        // Include any carry overs from summing the xtra bits together
-        // Now y has the mantissa, shift it adjusting for final fxp
-        int m;
-        if (FXP_lg2_yashift >= 0)
-                m = ya >> FXP_lg2_yashift;
-        else {
-                // Shifting the mantissa to the left, so we should pull
-                // the left-most bits from yb
-                m = (ya << (-FXP_lg2_yashift)) |
-                        ((yb & FXP_lg2_ybmask) >> FXP_lg2_ybshift);
+
+        // One final "iteration", for shift == FXP_INT_BITS
+        xsa = 0;
+        xsb = xa;
+        za = xa;
+        if (xsb > FXP_BKM_MAXU - xb) za++;
+        zb = xb + xsb;
+        if ((za < argument) || \
+            ((za == argument) && (zb == 0))) {
+                xa = za;
+                xb = zb;
+                auxa = FXP_BKM_LOGS[FXP_INT_BITS];
+                auxb = FXP_BKM_LOGS_XTRA[FXP_INT_BITS];
+                ya += auxa;
+                if (yb > FXP_BKM_MAXU - auxb) ya++;
+                yb += auxb;
         }
+
+        // Now y has the mantissa, shift it adjusting for final fxp
+        unsigned int rbitb, rbit, m;
+        // Rounding bit before shifting the mantissa value,
+        // just as lg2_l does
+        rbitb = (yb >> FXP_INT_BITS_M1);
+        ya += rbitb;
+        rbit = (ya >> FXP_whole_bits_m2) & 1u;
+        m = (ya >> FXP_whole_bits_m1) + rbit;
+        //printf("Final mantissa:%d  (rounding bit was %d)\n", m, rbit);
         // Return the complete logarithm (c + m) as fxp
         if (c < FXP_whole_min) {
                 if ((c + 1 == FXP_whole_min) && (m > 0)) {
@@ -1227,7 +1101,7 @@ int fxp_lg2(int fxp1)
                         // bits available for c, there are for c + 1,
                         // which is what this logarithm will return as
                         // whole part
-                        return INT_MIN + m;
+                        return INT_MIN + ((int) m);
                 }
                 // Overflow: the characteristic of the logarithm
                 // will not fit in the whole bits part of our
@@ -1235,9 +1109,9 @@ int fxp_lg2(int fxp1)
                 return FXP_NEG_INF;
         }
         if (c >= 0)
-                return (c << FXP_frac_bits) + m;
+                return (c << FXP_frac_bits) + ((int) m);
         else
-                return -(-c << FXP_frac_bits) + m;
+                return (-(-c << FXP_frac_bits)) + ((int) m);
 }
 
 /*
@@ -1288,7 +1162,7 @@ int fxp_pow2(int fxp1)
                 }
                 pow2w = FXP_one << (w + 1);
                 // Argument will be in [0, 1)
-                argument = ((unsigned int) f) << FXP_lg2_mshift;
+                argument = ((unsigned int) f) << FXP_whole_bits_m1;
         } else {
                 if (w <= FXP_INT_BITS_M1_NEG) {
                         return 0;
@@ -1302,9 +1176,9 @@ int fxp_pow2(int fxp1)
                 else
                         pow2w = FXP_one;
                 argument = (FXP_one + f) \
-                                << FXP_lg2_mshift;
+                                << FXP_whole_bits_m1;
         }
-        //printf("pow2w:%X  argument:%X\n", pow2w, argument);
+        //if (VERBOSE) printf("pow2w:%X  argument:%X\n", pow2w, argument);
         //unsigned int x = FXP_BKM_ONE, y = 0;
         unsigned int xa = FXP_BKM_ONE, xb = 0;
         unsigned int ya = 0, yb = 0;
@@ -1318,7 +1192,7 @@ int fxp_pow2(int fxp1)
                         za++;
                 zb = yb + auxb;
 
-                //printf("k:%d,  z:%X-%X\n", k, za, zb);
+                //if (VERBOSE) printf("k:%d,  z:%X-%X\n", k, za, zb);
                 //if (z <= argument) {
                 if ((za < argument) \
                     || ((za == argument) && (zb == 0))) {
@@ -1333,11 +1207,11 @@ int fxp_pow2(int fxp1)
                         // Here we r-shift the combo (xa, xb) by k units
                         // leaving the results in combo (xsa, xsb)
                         //if (k < FXP_INT_BITS) {
-                                ab_mask = (1u << k) - 1;
-                                a_bits = (xa & ab_mask);
-                                xsa = (xa >> k);
-                                xsb = (a_bits << (FXP_INT_BITS - k)) \
-                                        | (xb >> k);
+                        ab_mask = (1u << k) - 1;
+                        a_bits = (xa & ab_mask);
+                        xsa = (xa >> k);
+                        xsb = (a_bits << (FXP_INT_BITS - k)) \
+                                | (xb >> k);
                         //} else {
                         //        xsa = 0;
                         //        xsb = (xa >> (k - FXP_INT_BITS));
@@ -1346,8 +1220,8 @@ int fxp_pow2(int fxp1)
                         if (xsb > FXP_BKM_MAXU - xb)
                                 xa++;
                         xb += xsb;
-                        //printf("\tUpdating y (%X-%X) und x (%X-%X)\n", \
-                        //        ya, yb, xa, xb);
+                        //if (VERBOSE) printf("\tUpdating y (%X-%X) und x (%X-%X)\n", \
+                        //                ya, yb, xa, xb);
                 }
         }
         unsigned int x;
@@ -1357,7 +1231,7 @@ int fxp_pow2(int fxp1)
                 x = xa;
                 pow2w = pow2w << 1;
         }
-        //printf("xa:%X, final x:%X\n", xa, x);
+        //if (VERBOSE) printf("xa:%X, final x:%X\n", xa, x);
         unsigned int md = mul_distrib(pow2w, x);
         return (int) md;
 }

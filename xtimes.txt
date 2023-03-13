@@ -20,93 +20,93 @@ long double has a size of 16 bytes.
 Number of frac bits: 8
 10%  20%  30%  40%  50%  60%  70%  80%  90%  100%  
 add      :   1.00
-mul      :  10.04
+mul      :  10.03
 mul_l    :   1.62
-div      :  15.89
-div_l    :   3.06
-lg2      :  12.35  (BKM, only ints)
-lg2_l    :  20.36  (about  1.65x lg2, using BKM and longs)
-lg2_mul_l:  21.03  (about  1.70x lg2, using mult. and longs)
-pow2     :  37.73  (BKM, only ints)
-pow2_l   :  17.82  (about  0.47x pow2, using BKM and longs)
+div      :  15.69
+div_l    :   2.97
+lg2      :  39.83  (BKM, only ints)
+lg2_l    :  20.44  (about  0.51x lg2, using BKM and longs)
+lg2_mul_l:  20.96  (about  0.53x lg2, using mult. and longs)
+pow2     :  37.07  (BKM, only ints)
+pow2_l   :  17.73  (about  0.48x pow2, using BKM and longs)
 
 Number of frac bits: 12
 10%  20%  30%  40%  50%  60%  70%  80%  90%  100%  
 add      :   1.00
-mul      :  10.42
+mul      :  10.45
 mul_l    :   1.64
-div      :  16.75
-div_l    :   3.07
-lg2      :  17.58  (BKM, only ints)
-lg2_l    :  20.76  (about  1.18x lg2, using BKM and longs)
-lg2_mul_l:  31.40  (about  1.79x lg2, using mult. and longs)
-pow2     :  35.68  (BKM, only ints)
-pow2_l   :  16.91  (about  0.47x pow2, using BKM and longs)
+div      :  16.68
+div_l    :   2.96
+lg2      :  40.51  (BKM, only ints)
+lg2_l    :  20.77  (about  0.51x lg2, using BKM and longs)
+lg2_mul_l:  31.23  (about  0.77x lg2, using mult. and longs)
+pow2     :  36.04  (BKM, only ints)
+pow2_l   :  17.30  (about  0.48x pow2, using BKM and longs)
 
 Number of frac bits: 16
 10%  20%  30%  40%  50%  60%  70%  80%  90%  100%  
 add      :   1.00
-mul      :  10.97
+mul      :  10.95
 mul_l    :   1.60
-div      :  17.80
-div_l    :   3.07
-lg2      :  22.81  (BKM, only ints)
-lg2_l    :  20.83  (about  0.91x lg2, using BKM and longs)
-lg2_mul_l:  42.04  (about  1.84x lg2, using mult. and longs)
-pow2     :  34.49  (BKM, only ints)
-pow2_l   :  16.41  (about  0.48x pow2, using BKM and longs)
+div      :  17.70
+div_l    :   2.95
+lg2      :  40.60  (BKM, only ints)
+lg2_l    :  20.85  (about  0.51x lg2, using BKM and longs)
+lg2_mul_l:  41.47  (about  1.02x lg2, using mult. and longs)
+pow2     :  33.74  (BKM, only ints)
+pow2_l   :  16.23  (about  0.48x pow2, using BKM and longs)
 
 Number of frac bits: 20
 10%  20%  30%  40%  50%  60%  70%  80%  90%  100%  
 add      :   1.00
-mul      :  11.65
-mul_l    :   1.62
-div      :  15.16
-div_l    :   3.06
-lg2      :  28.35  (BKM, only ints)
-lg2_l    :  20.86  (about  0.74x lg2, using BKM and longs)
-lg2_mul_l:  52.81  (about  1.86x lg2, using mult. and longs)
-pow2     :  33.26  (BKM, only ints)
-pow2_l   :  15.97  (about  0.48x pow2, using BKM and longs)
+mul      :  11.50
+mul_l    :   1.61
+div      :  15.02
+div_l    :   2.95
+lg2      :  40.47  (BKM, only ints)
+lg2_l    :  20.78  (about  0.51x lg2, using BKM and longs)
+lg2_mul_l:  51.88  (about  1.28x lg2, using mult. and longs)
+pow2     :  32.52  (BKM, only ints)
+pow2_l   :  15.67  (about  0.48x pow2, using BKM and longs)
 
 Number of frac bits: 24
 10%  20%  30%  40%  50%  60%  70%  80%  90%  100%  
 add      :   1.00
-mul      :  11.74
-mul_l    :   1.65
-div      :  14.52
-div_l    :   3.03
-lg2      :  33.55  (BKM, only ints)
-lg2_l    :  20.92  (about  0.62x lg2, using BKM and longs)
-lg2_mul_l:  64.23  (about  1.91x lg2, using mult. and longs)
-pow2     :  31.27  (BKM, only ints)
-pow2_l   :  14.86  (about  0.48x pow2, using BKM and longs)
+mul      :  11.68
+mul_l    :   1.62
+div      :  14.39
+div_l    :   2.92
+lg2      :  40.50  (BKM, only ints)
+lg2_l    :  20.81  (about  0.51x lg2, using BKM and longs)
+lg2_mul_l:  62.71  (about  1.55x lg2, using mult. and longs)
+pow2     :  30.61  (BKM, only ints)
+pow2_l   :  14.79  (about  0.48x pow2, using BKM and longs)
 
 Number of frac bits: 28
 10%  20%  30%  40%  50%  60%  70%  80%  90%  100%  
 add      :   1.00
-mul      :  11.81
-mul_l    :   1.62
-div      :  13.84
-div_l    :   2.99
-lg2      :  38.44  (BKM, only ints)
-lg2_l    :  20.70  (about  0.54x lg2, using BKM and longs)
-lg2_mul_l:  74.97  (about  1.95x lg2, using mult. and longs)
-pow2     :  32.82  (BKM, only ints)
-pow2_l   :  15.67  (about  0.48x pow2, using BKM and longs)
+mul      :  11.86
+mul_l    :   1.63
+div      :  13.94
+div_l    :   2.91
+lg2      :  40.55  (BKM, only ints)
+lg2_l    :  20.83  (about  0.51x lg2, using BKM and longs)
+lg2_mul_l:  73.42  (about  1.81x lg2, using mult. and longs)
+pow2     :  32.77  (BKM, only ints)
+pow2_l   :  15.80  (about  0.48x pow2, using BKM and longs)
 
 
 =================================================
 Xtime averages for frac bit configurations {8, 12, 16, 20, 24, 28}
 =================================================
 add      :   1.00  (  4.92x system's native addition of ints)
-mul      :  11.11  ( 53.47x system's native multiplication of ints)
-mul_l    :   1.63  (  7.82x system's native multiplication of ints)
-div      :  15.66  ( 30.71x system's native division of ints)
-div_l    :   3.05  (  5.98x system's native division of ints)
-lg2      :  25.54  (BKM, only ints)
-lg2_l    :  20.74  (about  0.81x lg2, using BKM and longs)
-lg2_mul_l:  47.80  (about  1.87x lg2, using mult. and longs)
-pow2     :  34.20  (BKM, only ints)
-pow2_l   :  16.27  (about  0.48x pow2, using BKM and longs)
+mul      :  11.08  ( 53.47x system's native multiplication of ints)
+mul_l    :   1.62  (  7.82x system's native multiplication of ints)
+div      :  15.57  ( 28.57x system's native division of ints)
+div_l    :   2.94  (  5.40x system's native division of ints)
+lg2      :  40.41  (BKM, only ints)
+lg2_l    :  20.75  (about  0.51x lg2, using BKM and longs)
+lg2_mul_l:  46.94  (about  1.16x lg2, using mult. and longs)
+pow2     :  33.79  (BKM, only ints)
+pow2_l   :  16.25  (about  0.48x pow2, using BKM and longs)
 =================================================

@@ -20,7 +20,7 @@
 
 //Used while testing and debugging trying to optimize division
 //#include "fxp_aux.h"
-//#define VERBOSE 1
+//#define VERBOSE 0
 
 
 // For the BKM log calculation when using longs.
@@ -191,6 +191,9 @@ int fxp_lg2_mul_l(int fxp1)
 /*
  * log2 calculation using the BKM (L-Mode) algoritm,
  * and using longs.
+ *
+ * For more details on BKM:
+ * https://en.wikipedia.org/wiki/BKM_algorithm
  */
 int fxp_lg2_l(int fxp1)
 {
@@ -205,57 +208,46 @@ int fxp_lg2_l(int fxp1)
                     (nbx - FXP_frac_bits - 1): 0;
         // Here we have already calculated the log characteristic c
         // Now lshifting the original number to have it as unsigned
-        // long fxp with 2 whole bits (2 needed because zz can
+        // long fxp with 2 whole bits (2 needed because z can
         // intermitently get a value > 2)
-        unsigned long z = ((unsigned long) fxp1) << \
-                            //(clz + FXP_BKM_L_CLZSHIFT);
+        // Watch out we are using two different shifted
+        // configurations simultaneously, but independently:
+        // - x aligned with FXP_BKM_ONE_L: 2 whole and 62 frac bits
+        //   (again at least 2 whole bits for the BKM log algorithm).
+        // - However y, argument, and the BKM_LOGS array values
+        //   have 1 whole and 63 frac bits for more accuracy
+        unsigned long argument = ((unsigned long) fxp1) << \
                             (clz + FXP_INT_BITS_M1);
         unsigned long x = FXP_BKM_ONE_L;
-        unsigned long zz, xs;
+        unsigned long z, xs;
         // y is the starting mantissa. Its value will remain in the
         // range of lg(x), x in [1, 2), so y will always be in [0, 1)
         unsigned long y = 0;
-        //printf("z: %lu\n", z);
-        //for (int shift = 1; shift <= FXP_lg2_maxloops; shift++) {
+        //printf("c:%d  argument:x%lX\n", c, argument);
         for (int shift = 1; shift <= FXP_INT_BITS; shift++) {
                 //printf("shift:%d looping\n", shift);
                 xs = (x >> shift);
-                zz = x + xs;
-                if (zz <= z) {
-                        x = zz;
+                z = x + xs;
+                if (z <= argument) {
+                        x = z;
                         y += FXP_BKM_LOGS_L[shift];
-                        //printf("\tx:%lX  Updating y:%lX\n", x, y);
+                        //printf("\tx:x%lX  Updating y:x%lX\n", x, y);
                 }
         }
         // Here y has the calculated mantissa
 
-        // TODO:
-        // For ln() or lg10() we could apply the multiplication
-        // with the corresponding factor at this point,
-        // before rshifting the mantissa to the final frac bits)
-        // so as to preserve precision. This would be a separate
-        // internal multiplication possibly using 4 ints: w for
-        // the whole and two for the frac parts of each operand
-
-        // Shift y adjusting it for final fxp,
-        // and round last bit
-        //unsigned long mask = 1u << (FXP_lg2_l_mshift - 1);
-        //unsigned long rbit = y & mask;
-        //long m = (rbit > 0u)?
-        //            (y >> FXP_lg2_l_mshift) + 1:
-        //            (y >> FXP_lg2_l_mshift);
-
-        unsigned long rbit = (y >> FXP_lg2_l_mshiftm1) & 1ul;
-        long m = (y >> FXP_lg2_l_mshift) + rbit;
-        int im = (int) m;
+        unsigned long rbit = (y >> FXP_lg2_l_mshift_m1) & 1ul;
+        long longm = (y >> FXP_lg2_l_mshift) + rbit;
+        int m = (int) longm;
+        //printf("Final mantissa:%d  (rounding bit was %d)\n", m, (int) rbit);
         // Return the complete logarithm (c + m) as fxp
         if (c < FXP_whole_min) {
-                if ((c == FXP_whole_min_m1) && (im > 0)) {
+                if ((c == FXP_whole_min_m1) && (m > 0)) {
                         // Special case: in spite of not enough whole
                         // bits available for c, there are for c + 1,
                         // which is what this logarithm will return as
                         // whole part
-                        return INT_MIN + im;
+                        return INT_MIN + m;
                 }
                 // Overflow: the characteristic of the logarithm
                 // will not fit in the whole bits part of our
@@ -263,9 +255,9 @@ int fxp_lg2_l(int fxp1)
                 return FXP_NEG_INF;
         }
         if (c >= 0)
-            return (c << FXP_frac_bits) + im;
+            return (c << FXP_frac_bits) + m;
         else
-            return -(-c << FXP_frac_bits) + im;
+            return -(-c << FXP_frac_bits) + m;
 }
 
 
@@ -281,7 +273,7 @@ unsigned long mul_distrib_l( unsigned long x,
         xb = (x & FXP_RINT_MASK);
         ya = y >> FXP_INT_BITS;
         yb = (y & FXP_RINT_MASK);
-        //printf("\txa:%X, xb:%X, ya:%X, yb:%X\n", xa, xb, ya, yb);
+        //if (VERBOSE) printf("\txa:%lX, xb:%lX, ya:%lX, yb:%lX\n", xa, xb, ya, yb);
         xayb = xa * yb;
         yaxb = ya * xb;
         qr1 = xayb & FXP_RINT_MASK;
@@ -302,8 +294,8 @@ unsigned long mul_distrib_l( unsigned long x,
 
 /*
  * pow2 calculation (2^fxp1) using the BKM (E-mode) algorithm
- * Analogous to implementation in bkm.c,
- * but here tailored for fxp's, and using longs.
+ * Analogous to implementation in bkm.c, but here tailored
+ * for fxp's, and using longs.
  */
 int fxp_pow2_l(int fxp1)
 {
@@ -328,27 +320,23 @@ int fxp_pow2_l(int fxp1)
                         pow2w = FXP_one_l >> (-w - 1);
                 else
                         pow2w = FXP_one_l << 1;
-                // Notice argument is >= 0, in (0, 1]
+                // Notice argument is > 0, in (0, 1]
                 argument = (FXP_one_l + f) \
                                 << FXP_lg2_l_mshift;
         }
-        // Watch out we are using two different shifted
-        // configurations simultaneously, but independently:
-        // - x aligned with FXP_BKM_ONE_L: 2 whole and 62 frac bits
-        //   (we needed at least 2 whole bits for the BKM log algorithm).
-        // - However argument, y and the BKM_LOGS array values
-        //   have 1 whole and 63 frac bits for more accuracy
-        //printf("\npow2_l: pow2w:%lX  argument:%lX\n", pow2w, argument);
+        //if (VERBOSE) printf("\npow2_l: pow2w:%lX  argument:%lX\n", pow2w, argument);
         unsigned long x = FXP_BKM_ONE_L, y = 0;
         for (int k = 0; k < FXP_INT_BITS; k++) {
                 unsigned long const  z = y + FXP_BKM_LOGS_L[k];
-                //printf("k:%d,  z:%lX\n", k, z);
+                //if (VERBOSE) printf("k:%d,  z:%lX\n", k, z);
                 if (z <= argument) {
                         y = z;
                         x = x + (x >> k);
-                        //printf("\tUpdating y (%lX) und x (%lX)\n", y, x);
+                        //if (VERBOSE) printf("\tUpdating y (%lX) und x (%lX)\n", y, x);
                 }
         }
+        //if (VERBOSE) printf("final x:%lX\n", x);
         unsigned long md = mul_distrib_l(pow2w, x);
         return (int) md;
 }
+
