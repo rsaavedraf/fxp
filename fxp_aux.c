@@ -42,25 +42,63 @@ long double lim_frac(long double x, int fbp)
 
 void print_int_as_bin(int n, int width)
 {
-        int an;
-        int signspace = 0;
+        int an, neg_sign;
         if (n < 0) {
                 an = -n;
-                signspace = 1;
+                neg_sign = 1;
         } else {
                 an = n;
+                neg_sign = 0;
         }
         int nbn = fxp_nbits(an);
-        int margin = (nbn == 0? 1: nbn) - signspace;
+        int margin = (nbn == 0? 1: nbn) - neg_sign;
         while (width > margin) {
                 printf(" ");
                 width--;
         }
-        if (signspace) printf("-");
+        if (neg_sign) printf("-");
         nbn = (nbn == 0)? 1: nbn;
         int i = nbn;
         while (i > 0) {
-                int bit = (an & (1 << (i - 1))) >> (i - 1);
+                int bit = (an >> (i - 1)) & 1;
+                printf("%d", bit);
+                i--;
+        }
+}
+
+void print_long_as_bin(long n)
+{
+        int an;
+        if (n < 0) {
+                an = -n;
+                printf("-");
+        } else {
+                an = n;
+        }
+        int i = FXP_LONG_BITS;
+        while (i > 0) {
+                int bit = (an >> (i - 1)) & 1;
+                printf("%d", bit);
+                i--;
+        }
+}
+
+void print_uint_as_bin(unsigned int n)
+{
+        int i = FXP_INT_BITS;
+        while (i > 0) {
+                int bit = (n >> (i - 1)) & 1;
+                printf("%d", bit);
+                i--;
+        }
+
+}
+
+void print_ulong_as_bin(unsigned long n)
+{
+        int i = FXP_LONG_BITS;
+        while (i > 0) {
+                int bit = (n >> (i - 1)) & 1;
                 printf("%d", bit);
                 i--;
         }
@@ -83,14 +121,12 @@ void print_fxp_as_bin(int n, int width)
                 width--;
         }
         if (signspace) printf("(-)");
-        //int i = MAX(frbits, (nbn == 0)? 1: nbn);
         int i = (nbn == 0)? 1: nbn;
         if (FXP_frac_bits > i) i = FXP_frac_bits;
         while (i > 0) {
                 if (i == FXP_frac_bits) printf(".");
                 if (i <= nbn) {
-                        int bit = (an & (1 << (i - 1))) \
-                                    >> (i - 1);
+                        int bit = (an >> (i - 1)) & 1;
                         printf("%d", bit);
                 } else {
                         printf("0");
@@ -115,10 +151,10 @@ void print_fxp(int x)
                 int px = -x;
                 if (whole < 0) whole = -whole;
                 if (frac < 0) frac = -frac;
-                printf("-%d.%7d (=Lf:%Lf = %d = x(-)%X = b",
+                printf("-%d.%7d (=%Lf =%d =x(-)%X =b",
                         whole, frac, n, x, px);
         } else {
-                printf("%d.%7d (=Lf:%Lf = %d = x%X = b",
+                printf("%d.%7d (=%Lf =%d =x%X =b",
                         whole, frac, n, x, x);
         }
         print_fxp_as_bin(x, 0);

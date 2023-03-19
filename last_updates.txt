@@ -173,3 +173,13 @@ especially for lg2.
 Variable names now more consistent between int vs. long implementations
 of lg2 and pow2 functions.
 
+2023-03-19:
+Modified tester to use the more typical ordering of
+"expected before actual" arguments in test_fxp().
+Functions ln_l() and lg10_l() reimplemented by calling
+lg2_x_factor(), which multiplies by the factors at their
+full precision. This means that ln_l and lg10_l now have
+the same "as good as it can ever get" accuracy as lg2_l!
+(WDELTA_MAX lowered from 6 to 2, yet no warnings!)
+Compacted the code that tests all logarithms and powers.
+

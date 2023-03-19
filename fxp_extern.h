@@ -28,6 +28,9 @@ extern const long double FXP_PINF_LD;
 extern const long double FXP_UNDEF_LD;
 extern const long double FXP_NINF_LD;
 
+extern const unsigned long FXP_LN_2_I64;
+extern const unsigned long FXP_LG10_2_I64;
+
 extern int FXP_frac_bits;
 extern int FXP_frac_bits_m1;
 extern int FXP_frac_mask;
@@ -72,3 +75,7 @@ extern const unsigned int FXP_LWORD_MASK;
 extern const unsigned int FXP_RWORD_MASK;
 extern const unsigned long FXP_LINT_MASK;
 extern const unsigned long FXP_RINT_MASK;
+
+extern const int FXP_LONG_BITS;
+extern const int FXP_LONG_BITS_M1;
+

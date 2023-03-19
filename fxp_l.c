@@ -16,15 +16,19 @@
 #include "fxp_aux.h"
 #include <stdio.h>
 #include <stdlib.h>
-//#include <assert.h>
+#include <assert.h>
 
 //Used while testing and debugging trying to optimize division
-//#include "fxp_aux.h"
-//#define VERBOSE 0
+#include "fxp_aux.h"
+#define VERBOSE 1
 
+struct lgcharm_l {
+        long characteristic;
+        unsigned long mantissa;
+};
 
-// For the BKM log calculation when using longs.
-// Values in this array are: a[k] = log2(1 + 1/2^k) represented as
+// For the BKM lg calculation when using longs.
+// Values in this array are: a[k] = lg2(1 + 1/2^k) represented as
 // unsigned long fxp's (8 bytes,) with 63 frac bits
 static const unsigned long FXP_BKM_LOGS_L[] = {
         0x8000000000000000, 0x4AE00D1CFDEB4400, 0x2934F0979A371600, 0x15C01A39FBD68800,
@@ -48,6 +52,12 @@ static const unsigned long FXP_BKM_LOGS_L[] = {
 // a 4 -bit right-shift of the value 4 positions earlier
 };
 
+
+static inline int fxp_nbits_l(unsigned long x)
+{
+        if (x == 0) return 0;
+        return FXP_LONG_BITS - __builtin_clzl(x);
+};
 
 /**
  * Safe implementation of fxp multiplication using longs,
@@ -121,18 +131,6 @@ int fxp_div_l(int fxp1, int fxp2)
 }
 
 /*
- * Implementation of ln and lg10 using longs
- */
-int fxp_ln_l(int fxp1)
-{
-        return fxp_mul_l(fxp_lg2_l(fxp1), FXP_shifted_ln_2);
-}
-
-int fxp_lg10_l(int fxp1) {
-        return fxp_mul_l(fxp_lg2(fxp1), FXP_shifted_lg10_2);
-}
-
-/*
  * Alternative lg2 of an fxp using multiplication. Only applicable
  * for systems in which sizeof(long) >= 2 * sizeof(int)
  *
@@ -152,8 +150,7 @@ int fxp_lg2_mul_l(int fxp1)
 {
         if (fxp1 <= 0) return ((fxp1 == 0)? FXP_NEG_INF: FXP_UNDEF);
         if (fxp1 == FXP_POS_INF) return FXP_POS_INF;
-        int c = 0; // characteristic
-        int nx;
+        int nx, c;
         int nbx = fxp_nbits(fxp1);
         if (fxp1 < FXP_one) {
                 c = nbx - FXP_frac_bits - 1;
@@ -162,6 +159,7 @@ int fxp_lg2_mul_l(int fxp1)
                 c = nbx - FXP_frac_bits - 1;
                 nx = fxp1 >> c;
         } else {
+                c = 0;
                 nx = fxp1;
         }
         // Mantissa calculation:
@@ -189,23 +187,27 @@ int fxp_lg2_mul_l(int fxp1)
 }
 
 /*
- * log2 calculation using the BKM (L-Mode) algoritm,
- * and using longs.
+ * Internal auxiliar function that calculates the characteristic
+ * rounded mantissa of a lg2, returning them separately in a
+ * struct (lgcharm_l), both at their maximum possible precision,
+ * so unshifted
+ * Uses the BKM L-Mode algorithm (requires table of pre-calculated
+ * values) and longs.
  *
  * For more details on BKM:
  * https://en.wikipedia.org/wiki/BKM_algorithm
  */
-int fxp_lg2_l(int fxp1)
+static inline struct lgcharm_l fxp_lg2_l_tuple(int fxp1)
 {
-        if (fxp1 <= 0) return ((fxp1 == 0)? FXP_NEG_INF: FXP_UNDEF);
-        if (fxp1 == FXP_POS_INF) return FXP_POS_INF;
-        // Here fxp1 for sure > 0
+        struct lgcharm_l result;
+        // Assumes fxp1 is for sure > 0
         int clz = __builtin_clz((unsigned int) fxp1);
         // clz > 0 since at least sign bit == 0
         int nbx = FXP_INT_BITS - clz;
-        // c is characteristic
-        int c = ((fxp1 < FXP_one) || (fxp1 >= FXP_two))?
-                    (nbx - FXP_frac_bits - 1): 0;
+        // Assign the characteristic to *c
+        result.characteristic = \
+                ((fxp1 < FXP_one) || (fxp1 >= FXP_two))? \
+                        (nbx - FXP_frac_bits - 1): 0;
         // Here we have already calculated the log characteristic c
         // Now lshifting the original number to have it as unsigned
         // long fxp with 2 whole bits (2 needed because z can
@@ -214,39 +216,56 @@ int fxp_lg2_l(int fxp1)
         // configurations simultaneously, but independently:
         // - x aligned with FXP_BKM_ONE_L: 2 whole and 62 frac bits
         //   (again at least 2 whole bits for the BKM log algorithm).
-        // - However y, argument, and the BKM_LOGS array values
-        //   have 1 whole and 63 frac bits for more accuracy
+        // - However argument, the BKM_LOGS array values, and the
+        //   mantissa all have 1 whole and 63 frac bits for more
+        //   accuracy
         unsigned long argument = ((unsigned long) fxp1) << \
                             (clz + FXP_INT_BITS_M1);
         unsigned long x = FXP_BKM_ONE_L;
         unsigned long z, xs;
-        // y is the starting mantissa. Its value will remain in the
-        // range of lg(x), x in [1, 2), so y will always be in [0, 1)
-        unsigned long y = 0;
-        //printf("c:%d  argument:x%lX\n", c, argument);
+        // The mantissa value will remain in the range of lg2(x),
+        // x in [1, 2), meaning mantissa always in [0, 1)
+        result.mantissa = 0lu;
         for (int shift = 1; shift <= FXP_INT_BITS; shift++) {
                 //printf("shift:%d looping\n", shift);
                 xs = (x >> shift);
                 z = x + xs;
                 if (z <= argument) {
                         x = z;
-                        y += FXP_BKM_LOGS_L[shift];
+                        result.mantissa += FXP_BKM_LOGS_L[shift];
                         //printf("\tx:x%lX  Updating y:x%lX\n", x, y);
                 }
         }
-        // Here y has the calculated mantissa
+        //printf("characteristic:%ld (x%lX)  mantissa:%lu (x%lX)\n", \
+        //            result.characteristic, result.characteristic, \
+        //            result.mantissa, result.mantissa);
+        //printf("Lf mantissa:%LE\n", ((long double) result.mantissa) / (~0ul >> 1));
+        return result;
+}
 
-        unsigned long rbit = (y >> FXP_lg2_l_mshift_m1) & 1ul;
-        long longm = (y >> FXP_lg2_l_mshift) + rbit;
+/*
+ * lg2 using BKM and longs
+ */
+int fxp_lg2_l(int fxp1)
+{
+        if (fxp1 < 0) return FXP_UNDEF;
+        if (fxp1 == 0) return FXP_NEG_INF;
+        if (fxp1 == FXP_POS_INF) return FXP_POS_INF;
+        struct lgcharm_l charm = fxp_lg2_l_tuple(fxp1);
+        // Round and shift the mantissa
+        unsigned long rbit = (charm.mantissa >> \
+                                FXP_lg2_l_mshift_m1) & 1ul;
+        long longm = (charm.mantissa >> FXP_lg2_l_mshift) + rbit;
         int m = (int) longm;
         //printf("Final mantissa:%d  (rounding bit was %d)\n", m, (int) rbit);
-        // Return the complete logarithm (c + m) as fxp
-        if (c < FXP_whole_min) {
-                if ((c == FXP_whole_min_m1) && (m > 0)) {
+        // Return the complete logarithm (char + mant) as fxp
+        if (charm.characteristic < FXP_whole_min) {
+                if ((charm.characteristic == FXP_whole_min_m1) \
+                        && (m > 0)) {
                         // Special case: in spite of not enough whole
-                        // bits available for c, there are for c + 1,
-                        // which is what this logarithm will return as
-                        // whole part
+                        // bits available for the characteristic, there
+                        // are for characteristic + 1, which is what will
+                        // get returned as whole part of this logarithm
                         return INT_MIN + m;
                 }
                 // Overflow: the characteristic of the logarithm
@@ -254,12 +273,10 @@ int fxp_lg2_l(int fxp1)
                 // current fxp settings
                 return FXP_NEG_INF;
         }
-        if (c >= 0)
-            return (c << FXP_frac_bits) + m;
-        else
-            return -(-c << FXP_frac_bits) + m;
+        return (charm.characteristic >= 0)?
+                (int) ((charm.characteristic << FXP_frac_bits) + m):
+                (int) (-(-charm.characteristic << FXP_frac_bits) + m);
 }
-
 
 /*
  * Analogougs to mul_distrib in fxp.c, but here using longs
@@ -290,6 +307,131 @@ unsigned long mul_distrib_l( unsigned long x,
         product = xaya + ql1 + ql2 + ql3;
         return product;
 
+}
+
+/*
+ * Calculates log2 and then multiplies by the given factor
+ */
+static inline int lg2_x_factor_l(int fxp1, const unsigned long FACTOR)
+{
+        struct lgcharm_l charm = fxp_lg2_l_tuple(fxp1);
+        /*
+        if (VERBOSE) {
+                printf("\nFrom lg2_l_tuple: char: %ld (x%lX) mant: %lu (x%lX)\n", \
+                            charm.characteristic, charm.characteristic, \
+                            charm.mantissa, charm.mantissa);
+        }
+        */
+
+        //printf("as fxp: ");
+        //print_fxp(fxp_bin(charm.characteristic, charm.mantissa));
+        //printf("\n");
+        int nlz_m1;
+        long s1;
+        if (charm.characteristic < 0) {
+                /*
+                printf("\nCharacteristic is: %ld (x%lX)\n\t",
+                        charm.characteristic,
+                        charm.characteristic);
+                printf("\nMantissa is: %lu (x%lX)\n\t",
+                        charm.mantissa,
+                        charm.mantissa);
+                */
+                if ((charm.characteristic < FXP_whole_min_m1) \
+                        || ((charm.characteristic == FXP_whole_min_m1) \
+                            && (charm.mantissa == 0))) {
+                        return FXP_NEG_INF;
+                }
+                unsigned long posc = (-charm.characteristic);
+                nlz_m1 = __builtin_clzl(posc) - 1;
+                unsigned long f1 = posc << nlz_m1;
+                s1 = -mul_distrib_l(f1, FACTOR);
+
+                /*
+                if (VERBOSE) {
+                        printf("Characteristic and lg factor:\n");
+                        printf("-"); print_ulong_as_bin(f1);
+                        printf(" (%LE)\n", -((long double) f1) \
+                                                / (1ul << nlz_m1));
+                        print_ulong_as_bin(FACTOR);
+                        printf(" (%LE)\n", ((long double) FACTOR) / (~0ul));
+
+                        printf("Their product s1 is:\n");
+                        print_ulong_as_bin(s1);
+                        printf(" (%LE)\n", ((long double) s1) / (1ul << nlz_m1));
+                }
+                */
+        } else {
+                nlz_m1 = __builtin_clzl(charm.characteristic) - 1;
+                unsigned long f1 = charm.characteristic << nlz_m1;
+                s1 = mul_distrib_l(f1, FACTOR);
+
+        }
+        // The mantissa has 1 whole bit (= 0) and 63 frac bits,
+        // while the LN_2 is using all 64 bits as frac bits
+        unsigned long s2 = mul_distrib_l(charm.mantissa, FACTOR);
+        int shift = FXP_LONG_BITS_M1 - nlz_m1;
+        int rbit = (shift == 0)? 0: (s2 >> (shift - 1)) & 1ul;
+        long ss2 = (long) ((s2 >> shift) + rbit);
+        // Summing up s1 and s2
+        long pre_lg = s1 + ss2;
+        long final_lg;
+        // Finally round and shift for current fxp configuration
+        if (pre_lg < 0) {
+                long s3 = -pre_lg;
+                rbit = (s3 >> (nlz_m1 - FXP_frac_bits_m1)) & 1ul;
+                final_lg =  -((s3 >> (nlz_m1 - FXP_frac_bits)) + rbit);
+                if (final_lg < FXP_MIN) {
+                        return FXP_NEG_INF;
+                }
+        } else {
+                rbit = (pre_lg >> (nlz_m1 - FXP_frac_bits_m1)) & 1ul;
+                final_lg =  (pre_lg >> (nlz_m1 - FXP_frac_bits)) + rbit;
+        }
+
+        /*
+        if (VERBOSE) {
+                printf("\nMantissa and LG factor:\n");
+                print_ulong_as_bin(charm.mantissa);
+                printf(" (%LE)\n", ((long double) charm.mantissa) / (~0ul >> 1));
+                print_ulong_as_bin(LG_FACTOR);
+                printf(" (%LE)\n", ((long double) LG_FACTOR) / (~0ul));
+
+                printf("Their product s2 is:\n");
+                print_ulong_as_bin(s2);
+                printf(" (%LE)\n", ((long double) s2) / (~0ul >> 1));
+
+                printf("Adjusted s2 is:\n");
+                print_ulong_as_bin(ss2);
+                printf(" (%LE)\n", ((long double) ss2) / (~0ul >> 1));
+
+                printf("Final lg is:\n");
+                print_ulong_as_bin(pre_lg);
+                printf(" (%LE)\n", ((long double) pre_lg) / (1ul << nlz_m1));
+        }
+        */
+        return (int) final_lg;
+}
+
+/*
+ * Implementation of ln_l using lg2
+ */
+int fxp_ln_l(int fxp1)
+{
+        if (fxp1 < 0) return FXP_UNDEF;
+        if (fxp1 == 0) return FXP_NEG_INF;
+        if (fxp1 == FXP_POS_INF) return FXP_POS_INF;
+        return lg2_x_factor_l(fxp1, FXP_LN_2_I64);
+}
+
+/*
+ * Implementation of lg10 using lg2
+ */
+int fxp_lg10_l(int fxp1) {
+        if (fxp1 < 0) return FXP_UNDEF;
+        if (fxp1 == 0) return FXP_NEG_INF;
+        if (fxp1 == FXP_POS_INF) return FXP_POS_INF;
+        return lg2_x_factor_l(fxp1, FXP_LG10_2_I64);
 }
 
 /*
@@ -339,4 +481,3 @@ int fxp_pow2_l(int fxp1)
         unsigned long md = mul_distrib_l(pow2w, x);
         return (int) md;
 }
-

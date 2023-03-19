@@ -14,6 +14,9 @@
 
 long double lim_frac(long double x, int fbp);
 void print_int_as_bin(int n, int width);
+void print_long_as_bin(long n);
+void print_uint_as_bin(unsigned int n);
+void print_ulong_as_bin(unsigned long n);
 void print_fxp_as_bin(int x, int width);
 void print_fxp(int fxp);
 void print_fxp_div(int startmask, int nmaskbits, int n, int frac_bits);
