@@ -9,8 +9,7 @@ The code implements overflow-safe operations for +, -, *, and /,
 following CMU SEI's INT32-C recommendations. For further details:
 [INT32-C. Ensure that operations on signed integers do not result in overflow](https://wiki.sei.cmu.edu/confluence/display/c/INT32-C.+Ensure+that+operations+on+signed+integers+do+not+result+in+overflow)
 
-lg2(), pow2() implemented using the BKM algorithm:
-[Wikipedia: BKM algorithm](https://en.wikipedia.org/wiki/BKM_algorithm)
+lg2(), pow2() implemented using the [BKM algorithm (Wikipedia)](https://en.wikipedia.org/wiki/BKM_algorithm)
 
 ln() and lg10() implemented multiplying lg2 by needed factor at full 
 int-size precision (not just current fxp frac bits) to avoid precision loss.
