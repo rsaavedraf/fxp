@@ -177,9 +177,22 @@ of lg2 and pow2 functions.
 Modified tester to use the more typical ordering of
 "expected before actual" arguments in test_fxp().
 Functions ln_l() and lg10_l() reimplemented by calling
-lg2_x_factor(), which multiplies by the factors at their
+lg2_x_factor_l(), which multiplies by the factors at their
 full precision. This means that ln_l and lg10_l now have
 the same "as good as it can ever get" accuracy as lg2_l!
 (WDELTA_MAX lowered from 6 to 2, yet no warnings!)
 Compacted the code that tests all logarithms and powers.
+
+2023-03-20:
+Separated print_<type>_as_bin() functions into print_as_bits.c
+Fine tuning lg2_x_factor(), analogous to lg2_x_factor_l()
+in fxp_l.c, but for ints only in fxp.c.
+Digging into the correct shifts needed for a final negative
+lg for all frac bit cases.
+Special tests for lg2(x) for x in [0, k] with k < 1, which
+would cause overflow because of not enough whole bits
+for the result.
+After that, also 0 warnings for lg2, ln, and lg10 even with
+the lowered WDELTA_MAX, so same accuracy as the _l versions.
+As far as accuracy, this completes all the logarithms.
 

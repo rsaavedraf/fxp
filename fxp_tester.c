@@ -2,7 +2,7 @@
 /*
  * fxp_tester.c
  * Tests the implementation of binary fixed point numbers
- * and arithmetic operations (fxp.c)
+ * (fxp.c)
  *
  * By Raul Saavedra, Bonn Germany
  */
@@ -34,9 +34,9 @@
 #define WDELTA_MAX 2.0
 
 static int fracbit_configs[] = {8, 11, 13, 16, 24, 31};
-//static int fracbit_configs[] = {27};
+//static int fracbit_configs[] = {29};
 /*
-static int fracbit_configs[] = {4, 8, 9, 10,   \
+static int fracbit_configs[] = {4, 8, 9, 10, \
             11, 12, 13, 14, 15, 16, 17, 18, 19, 20,     \
             21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31};
 */
@@ -59,9 +59,6 @@ static int whole_max;
 static int whole_min;
 static int fxp_largest;
 
-//void test_fxp(char *s, int fxp1, long double d_assert_val)
-// Switching to the more common order:
-// expected value first, actual value afterwards
 void test_fxp(char *s, long double d_assert_val, int fxp1)
 {
         printf("%s\n", s);
@@ -742,14 +739,14 @@ void test_ln(char * msg, int x)
 {
         long double tgt = get_ln_target(x);
         printf("ln_l("); test_fxp(msg, tgt, fxp_ln_l(x));
-        //printf("ln(");   test_fxp(msg, tgt, fxp_ln(x));
+        printf("ln(");   test_fxp(msg, tgt, fxp_ln(x));
 }
 
 void test_lg10(char * msg, int x)
 {
         long double tgt = get_lg10_target(x);
         printf("lg10_l("); test_fxp(msg, tgt, fxp_lg10_l(x));
-        //printf("lg10(");   test_fxp(msg, tgt, fxp_lg10(x));
+        printf("lg10(");   test_fxp(msg, tgt, fxp_lg10(x));
 }
 
 void test_logarithms()
@@ -796,8 +793,37 @@ void test_logarithms()
         test_lg2("1.00..01):",  fxp_bin(1, 1));
         test_lg2("1):",         fxp(1));
         test_lg2("0.99...9):",  fxp(1) - 1);
-        test_lg2("0.50..01):",  FXP_half + 1);
-        test_lg2("0.5):",       FXP_half);
+
+        /*
+        fbits   wbits  mag wbits  First overflowing x for lg2(x)
+        31      1       0           1/2^[     1   ]   -1
+        30      2       1           1/2^[     2   ]   -2
+        29      3       2           1/2^[     4   ]   -4
+        28      4       3           1/2^[     8   ]   -8
+        27      5       4           1/2^[    16   ]   -16
+        */
+
+
+        int exponent = (1u << (whole_bits - 1));
+        int k = d2fxp(powl(2.0, -exponent ));
+
+        if ((k > 0) && (exponent < FXP_INT_BITS)) {
+                // for any x in [0, 2^-k], lg2(x) will be
+                // <= -k, which means k must fit within the
+                // whole magnitude bits, so within whole_bits -1,
+                // which means k must be < 2^whole_bits
+                printf("\nWith only %d whole bit(s) (%d frac bits,)",
+                            whole_bits, frac_bits);
+                printf(" range for whole part is +/-%d,\n", FXP_whole_max);
+                printf("lg2(x) must necessarily overflow returning -INF for\n");
+                printf("all positive x <= k = ");
+                print_fxp(k); printf("\n");
+                test_lg2("k + tiniest):", k + 1);
+                test_lg2("k):", k);
+                test_lg2("k - tiniest):", k - 1);
+                printf("\n");
+        }
+
         test_lg2("tiniest):",   1);
         test_lg2("0):",         0);
         test_lg2("-INF):",      FXP_NEG_INF);

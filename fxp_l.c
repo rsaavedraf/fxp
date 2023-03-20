@@ -18,18 +18,20 @@
 #include <stdlib.h>
 #include <assert.h>
 
-//Used while testing and debugging trying to optimize division
-#include "fxp_aux.h"
-#define VERBOSE 1
+//#include "fxp_aux.h"
+//#define VERBOSE 0
 
 struct lgcharm_l {
         long characteristic;
         unsigned long mantissa;
 };
 
-// For the BKM lg calculation when using longs.
+// For the BKM lg2 calculation when using longs.
 // Values in this array are: a[k] = lg2(1 + 1/2^k) represented as
-// unsigned long fxp's (8 bytes,) with 63 frac bits
+// unsigned long fxp's (8 bytes,) with 63 frac bits, and
+// one magnitude whole bit (notice, not a sign but a magnitude single
+// whole bit, needed to be able to represent the first value in
+// the table == 1)
 static const unsigned long FXP_BKM_LOGS_L[] = {
         0x8000000000000000, 0x4AE00D1CFDEB4400, 0x2934F0979A371600, 0x15C01A39FBD68800,
         0xB31FB7D64898B00, 0x5AEB4DD63BF61C0, 0x2DCF2D0B85A4540, 0x16FE50B6EF08510,
@@ -187,10 +189,12 @@ int fxp_lg2_mul_l(int fxp1)
 }
 
 /*
- * Internal auxiliar function that calculates the characteristic
- * rounded mantissa of a lg2, returning them separately in a
- * struct (lgcharm_l), both at their maximum possible precision,
- * so unshifted
+ * Internal auxiliary function that calculates the characteristic
+ * and rounded mantissa of lg2, returning them separately in a
+ * struct (lgcharm_l), both at their maximum precision:
+ * The characteristic as long with 0 frac bits
+ * The mantissa as unsigned long with 63 frac bits (exact same
+ * configuration of the BKM array values)
  * Uses the BKM L-Mode algorithm (requires table of pre-calculated
  * values) and longs.
  *
@@ -217,8 +221,8 @@ static inline struct lgcharm_l fxp_lg2_l_tuple(int fxp1)
         // - x aligned with FXP_BKM_ONE_L: 2 whole and 62 frac bits
         //   (again at least 2 whole bits for the BKM log algorithm).
         // - However argument, the BKM_LOGS array values, and the
-        //   mantissa all have 1 whole and 63 frac bits for more
-        //   accuracy
+        //   mantissa all have 1 unsigned whole and 63 frac bits
+        //   for more accuracy
         unsigned long argument = ((unsigned long) fxp1) << \
                             (clz + FXP_INT_BITS_M1);
         unsigned long x = FXP_BKM_ONE_L;
@@ -251,6 +255,7 @@ int fxp_lg2_l(int fxp1)
         if (fxp1 < 0) return FXP_UNDEF;
         if (fxp1 == 0) return FXP_NEG_INF;
         if (fxp1 == FXP_POS_INF) return FXP_POS_INF;
+        // Get the separate characteristic and full mantissa
         struct lgcharm_l charm = fxp_lg2_l_tuple(fxp1);
         // Round and shift the mantissa
         unsigned long rbit = (charm.mantissa >> \
@@ -296,17 +301,15 @@ unsigned long mul_distrib_l( unsigned long x,
         qr1 = xayb & FXP_RINT_MASK;
         qr2 = yaxb & FXP_RINT_MASK;
         qr3 = xbyb >> FXP_INT_BITS;
-        //int rbit = ((unsigned int) (xbyb >> FXP_INT_BITS_M1)) & 1;
-        qrsum = qr1 + qr2 + qr3; // + rbit;
+        int rbit = ((unsigned int) (xbyb >> FXP_INT_BITS_M1)) & 1;
+        qrsum = qr1 + qr2 + qr3 + rbit;
         xaya = xa * ya;
         xbyb = xb * yb;
         ql1 = xayb >> FXP_INT_BITS;
         ql2 = yaxb >> FXP_INT_BITS;
-        //rbit = ((unsigned int) (qrsum >> FXP_INT_BITS_M1)) & 1;
-        ql3 = (qrsum >> FXP_INT_BITS); // + rbit;
+        ql3 = (qrsum >> FXP_INT_BITS);
         product = xaya + ql1 + ql2 + ql3;
         return product;
-
 }
 
 /*
@@ -315,17 +318,6 @@ unsigned long mul_distrib_l( unsigned long x,
 static inline int lg2_x_factor_l(int fxp1, const unsigned long FACTOR)
 {
         struct lgcharm_l charm = fxp_lg2_l_tuple(fxp1);
-        /*
-        if (VERBOSE) {
-                printf("\nFrom lg2_l_tuple: char: %ld (x%lX) mant: %lu (x%lX)\n", \
-                            charm.characteristic, charm.characteristic, \
-                            charm.mantissa, charm.mantissa);
-        }
-        */
-
-        //printf("as fxp: ");
-        //print_fxp(fxp_bin(charm.characteristic, charm.mantissa));
-        //printf("\n");
         int nlz_m1;
         long s1;
         if (charm.characteristic < 0) {
@@ -347,20 +339,6 @@ static inline int lg2_x_factor_l(int fxp1, const unsigned long FACTOR)
                 unsigned long f1 = posc << nlz_m1;
                 s1 = -mul_distrib_l(f1, FACTOR);
 
-                /*
-                if (VERBOSE) {
-                        printf("Characteristic and lg factor:\n");
-                        printf("-"); print_ulong_as_bin(f1);
-                        printf(" (%LE)\n", -((long double) f1) \
-                                                / (1ul << nlz_m1));
-                        print_ulong_as_bin(FACTOR);
-                        printf(" (%LE)\n", ((long double) FACTOR) / (~0ul));
-
-                        printf("Their product s1 is:\n");
-                        print_ulong_as_bin(s1);
-                        printf(" (%LE)\n", ((long double) s1) / (1ul << nlz_m1));
-                }
-                */
         } else {
                 nlz_m1 = __builtin_clzl(charm.characteristic) - 1;
                 unsigned long f1 = charm.characteristic << nlz_m1;
@@ -388,28 +366,6 @@ static inline int lg2_x_factor_l(int fxp1, const unsigned long FACTOR)
                 rbit = (pre_lg >> (nlz_m1 - FXP_frac_bits_m1)) & 1ul;
                 final_lg =  (pre_lg >> (nlz_m1 - FXP_frac_bits)) + rbit;
         }
-
-        /*
-        if (VERBOSE) {
-                printf("\nMantissa and LG factor:\n");
-                print_ulong_as_bin(charm.mantissa);
-                printf(" (%LE)\n", ((long double) charm.mantissa) / (~0ul >> 1));
-                print_ulong_as_bin(LG_FACTOR);
-                printf(" (%LE)\n", ((long double) LG_FACTOR) / (~0ul));
-
-                printf("Their product s2 is:\n");
-                print_ulong_as_bin(s2);
-                printf(" (%LE)\n", ((long double) s2) / (~0ul >> 1));
-
-                printf("Adjusted s2 is:\n");
-                print_ulong_as_bin(ss2);
-                printf(" (%LE)\n", ((long double) ss2) / (~0ul >> 1));
-
-                printf("Final lg is:\n");
-                print_ulong_as_bin(pre_lg);
-                printf(" (%LE)\n", ((long double) pre_lg) / (1ul << nlz_m1));
-        }
-        */
         return (int) final_lg;
 }
 

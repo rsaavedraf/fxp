@@ -51,7 +51,6 @@ extern double FXP_min_d;
 extern long double FXP_max_ld;
 extern long double FXP_min_ld;
 
-//extern int FXP_BKM_L_CLZSHIFT;
 extern unsigned long FXP_BKM_ONE_L;
 extern unsigned long FXP_BKM_HALF_L;
 extern int FXP_shifted_e;

@@ -1,4 +1,3 @@
-
 /* SPDX-License-Identifier: MIT */
 /*
  * fxp.c
@@ -14,11 +13,12 @@
 #include "fxp.h"
 #include <stdio.h>
 #include <stdlib.h>
-//#include <assert.h>
+#include <assert.h>
 
-//Used while testing and debugging trying to optimize division
-//#include "fxp_aux.h"
-//#define VERBOSE 1
+//#define VERBOSE 0
+#ifdef VERBOSE
+#include "print_as_bits.h"
+#endif
 
 const int FXP_INT_BITS = ((int) sizeof(int)) * 8;
 const int FXP_INT_BITS_M1 = FXP_INT_BITS - 1;
@@ -63,7 +63,7 @@ int FXP_frac_bits = FXP_FRAC_BITS_DEF;
 // variable name in lowercase
 
 int FXP_frac_bits_m1 = FXP_FRAC_BITS_DEF - 1;
-static int FXP_frac_bits_mod2 = FXP_FRAC_BITS_DEF % 2;
+//static int FXP_frac_bits_mod2 = FXP_FRAC_BITS_DEF % 2;
 
 // For improved-precision version of fxp_mul
 static int FXP_frac_mshift = FXP_FRAC_BITS_DEF / 2;
@@ -146,9 +146,12 @@ unsigned long FXP_one_l =  1ul << FXP_FRAC_BITS_DEF;
 int fxp_frac_max_dec = 9999;
 int fxp_frac_max_dec_p1 = 10000;
 
-// For the BKM lg2 and pow2 calculations.
-// Values in this array are: a[k] = log2(1 + 1/2^k) represented as
-// unsigned long fxp's (8 bytes,) with 31 frac bits
+// For the BKM lg2 calculation when using only ints.
+// Values in this array are: a[k] = lg2(1 + 1/2^k) represented as
+// unsigned int fxp's (4 bytes,) with 31 frac bits, and
+// one magnitude whole bit (notice, not a sign but a magnitude single
+// whole bit, needed to be able to represent the first value in
+// the table == 1)
 static const unsigned int FXP_BKM_LOGS[] = {
         0x80000000, 0x4AE00D1C, 0x2934F097, 0x15C01A39,
         0xB31FB7D, 0x5AEB4DD, 0x2DCF2D0, 0x16FE50B,
@@ -235,7 +238,8 @@ int fxp_set_frac_bits(int nfracbits)
                             FXP_FRAC_BITS_MIN:
                             (nfracbits > FXP_FRAC_BITS_MAX?
                                 FXP_FRAC_BITS_MAX: nfracbits));
-        FXP_frac_bits_mod2 = FXP_frac_bits % 2;
+        FXP_frac_bits_m1 = FXP_frac_bits - 1;
+        //FXP_frac_bits_mod2 = FXP_frac_bits % 2;
 
         FXP_whole_bits = FXP_INT_BITS - FXP_frac_bits;
         FXP_whole_bits_m1 = FXP_whole_bits - 1;
@@ -593,9 +597,7 @@ inline int fxp_nbits(unsigned int x)
  * Notice that the multiplication of two frac values can never
  * overflow regardless of their representing magnitudes
  * (operands are < 1, so the product is always < 1.)
- * Assumes the arguments are already properly shifted, so that
- * they have the binary point right to the left of the most
- * significant bit in an unsigned int.
+ * Assumes the arguments are already properly shifted.
  * Uses the distributive multiplication approach:
  * Identifying xa, xb, ya and yb as the inner "words"
  * (e.g. half ints) of the unsigned int arguments, so
@@ -621,21 +623,21 @@ unsigned int mul_distrib( unsigned int x,
         xb = (x & FXP_RWORD_MASK);
         ya = y >> FXP_WORD_BITS;
         yb = (y & FXP_RWORD_MASK);
-        //if (VERBOSE) printf("\txa:%X, xb:%X, ya:%X, yb:%X\n", xa, xb, ya, yb);
+        #ifdef VERBOSE
+                printf("\txa:%X, xb:%X, ya:%X, yb:%X\n", xa, xb, ya, yb);
+        #endif
         xayb = xa * yb;
         yaxb = ya * xb;
         qr1 = xayb & FXP_RWORD_MASK;
         qr2 = yaxb & FXP_RWORD_MASK;
         qr3 = xbyb >> FXP_WORD_BITS;
-        //int rbit = (xbyb >> FXP_WORD_BITS_M1) & 1;
-        qrsum = qr1 + qr2 + qr3; // + rbit;
+        int rbit = (xbyb >> FXP_WORD_BITS_M1) & 1u;
+        qrsum = qr1 + qr2 + qr3 + rbit;
         xaya = xa * ya;
         xbyb = xb * yb;
         ql1 = xayb >> FXP_WORD_BITS;
         ql2 = yaxb >> FXP_WORD_BITS;
-        //rbit = ((qrsum & FXP_LWORD_MASK) \
-        //              >> FXP_WORD_BITS_M1) & 1;
-        ql3 = (qrsum >> FXP_WORD_BITS); // + rbit;
+        ql3 = (qrsum >> FXP_WORD_BITS);
         product = xaya + ql1 + ql2 + ql3;
         return product;
 }
@@ -831,7 +833,7 @@ int fxp_div(int fxp1, int fxp2)
                 // when m < y
                 y = (y >> 1);
                 by--;
-                //if (VERBOSE) printf("\n\t\tNew shrinked divisor %d\n\n", y);
+                // if (VERBOSE) printf("\n\t\tNew shrinked divisor %d\n\n", y);
                 //qbits++;
                 bmax--;
         }
@@ -913,32 +915,33 @@ inline unsigned int fxp_get_lg10_2()
         return FXP_shifted_lg10_2;
 }
 
+struct lgcharm {
+        int characteristic;
+        unsigned int mantissa;
+};
+
 /*
- * Calculates the characteristic c and full precision (non-shifted)
- * rounded mantissa m of lg2, leaving those two values separately
- * in arguments passed by reference.
+ * Internal auxiliary function that calculates the characteristic
+ * and rounded mantissa of lg2, returning them separately in a
+ * struct (lgcharm), both at their maximum precision:
+ * The characteristic as int with 0 frac bits
+ * The mantissa as unsigned int with 31 frac bits (exact same
+ * configuration of the BKM array values.)
  * Uses the BKM L-Mode algorithm (requires table of pre-calculated
  * values) and only ints.
  *
  * For more details on BKM:
  * https://en.wikipedia.org/wiki/BKM_algorithm
  */
-static inline void fxp_lg2_sepcm(int fxp1, int * c, int * m)
+static inline struct lgcharm fxp_lg2_tuple(int fxp1)
 {
-        if (fxp1 <= 0) {
-                *c = (fxp1 == 0)? FXP_NEG_INF: FXP_UNDEF;
-                return;
-        }
-        if (fxp1 == FXP_POS_INF) {
-                *c = FXP_POS_INF;
-                return;
-        }
+        struct lgcharm result;
         // Here fxp1 for sure > 0
         int clz = __builtin_clz((unsigned int) fxp1);
         // Notice clz > 0 since at least sign bit in fxp1 is 0
         int nbx = FXP_INT_BITS - clz;
-        // Assign the characteristic to *c
-        *c = ((fxp1 < FXP_one) || (fxp1 >= FXP_two))?
+        // Assign the characteristic
+        result.characteristic = ((fxp1 < FXP_one) || (fxp1 >= FXP_two))?
                 (nbx - FXP_frac_bits - 1): 0;
         // Here we replicate what the lg2_l implementation does,
         // but simulating longs with two ints a and b, so
@@ -955,11 +958,10 @@ static inline void fxp_lg2_sepcm(int fxp1, int * c, int * m)
         unsigned int auxa, auxb;                    // aux
         unsigned int a_bits;
         unsigned int ab_mask = 1;
-        //printf("c:%d argument:x%X\n", c, argument);
         for (int shift = 1; shift < FXP_INT_BITS; shift++) {
                 //unsigned long xs = (x >> shift);
-                // Here we must r-shift the combo (xa, xb) by shift units
-                // leaving the results in combo (xsa, xsb)
+                // Here we must r-shift the combo (xa, xb) by shift
+                // units, leaving the results in combo (xsa, xsb)
                 a_bits = (xa & ab_mask);
                 xsa = (xa >> shift);
                 xsb = (a_bits << (FXP_INT_BITS - shift)) \
@@ -1010,8 +1012,8 @@ static inline void fxp_lg2_sepcm(int fxp1, int * c, int * m)
         // Assign the full precision (non-shifted) int-sized
         // rounded mantissa to *m
         int rbit = (yb >> FXP_INT_BITS_M1);
-        *m = ya + rbit;
-        return;
+        result.mantissa = ya + rbit;
+        return result;
 }
 
 /*
@@ -1019,102 +1021,183 @@ static inline void fxp_lg2_sepcm(int fxp1, int * c, int * m)
  */
 int fxp_lg2(int fxp1)
 {
-        int c, y;
+        if (fxp1 < 0) return FXP_UNDEF;
+        if (fxp1 == 0) return FXP_NEG_INF;
+        if (fxp1 == FXP_POS_INF) return FXP_POS_INF;
         // Get the separate characteristic and full mantissa
-        fxp_lg2_sepcm(fxp1, &c, &y);
-        if ((c == FXP_POS_INF) || (c == FXP_NEG_INF) \
-                || (c == FXP_UNDEF)) {
-                return c;
-        }
+        struct lgcharm charm = fxp_lg2_tuple(fxp1);
         // Shift the mantissa (rounding it) for current fxp config
-        int rbit = (y >> FXP_whole_bits_m2) & 1u;
-        int m = (y >> FXP_whole_bits_m1) + rbit;
+        int rbit = (charm.mantissa >> FXP_whole_bits_m2) & 1u;
+        int m = (charm.mantissa >> FXP_whole_bits_m1) + rbit;
         //printf("Final mantissa:%d  (rounding bit was %d)\n", m, rbit);
         // Return the complete logarithm (c + m) as fxp
-        if (c < FXP_whole_min) {
-                if ((c + 1 == FXP_whole_min) && (m > 0)) {
+        if (charm.characteristic < FXP_whole_min) {
+                if ((charm.characteristic == FXP_whole_min_m1) \
+                        && (m > 0)) {
                         // Special case: in spite of not enough whole
-                        // bits available for c, there are for c + 1,
-                        // which is what this logarithm will return as
-                        // whole part
-                        return INT_MIN + ((int) m);
+                        // bits available for characteristic, there are
+                        // for the characteristic + 1, which is what
+                        // gets returned here as whole part
+                        return INT_MIN + m;
                 }
                 // Overflow: the characteristic of the logarithm
                 // will not fit in the whole bits part of our
                 // current fxp settings
                 return FXP_NEG_INF;
         }
-        if (c >= 0)
-                return (c << FXP_frac_bits) + ((int) m);
-        else
-                return (-(-c << FXP_frac_bits)) + ((int) m);
+        return (charm.characteristic >= 0)?
+                (charm.characteristic << FXP_frac_bits) + m:
+                (-(-charm.characteristic << FXP_frac_bits)) + m;
 }
 
 /*
- * Default implementation of ln()
- * Uses the default lg2() and only ints:
- * Calculates ln(x) as lg2(x) * ln(2)
+ * Calculates log2 and then multiplies by the given factor
+ * Analogous to the one in fxp_l, but here using only ints
+ */
+static inline int lg2_x_factor(int fxp1, const unsigned int FACTOR)
+{
+        struct lgcharm charm = fxp_lg2_tuple(fxp1);
+        int nlz_m1;
+        int s1;
+        if (charm.characteristic < 0) {
+                /*
+                #ifdef VERBOSE
+                        printf("\nCharacteristic is: %d (x%X)\n",
+                                charm.characteristic,
+                                charm.characteristic);
+                        printf("Mantissa is      : %u (x%X)\n\t",
+                                charm.mantissa,
+                                charm.mantissa);
+                #endif
+                */
+                // If magnitude of final characteristic will be larger
+                // than whole_max, then the lg2 must overflow
+                if ((charm.characteristic < FXP_whole_min_m1) \
+                        || ((charm.characteristic == FXP_whole_min_m1) \
+                            && (charm.mantissa == 0))) {
+                        return FXP_NEG_INF;
+                }
+                unsigned int posc = (-charm.characteristic);
+                // nlz_m1 is >= 0. It will be 0 when the # of leading
+                // zeros of the magnitude of the mantissa is == 1,
+                // which means, just the sign bit is zero.
+                nlz_m1 = __builtin_clz(posc) - 1;
+                unsigned int f1 = posc << nlz_m1;
+                s1 = -mul_distrib(f1, FACTOR);
+                /*
+                #ifdef VERBOSE
+                        printf("Characteristic and lg factor:\n");
+                        printf("-"); print_uint_as_bin(f1);
+                        printf(" (%LE)\n", -((long double) f1) \
+                                                / (1u << nlz_m1));
+                        print_uint_as_bin(FACTOR);
+                        printf(" (%LE)\n", ((long double) FACTOR) / (~0u));
+
+                        printf("Their product s1 is:\n");
+                        print_uint_as_bin(s1);
+                        printf(" (%LE)\n", ((long double) s1) / (1u << nlz_m1));
+                #endif
+                */
+        } else {
+                nlz_m1 = __builtin_clz(charm.characteristic) - 1;
+                unsigned int f1 = charm.characteristic << nlz_m1;
+                s1 = mul_distrib(f1, FACTOR);
+
+        }
+        // The mantissa has 1 whole bit (= 0) and 63 frac bits,
+        // while the factor is using all 64 bits as frac bits
+        unsigned int s2 = mul_distrib(charm.mantissa, FACTOR);
+        int shift = FXP_INT_BITS_M1 - nlz_m1;
+        //#ifdef VERBOSE
+        //        printf("\n\nshift: %d\n\n", shift);
+        //#endif
+        int rbit = (shift == 0)? 0: (s2 >> (shift - 1)) & 1u;
+        int ss2 = (int) ((s2 >> shift) + rbit);
+        // Summing up s1 and s2
+        int pre_lg = s1 + ss2;
+        int final_lg;
+
+        // The mantissa has 1 whole bit (= 0) and 63 frac bits,
+        // while the factor is using all 64 bits as frac bits
+
+        // Finally round and shift for current fxp configuration
+        if (pre_lg < 0) {
+                int s3 = -pre_lg;
+                if (nlz_m1 > FXP_frac_bits_m1) {
+                        rbit = (s3 >> (nlz_m1 - FXP_frac_bits_m1)) & 1u;
+                        final_lg =  -((s3 >> (nlz_m1 - FXP_frac_bits)) + rbit);
+                } else {
+                        // TODO: Special cases when nlz_m1 is either
+                        // equal to FXP_frac_bits_m1, or even smaller.
+                        // Explain when this happens, and why we shift
+                        // the other way
+                        /*
+                        #ifdef VERBOSE
+                                printf("\nFXP is: %d (x%X)\n", fxp1, fxp1);
+                                printf("\twhole: %d,  frac: %d\n", fxp_get_whole_part(fxp1), fxp_get_dec_frac(fxp1));
+                                printf("nlz_m1: %d\n", nlz_m1);
+                                printf("FXP_frac_bits: %d\n\n", FXP_frac_bits);
+                        #endif
+                        */
+                        s3 <<= 1;
+                        final_lg = -s3;
+                }
+                /*
+                #ifdef VERBOSE
+                        printf("final_lg : %d\n", final_lg);
+                #endif
+                */
+        } else {
+                rbit = (pre_lg >> (nlz_m1 - FXP_frac_bits_m1)) & 1u;
+                final_lg = (pre_lg >> (nlz_m1 - FXP_frac_bits)) + rbit;
+        }
+        /*
+        #ifdef VERBOSE
+                printf("\nMantissa and LG factor:\n");
+                print_uint_as_bin(charm.mantissa);
+                printf(" (%LE)\n", ((long double) charm.mantissa) / (~0u >> 1));
+                print_uint_as_bin(FACTOR);
+                printf(" (%LE)\n", ((long double) FACTOR) / (~0u));
+
+                printf("Their product s2 is:\n");
+                print_uint_as_bin(s2);
+                printf(" (%LE)\n", ((long double) s2) / (~0u >> 1));
+
+                printf("Adjusted s2 is:\n");
+                print_uint_as_bin(ss2);
+                printf(" (%LE)\n", ((long double) ss2) / (~0u >> 1));
+
+                printf("Pre lg is:\n");
+                print_uint_as_bin(pre_lg);
+                printf(" (%LE)\n", ((long double) pre_lg) / (1u << nlz_m1));
+                printf("Final lg is:\n");
+                print_uint_as_bin(final_lg);
+                printf(" (%LE)\n", ((long double) final_lg) / FXP_frac_mask);
+        #endif
+        */
+        return final_lg;
+}
+
+/*
+ * Default implementation of ln() using lg2 and only ints
  */
 int fxp_ln(int fxp1)
 {
-        return 0;
-        int c2, y2;
-        fxp_lg2_sepcm(fxp1, &c2, &y2);
-        if ((c2 == FXP_POS_INF) || (c2 == FXP_NEG_INF) \
-                || (c2 == FXP_UNDEF)) {
-                return c2;
-        }
-
-        // Calculate the characteristic for ln
-
-        // Calculate mantissa for ln
-
-/*
-        // Return the final ln(x)
-        // Shift the mantissa (rounding it) for current fxp config
-        int rbit = (y >> FXP_whole_bits_m2) & 1u;
-        int m = (y >> FXP_whole_bits_m1) + rbit;
-        //printf("Final mantissa:%d  (rounding bit was %d)\n", m, rbit);
-        // Return the complete logarithm (c + m) as fxp
-        if (c < FXP_whole_min) {
-                if ((c + 1 == FXP_whole_min) && (m > 0)) {
-                        // Special case: in spite of not enough whole
-                        // bits available for c, there are for c + 1,
-                        // which is what this logarithm will return as
-                        // whole part
-                        return INT_MIN + ((int) m);
-                }
-                // Overflow: the characteristic of the logarithm
-                // will not fit in the whole bits part of our
-                // current fxp settings
-                return FXP_NEG_INF;
-        }
-        if (c >= 0)
-                return (c << FXP_frac_bits) + ((int) m);
-        else
-                return (-(-c << FXP_frac_bits)) + ((int) m);
-
-
-        unsigned int f = 0; 
-        f >>= FXP_whole_bits;
-        int rw = 0, rf = 0;
-        // TODO:
-        //int w = mul_whole_frac(fxp_get_whole_part(fxp1), FXP_LN_2_I32, \
-        //                        &rw, &rf);
-        //return fxp_add(rw, rf);
-
-        //return fxp_mul(fxp_lg2(fxp1), FXP_shifted_ln_2);
-*/
+        if (fxp1 < 0) return FXP_UNDEF;
+        if (fxp1 == 0) return FXP_NEG_INF;
+        if (fxp1 == FXP_POS_INF) return FXP_POS_INF;
+        return lg2_x_factor(fxp1, FXP_LN_2_I32);
 }
 
 /*
- * Default implementation of lg10()
- * Uses the default lg2() and only ints
+ * Default implementation of lg10() using lg2 and only ints
  */
 int fxp_lg10(int fxp1)
 {
-        return 0;
-        return fxp_mul(fxp_lg2(fxp1), FXP_shifted_lg10_2);
+        if (fxp1 < 0) return FXP_UNDEF;
+        if (fxp1 == 0) return FXP_NEG_INF;
+        if (fxp1 == FXP_POS_INF) return FXP_POS_INF;
+        return lg2_x_factor(fxp1, FXP_LG10_2_I32);
 }
 
 
@@ -1140,10 +1223,6 @@ int fxp_pow2(int fxp1)
                 if (w <= FXP_INT_BITS_M1_NEG) {
                         return 0;
                 }
-                //if (w < 0)
-                //        pow2w = FXP_one >> (-w - 1);
-                //else
-                //        pow2w = FXP_one << 1;
                 if (w < 0)
                         pow2w = FXP_one >> (-w);
                 else

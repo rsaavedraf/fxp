@@ -8,11 +8,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-//#include <assert.h>
 #include <float.h>
 #include <time.h>
 #include <math.h>
 #include "fxp_aux.h"
+#include "print_as_bits.h"
+//#include <assert.h>
 
 /*
  * Limits the precision of a double to the specified
@@ -31,77 +32,13 @@ long double lim_frac(long double x, int fbp)
         long double pxw = truncl(px);
         // keep only up to fbp fraction bits in frac part
         long double dfrac = px - pxw;
-        long long shift = ((unsigned int) 1) << fbp;
-        dfrac = truncl(dfrac * shift);
+        unsigned long long shift = 1ull << fbp;
+        unsigned long long shift_x2 = shift << 1ull;
+        int rbit = (int) (((unsigned long long) \
+                        truncl(dfrac * shift_x2)) & 1ull);
+        dfrac = truncl(dfrac * shift) + rbit;
         dfrac = dfrac / shift;
-        if (x < 0)
-                return -pxw - dfrac;
-        else
-                return pxw + dfrac;
-}
-
-void print_int_as_bin(int n, int width)
-{
-        int an, neg_sign;
-        if (n < 0) {
-                an = -n;
-                neg_sign = 1;
-        } else {
-                an = n;
-                neg_sign = 0;
-        }
-        int nbn = fxp_nbits(an);
-        int margin = (nbn == 0? 1: nbn) - neg_sign;
-        while (width > margin) {
-                printf(" ");
-                width--;
-        }
-        if (neg_sign) printf("-");
-        nbn = (nbn == 0)? 1: nbn;
-        int i = nbn;
-        while (i > 0) {
-                int bit = (an >> (i - 1)) & 1;
-                printf("%d", bit);
-                i--;
-        }
-}
-
-void print_long_as_bin(long n)
-{
-        int an;
-        if (n < 0) {
-                an = -n;
-                printf("-");
-        } else {
-                an = n;
-        }
-        int i = FXP_LONG_BITS;
-        while (i > 0) {
-                int bit = (an >> (i - 1)) & 1;
-                printf("%d", bit);
-                i--;
-        }
-}
-
-void print_uint_as_bin(unsigned int n)
-{
-        int i = FXP_INT_BITS;
-        while (i > 0) {
-                int bit = (n >> (i - 1)) & 1;
-                printf("%d", bit);
-                i--;
-        }
-
-}
-
-void print_ulong_as_bin(unsigned long n)
-{
-        int i = FXP_LONG_BITS;
-        while (i > 0) {
-                int bit = (n >> (i - 1)) & 1;
-                printf("%d", bit);
-                i--;
-        }
+        return (x < 0)? -pxw - dfrac: pxw + dfrac;
 }
 
 void print_fxp_as_bin(int n, int width)
