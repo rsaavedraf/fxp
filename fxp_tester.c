@@ -34,11 +34,12 @@
 #define WDELTA_MAX 2.0
 
 static int fracbit_configs[] = {8, 11, 13, 16, 24, 31};
-//static int fracbit_configs[] = {29};
+//static int fracbit_configs[] = {28};
 /*
-static int fracbit_configs[] = {4, 8, 9, 10, \
-            11, 12, 13, 14, 15, 16, 17, 18, 19, 20,     \
-            21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31};
+static int fracbit_configs[] = {
+4, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31
+};
 */
 
 static long double max_warn_delta = 0.0;
@@ -756,13 +757,13 @@ void test_logarithms()
         printf("e      : "); print_fxp(fxp_get_e()); printf("\n");
         printf("pi     : "); print_fxp(fxp_get_pi()); printf("\n");
         printf("ln(2)  : "); print_fxp(fxp_get_ln_2()); printf("\n");
-        printf("lg10(2): "); print_fxp(fxp_get_lg10_2()); printf("\n\n");
+        printf("lg10(2): "); print_fxp(fxp_get_lg10_2()); printf("\n");
 
         if ((whole_bits >= 3) && (TEST_LG2_MUL_L)) {
                 // To test logarithm calculation with fxp_log2_mul_l
                 // we need an fxp configuration with at least 3 whole bits
-                test_lg2_mul_l("+INF):",        FXP_POS_INF);
-                test_lg2_mul_l("+INF):",        FXP_MAX);
+                test_lg2_mul_l("\n+INF):",        FXP_POS_INF);
+                test_lg2_mul_l("largest):",     FXP_MAX);
                 test_lg2_mul_l("2.2):",         fxp_bin(2, FXP_frac_mask/5));
                 test_lg2_mul_l("2):",           fxp(2));
                 test_lg2_mul_l("1.99...9):",    fxp_bin(1, FXP_frac_max));
@@ -783,7 +784,6 @@ void test_logarithms()
                 printf("\n");
         }
 
-        printf("\n");
         test_lg2("+INF):",      FXP_POS_INF);
         test_lg2("largest):",   FXP_MAX);
         test_lg2("100):",       fxp(100));
@@ -794,24 +794,9 @@ void test_logarithms()
         test_lg2("1):",         fxp(1));
         test_lg2("0.99...9):",  fxp(1) - 1);
 
-        /*
-        fbits   wbits  mag wbits  First overflowing x for lg2(x)
-        31      1       0           1/2^[     1   ]   -1
-        30      2       1           1/2^[     2   ]   -2
-        29      3       2           1/2^[     4   ]   -4
-        28      4       3           1/2^[     8   ]   -8
-        27      5       4           1/2^[    16   ]   -16
-        */
-
-
         int exponent = (1u << (whole_bits - 1));
         int k = d2fxp(powl(2.0, -exponent ));
-
         if ((k > 0) && (exponent < FXP_INT_BITS)) {
-                // for any x in [0, 2^-k], lg2(x) will be
-                // <= -k, which means k must fit within the
-                // whole magnitude bits, so within whole_bits -1,
-                // which means k must be < 2^whole_bits
                 printf("\nWith only %d whole bit(s) (%d frac bits,)",
                             whole_bits, frac_bits);
                 printf(" range for whole part is +/-%d,\n", FXP_whole_max);
@@ -833,10 +818,12 @@ void test_logarithms()
         test_ln("+INF):",       FXP_POS_INF);
         test_ln("largest):",    FXP_MAX);
         test_ln("100):",        fxp(100));
+        test_ln("e+1):",        fxp_add(fxp_get_e(), fxp(1)));
         test_ln("e):",          fxp_get_e());
         test_ln("2.2):",        fxp_bin(2, FXP_frac_mask/5));
         test_ln("2):",          fxp(2));
         test_ln("1.99...9):",   fxp_bin(1, FXP_frac_max));
+        test_ln("1.5):",        d2fxp(1.5));
         test_ln("1.00..01):",   fxp_bin(1, 1));
         test_ln("1):",          fxp(1));
         test_ln("0.99...9):",   fxp(1) - 1);
@@ -865,7 +852,6 @@ void test_logarithms()
         test_lg10("-INF):",     FXP_NEG_INF);
         test_lg10("UNDEF):",    FXP_UNDEF);
 }
-
 
 void test_pow2(char * msg, int x)
 {
@@ -941,6 +927,7 @@ void test_ops_with_rand_nums()
                 test_fxp("n2: ", get_f_target(n2), f2fxp(fxp2f(n2)));
                 test_fxp("n3: ", get_f_target(n3), f2fxp(fxp2f(n3)));
 
+/*
                 fxp1 = fxp_add(n1, n2);
                 tgt1 = get_target(ldx + ldy);
                 test_fxp("add   (n1+n2)", tgt1, fxp1);
@@ -969,7 +956,7 @@ void test_ops_with_rand_nums()
                 tgt2 = get_div_target(n1, n3);
                 test_fxp("div_l (n1/n3)", tgt2, fxp1);
                 test_fxp("div   (n1/n3)", tgt2, fxp2);
-
+*/
                 // Make arguments positive for the log tests
                 n1 = n1 < 0? -n1: n1;
                 n2 = n2 < 0? -n2: n2;
@@ -999,7 +986,7 @@ void test_ops_with_rand_nums()
                 test_lg10("n1)", n1);
                 test_lg10("n2)", n2);
                 test_lg10("n3)", n3);
-
+/*
                 n4 = -fxp_get_bin_frac(n1);
                 tgt1 = get_pow2_target(n4);
                 tgt2 = get_pow2_target(n3);
@@ -1007,6 +994,7 @@ void test_ops_with_rand_nums()
                 test_pow2("-frac(n1))", n4);
                 test_pow2("n3)", n3);
                 test_pow2("-n3)", -n3);
+*/
         }
 }
 

@@ -196,3 +196,9 @@ After that, also 0 warnings for lg2, ln, and lg10 even with
 the lowered WDELTA_MAX, so same accuracy as the _l versions.
 As far as accuracy, this completes all the logarithms.
 
+2023-03-22:
+Renamed variables in lg2_x_factor for more clarity.
+Improving the VERBOSE printouts, and inspecting
+in detail the ranges of inputs that trigger certain
+running paths in lg2_x_factor.
+Clean up of vars no longer used.

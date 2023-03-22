@@ -13,7 +13,7 @@
 #include "fxp.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <assert.h>
+//#include <assert.h>
 
 //#define VERBOSE 0
 #ifdef VERBOSE
@@ -32,7 +32,7 @@ const int FXP_MIN = FXP_NEG_INF + 1;
 // Saving the true most negative int for "undefined"
 const int FXP_UNDEF = INT_MIN;
 const int FXP_FRAC_BITS_MIN = 4;
-const int FXP_FRAC_BITS_DEF = 16;
+const int FXP_FRAC_BITS_DEF = FXP_INT_BITS / 2;
 
 const int FXP_WORD_BITS = FXP_INT_BITS >> 1;
 const int FXP_WORD_BITS_M1 = FXP_WORD_BITS - 1;
@@ -63,12 +63,6 @@ int FXP_frac_bits = FXP_FRAC_BITS_DEF;
 // variable name in lowercase
 
 int FXP_frac_bits_m1 = FXP_FRAC_BITS_DEF - 1;
-//static int FXP_frac_bits_mod2 = FXP_FRAC_BITS_DEF % 2;
-
-// For improved-precision version of fxp_mul
-static int FXP_frac_mshift = FXP_FRAC_BITS_DEF / 2;
-static unsigned int FXP_frac_maskl = 4032;
-static unsigned int FXP_frac_maskr = 63;
 
 // Default number of bits for the whole part (includes sign bit)
 int FXP_whole_bits = FXP_INT_BITS - FXP_FRAC_BITS_DEF;
@@ -247,18 +241,6 @@ int fxp_set_frac_bits(int nfracbits)
 
         // fxp_frac_mask should correspond to 2^FXP_FRAC_BITS - 1
         FXP_frac_mask = (1u << FXP_frac_bits) - 1;
-
-        // Variables used in fxp_mul to process the
-        // full multiplication of the frac parts avoiding
-        // precision loss
-        if (FXP_frac_bits == FXP_INT_BITS_M1) {
-                FXP_frac_mshift = (FXP_INT_BITS_M1 - 1) / 2;
-        } else {
-                FXP_frac_mshift = (FXP_frac_bits / 2) \
-                                    + (FXP_frac_bits % 2);
-        }
-        FXP_frac_maskr = (1u << FXP_frac_mshift) - 1;
-        FXP_frac_maskl = FXP_frac_maskr << FXP_frac_mshift;
 
         // When using all bits for frac (except for the sign bit),
         // then our max valid frac cannot be equal to frac_mask
@@ -623,9 +605,9 @@ unsigned int mul_distrib( unsigned int x,
         xb = (x & FXP_RWORD_MASK);
         ya = y >> FXP_WORD_BITS;
         yb = (y & FXP_RWORD_MASK);
-        #ifdef VERBOSE
-                printf("\txa:%X, xb:%X, ya:%X, yb:%X\n", xa, xb, ya, yb);
-        #endif
+        //#ifdef VERBOSE
+        //        printf("\txa:%X, xb:%X, ya:%X, yb:%X\n", xa, xb, ya, yb);
+        //#endif
         xayb = xa * yb;
         yaxb = ya * xb;
         qr1 = xayb & FXP_RWORD_MASK;
@@ -1052,129 +1034,118 @@ int fxp_lg2(int fxp1)
 
 /*
  * Calculates log2 and then multiplies by the given factor
- * Analogous to the one in fxp_l, but here using only ints
+ * Analogous to the one in fxp_l, but here using only ints.
  */
 static inline int lg2_x_factor(int fxp1, const unsigned int FACTOR)
 {
         struct lgcharm charm = fxp_lg2_tuple(fxp1);
-        int nlz_m1;
-        int s1;
+        // Count of leading zeros in the (positive)
+        // characteristic magnitude, minus 1
+        int shift_for_c;
+        unsigned int shifted_c;
+        int cxf, stop1 = 0, stop2 = 0;
         if (charm.characteristic < 0) {
-                /*
-                #ifdef VERBOSE
-                        printf("\nCharacteristic is: %d (x%X)\n",
-                                charm.characteristic,
-                                charm.characteristic);
-                        printf("Mantissa is      : %u (x%X)\n\t",
-                                charm.mantissa,
-                                charm.mantissa);
-                #endif
-                */
-                // If magnitude of final characteristic will be larger
-                // than whole_max, then the lg2 must overflow
                 if ((charm.characteristic < FXP_whole_min_m1) \
                         || ((charm.characteristic == FXP_whole_min_m1) \
                             && (charm.mantissa == 0))) {
                         return FXP_NEG_INF;
                 }
-                unsigned int posc = (-charm.characteristic);
-                // nlz_m1 is >= 0. It will be 0 when the # of leading
-                // zeros of the magnitude of the mantissa is == 1,
-                // which means, just the sign bit is zero.
-                nlz_m1 = __builtin_clz(posc) - 1;
-                unsigned int f1 = posc << nlz_m1;
-                s1 = -mul_distrib(f1, FACTOR);
-                /*
                 #ifdef VERBOSE
-                        printf("Characteristic and lg factor:\n");
-                        printf("-"); print_uint_as_bin(f1);
-                        printf(" (%LE)\n", -((long double) f1) \
-                                                / (1u << nlz_m1));
-                        print_uint_as_bin(FACTOR);
-                        printf(" (%LE)\n", ((long double) FACTOR) / (~0u));
-
-                        printf("Their product s1 is:\n");
-                        print_uint_as_bin(s1);
-                        printf(" (%LE)\n", ((long double) s1) / (1u << nlz_m1));
+                        if (charm.characteristic == FXP_whole_min_m1) {
+                                printf("\n\tCharacteristic right beyond the -LIMIT!\n\t");
+                        }
                 #endif
-                */
+                unsigned int posc = (-charm.characteristic);
+                shift_for_c = __builtin_clz(posc) - 1;
+                shifted_c = posc << shift_for_c;
+                cxf = -mul_distrib(shifted_c, FACTOR);
         } else {
-                nlz_m1 = __builtin_clz(charm.characteristic) - 1;
-                unsigned int f1 = charm.characteristic << nlz_m1;
-                s1 = mul_distrib(f1, FACTOR);
-
+                shift_for_c = __builtin_clz(charm.characteristic) - 1;
+                shifted_c = charm.characteristic << shift_for_c;
+                cxf = mul_distrib(shifted_c, FACTOR);
         }
-        // The mantissa has 1 whole bit (= 0) and 63 frac bits,
-        // while the factor is using all 64 bits as frac bits
-        unsigned int s2 = mul_distrib(charm.mantissa, FACTOR);
-        int shift = FXP_INT_BITS_M1 - nlz_m1;
-        //#ifdef VERBOSE
-        //        printf("\n\nshift: %d\n\n", shift);
-        //#endif
-        int rbit = (shift == 0)? 0: (s2 >> (shift - 1)) & 1u;
-        int ss2 = (int) ((s2 >> shift) + rbit);
-        // Summing up s1 and s2
-        int pre_lg = s1 + ss2;
+        #ifdef VERBOSE
+                printf("\n\tArgument is %d (x%X,  b",
+                        fxp1, fxp1);
+                print_int_as_bin(fxp1, 0);
+                printf(")\n\t");
+                printf("Whole: %d,  dec frac: %d (/%d)\n\t", \
+                        fxp_get_whole_part(fxp1),
+                        fxp_get_dec_frac(fxp1),
+                        fxp_frac_max_dec + 1);
+                printf("Characteristic is: %d (x%X,  b",
+                        charm.characteristic,
+                        charm.characteristic);
+                print_int_as_bin(charm.characteristic, 0);
+                printf(")\n\t");
+                printf("Mantissa is      : %u (x%X,  b.",
+                        charm.mantissa,
+                        charm.mantissa);
+                print_int_as_bin(charm.mantissa, 0);
+                printf(")\n\t");
+                printf("+Characteristic L-shifted (by %d), and factor:\n\t", \
+                        shift_for_c);
+                print_uint_as_bin(shifted_c);
+                printf(" (%LE)\n\t", ((long double) f1) \
+                print_uint_as_bin(FACTOR);
+                printf(" (%LE)\n\t", ((long double) FACTOR) / (~0u));
+                printf("Their signed product cxf is:\n\t");
+                print_uint_as_bin(cxf);
+                printf(" (%LE)\n\t", ((long double) cxf) / (1u << shift_for_c));
+        #endif
+
+        unsigned int mxf = mul_distrib(charm.mantissa, FACTOR);
+        // R-shift frac value in s2 to be able to add it to s1
+        int shift_for_m = FXP_INT_BITS_M1 - shift_for_c;
+        int rbit = (shift_for_m == 0)? 0: (mxf >> (shift_for_m - 1)) & 1u;
+        int shifted_mxf = (int) ((mxf >> shift_for_m) + rbit);
+        // Add up s1 and s2
+        int sum = cxf + shifted_mxf;
         int final_lg;
 
-        // The mantissa has 1 whole bit (= 0) and 63 frac bits,
-        // while the factor is using all 64 bits as frac bits
-
-        // Finally round and shift for current fxp configuration
-        if (pre_lg < 0) {
-                int s3 = -pre_lg;
-                if (nlz_m1 > FXP_frac_bits_m1) {
-                        rbit = (s3 >> (nlz_m1 - FXP_frac_bits_m1)) & 1u;
-                        final_lg =  -((s3 >> (nlz_m1 - FXP_frac_bits)) + rbit);
+        // Round and then final shift to leave result aligned
+        // with current fxp configuration
+        if (sum < 0) {
+                int psum = -sum;
+                if (shift_for_c > FXP_frac_bits_m1) {
+                        rbit = (psum >> (shift_for_c - FXP_frac_bits_m1)) & 1u;
+                        final_lg =  -((psum >> (shift_for_c - FXP_frac_bits)) + rbit);
                 } else {
-                        // TODO: Special cases when nlz_m1 is either
-                        // equal to FXP_frac_bits_m1, or even smaller.
-                        // Explain when this happens, and why we shift
-                        // the other way
-                        /*
                         #ifdef VERBOSE
-                                printf("\nFXP is: %d (x%X)\n", fxp1, fxp1);
-                                printf("\twhole: %d,  frac: %d\n", fxp_get_whole_part(fxp1), fxp_get_dec_frac(fxp1));
-                                printf("nlz_m1: %d\n", nlz_m1);
-                                printf("FXP_frac_bits: %d\n\n", FXP_frac_bits);
+                                printf("\n\tShift_for_c: %d  <=  Fbits_m1: %d\n\t", \
+                                        shift_for_c, FXP_frac_bits_m1);
                         #endif
-                        */
-                        s3 <<= 1;
-                        final_lg = -s3;
+                        psum <<= 1;
+                        final_lg = -psum;
                 }
-                /*
-                #ifdef VERBOSE
-                        printf("final_lg : %d\n", final_lg);
-                #endif
-                */
         } else {
-                rbit = (pre_lg >> (nlz_m1 - FXP_frac_bits_m1)) & 1u;
-                final_lg = (pre_lg >> (nlz_m1 - FXP_frac_bits)) + rbit;
+                rbit = (sum >> (shift_for_c - FXP_frac_bits_m1)) & 1u;
+                final_lg = (sum >> (shift_for_c - FXP_frac_bits)) + rbit;
         }
-        /*
+
         #ifdef VERBOSE
-                printf("\nMantissa and LG factor:\n");
+                printf("Mantissa and factor:\n\t");
                 print_uint_as_bin(charm.mantissa);
-                printf(" (%LE)\n", ((long double) charm.mantissa) / (~0u >> 1));
+                printf(" (%LE)\n\t", ((long double) charm.mantissa) / (~0u >> 1));
                 print_uint_as_bin(FACTOR);
-                printf(" (%LE)\n", ((long double) FACTOR) / (~0u));
-
-                printf("Their product s2 is:\n");
-                print_uint_as_bin(s2);
-                printf(" (%LE)\n", ((long double) s2) / (~0u >> 1));
-
-                printf("Adjusted s2 is:\n");
-                print_uint_as_bin(ss2);
-                printf(" (%LE)\n", ((long double) ss2) / (~0u >> 1));
-
-                printf("Pre lg is:\n");
-                print_uint_as_bin(pre_lg);
-                printf(" (%LE)\n", ((long double) pre_lg) / (1u << nlz_m1));
-                printf("Final lg is:\n");
+                printf(" (%LE)\n\t", ((long double) FACTOR) / (~0u));
+                printf("Their unsigned product mxf is:\n\t");
+                print_uint_as_bin(mxf);
+                printf(" (%LE)\n\t", ((long double) mxf) / (~0u >> 1));
+                printf("Frac bits:%d,  shift for m: %d\n\t", \
+                        FXP_frac_bits, shift_for_m);
+                printf("R-shifted mxf (by %d, to add it to cxf) is:\n\t", shift_for_m);
+                print_uint_as_bin(shifted_mxf);
+                printf(" (%LE)\n", ((long double) shifted_mxf) / \
+                                        (~0u >> (1 + shift_for_m)));
+                printf("\tSum for lg is:\n\t");
+                print_uint_as_bin(sum);
+                printf(" (%LE)\n\t", ((long double) sum) / (1u << shift_for_c));
+                printf("Final lg is:\n\t");
                 print_uint_as_bin(final_lg);
-                printf(" (%LE)\n", ((long double) final_lg) / FXP_frac_mask);
+                printf(" (%LE)\n", ((long double) final_lg) / FXP_frac_max_p1);
         #endif
-        */
+
         return final_lg;
 }
 
