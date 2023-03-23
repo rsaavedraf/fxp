@@ -1039,11 +1039,9 @@ int fxp_lg2(int fxp1)
 static inline int lg2_x_factor(int fxp1, const unsigned int FACTOR)
 {
         struct lgcharm charm = fxp_lg2_tuple(fxp1);
-        // Count of leading zeros in the (positive)
-        // characteristic magnitude, minus 1
         int shift_for_c;
         unsigned int shifted_c;
-        int cxf, stop1 = 0, stop2 = 0;
+        int cxf;
         if (charm.characteristic < 0) {
                 if ((charm.characteristic < FXP_whole_min_m1) \
                         || ((charm.characteristic == FXP_whole_min_m1) \
@@ -1095,11 +1093,9 @@ static inline int lg2_x_factor(int fxp1, const unsigned int FACTOR)
         #endif
 
         unsigned int mxf = mul_distrib(charm.mantissa, FACTOR);
-        // R-shift frac value in s2 to be able to add it to s1
         int shift_for_m = FXP_INT_BITS_M1 - shift_for_c;
         int rbit = (shift_for_m == 0)? 0: (mxf >> (shift_for_m - 1)) & 1u;
         int shifted_mxf = (int) ((mxf >> shift_for_m) + rbit);
-        // Add up s1 and s2
         int sum = cxf + shifted_mxf;
         int final_lg;
 

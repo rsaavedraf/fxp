@@ -16,7 +16,7 @@
 #include "fxp_aux.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <assert.h>
+//#include <assert.h>
 
 //#include "fxp_aux.h"
 //#define VERBOSE 0
@@ -51,7 +51,7 @@ static const unsigned long FXP_BKM_LOGS_L[] = {
         //0xB, 0x5, 0x2, 0x1,
         //0x0
 // Starting with the row marked with the *, each entry is exactly
-// a 4 -bit right-shift of the value 4 positions earlier
+// a 4-bit right-shift of the value 4 positions earlier
 };
 
 
@@ -318,53 +318,40 @@ unsigned long mul_distrib_l( unsigned long x,
 static inline int lg2_x_factor_l(int fxp1, const unsigned long FACTOR)
 {
         struct lgcharm_l charm = fxp_lg2_l_tuple(fxp1);
-        int nlz_m1;
-        long s1;
+        int shift_for_c;
+        unsigned long shifted_c;
+        long cxf;
         if (charm.characteristic < 0) {
-                /*
-                printf("\nCharacteristic is: %ld (x%lX)\n\t",
-                        charm.characteristic,
-                        charm.characteristic);
-                printf("\nMantissa is: %lu (x%lX)\n\t",
-                        charm.mantissa,
-                        charm.mantissa);
-                */
                 if ((charm.characteristic < FXP_whole_min_m1) \
                         || ((charm.characteristic == FXP_whole_min_m1) \
                             && (charm.mantissa == 0))) {
                         return FXP_NEG_INF;
                 }
                 unsigned long posc = (-charm.characteristic);
-                nlz_m1 = __builtin_clzl(posc) - 1;
-                unsigned long f1 = posc << nlz_m1;
-                s1 = -mul_distrib_l(f1, FACTOR);
+                shift_for_c = __builtin_clzl(posc) - 1;
+                shifted_c = posc << shift_for_c;
+                cxf = -mul_distrib_l(shifted_c, FACTOR);
 
         } else {
-                nlz_m1 = __builtin_clzl(charm.characteristic) - 1;
-                unsigned long f1 = charm.characteristic << nlz_m1;
-                s1 = mul_distrib_l(f1, FACTOR);
+                shift_for_c = __builtin_clzl(charm.characteristic) - 1;
+                shifted_c = charm.characteristic << shift_for_c;
+                cxf = mul_distrib_l(shifted_c, FACTOR);
 
         }
-        // The mantissa has 1 whole bit (= 0) and 63 frac bits,
-        // while the LN_2 is using all 64 bits as frac bits
-        unsigned long s2 = mul_distrib_l(charm.mantissa, FACTOR);
-        int shift = FXP_LONG_BITS_M1 - nlz_m1;
-        int rbit = (shift == 0)? 0: (s2 >> (shift - 1)) & 1ul;
-        long ss2 = (long) ((s2 >> shift) + rbit);
-        // Summing up s1 and s2
-        long pre_lg = s1 + ss2;
+        unsigned long mxf = mul_distrib_l(charm.mantissa, FACTOR);
+        int shift_for_m = FXP_LONG_BITS_M1 - shift_for_c;
+        int rbit = (shift_for_m == 0)? 0: (mxf >> (shift_for_m - 1)) & 1ul;
+        long shifted_mxf = (long) ((mxf >> shift_for_m) + rbit);
+        long sum = cxf + shifted_mxf;
         long final_lg;
         // Finally round and shift for current fxp configuration
-        if (pre_lg < 0) {
-                long s3 = -pre_lg;
-                rbit = (s3 >> (nlz_m1 - FXP_frac_bits_m1)) & 1ul;
-                final_lg =  -((s3 >> (nlz_m1 - FXP_frac_bits)) + rbit);
-                if (final_lg < FXP_MIN) {
-                        return FXP_NEG_INF;
-                }
+        if (sum < 0) {
+                long psum = -sum;
+                rbit = (psum >> (shift_for_c - FXP_frac_bits_m1)) & 1ul;
+                final_lg =  -((psum >> (shift_for_c - FXP_frac_bits)) + rbit);
         } else {
-                rbit = (pre_lg >> (nlz_m1 - FXP_frac_bits_m1)) & 1ul;
-                final_lg =  (pre_lg >> (nlz_m1 - FXP_frac_bits)) + rbit;
+                rbit = (sum >> (shift_for_c - FXP_frac_bits_m1)) & 1ul;
+                final_lg =  (sum >> (shift_for_c - FXP_frac_bits)) + rbit;
         }
         return (int) final_lg;
 }
