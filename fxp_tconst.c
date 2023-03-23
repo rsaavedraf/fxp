@@ -340,14 +340,14 @@ int main(void)
         printf("lg2(10)  as fxp (%d frac bits) %llX\n", \
                     frbits, bex_from_dec(STR_LG2_10_DEC, 0, frbits, 1));
         printf("lg2(10)  as fxp (%d frac bits) %llX\n\n", \
-                    frbits, bex_from_dec(STR_LG2_10_DEC, 0, 32 + frbits, 1));
+                    32 + frbits, bex_from_dec(STR_LG2_10_DEC, 0, 32 + frbits, 1));
 
         frbits = 31;
         printf("lg2(e)  as decimal: %s\n", STR_LG2_E_DEC);
         printf("lg2(e)  as fxp (%d frac bits) %llX\n", \
                     frbits, bex_from_dec(STR_LG2_E_DEC, 0, frbits, 1));
         printf("lg2(e)  as fxp (%d frac bits) %llX\n\n", \
-                    frbits, bex_from_dec(STR_LG2_E_DEC, 0, 32 + frbits, 1));
+                    32 + frbits, bex_from_dec(STR_LG2_E_DEC, 0, 32 + frbits, 1));
 
         frbits = 32;
         printf("ln(2) as decimal: %s\n", STR_LN_2_DEC);
