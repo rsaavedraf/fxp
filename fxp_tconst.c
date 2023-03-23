@@ -58,10 +58,10 @@
 //  https://oeis.org/A007524
 
 // log2(e)
-//#define STR_LG2_E_DEC   "1.4426950408889634073599246810018921374266459541529859341354494069311092191811850798855266228935063444"
+#define STR_LG2_E_DEC   "1.4426950408889634073599246810018921374266459541529859341354494069311092191811850798855266228935063444"
 
 // log2(10)
-//#define STR_LG2_10_DEC "3.32192809488736234787031942948939017586483139302458061205475639581593477660862521585013974335937015"
+#define STR_LG2_10_DEC "3.32192809488736234787031942948939017586483139302458061205475639581593477660862521585013974335937015"
 
 // Sqrt(2)
 //#define STR_SQRT2_BIN "1.01101010000010011110011001100111111100111011110011001001000010001011001011111011000100110110011011"
@@ -335,6 +335,19 @@ int main(void)
                     frbits, bex_from_bin(STR_PI_BIN, 2, frbits, 1));
         printf("pi as fxp (%d frac bits) %llX\n\n", \
                     32 + frbits, bex_from_bin(STR_PI_BIN, 2, 32 + frbits, 1));
+
+        printf("lg2(10) as decimal: %s\n", STR_LG2_10_DEC);
+        printf("lg2(10)  as fxp (%d frac bits) %llX\n", \
+                    frbits, bex_from_dec(STR_LG2_10_DEC, 0, frbits, 1));
+        printf("lg2(10)  as fxp (%d frac bits) %llX\n\n", \
+                    frbits, bex_from_dec(STR_LG2_10_DEC, 0, 32 + frbits, 1));
+
+        frbits = 31;
+        printf("lg2(e)  as decimal: %s\n", STR_LG2_E_DEC);
+        printf("lg2(e)  as fxp (%d frac bits) %llX\n", \
+                    frbits, bex_from_dec(STR_LG2_E_DEC, 0, frbits, 1));
+        printf("lg2(e)  as fxp (%d frac bits) %llX\n\n", \
+                    frbits, bex_from_dec(STR_LG2_E_DEC, 0, 32 + frbits, 1));
 
         frbits = 32;
         printf("ln(2) as decimal: %s\n", STR_LN_2_DEC);
