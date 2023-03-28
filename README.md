@@ -13,6 +13,8 @@ lg2(), pow2() implemented using the [BKM algorithm (Wikipedia)](https://en.wikip
 
 ln() and lg10() implemented multiplying lg2 by needed factor at full 
 int-size precision (not just current fxp frac bits) to avoid precision loss.
+Goals of this implementation are mostly flexibility (hence the configurable frac bits,)
+yet ultimate precision within the chosen number of frac bits.
 
 exp() and pow10() now implemented (using longs, int-only versions + powxy() and sqrt() coming very soon.)
 
