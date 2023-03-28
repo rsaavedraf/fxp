@@ -480,7 +480,7 @@ int fxp_pow2_l(int fxp1)
 }
 
 /*
- * Calculate the pow2 of a positive argument x
+ * Calculate the pow2 of a non-negative argument x
  * multiplied by a factor C (C having the indicated
  * number of whole bits)
  */
@@ -506,7 +506,7 @@ static inline int fxp_pow2_pos_arg_xfactor( \
         int w_margin;
         // whole part of x shifted
         wx = fxp_get_whole_part(x);
-        wx_clz = __builtin_clzl(wx);
+        wx_clz = (wx == 0)? FXP_LONG_BITS: __builtin_clzl(wx);
         wx_nbits = FXP_LONG_BITS - wx_clz;
         wx_clz_m1 = wx_clz - 1;
         wx_clz_p1 = wx_clz + 1;
@@ -581,7 +581,7 @@ static inline int fxp_pow2_neg_arg_xfactor( \
         int w_margin;
         // whole part of x shifted
         wx = -fxp_get_whole_part(x);
-        wx_clz = __builtin_clzl(wx);
+        wx_clz = (wx == 0)? FXP_LONG_BITS: __builtin_clzl(wx);
         wx_nbits = FXP_LONG_BITS - wx_clz;
         wx_clz_m1 = wx_clz - 1;
         wx_clz_p1 = wx_clz + 1;
