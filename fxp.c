@@ -934,7 +934,7 @@ struct tuple {
  * For more details on BKM:
  * https://en.wikipedia.org/wiki/BKM_algorithm
  */
-static inline struct tuple fxp_lg2_tuple(int fxp1)
+static inline struct tuple fxp_lg2_as_tuple(int fxp1)
 {
         struct tuple result;
         // Here fxp1 for sure > 0
@@ -1026,7 +1026,7 @@ int fxp_lg2(int fxp1)
         if (fxp1 == 0) return FXP_NEG_INF;
         if (fxp1 == FXP_POS_INF) return FXP_POS_INF;
         // Get the separate characteristic and full mantissa
-        struct tuple tup = fxp_lg2_tuple(fxp1);
+        struct tuple tup = fxp_lg2_as_tuple(fxp1);
         // Shift the mantissa (rounding it) for current fxp config
         int rbit = (tup.f >> FXP_whole_bits_m2) & 1u;
         int m = (tup.f >> FXP_whole_bits_m1) + rbit;
@@ -1057,7 +1057,7 @@ int fxp_lg2(int fxp1)
  */
 static inline int lg2_x_factor(int fxp1, const unsigned int FACTOR)
 {
-        struct tuple tup = fxp_lg2_tuple(fxp1);
+        struct tuple tup = fxp_lg2_as_tuple(fxp1);
         int shift_for_c = 0;
         unsigned int shifted_c = 0;
         int cxf;
@@ -1077,9 +1077,15 @@ static inline int lg2_x_factor(int fxp1, const unsigned int FACTOR)
                 shifted_c = posc << shift_for_c;
                 cxf = -mul_distrib(shifted_c, FACTOR);
         } else {
-                shift_for_c = __builtin_clz(tup.w) - 1;
-                shifted_c = tup.w << shift_for_c;
-                cxf = mul_distrib(shifted_c, FACTOR);
+                if (tup.w == 0) {
+                        shift_for_c = FXP_INT_BITS_M1;
+                        shifted_c = 0;
+                        cxf = 0;
+                } else {
+                        shift_for_c = __builtin_clz(tup.w) - 1;
+                        shifted_c = tup.w << shift_for_c;
+                        cxf = mul_distrib(shifted_c, FACTOR);
+                }
         }
         #ifdef VERBOSE
         printf("\n\tArgument is %d (x%X,  b",

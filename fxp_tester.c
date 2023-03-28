@@ -23,7 +23,7 @@
 #define DASHES "========================\n"
 
 // Set to 0 in order to be able to replicate runs
-#define SET_RAND_SEED 1
+#define SET_RAND_SEED 0
 
 #define TEST_WITH_RANDS 1
 #define MAX_RAND_NUMS 5
@@ -780,10 +780,10 @@ void test_logarithms()
                 // we need an fxp configuration with at least 3 whole bits
                 test_lg2_mul_l("\n+INF):",        FXP_POS_INF);
                 test_lg2_mul_l("largest):",     FXP_MAX);
-                test_lg2_mul_l("2.2):",         fxp_bin(2, FXP_frac_mask/5));
+                test_lg2_mul_l("2.2):",         d2fxp(2.2));
                 test_lg2_mul_l("2):",           fxp(2));
-                test_lg2_mul_l("1.99...9):",    fxp_bin(1, FXP_frac_max));
-                test_lg2_mul_l("1.00..01):",    fxp_bin(1, 1));
+                test_lg2_mul_l("1.99...9):",    fxp(2) - 1);
+                test_lg2_mul_l("1.00..01):",    fxp(1) + 1);
                 test_lg2_mul_l("1):",           fxp(1));
                 test_lg2_mul_l("0.99...9):",    fxp(1) - 1);
                 test_lg2_mul_l("0.50..01):",    FXP_half + 1);
@@ -803,10 +803,10 @@ void test_logarithms()
         test_lg2("+INF):",      FXP_POS_INF);
         test_lg2("largest):",   FXP_MAX);
         test_lg2("100):",       fxp(100));
-        test_lg2("2.2):",       fxp_bin(2, FXP_frac_mask/5));
+        test_lg2("2.2):",       d2fxp(2.2));
         test_lg2("2):",         fxp(2));
-        test_lg2("1.99...9):",  fxp_bin(1, FXP_frac_max));
-        test_lg2("1.00..01):",  fxp_bin(1, 1));
+        test_lg2("1.99...9):",  fxp(2) - 1);
+        test_lg2("1.00..01):",  fxp(1) + 1);
         test_lg2("1):",         fxp(1));
         test_lg2("0.99...9):",  fxp(1) - 1);
 
@@ -838,9 +838,9 @@ void test_logarithms()
         test_ln("e):",          fxp_get_e());
         test_ln("2.2):",        d2fxp(2.2));
         test_ln("2):",          fxp(2));
-        test_ln("1.99...9):",   fxp_bin(1, FXP_frac_max));
+        test_ln("1.99...9):",   fxp(2) - 1);
         test_ln("1.5):",        d2fxp(1.5));
-        test_ln("1.00..01):",   fxp_bin(1, 1));
+        test_ln("1.00..01):",   fxp(1) + 1);
         test_ln("1):",          fxp(1));
         test_ln("0.99...9):",   fxp(1) - 1);
         test_ln("0.50..01):",   FXP_half + 1);

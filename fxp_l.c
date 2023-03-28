@@ -214,7 +214,7 @@ int fxp_lg2_mul_l(int fxp1)
  * For more details on BKM:
  * https://en.wikipedia.org/wiki/BKM_algorithm
  */
-static inline struct tuple_l fxp_lg2_l_tuple(int fxp1)
+static inline struct tuple_l fxp_lg2_as_tuple_l(int fxp1)
 {
         struct tuple_l result;
         // Assumes fxp1 is for sure > 0
@@ -268,7 +268,7 @@ int fxp_lg2_l(int fxp1)
         if (fxp1 == 0) return FXP_NEG_INF;
         if (fxp1 == FXP_POS_INF) return FXP_POS_INF;
         // Get the separate characteristic and full mantissa
-        struct tuple_l tup = fxp_lg2_l_tuple(fxp1);
+        struct tuple_l tup = fxp_lg2_as_tuple_l(fxp1);
         // Round and shift the mantissa
         unsigned long rbit = (tup.f >> \
                                 FXP_lg2_l_mshift_m1) & 1ul;
@@ -326,9 +326,10 @@ unsigned long mul_distrib_l( unsigned long x,
 /*
  * Calculates log2 and then multiplies by the given factor
  */
-static inline int lg2_x_factor_l(int fxp1, const unsigned long FACTOR)
+static inline int lg2_x_factor_l(int fxp1, \
+                        const unsigned long FACTOR)
 {
-        struct tuple_l tup = fxp_lg2_l_tuple(fxp1);
+        struct tuple_l tup = fxp_lg2_as_tuple_l(fxp1);
         int shift_for_c;
         unsigned long shifted_c;
         long cxf;
@@ -344,9 +345,15 @@ static inline int lg2_x_factor_l(int fxp1, const unsigned long FACTOR)
                 cxf = -mul_distrib_l(shifted_c, FACTOR);
 
         } else {
-                shift_for_c = __builtin_clzl(tup.w) - 1;
-                shifted_c = tup.w << shift_for_c;
-                cxf = mul_distrib_l(shifted_c, FACTOR);
+                if (tup.w == 0) {
+                        shift_for_c = FXP_LONG_BITS_M1;
+                        shifted_c = 0;
+                        cxf = 0;
+                } else {
+                        shift_for_c = __builtin_clzl(tup.w) - 1;
+                        shifted_c = tup.w << shift_for_c;
+                        cxf = mul_distrib_l(shifted_c, FACTOR);
+                }
         }
         unsigned long mxf = mul_distrib_l(tup.f, FACTOR);
         int shift_for_m = FXP_LONG_BITS_M1 - shift_for_c;
