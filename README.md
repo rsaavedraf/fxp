@@ -27,12 +27,15 @@ That will compile locally and run the tester program. It should produce a long t
 
 Up to now run and tested on the following CPUs using gcc v11.3.0 with no -O options:
 
-[https://en.wikipedia.org/wiki/Endianness](Little-Endian) CPUs:
+[Little Endian](https://en.wikipedia.org/wiki/Endianness) CPUs:
 - Intel Core i7-6700K
 - Arm Cortex-A72 (-> Raspberry Pi 4 Model B)
 
-To use the Fix Point Numbers yourself, you only need files ==fxp.h== and ==fxp.c== when strictly
-using ints and only ints. If also using longs, then also files ==fxp_l.h== and ==fxp_l.c==. All the other files
-are auxiliary (convert to and from floating points, print out, test, etc.)
+[Big Endian](https://en.wikipedia.org/wiki/Endianness) CPUs:
+- 
+
+To use the Fix Point Numbers yourself, you only need files *fxp.h* and *fxp.c* when strictly
+using ints and only ints. If also using longs, then also files *fxp_l.h* and *fxp_l.c*. All the other files
+are auxiliary (to convert to and from floating points, print out, test, etc.)
 
 If you encounter any problems or errors please don't hesitate to let me know.
