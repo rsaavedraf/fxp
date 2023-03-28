@@ -14,8 +14,25 @@ lg2(), pow2() implemented using the [BKM algorithm (Wikipedia)](https://en.wikip
 ln() and lg10() implemented multiplying lg2 by needed factor at full 
 int-size precision (not just current fxp frac bits) to avoid precision loss.
 
-exp(), pow(), and sqrt() coming soon.
+exp() and pow10() now implemented (using longs, int-only versions + powxy() and sqrt() coming very soon.)
 
 Once completed with trigonometric functions, planning to rewrite in Rust.
 
-By Raul Saavedra
+## To try it
+You only need a C compiler like gcc installed. Simply clone this repo and then run the following script on its folder:
+
+    ./r
+
+That will compile locally and run the tester program. It should produce a long testing output like the one in output.txt.
+
+Up to now run and tested on the following CPUs using gcc v11.3.0 with no -O options:
+
+[https://en.wikipedia.org/wiki/Endianness](Little-Endian) CPUs:
+- Intel Core i7-6700K
+- Arm Cortex-A72 (-> Raspberry Pi 4 Model B)
+
+To use the Fix Point Numbers yourself, you only need files ==fxp.h== and ==fxp.c== when strictly
+using ints and only ints. If also using longs, then also files ==fxp_l.h== and ==fxp_l.c==. All the other files
+are auxiliary (convert to and from floating points, print out, test, etc.)
+
+If you encounter any problems or errors please don't hesitate to let me know.
