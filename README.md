@@ -23,9 +23,14 @@ You only need a C compiler like gcc installed. Simply clone this repo and then r
 
     ./r
 
-That will compile locally and run the tester program. It should produce a long testing output like the one in output.txt.
+That will compile locally and run the tester program.
+It should produce a long testing output, like the one in *output.txt*. The end of the 
+output will ideally show a total of zero warnings. If an error larger
+than the warning tolerance is found, then an assert will get triggered stopping
+the program immediately, and the output will end with that assert right after
+the function where the error was encountered.
 
-Up to now run and tested on the following CPUs using gcc v11.3.0 with no -O options:
+Up to now I have run and tested it on the following CPUs using gcc v11.3.0 with no -O options:
 
 [Little Endian](https://en.wikipedia.org/wiki/Endianness) CPUs:
 - Intel Core i7-6700K
@@ -34,7 +39,7 @@ Up to now run and tested on the following CPUs using gcc v11.3.0 with no -O opti
 [Big Endian](https://en.wikipedia.org/wiki/Endianness) CPUs:
 - (To be added when tried)
 
-To use the Fix Point Numbers yourself, you only need files *fxp.h* and *fxp.c* when strictly
+To use these Fix Point Numbers yourself, you only need files *fxp.h* and *fxp.c* when strictly
 using ints and only ints. If also using longs, then also files *fxp_l.h* and *fxp_l.c*. All the other files
 are auxiliary (to convert to and from floating points, print out, test, etc.)
 
