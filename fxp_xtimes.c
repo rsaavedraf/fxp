@@ -5,8 +5,7 @@
  *
  * Shows relavite execution times (smaller is better)
  * for the different fxp operations and functions.
- * Example end of the ouput, for a system with an
- * Intel i7-6700K cpu, run on 2023-03-13:
+ * Example output: file xtimes.txt in the repo
  *
  */
 
