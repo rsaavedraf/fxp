@@ -32,7 +32,7 @@ Up to now run and tested on the following CPUs using gcc v11.3.0 with no -O opti
 - Arm Cortex-A72 (-> Raspberry Pi 4 Model B)
 
 [Big Endian](https://en.wikipedia.org/wiki/Endianness) CPUs:
-- 
+- (To be added when tried)
 
 To use the Fix Point Numbers yourself, you only need files *fxp.h* and *fxp.c* when strictly
 using ints and only ints. If also using longs, then also files *fxp_l.h* and *fxp_l.c*. All the other files
