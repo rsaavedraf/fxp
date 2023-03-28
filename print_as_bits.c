@@ -40,7 +40,7 @@ void print_int_as_bin(int n, int width)
 
 void print_long_as_bin(long n)
 {
-        int an;
+        unsigned long an;
         if (n < 0) {
                 an = -n;
                 printf("-");
@@ -49,7 +49,7 @@ void print_long_as_bin(long n)
         }
         int i = LONG_BITS;
         while (i > 0) {
-                int bit = (an >> (i - 1)) & 1;
+                int bit = (int) ((an >> (i - 1)) & 1ul);
                 printf("%d", bit);
                 i--;
         }
@@ -70,7 +70,7 @@ void print_ulong_as_bin(unsigned long n)
 {
         int i = LONG_BITS;
         while (i > 0) {
-                int bit = (n >> (i - 1)) & 1;
+                int bit = (n >> (i - 1)) & 1ul;
                 printf("%d", bit);
                 i--;
         }

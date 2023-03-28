@@ -8,20 +8,6 @@
  * Example end of the ouput, for a system with an
  * Intel i7-6700K cpu, run on 2023-03-13:
  *
-=================================================
-Xtime averages for frac bit configurations {8, 12, 16, 20, 24, 28}
-=================================================
-add      :   1.00  (  4.92x system's native addition of ints)
-mul      :  11.08  ( 53.47x system's native multiplication of ints)
-mul_l    :   1.62  (  7.82x system's native multiplication of ints)
-div      :  15.57  ( 28.57x system's native division of ints)
-div_l    :   2.94  (  5.40x system's native division of ints)
-lg2      :  40.41  (BKM, only ints)
-lg2_l    :  20.75  (about  0.51x lg2, using BKM and longs)
-lg2_mul_l:  46.94  (about  1.16x lg2, using mult. and longs)
-pow2     :  33.79  (BKM, only ints)
-pow2_l   :  16.25  (about  0.48x pow2, using BKM and longs)
-=================================================
  */
 
 #include <stdio.h>

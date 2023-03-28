@@ -18,8 +18,13 @@
 
 int fxp_mul_l(int fxp1, int fxp2);
 int fxp_div_l(int fxp1, int fxp2);
-int fxp_lg2_l(int fxp);
-int fxp_lg2_mul_l(int fxp);
-int fxp_ln_l(int fxp);
-int fxp_lg10_l(int fxp);
-int fxp_pow2_l(int fxp);
+
+int fxp_lg2_l(int fxp1);
+int fxp_lg2_mul_l(int fxp1);
+int fxp_ln_l(int fxp1);
+int fxp_lg10_l(int fxp1);
+int fxp_pow2_l(int fxp1);
+int fxp_exp_l(int fxp1);
+
+int fxp_pow10_l(int fxp1);
+int fxp_powxy_l(int fxp1, int fxp2);

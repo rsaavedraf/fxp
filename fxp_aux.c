@@ -25,8 +25,8 @@
 long double lim_frac(long double x, int fbp)
 {
         if (x <= FXP_UNDEF_LD) return FXP_UNDEF_LD;
-        if (x < FXP_min_ld) return FXP_NINF_LD;
-        if (x > FXP_max_ld) return FXP_PINF_LD;
+        if (x <= FXP_min_ld) return FXP_NINF_LD;
+        if (x >= FXP_max_ld) return FXP_PINF_LD;
         // get whole part
         long double px = (x < 0)? -x: x;
         long double pxw = truncl(px);
@@ -88,10 +88,10 @@ void print_fxp(int x)
                 int px = -x;
                 if (whole < 0) whole = -whole;
                 if (frac < 0) frac = -frac;
-                printf("-%d.%7d (=%Lf =%d =x(-)%X =b",
+                printf("-%d.%7d (=%.10Le =%d =x(-)%X =b",
                         whole, frac, n, x, px);
         } else {
-                printf("%d.%7d (=%Lf =%d =x%X =b",
+                printf("%d.%7d (=%.10Le =%d =x%X =b",
                         whole, frac, n, x, x);
         }
         print_fxp_as_bin(x, 0);
@@ -180,8 +180,8 @@ void print_sys_info()
 {
         fflush( stdout );
         printf("\nSystem details:\n");
-        system("hostnamectl | grep -e 'Operating System' -e 'Architecture'");
-        system("cat /proc/cpuinfo | grep -e 'CPU' -e 'model name' -e 'Model' | sort -r | head -1");
+        int r1 = system("hostnamectl | grep -e 'Operating System' -e 'Architecture'");
+        int r2 = system("cat /proc/cpuinfo | grep -e 'CPU' -e 'model name' -e 'Model' | sort -r | head -1");
 
         printf("\nNum type sizes:\n");
         printf("char        has a size of %zu bytes.\n", sizeof(char));

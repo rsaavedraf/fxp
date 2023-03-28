@@ -202,3 +202,44 @@ Improving the VERBOSE printouts, and inspecting
 in detail the ranges of inputs that trigger certain
 running paths in lg2_x_factor.
 Clean up of vars no longer used.
+
+2023-03-23:
+Made fxp_tconst.c show the unsigned fxp representations
+for constants lg2(e) y lg2(10), both as uint and ulong.
+They will be used as factors for calculation of exp() and
+pow10() using pow2().
+Renamed the tuple struct used for lg as cmtuple (will also
+use it for pow).
+Reimplemented pow2 using the intermediate tuple.
+
+2023-03-25:
+Fixed a bug in one corner case for which oddly enough 
+our Actual value was correct, but the Expected one was
+incorrect!
+Using 31 frac bits, pow2_l(-tiniest) was returning
+a correct result very close to but smaller than 1,
+as expected, yet get_pow2_target(-tiniest) was incorrectly
+returning +INF.
+This problem was caused by how FXP_max_ld was initialized.
+Now instead of initializing it from the max valid fractional
+value, and checking if any actual value was > than that,
+we now initialize FXP_max_ld as the first invalid + integer
+minus half tiniest for the current FXP config, and we check
+if any value is >= to it.
+After this change, with 31 frac bits get_pow2_target(-tiniest)
+now does return a value very close to but smaller than 1, as
+expected, instead of +INF.
+
+2023-03-27
+exp_l() and pow10_l() implemented using pow2_l()
+Debugged mul_distrib_l(): xbyb was being used before
+initialization.
+Simplified and unified the tuple variable names on fxp.c
+and fxp_l.c
+
+
+Pending
+Implement exp(), pow10() (only ints) using pow2()
+Implement powxyl() and powxy()
+Implement sqrt_l() and sqrt()
+
