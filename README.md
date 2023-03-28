@@ -18,19 +18,20 @@ exp() and pow10() now implemented (using longs, int-only versions + powxy() and 
 
 Once completed with trigonometric functions, planning to rewrite in Rust.
 
-## To try it
-You only need a C compiler like gcc installed. Simply clone this repo and then run the following script on its folder:
+## How To Try It
+You only need a C compiler like gcc installed.
+Simply clone this repo and then run the following script on its folder:
 
     ./r
 
 That will compile locally and run the tester program.
-It should produce a long testing output, like the one in *output.txt*. The end of the 
-output will ideally show a total of zero warnings. If an error larger
-than the warning tolerance is found, then an assert will get triggered stopping
-the program immediately, and the output will end with that assert right after
-the function where the error was encountered.
+It should produce a long testing output, like the one in *output.txt*.
+The end of the output will ideally show a total of zero warnings.
+If an error larger than the warning tolerance is found, then an assert 
+will get triggered stopping the program immediately and showing the
+function call that was being tested and caused the error.
 
-Up to now I have run and tested it on the following CPUs using gcc v11.3.0 with no -O options:
+Up to now I have run and tested it successfully with zero warnings on the following CPUs using gcc v11.3.0 with no -O options:
 
 [Little Endian](https://en.wikipedia.org/wiki/Endianness) CPUs:
 - Intel Core i7-6700K
