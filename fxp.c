@@ -739,7 +739,7 @@ int fxp_mul(int fxp1, int fxp2)
         //printf("x:%X, ux:%X\n", x, ux);
         //printf("y:%X, uy:%X\n", y, uy);
         unsigned int pf3u = mul_distrib(ux, uy);
-        int rbit = (pf3u >> FXP_whole_bits_m1) & 1;
+        int rbit = (pf3u >> FXP_whole_bits_m1) & 1u;
         pf3 = (int) ((pf3u >> FXP_whole_bits) + rbit);
 
         //printf("pf3u: %u, pf3:%X\n", pf3u, pf3);;
@@ -910,15 +910,9 @@ inline unsigned int fxp_get_lg10_2()
         return FXP_shifted_lg10_2;
 }
 
-/*
-struct cmtuple {
-        int characteristic;
-        unsigned int mantissa;
-};
-*/
 struct tuple {
-        int w;          // whole part, characteristic for lg;
-        unsigned int f; // frac part, mantissa for lg;
+        int w;          // whole part, characteristic for lg
+        unsigned int f; // frac part, mantissa for lg
 };
 
 /*
@@ -1055,7 +1049,8 @@ int fxp_lg2(int fxp1)
  * Calculates log2 and then multiplies by the given factor
  * Analogous to the one in fxp_l, but here using only ints.
  */
-static inline int lg2_x_factor(int fxp1, const unsigned int FACTOR)
+static inline int lg2_x_factor(int fxp1, \
+                        const unsigned int FACTOR)
 {
         struct tuple tup = fxp_lg2_as_tuple(fxp1);
         int shift_for_c = 0;
@@ -1077,14 +1072,14 @@ static inline int lg2_x_factor(int fxp1, const unsigned int FACTOR)
                 shifted_c = posc << shift_for_c;
                 cxf = -mul_distrib(shifted_c, FACTOR);
         } else {
-                if (tup.w == 0) {
-                        shift_for_c = FXP_INT_BITS_M1;
-                        shifted_c = 0;
-                        cxf = 0;
-                } else {
+                if (tup.w > 0) {
                         shift_for_c = __builtin_clz(tup.w) - 1;
                         shifted_c = tup.w << shift_for_c;
                         cxf = mul_distrib(shifted_c, FACTOR);
+                } else {
+                        shift_for_c = FXP_INT_BITS_M1;
+                        shifted_c = 0;
+                        cxf = 0;
                 }
         }
         #ifdef VERBOSE
@@ -1278,16 +1273,153 @@ int fxp_pow2(int fxp1)
         return (int) md;
 }
 
-int fxp_pow(int x, int y)
+/*
+ * pow2 calculation (2^fxp1) of a non-negative argument,
+ * using the BKM (E-mode) algorithm and only ints.
+ * Argument comes as a {w,f} tuple, where the
+ * f component must already have the same alignment
+ * as the BKM array values (1 whole bit)
+ */
+int fxp_pow2_wtuple_pos(struct tuple tup)
+{
+/*
+        unsigned long pow2w, argument;
+        if (tup.w >= FXP_whole_bits_m1) return FXP_POS_INF;
+        pow2w = FXP_one_l << (tup.w + 2);
+        // Argument == tup.f will be in [0, 1)
+        //printf("\npow2_l: pow2w:%lX  argument:%lX\n", pow2w, argument);
+        unsigned long x = FXP_BKM_X_ONE_L, y = 0;
+        for (int k = 0; k < FXP_INT_BITS; k++) {
+                unsigned long const  z = y + FXP_BKM_LOGS_L[k];
+                //printf("k:%d,  z:%lX\n", k, z);
+                if (z <= tup.f) {
+                        y = z;
+                        x = x + (x >> k);
+                        //printf("\tUpdating y (%lX) und x (%lX)\n", y, x);
+                }
+        }
+        //printf("final x:%lX\n", x);
+        unsigned long md = mul_distrib_l(pow2w, x);
+        return (int) md;
+*/
+        return 0;
+}
+
+
+
+/*
+ * pow2 calculation (2^fxp1) of a negative argument,
+ * using the BKM (E-mode) algorithm and ints.
+ * Argument comes as a {w,f} tuple, where the
+ * f component must already have the same alignment
+ * as the BKM array values (1 whole bit)
+ */
+int fxp_pow2_wtuple_neg(struct tuple tup)
+{
+/*
+        unsigned int pow2w, argument;
+        if (tup.w >= FXP_INT_BITS_M1) return 0;
+        if (tup.w > 0)
+                pow2w = FXP_one_l >> (tup.w - 1);
+        else
+                pow2w = FXP_one_l << 1;
+        // Notice argument is > 0, in (0, 1]
+        argument = FXP_BKM_A_ONE_L - tup.f;
+        unsigned long x = FXP_BKM_X_ONE_L, y = 0;
+        for (int k = 0; k < FXP_INT_BITS; k++) {
+                unsigned long const  z = y + FXP_BKM_LOGS_L[k];
+                if (z <= argument) {
+                        y = z;
+                        x = x + (x >> k);
+                }
+        }
+        unsigned long md = mul_distrib_l(pow2w, x);
+        return (int) md;
+*/
+        return 0;
+}
+
+/*
+ * pow2 calculation (2^fxp1) using the BKM (E-mode) algorithm
+ * Analogous to implementation in bkm.c, but here tailored
+ * for fxp's using only ints
+ */
+int fxp_pow2_split(int fxp1)
+{
+        if (fxp1 == FXP_UNDEF) return FXP_UNDEF;
+        if (fxp1 == FXP_NEG_INF) return 0;
+        if (fxp1 == FXP_POS_INF) return FXP_POS_INF;
+        if (fxp1 >= 0) {
+                struct tuple x = {
+                            (unsigned int) fxp_get_whole_part(fxp1),
+                            ((unsigned int) fxp_get_bin_frac(fxp1)) };
+                return fxp_pow2_wtuple_pos( x );
+        } else {
+                int pfxp1 = -fxp1;
+                struct tuple x = {
+                            (unsigned int) fxp_get_whole_part(pfxp1),
+                            ((unsigned int) fxp_get_bin_frac(pfxp1)) };
+                return fxp_pow2_wtuple_neg( x );
+        }
+}
+
+/*
+ * Calculate the pow2 of a non-negative argument x
+ * multiplied by a factor C (C having the indicated
+ * number of whole bits)
+ */
+static inline int fxp_pow2_pos_arg_xfactor( \
+                        int x, \
+                        const unsigned int C, \
+                        int c_nwhole_bits)
 {
         // TODO
         return 0;
 }
 
-int fxp_exp(int fxp1)
+/*
+ * Calculate the pow2 of a negative argument x
+ * multiplied by a factor C (C having the indicated
+ * number of whole bits)
+ */
+static inline int fxp_pow2_neg_arg_xfactor( \
+                        int x, \
+                        const unsigned int C, \
+                        int c_nwhole_bits)
 {
         // TODO
         return 0;
+}
+
+/*
+ * Implementation of exp_l(x) from pow2_l(x)
+ * Using logarithm properties:
+ * e^x == 2^( lg2(e^x) ) == 2^( x * lg2(e) )
+ */
+int fxp_exp(int fxp1)
+{
+        if (fxp1 == FXP_UNDEF) return FXP_UNDEF;
+        if (fxp1 == FXP_NEG_INF) return 0;
+        if (fxp1 == FXP_POS_INF) return FXP_POS_INF;
+        return (fxp1 >= 0)?
+                fxp_pow2_pos_arg_xfactor(fxp1, FXP_LG2_E_I32, 1):
+                fxp_pow2_neg_arg_xfactor(fxp1, FXP_LG2_E_I32, 1);
+
+}
+
+/*
+ * Implementation of pow10(x) from pow2(x)
+ * Using logarithm properties:
+ * 10^x == 2^( lg2(10^x) ) == 2^( x * lg2(10) )
+ */
+int fxp_pow10(int fxp1)
+{
+        if (fxp1 == FXP_UNDEF) return FXP_UNDEF;
+        if (fxp1 == FXP_NEG_INF) return 0;
+        if (fxp1 == FXP_POS_INF) return FXP_POS_INF;
+        return (fxp1 >= 0)?
+                fxp_pow2_pos_arg_xfactor(fxp1, FXP_LG2_10_I32, 2):
+                fxp_pow2_neg_arg_xfactor(fxp1, FXP_LG2_10_I32, 2);
 }
 
 /*
