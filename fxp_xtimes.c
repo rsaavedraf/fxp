@@ -24,12 +24,13 @@ int main(void) {
 
         int s1, s2, s3, n1, n2, n3, x, y, n, lastp;
 
-        long double tadd, tadd_l, tmul, tmul_l, tmul_d;
-        long double tdiv, tdiv_l, tlg2, tlg2_l, tlg2_mul, tlg2_mul_l;
-        long double tpow2, tpow2_l;
+        long double tadd, tadd_l, tmul, tmul_l, tmul_d, tdiv, tdiv_l;
+        long double tlg2, tlg2_l, tlg2_mul, tlg2_mul_l, tln, tln_l;
+        long double tpow2, tpow2_l, texp, texp_l;
         long double avgadd, avgadd_l, avgmul, avgmul_l, avgmul_d;
         long double avgdiv, avgdiv_l, avglg2, avglg2_l, avglg2_mul;
-        long double avglg2_mul_l, avgpow2, avgpow2_l;
+        long double avglg2_mul_l, avgln, avgln_l;
+        long double avgpow2, avgpow2_l, avgexp, avgexp_l;
         // Times for the system's native operations
         long double tadd_sys, tmul_sys, tdiv_sys;
         long double avgadd_sys, avgmul_sys, avgdiv_sys;
@@ -52,41 +53,49 @@ int main(void) {
         printf("\n%sRelative Execution Times of FXP operations\n%s", DASHES, DASHES);
         print_sys_info();
 
-        avgadd = 0;
-        avgmul = 0;
-        avgmul_l = 0;
-        avgmul_d = 0;
-        avgdiv = 0;
-        avgdiv_l = 0;
-        avglg2 = 0;
-        avglg2_l = 0;
-        avgpow2 = 0;
-        avgpow2_l = 0;
-        avglg2_mul = 0;
-        avglg2_mul_l = 0;
-        avgadd_sys = 0;
-        avgmul_sys = 0;
-        avgdiv_sys = 0;
+        avgadd = 0.0;
+        avgmul = 0.0;
+        avgmul_l = 0.0;
+        avgmul_d = 0.0;
+        avgdiv = 0.0;
+        avgdiv_l = 0.0;
+        avglg2 = 0.0;
+        avglg2_l = 0.0;
+        avglg2_mul = 0.0;
+        avglg2_mul_l = 0.0;
+        avgln = 0.0;
+        avgln_l = 0.0;
+        avgpow2 = 0.0;
+        avgpow2_l = 0.0;
+        avgexp = 0.0;
+        avgexp_l = 0.0;
+        avgadd_sys = 0.0;
+        avgmul_sys = 0.0;
+        avgdiv_sys = 0.0;
         for (int nc = 0; nc < nconfigs; nc++) {
                 int nfb = fracbit_configs[nc];
                 fxp_set_frac_bits(nfb);
                 printf("\nNumber of frac bits: %d\n", FXP_frac_bits);
-                tadd = 0;
-                tmul = 0;
-                tmul_l = 0;
-                tmul_d = 0;
-                tdiv = 0;
-                tdiv_l = 0;
-                tlg2 = 0;
-                tlg2_l = 0;
-                tlg2_mul = 0;
-                tlg2_mul_l = 0;
-                tpow2 = 0;
-                tpow2_l = 0;
+                tadd = 0.0;
+                tmul = 0.0;
+                tmul_l = 0.0;
+                tmul_d = 0.0;
+                tdiv = 0.0;
+                tdiv_l = 0.0;
+                tlg2 = 0.0;
+                tlg2_l = 0.0;
+                tlg2_mul = 0.0;
+                tlg2_mul_l = 0.0;
+                tln = 0.0;
+                tln_l = 0.0;
+                tpow2 = 0.0;
+                tpow2_l = 0.0;
+                texp = 0.0;
+                texp_l = 0.0;
                 lastp = -1;
-                tadd_sys = 0;
-                tmul_sys = 0;
-                tdiv_sys = 0;
+                tadd_sys = 0.0;
+                tmul_sys = 0.0;
+                tdiv_sys = 0.0;
                 int nwb = FXP_INT_BITS - nfb;
                 unsigned int mask_for_pow = (1u << ((nwb > 6? 6: nwb) + nfb - 1)) - 1;
                 for (int n = 0; n < MAX_NUMS; n++) {
@@ -243,7 +252,85 @@ int main(void) {
                         tdiv_l += dt;
                         avgdiv_l += dt;
 
+                        // Divisions done, restore val[18] from 1 to 0
                         val[18] = 0;
+
+                        // Calculation of pow2 of fxp's using
+                        // BKM and only ints
+                        n1 = n1 & mask_for_pow;
+                        n2 = -n3;
+                        t0 = clock();
+                        for (int i = 0; i < MAX_OPS; i++) {
+                                x = fxp_pow2(n1);
+                                x = fxp_pow2(n2);
+                                for (int j = 0; j < nvals; j++) {
+                                        y = val[j];
+                                        x = fxp_pow2(n1);
+                                        x = fxp_pow2(n2);
+                                        x = fxp_pow2(n3);
+                                }
+                        }
+                        t1= clock();
+                        dt = ((double) t1 - t0);
+                        tpow2 += dt;
+                        avgpow2 += dt;
+
+                        // Calculation of pow2_l of fxp's using
+                        // BKM and only ints
+                        t0 = clock();
+                        for (int i = 0; i < MAX_OPS; i++) {
+                                x = fxp_pow2_l(n1);
+                                x = fxp_pow2_l(n2);
+                                for (int j = 0; j < nvals; j++) {
+                                        y = val[j];
+                                        x = fxp_pow2_l(n1);
+                                        x = fxp_pow2_l(n2);
+                                        x = fxp_pow2_l(n3);
+                                }
+                        }
+                        t1= clock();
+                        dt = ((double) t1 - t0);
+                        tpow2_l += dt;
+                        avgpow2_l += dt;
+
+                        // Calculation of exp of fxp's using
+                        // pow2 (-> only ints)
+                        n1 = n1 & mask_for_pow;
+                        n2 = -n3;
+                        t0 = clock();
+                        for (int i = 0; i < MAX_OPS; i++) {
+                                x = fxp_exp(n1);
+                                x = fxp_exp(n2);
+                                for (int j = 0; j < nvals; j++) {
+                                        y = val[j];
+                                        x = fxp_exp(n1);
+                                        x = fxp_exp(n2);
+                                        x = fxp_exp(n3);
+                                }
+                        }
+                        t1= clock();
+                        dt = ((double) t1 - t0);
+                        texp += dt;
+                        avgexp += dt;
+
+                        // Calculation of exp_l of fxp's using
+                        // pow2_l (-> longs)
+                        t0 = clock();
+                        for (int i = 0; i < MAX_OPS; i++) {
+                                x = fxp_exp_l(n1);
+                                x = fxp_exp_l(n2);
+                                for (int j = 0; j < nvals; j++) {
+                                        y = val[j];
+                                        x = fxp_exp_l(n1);
+                                        x = fxp_exp_l(n2);
+                                        x = fxp_exp_l(n3);
+                                }
+                        }
+                        t1= clock();
+                        dt = ((double) t1 - t0);
+                        texp_l += dt;
+                        avgexp_l += dt;
+
 
                         // To measure the lg execution use only + arguments
                         if (n1 < 0) n1 = -n1;
@@ -302,43 +389,39 @@ int main(void) {
                         tlg2_mul_l += dt;
                         avglg2_mul_l += dt;
 
-                        // Calculation of pow2 of fxp's using
-                        // BKM and only ints
-                        n1 = n1 & mask_for_pow;
-                        n2 = -n3;
+                        // Calculation of ln of fxp's
                         t0 = clock();
                         for (int i = 0; i < MAX_OPS; i++) {
-                                x = fxp_pow2(n1);
-                                x = fxp_pow2(n2);
+                                x = fxp_ln(n1);
+                                x = fxp_ln(n2);
                                 for (int j = 0; j < nvals; j++) {
                                         y = val[j];
-                                        x = fxp_pow2(n1);
-                                        x = fxp_pow2(n2);
-                                        x = fxp_pow2(n3);
+                                        x = fxp_ln(n1);
+                                        x = fxp_ln(n2);
+                                        x = fxp_ln(n3);
                                 }
                         }
                         t1= clock();
                         dt = ((double) t1 - t0);
-                        tpow2 += dt;
-                        avgpow2 += dt;
+                        tln += dt;
+                        avgln += dt;
 
-                        // Calculation of pow2_l of fxp's using
-                        // BKM and only ints
+                        // Calculation of lg2 of fxp's using longs
                         t0 = clock();
                         for (int i = 0; i < MAX_OPS; i++) {
-                                x = fxp_pow2_l(n1);
-                                x = fxp_pow2_l(n2);
+                                x = fxp_ln_l(n1);
+                                x = fxp_ln_l(n2);
                                 for (int j = 0; j < nvals; j++) {
                                         y = val[j];
-                                        x = fxp_pow2_l(n1);
-                                        x = fxp_pow2_l(n2);
-                                        x = fxp_pow2_l(n3);
+                                        x = fxp_ln_l(n1);
+                                        x = fxp_ln_l(n2);
+                                        x = fxp_ln_l(n3);
                                 }
                         }
                         t1= clock();
                         dt = ((double) t1 - t0);
-                        tpow2_l += dt;
-                        avgpow2_l += dt;
+                        tln_l += dt;
+                        avgln_l += dt;
 
                 }
 
@@ -354,14 +437,22 @@ int main(void) {
                             tlg2_l / tadd, tlg2_l / tlg2);
                 printf("lg2_mul_l: %6.2Lf  (about %5.2Lfx lg2, using mult. and longs)\n", \
                             tlg2_mul_l / tadd, tlg2_mul_l / tlg2);
+                printf("ln       : %6.2Lf  (using lg2)\n", \
+                            tln / tadd);
+                printf("ln_l     : %6.2Lf  (about %5.2Lfx lg2, using lg2_l)\n", \
+                            tln_l / tadd, tln_l / tlg2);
                 printf("pow2     : %6.2Lf  (BKM, only ints)\n", \
                             tpow2 / tadd);
                 printf("pow2_l   : %6.2Lf  (about %5.2Lfx pow2, using BKM and longs)\n", \
                             tpow2_l / tadd, tpow2_l / tpow2);
+                printf("exp      : %6.2Lf  (about %5.2Lfx pow2, using pow2)\n", \
+                            texp / tadd, texp / tpow2);
+                printf("exp_l    : %6.2Lf  (about %5.2Lfx pow2, using pow2_l)\n", \
+                            texp_l / tadd, texp_l / tpow2);
         }
 
         // Overall results
-        printf("\n\n%sXtime averages for frac bit configurations {", DASHES);
+        printf("\n\n%sRelative Xtime averages for frac bit configurations {", DASHES);
         for (int nc = 0; nc < nconfigs; nc++) {
                 printf("%d", fracbit_configs[nc]);
                 printf((nc + 1 == nconfigs? "}": ", "));
@@ -377,9 +468,13 @@ int main(void) {
         avgdiv_l /= nconfigs;
         avglg2 /= nconfigs;
         avglg2_l /= nconfigs;
+        avgln /= nconfigs;
+        avgln_l /= nconfigs;
         avglg2_mul_l /= nconfigs;
         avgpow2 /= nconfigs;
         avgpow2_l /= nconfigs;
+        avgexp /= nconfigs;
+        avgexp_l /= nconfigs;
         printf("add      : %6.2Lf  (%6.2Lfx system's native addition of ints)\n", \
                     1.0L, avgadd / avgadd_sys);
         printf("mul      : %6.2Lf  (%6.2Lfx system's native multiplication of ints)\n", \
@@ -397,13 +492,25 @@ int main(void) {
         printf("lg2_mul_l: %6.2Lf  (about %5.2Lfx lg2, using mult. and longs)\n", \
                     avglg2_mul_l / avgadd, \
                     avglg2_mul_l / avglg2);
+        printf("ln       : %6.2Lf  (about %5.2Lfx lg2, using lg2)\n", \
+                    avgln / avgadd, avgln / avglg2);
+        printf("ln_l     : %6.2Lf  (about %5.2Lfx lg2, using lg2_l)\n", \
+                    avgln_l / avgadd, avgln_l / avglg2);
         printf("pow2     : %6.2Lf  (BKM, only ints)\n", \
                     avgpow2 / avgadd);
         printf("pow2_l   : %6.2Lf  (about %5.2Lfx pow2, using BKM and longs)\n", \
                     avgpow2_l / avgadd, \
                     avgpow2_l / avgpow2);
+        printf("exp      : %6.2Lf  (about %5.2Lfx pow2, using pow2)\n", \
+                    avgexp / avgadd, \
+                    avgexp / avgpow2);
+        printf("exp_l    : %6.2Lf  (about %5.2Lfx pow2, using pow2_l)\n", \
+                    avgexp_l / avgadd, \
+                    avgexp_l / avgpow2);
 
         printf("%s", DASHES);
+        printf("(Keep in mind: compiler optimization options used/not used can ");
+        printf("affect these measurements significantly.)\n\n");
 
         return 0;
 }
