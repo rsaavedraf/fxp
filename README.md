@@ -20,6 +20,7 @@ exp() and pow10() now implemented (using longs, int-only versions + powxy() and 
 
 Once completed with trigonometric functions, planning to rewrite in Rust.
 
+&nbsp;
 ## How To Try It
 You only need a C compiler like gcc installed.
 Simply clone this repo and then run the following script on its folder:
@@ -43,8 +44,9 @@ with some -O options.
 - Arm Cortex-A72 (-> Raspberry Pi 4 Model B)
 
 [Big Endian](https://en.wikipedia.org/wiki/Endianness) CPUs:
-(To be added when tried/receiving output from test runs)
+- (To be added when tried/receiving output from test runs)
 
+&nbsp;
 ## Your Feedback is Welcome!
 If you try it on any CPU not listed above, specially one with an 
 instruction set architecture different from the ones represented above,
