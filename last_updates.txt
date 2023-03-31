@@ -237,9 +237,19 @@ initialization.
 Simplified and unified the tuple variable names on fxp.c
 and fxp_l.c
 
+2023-03-29
+Relative execution times for ln(), ln_l(), exp() and exp_l()
+now also measured by fxp_xtimes.c
 
-Pending
-Implement exp(), pow10() (only ints) using pow2()
-Implement powxyl() and powxy()
+2023-03-31
+Intermediate refactoring of pow2() in fxp.c, following the same
+adjusments made in fxp_l.c implementing exp and pow10
+as pow2 times the corresponding factor.
+
+
+
+Pending:
+Finish implementing exp(), pow10() (only ints) using pow2()
+Implement powxy_l() and powxy()
 Implement sqrt_l() and sqrt()
-
+Implement trigonometric functions

@@ -32,6 +32,8 @@ extern const unsigned long FXP_LN_2_I64;
 extern const unsigned long FXP_LG10_2_I64;
 extern const unsigned long FXP_LG2_E_I64;
 extern const unsigned long FXP_LG2_10_I64;
+extern const unsigned int FXP_LG2_E_WBITS;
+extern const unsigned int FXP_LG2_10_WBITS;
 
 extern int FXP_frac_bits;
 extern int FXP_frac_bits_m1;

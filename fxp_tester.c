@@ -2,7 +2,7 @@
 /*
  * fxp_tester.c
  * Tests the implementation of binary fixed point numbers
- * (fxp.c)
+ * (fxp.c and fxp_l.c)
  *
  * By Raul Saavedra, Bonn Germany
  */

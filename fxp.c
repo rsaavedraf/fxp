@@ -127,10 +127,12 @@ const unsigned long FXP_LG10_2_I64 = 0x4D104D427DE7FD01ul;
 // lg2(e) = 1.44269504... (1 whole, 31 and 63 frac bits)
 const unsigned int FXP_LG2_E_I32 = 0xB8AA3B29u;
 const unsigned long FXP_LG2_E_I64 = 0xB8AA3B295C17F19Eul;
+const unsigned int FXP_LG2_E_WBITS = 1;
 
 // lg2(10) = 3.32192809... (2 whole, 30 and 62 frac bits)
 const unsigned int FXP_LG2_10_I32 = 0xD49A784Cu;
 const unsigned long FXP_LG2_10_I64 = 0xD49A784BCD1B8B51ul;
+const unsigned int FXP_LG2_10_WBITS = 2;
 
 static const int FXP_DEF_SHIFT = FXP_INT_BITS - FXP_FRAC_BITS_DEF;
 unsigned int FXP_shifted_e = (FXP_E_I32 >> (FXP_DEF_SHIFT - 2));
@@ -141,7 +143,7 @@ unsigned int FXP_shifted_lg10_2 = (FXP_LG10_2_I32 >> FXP_DEF_SHIFT);
 // Auxiliary variables used in the lg2 implementations
 int FXP_half = 1 << (FXP_FRAC_BITS_DEF - 1);
 int FXP_two = 1 << (FXP_FRAC_BITS_DEF + 1);
-//int FXP_lg2_maxloops = FXP_FRAC_BITS_DEF + 1;
+int FXP_lg2_maxloops = FXP_FRAC_BITS_DEF + 1;
 unsigned int FXP_one = 1u << FXP_FRAC_BITS_DEF;
 unsigned long FXP_one_l =  1ul << FXP_FRAC_BITS_DEF;
 
@@ -202,7 +204,6 @@ static const unsigned int FXP_BKM_LOGS_XTRA[] = {
 static const unsigned int FXP_BKM_A_ONE = 1u << (FXP_INT_BITS - 1);
 // BKM One aligned for X: unsigned fxp with 2 whole bits
 static const unsigned int FXP_BKM_X_ONE = 1u << (FXP_INT_BITS - 2);
-//static const unsigned int FXP_BKM_HALF = FXP_BKM_X_ONE >> 1;
 static const unsigned int FXP_BKM_MAXU = ~(0u);
 
 // Auxiliary variables for the implementations that use longs (fxp_l.c)
@@ -210,7 +211,6 @@ const unsigned long FXP_BKM_A_ONE_L = \
                     ((unsigned long) FXP_BKM_A_ONE) << FXP_INT_BITS;
 const unsigned long FXP_BKM_X_ONE_L = \
                     ((unsigned long) FXP_BKM_X_ONE) << FXP_INT_BITS;
-//const unsigned long FXP_BKM_HALF_L = (FXP_BKM_X_ONE_L >> 1);
 
 unsigned long FXP_max_lshifted = (FXP_MAX_L << FXP_FRAC_BITS_DEF) \
                     | (((1 << FXP_FRAC_BITS_DEF) - 1) / 2);
@@ -303,7 +303,7 @@ int fxp_set_frac_bits(int nfracbits)
         FXP_one_l = 1l << FXP_frac_bits;
         FXP_half = FXP_one >> 1;
         FXP_two = FXP_one << 1;
-        //FXP_lg2_maxloops = FXP_frac_bits + 1;
+        FXP_lg2_maxloops = FXP_frac_bits + 1;
         FXP_lg2_l_mshift = 2 * FXP_INT_BITS - 1 - FXP_frac_bits;
         FXP_lg2_l_mshift_m1 = FXP_lg2_l_mshift - 1;
         FXP_lg2_l_mshift_p1 = FXP_lg2_l_mshift + 1;
@@ -918,7 +918,7 @@ struct tuple {
 /*
  * Internal auxiliary function that calculates the characteristic
  * and rounded mantissa of lg2, returning them separately in a
- * struct (tuple), both at their maximum precision:
+ * struct (tuple), both at their maximum bit-precision:
  * The characteristic as int with 0 frac bits
  * The mantissa as unsigned int with 31 frac bits (exact same
  * configuration of the BKM array values.)
@@ -928,7 +928,8 @@ struct tuple {
  * For more details on BKM:
  * https://en.wikipedia.org/wiki/BKM_algorithm
  */
-static inline struct tuple fxp_lg2_as_tuple(int fxp1)
+static inline struct tuple fxp_get_lg2_as_tuple(int fxp1, \
+                            const int MAX_LOOPS)
 {
         struct tuple result;
         // Here fxp1 for sure > 0
@@ -953,7 +954,8 @@ static inline struct tuple fxp_lg2_as_tuple(int fxp1)
         unsigned int auxa, auxb;                    // aux
         unsigned int a_bits;
         unsigned int ab_mask = 1;
-        for (int shift = 1; shift < FXP_INT_BITS; shift++) {
+        //for (int shift = 1; shift < FXP_INT_BITS; shift++) {
+        for (int shift = 1; shift < MAX_LOOPS; shift++) {
                 //unsigned long xs = (x >> shift);
                 // Here we must r-shift the combo (xa, xb) by shift
                 // units, leaving the results in combo (xsa, xsb)
@@ -988,6 +990,7 @@ static inline struct tuple fxp_lg2_as_tuple(int fxp1)
                 }
         }
         // One final "iteration", as if shift == FXP_INT_BITS
+        // (Done separately to avoid an if inside the loop)
         xsa = 0;
         xsb = xa;
         za = xa;
@@ -1020,7 +1023,7 @@ int fxp_lg2(int fxp1)
         if (fxp1 == 0) return FXP_NEG_INF;
         if (fxp1 == FXP_POS_INF) return FXP_POS_INF;
         // Get the separate characteristic and full mantissa
-        struct tuple tup = fxp_lg2_as_tuple(fxp1);
+        struct tuple tup = fxp_get_lg2_as_tuple(fxp1, FXP_lg2_maxloops);
         // Shift the mantissa (rounding it) for current fxp config
         int rbit = (tup.f >> FXP_whole_bits_m2) & 1u;
         int m = (tup.f >> FXP_whole_bits_m1) + rbit;
@@ -1052,7 +1055,7 @@ int fxp_lg2(int fxp1)
 static inline int lg2_x_factor(int fxp1, \
                         const unsigned int FACTOR)
 {
-        struct tuple tup = fxp_lg2_as_tuple(fxp1);
+        struct tuple tup = fxp_get_lg2_as_tuple(fxp1, FXP_INT_BITS);
         int shift_for_c = 0;
         unsigned int shifted_c = 0;
         int cxf;
@@ -1186,91 +1189,67 @@ int fxp_lg10(int fxp1)
 }
 
 
-/*
- * Analogous to fxp_pow2_l but using only ints
- */
-int fxp_pow2(int fxp1)
+struct utuple {
+        unsigned int a;
+        unsigned int b;
+};
+
+static inline struct utuple fxp_bkm_emode(int argument)
 {
-        if (fxp1 == FXP_UNDEF) return FXP_UNDEF;
-        if (fxp1 == FXP_NEG_INF) return 0;
-        if (fxp1 == FXP_POS_INF) return FXP_POS_INF;
-        int w = fxp_get_whole_part(fxp1);
-        int f = fxp_get_bin_frac(fxp1);
-        unsigned int pow2w, argument;
-        if (fxp1 >= 0) {
-                if (w >= FXP_whole_bits_m1) {
-                        return FXP_POS_INF;
-                }
-                pow2w = FXP_one << (w + 1);
-                // Argument will be in [0, 1)
-                argument = ((unsigned int) f) << FXP_whole_bits_m1;
-        } else {
-                if (w <= FXP_INT_BITS_M1_NEG) {
-                        return 0;
-                }
-                if (w < 0)
-                        pow2w = FXP_one >> (-w);
-                else
-                        pow2w = FXP_one;
-                argument = (FXP_one + f) \
-                                << FXP_whole_bits_m1;
-        }
-        //if (VERBOSE) printf("pow2w:%X  argument:%X\n", pow2w, argument);
-        //unsigned int x = FXP_BKM_ONE, y = 0;
-        unsigned int xa = FXP_BKM_X_ONE, xb = 0;
-        unsigned int ya = 0, yb = 0;
-        unsigned int auxa, auxb, za, zb, xsa, xsb, a_bits, ab_mask;
+        struct utuple x = { FXP_BKM_X_ONE, 0u };
+        struct utuple y = { 0u, 0u };
+        struct utuple aux, z, xs;
+        unsigned int a_bits, ab_mask;
         for (int k = 0; k < FXP_INT_BITS; k++) {
-                //unsigned int const  z = y + FXP_BKM_LOGS[k];
-                auxa = FXP_BKM_LOGS[k];
-                auxb = FXP_BKM_LOGS_XTRA[k];
-                za = ya + auxa;
-                if (yb > FXP_BKM_MAXU - auxb)
-                        za++;
-                zb = yb + auxb;
-
-                //if (VERBOSE) printf("k:%d,  z:%X-%X\n", k, za, zb);
+                aux.a = FXP_BKM_LOGS[k];
+                aux.b = FXP_BKM_LOGS_XTRA[k];
+                z.a = y.a + aux.a;
+                if (y.b > FXP_BKM_MAXU - aux.b)
+                        z.a++;
+                z.b = y.b + aux.b;
+                #ifdef VERBOSE
+                printf("k:%d,  z:%X-%X\n", k, z.a, z.b);
+                #endif
                 //if (z <= argument) {
-                if ((za < argument) \
-                    || ((za == argument) && (zb == 0))) {
-                        //y = z;
-                        ya = za;
-                        yb = zb;
-
+                if ((z.a < argument) \
+                    || ((z.a == argument) && (z.b == 0))) {
+                        y = z;
                         //x = x + (x >> k);
                         // Equivalent to:
                         // xs = (x >> k);
                         // x += xs;
-                        // Here we r-shift the combo (xa, xb) by k units
-                        // leaving the results in combo (xsa, xsb)
-                        //if (k < FXP_INT_BITS) {
+                        // Here we r-shift the combo in x by k units
+                        // leaving the results in combo xs
                         ab_mask = (1u << k) - 1;
-                        a_bits = (xa & ab_mask);
-                        xsa = (xa >> k);
-                        xsb = (a_bits << (FXP_INT_BITS - k)) \
-                                | (xb >> k);
-                        //} else {
-                        //        xsa = 0;
-                        //        xsb = (xa >> (k - FXP_INT_BITS));
-                        //}
-                        xa += xsa;
-                        if (xsb > FXP_BKM_MAXU - xb)
-                                xa++;
-                        xb += xsb;
-                        //if (VERBOSE) printf("\tUpdating y (%X-%X) und x (%X-%X)\n", \
-                        //                ya, yb, xa, xb);
+                        a_bits = (x.a & ab_mask);
+                        xs.a = (x.a >> k);
+                        xs.b = (a_bits << (FXP_INT_BITS - k)) \
+                                | (x.b >> k);
+                        x.a += xs.a;
+                        if (xs.b > FXP_BKM_MAXU - x.b) x.a++;
+                        x.b += xs.b;
+                        #ifdef VERBOSE
+                        printf("\tUpdating y (%X-%X) und x (%X-%X)\n", \
+                                        y.a, y.b, x.a, x.b);
+                        #endif
                 }
         }
+        return x;
+}
+
+static inline int fxp_pow2w_by_x(
+                        unsigned int pow2w, \
+                        struct utuple tup)
+{
         unsigned int x;
-        if ((xa >> FXP_INT_BITS_M1) == 0) {
-                x = (xa << 1) | (xb >> FXP_INT_BITS_M1);
+        if ((tup.a >> FXP_INT_BITS_M1) == 0) {
+                x = (tup.a << 1) | (tup.b >> FXP_INT_BITS_M1);
         } else {
-                x = xa;
+                x = tup.a;
                 pow2w = pow2w << 1;
         }
-        //if (VERBOSE) printf("xa:%X, final x:%X\n", xa, x);
-        unsigned int md = mul_distrib(pow2w, x);
-        return (int) md;
+        unsigned int product = mul_distrib(pow2w, x);
+        return (int) product;
 }
 
 /*
@@ -1280,32 +1259,21 @@ int fxp_pow2(int fxp1)
  * f component must already have the same alignment
  * as the BKM array values (1 whole bit)
  */
-int fxp_pow2_wtuple_pos(struct tuple tup)
+static inline int fxp_pow2_wpos_tuple(struct tuple tup)
 {
-/*
-        unsigned long pow2w, argument;
-        if (tup.w >= FXP_whole_bits_m1) return FXP_POS_INF;
-        pow2w = FXP_one_l << (tup.w + 2);
-        // Argument == tup.f will be in [0, 1)
-        //printf("\npow2_l: pow2w:%lX  argument:%lX\n", pow2w, argument);
-        unsigned long x = FXP_BKM_X_ONE_L, y = 0;
-        for (int k = 0; k < FXP_INT_BITS; k++) {
-                unsigned long const  z = y + FXP_BKM_LOGS_L[k];
-                //printf("k:%d,  z:%lX\n", k, z);
-                if (z <= tup.f) {
-                        y = z;
-                        x = x + (x >> k);
-                        //printf("\tUpdating y (%lX) und x (%lX)\n", y, x);
-                }
+        if (tup.w >= FXP_whole_bits_m1) {
+                return FXP_POS_INF;
         }
-        //printf("final x:%lX\n", x);
-        unsigned long md = mul_distrib_l(pow2w, x);
-        return (int) md;
-*/
-        return 0;
+        unsigned int pow2w, argument;
+        pow2w = FXP_one << (tup.w + 1);
+        // Argument will be in [0, 1)
+        argument = ((unsigned int) tup.f) << FXP_whole_bits_m1;
+        #ifdef VERBOSE
+        printf("pow2w:%X  argument:%X\n", pow2w, argument);
+        #endif
+        struct utuple x = fxp_bkm_emode(argument);
+        return fxp_pow2w_by_x(pow2w, x);
 }
-
-
 
 /*
  * pow2 calculation (2^fxp1) of a negative argument,
@@ -1314,29 +1282,19 @@ int fxp_pow2_wtuple_pos(struct tuple tup)
  * f component must already have the same alignment
  * as the BKM array values (1 whole bit)
  */
-int fxp_pow2_wtuple_neg(struct tuple tup)
+static inline int fxp_pow2_wneg_tuple(struct tuple tup)
 {
-/*
-        unsigned int pow2w, argument;
-        if (tup.w >= FXP_INT_BITS_M1) return 0;
-        if (tup.w > 0)
-                pow2w = FXP_one_l >> (tup.w - 1);
-        else
-                pow2w = FXP_one_l << 1;
-        // Notice argument is > 0, in (0, 1]
-        argument = FXP_BKM_A_ONE_L - tup.f;
-        unsigned long x = FXP_BKM_X_ONE_L, y = 0;
-        for (int k = 0; k < FXP_INT_BITS; k++) {
-                unsigned long const  z = y + FXP_BKM_LOGS_L[k];
-                if (z <= argument) {
-                        y = z;
-                        x = x + (x >> k);
-                }
+        if (tup.w >= FXP_INT_BITS_M1) {
+                return 0;
         }
-        unsigned long md = mul_distrib_l(pow2w, x);
-        return (int) md;
-*/
-        return 0;
+        unsigned int pow2w, argument;
+        pow2w = (tup.w > 0)? FXP_one >> tup.w: FXP_one;
+        argument = ((unsigned int) (FXP_one - tup.f)) << FXP_whole_bits_m1;
+        #ifdef VERBOSE
+        printf("pow2w:%X  argument:%X\n", pow2w, argument);
+        #endif
+        struct utuple x = fxp_bkm_emode(argument);
+        return fxp_pow2w_by_x(pow2w, x);
 }
 
 /*
@@ -1344,24 +1302,27 @@ int fxp_pow2_wtuple_neg(struct tuple tup)
  * Analogous to implementation in bkm.c, but here tailored
  * for fxp's using only ints
  */
-int fxp_pow2_split(int fxp1)
+int fxp_pow2(int fxp1)
 {
         if (fxp1 == FXP_UNDEF) return FXP_UNDEF;
         if (fxp1 == FXP_NEG_INF) return 0;
         if (fxp1 == FXP_POS_INF) return FXP_POS_INF;
         if (fxp1 >= 0) {
-                struct tuple x = {
-                            (unsigned int) fxp_get_whole_part(fxp1),
+                struct tuple tup = {
+                            fxp_get_whole_part(fxp1),
                             ((unsigned int) fxp_get_bin_frac(fxp1)) };
-                return fxp_pow2_wtuple_pos( x );
+                return fxp_pow2_wpos_tuple( tup );
         } else {
                 int pfxp1 = -fxp1;
-                struct tuple x = {
-                            (unsigned int) fxp_get_whole_part(pfxp1),
+                struct tuple tup = {
+                            fxp_get_whole_part(pfxp1),
                             ((unsigned int) fxp_get_bin_frac(pfxp1)) };
-                return fxp_pow2_wtuple_neg( x );
+                return fxp_pow2_wneg_tuple( tup );
         }
 }
+
+static const unsigned int UINT_ALL_ONES = ~0u;
+static const unsigned int UINT_ALL_ONES_RS1 = ~0u >> 1;
 
 /*
  * Calculate the pow2 of a non-negative argument x
@@ -1374,6 +1335,7 @@ static inline int fxp_pow2_pos_arg_xfactor( \
                         int c_nwhole_bits)
 {
         // TODO
+
         return 0;
 }
 
@@ -1388,6 +1350,7 @@ static inline int fxp_pow2_neg_arg_xfactor( \
                         int c_nwhole_bits)
 {
         // TODO
+
         return 0;
 }
 
@@ -1402,8 +1365,12 @@ int fxp_exp(int fxp1)
         if (fxp1 == FXP_NEG_INF) return 0;
         if (fxp1 == FXP_POS_INF) return FXP_POS_INF;
         return (fxp1 >= 0)?
-                fxp_pow2_pos_arg_xfactor(fxp1, FXP_LG2_E_I32, 1):
-                fxp_pow2_neg_arg_xfactor(fxp1, FXP_LG2_E_I32, 1);
+                fxp_pow2_pos_arg_xfactor(fxp1, \
+                                    FXP_LG2_E_I32, \
+                                    FXP_LG2_E_WBITS):
+                fxp_pow2_neg_arg_xfactor(fxp1, \
+                                    FXP_LG2_E_I32, \
+                                    FXP_LG2_E_WBITS);
 
 }
 
@@ -1418,8 +1385,12 @@ int fxp_pow10(int fxp1)
         if (fxp1 == FXP_NEG_INF) return 0;
         if (fxp1 == FXP_POS_INF) return FXP_POS_INF;
         return (fxp1 >= 0)?
-                fxp_pow2_pos_arg_xfactor(fxp1, FXP_LG2_10_I32, 2):
-                fxp_pow2_neg_arg_xfactor(fxp1, FXP_LG2_10_I32, 2);
+                fxp_pow2_pos_arg_xfactor(fxp1, \
+                                    FXP_LG2_10_I32, \
+                                    FXP_LG2_10_WBITS):
+                fxp_pow2_neg_arg_xfactor(fxp1, \
+                                    FXP_LG2_10_I32, \
+                                    FXP_LG2_10_WBITS);
 }
 
 /*

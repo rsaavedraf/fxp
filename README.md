@@ -27,23 +27,38 @@ Simply clone this repo and then run the following script on its folder:
     ./r
 
 That will compile locally and run the tester program.
-It should produce a long testing output, like the one in *output.txt*.
-The end of the output will ideally show a total of zero warnings.
+It should produce a long testing output, like the ones in the 
+*output.\*.txt* files.
+At the end it will ideally show a total of zero warnings.
 If an error larger than the warning tolerance is found, then an assert 
-will get triggered stopping the program immediately and showing the
-function call that was being tested and caused the error.
+will get triggered stopping the program immediately, showing the
+function call that was being tested right then.
 
-Up to now I have run and tested it successfully with zero warnings on the following CPUs using gcc v11.3.0 with no -O options:
+Up to now I have run and tested it successfully with zero warnings on 
+a couple of CPUs listed below, using gcc v11.3.0 both without and 
+with some -O options.
 
 [Little Endian](https://en.wikipedia.org/wiki/Endianness) CPUs:
 - Intel Core i7-6700K
 - Arm Cortex-A72 (-> Raspberry Pi 4 Model B)
 
 [Big Endian](https://en.wikipedia.org/wiki/Endianness) CPUs:
-- (To be added when tried)
+(To be added when tried/receiving output from test runs)
 
-To use these Fix Point Numbers yourself, you only need files *fxp.h* and *fxp.c* when strictly
-using ints and only ints. If also using longs, then also files *fxp_l.h* and *fxp_l.c*. All the other files
-are auxiliary (to convert to and from floating points, print out, test, etc.)
+## Your Feedback is Welcome!
+If you try it on any CPU not listed above, specially one with an 
+instruction set architecture different from the ones represented above,
+please get in touch and send me your output. I'll be glad to credit you 
+for it here if you'd like! :)
+Either email me or send a PR for an output file named along the 
+lines of *output.cpu_model.txt*
 
-If you encounter any problems or errors please don't hesitate to let me know.
+If you encounter any problems or errors, please don't hesitate to 
+let me know as well, glad to also credit troubleshooting input/feedback.
+Just please mention compiler, compiler options used, and your hardware details.
+
+To use these Fix Point Numbers yourself, for now you only need 
+files *fxp.h* and *fxp.c* if strictly using ints and only ints.
+If also using longs, then also files *fxp_l.h* and *fxp_l.c*. 
+All the other files are auxiliary (to convert to and from floating points, 
+print out, test, etc.)
