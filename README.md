@@ -28,8 +28,8 @@ Simply clone this repo and then run the following script on its folder:
     ./r
 
 That will compile locally and run the tester program.
-It should produce a long testing output, like the ones in the 
-*output.\*.txt* files.
+It should produce a long testing output, like the one in the 
+*output.\*.txt* file(s).
 At the end it will ideally show a total of zero warnings.
 If an error larger than the warning tolerance is found, then an assert 
 will get triggered stopping the program immediately, showing the
@@ -47,7 +47,7 @@ with some -O options.
 - (To be added when tried/receiving output from test runs)
 
 &nbsp;
-## Your Feedback is Welcome!
+## Your Feedback/Help is Welcome!
 If you try it on any CPU not listed above, specially one with an 
 instruction set architecture different from the ones represented above,
 please get in touch and send me your output. I'll be glad to credit you 
