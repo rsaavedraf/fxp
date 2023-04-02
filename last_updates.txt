@@ -246,10 +246,15 @@ Intermediate refactoring of pow2() in fxp.c, following the same
 adjusments made in fxp_l.c implementing exp and pow10
 as pow2 times the corresponding factor.
 
+2023-04-02
+Finishing implementation of exp() and pow10() using pow2().
+Some border cases still pending for detailed testing and
+debugging, i.e.: exp(14.999...) triggers assert, but only
+when using 8 or 9 frac bits (???).
 
 
 Pending:
-Finish implementing exp(), pow10() (only ints) using pow2()
+Finish testing exp() and pow10()
 Implement powxy_l() and powxy()
 Implement sqrt_l() and sqrt()
 Implement trigonometric functions

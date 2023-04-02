@@ -16,7 +16,7 @@ int-size precision (not just current fxp frac bits) to avoid precision loss.
 Goals of this implementation are mostly flexibility (hence the configurable frac bits,)
 yet ultimate precision within the chosen number of frac bits.
 
-exp() and pow10() now implemented (using longs, int-only versions + powxy() and sqrt() coming very soon.)
+exp() and pow10() now also implemented based on pow2(). (powxy() and sqrt() coming very soon.)
 
 Once completed with trigonometric functions, planning to rewrite in Rust.
 

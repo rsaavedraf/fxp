@@ -7,7 +7,6 @@
  * arithmetic operations +, -, *, and /, and more.
  *
  * By Raul Saavedra, Bonn, Germany
- *
  */
 
 #include "fxp.h"
@@ -1188,13 +1187,12 @@ int fxp_lg10(int fxp1)
         return lg2_x_factor(fxp1, FXP_LG10_2_I32);
 }
 
-
 struct utuple {
         unsigned int a;
         unsigned int b;
 };
 
-static inline struct utuple fxp_bkm_emode(int argument)
+static inline struct utuple fxp_bkm_emode(unsigned int argument)
 {
         struct utuple x = { FXP_BKM_X_ONE, 0u };
         struct utuple y = { 0u, 0u };
@@ -1253,7 +1251,7 @@ static inline int fxp_pow2w_by_x(
 }
 
 /*
- * pow2 calculation (2^fxp1) of a non-negative argument,
+ * pow2 calculation (2^fxp1) of a NON-negative argument,
  * using the BKM (E-mode) algorithm and only ints.
  * Argument comes as a {w,f} tuple, where the
  * f component must already have the same alignment
@@ -1261,17 +1259,14 @@ static inline int fxp_pow2w_by_x(
  */
 static inline int fxp_pow2_wpos_tuple(struct tuple tup)
 {
-        if (tup.w >= FXP_whole_bits_m1) {
-                return FXP_POS_INF;
-        }
+        if (tup.w >= FXP_whole_bits_m1) return FXP_POS_INF;
         unsigned int pow2w, argument;
         pow2w = FXP_one << (tup.w + 1);
         // Argument will be in [0, 1)
-        argument = ((unsigned int) tup.f) << FXP_whole_bits_m1;
-        #ifdef VERBOSE
-        printf("pow2w:%X  argument:%X\n", pow2w, argument);
-        #endif
-        struct utuple x = fxp_bkm_emode(argument);
+        //#ifdef VERBOSE
+        //printf("pow2w:%X  argument:%X\n", pow2w, tup.f);
+        //#endif
+        struct utuple x = fxp_bkm_emode(tup.f);
         return fxp_pow2w_by_x(pow2w, x);
 }
 
@@ -1284,15 +1279,14 @@ static inline int fxp_pow2_wpos_tuple(struct tuple tup)
  */
 static inline int fxp_pow2_wneg_tuple(struct tuple tup)
 {
-        if (tup.w >= FXP_INT_BITS_M1) {
-                return 0;
-        }
+        if (tup.w >= FXP_INT_BITS_M1) return 0;
         unsigned int pow2w, argument;
         pow2w = (tup.w > 0)? FXP_one >> tup.w: FXP_one;
-        argument = ((unsigned int) (FXP_one - tup.f)) << FXP_whole_bits_m1;
-        #ifdef VERBOSE
-        printf("pow2w:%X  argument:%X\n", pow2w, argument);
-        #endif
+        //argument = ((unsigned int) (FXP_one - tup.f)) << FXP_whole_bits_m1;
+        argument = (unsigned int) (FXP_BKM_A_ONE - tup.f);
+        //#ifdef VERBOSE
+        //printf("pow2w:%X  argument:%X\n", pow2w, argument);
+        //#endif
         struct utuple x = fxp_bkm_emode(argument);
         return fxp_pow2w_by_x(pow2w, x);
 }
@@ -1310,13 +1304,15 @@ int fxp_pow2(int fxp1)
         if (fxp1 >= 0) {
                 struct tuple tup = {
                             fxp_get_whole_part(fxp1),
-                            ((unsigned int) fxp_get_bin_frac(fxp1)) };
+                            ((unsigned int) fxp_get_bin_frac(fxp1)) \
+                                    << FXP_whole_bits_m1 };
                 return fxp_pow2_wpos_tuple( tup );
         } else {
                 int pfxp1 = -fxp1;
                 struct tuple tup = {
                             fxp_get_whole_part(pfxp1),
-                            ((unsigned int) fxp_get_bin_frac(pfxp1)) };
+                            ((unsigned int) fxp_get_bin_frac(pfxp1)) \
+                                    << FXP_whole_bits_m1 };
                 return fxp_pow2_wneg_tuple( tup );
         }
 }
@@ -1325,39 +1321,215 @@ static const unsigned int UINT_ALL_ONES = ~0u;
 static const unsigned int UINT_ALL_ONES_RS1 = ~0u >> 1;
 
 /*
- * Calculate the pow2 of a non-negative argument x
- * multiplied by a factor C (C having the indicated
- * number of whole bits)
+ * Calculate the pow2 of a NON-negative argument x
+ * multiplied by a factor C (with C having the
+ * indicated number of whole bits)
  */
 static inline int fxp_pow2_pos_arg_xfactor( \
                         int x, \
                         const unsigned int C, \
                         int c_nwhole_bits)
 {
-        // TODO
+        unsigned int f, fxC, w_fxC, f_fxC;
+        int margin = c_nwhole_bits;
+        // fraction part of x, l-shifted all the way
+        // so we leave no whole bits
+        f = ((unsigned int) fxp_get_bin_frac(x))
+                                    << FXP_whole_bits;
+        // times the factor C
+        fxC = mul_distrib(f, C);
+        // whole and frac parts of that product fxC
+        unsigned int ffmask = UINT_ALL_ONES >> margin;
+        f_fxC = fxC & ffmask;
+        w_fxC = fxC >> (FXP_INT_BITS - margin);
 
-        return 0;
+        #ifdef VERBOSE
+        printf("\n\tf (0 whole bits) and factor C (%d whole bits):\n\t", \
+                        c_nwhole_bits);
+        print_uint_as_bin(f);
+        printf(" (%LE)\n\t", ((long double) f / (1ul << FXP_INT_BITS)));
+        print_uint_as_bin(C);
+        printf(" (%LE)\n\t", ((long double) C) \
+                                / (1ul << FXP_INT_BITS - c_nwhole_bits));
+        printf("Product fxC (%d whole bits) is:\n\t", margin - 1);
+        print_uint_as_bin(fxC);
+        printf(" (%LE)\n\t", ((long double) fxC) \
+                                / (1ul << FXP_INT_BITS - c_nwhole_bits));
+        printf("w_fxC: %u\n\t", w_fxC);
+        printf("f_fxC (%d whole bits):\n\t", margin);
+        print_uint_as_bin(f_fxC);
+        printf(" (%LE)\n\t", ((long double) f_fxC) \
+                                / (1ul << FXP_INT_BITS - c_nwhole_bits));
+        #endif
+
+        unsigned int wx, w, wxC, w_wxC, f_wxC;
+        int wx_nbits, wx_clz, wx_clz_m1, w_margin;
+        // whole part of x shifted
+        wx = fxp_get_whole_part(x);
+        wx_clz = (wx == 0)? FXP_INT_BITS: __builtin_clz(wx);
+        wx_nbits = FXP_INT_BITS - wx_clz;
+        wx_clz_m1 = wx_clz - 1;
+        w = wx << wx_clz;
+        // times the factor C
+        wxC = mul_distrib(w, C);
+        // Whole and frac parts of that product wxC
+        w_margin = wx_nbits + c_nwhole_bits;
+        unsigned int wfmask = UINT_ALL_ONES >> w_margin;
+        f_wxC = wxC & wfmask;
+        w_wxC = wxC >> (FXP_INT_BITS - w_margin);
+
+        #ifdef VERBOSE
+        printf("\n\tw (%d whole bits) and factor C (%d whole bits):\n\t", \
+                    wx_nbits, c_nwhole_bits);
+        print_uint_as_bin(w);
+        printf(" (%LE)\n\t", ((long double) w / (1u << wx_clz)));
+        print_uint_as_bin(C);
+        printf(" (%LE)\n\t", ((long double) C) \
+                                / (1u << FXP_INT_BITS - c_nwhole_bits));
+        printf("Product wxC (%d whole bits) is:\n\t", w_margin);
+        print_uint_as_bin(wxC);
+        printf(" (%LE)\n\t", ((long double) wxC) \
+                                / (1u << wx_clz_m1));
+        printf("w_wxC: %u\n\t", w_wxC);
+        printf("f_wxC (%d whole bits):\n\t", w_margin);
+        print_uint_as_bin(f_wxC);
+        printf(" (%LE)\n\t", ((long double) f_wxC) \
+                                / (1ul << FXP_INT_BITS - w_margin));
+        #endif
+
+        // Left-align both f_fxC and f_wxC leaving 1 whole bit
+        // in order to add them up
+        f_fxC <<= (margin - 1);
+        f_wxC <<= (w_margin - 1);
+        // Get final whole and frac parts, and calculate
+        // the corresponding pow2
+        unsigned int fplusf = f_fxC + f_wxC;
+        unsigned int w_fplusf = fplusf >> FXP_INT_BITS_M1;
+        unsigned int fsum = fplusf & UINT_ALL_ONES_RS1;
+        unsigned int wsum = w_wxC + w_fxC + w_fplusf;
+
+        #ifdef VERBOSE
+        printf("final wsum:\n\t");
+        print_uint_as_bin(wsum);
+        printf(" (%u)\n\t", wsum);
+        printf("final fsum:\n\t");
+        print_uint_as_bin(fsum);
+        printf(" (%LE)\n", ((long double) fsum) \
+                                / (1u << FXP_INT_BITS_M1));
+        #endif
+
+        struct tuple xC = { wsum, fsum };
+        return fxp_pow2_wpos_tuple( xC );
 }
 
 /*
  * Calculate the pow2 of a negative argument x
- * multiplied by a factor C (C having the indicated
- * number of whole bits)
+ * multiplied by a factor C (with C having the
+ * indicated number of whole bits)
  */
 static inline int fxp_pow2_neg_arg_xfactor( \
                         int x, \
                         const unsigned int C, \
                         int c_nwhole_bits)
 {
-        // TODO
+        unsigned int f, fxC, w_fxC, f_fxC;
+        int margin = c_nwhole_bits;
+        // fraction part of x, l-shifted all the way
+        // so we leave no whole bits
+        f = ((unsigned int) fxp_get_bin_frac(x)) \
+                                    << FXP_whole_bits;
+        // times the factor C
+        fxC = mul_distrib(f, C);
+        // whole and frac parts of that product fxC
+        unsigned int ffmask = UINT_ALL_ONES >> margin;
+        f_fxC = fxC & ffmask;
+        w_fxC = fxC >> (FXP_INT_BITS - margin);
 
-        return 0;
+        #ifdef VERBOSE
+        printf("\n\tf (0 whole bits) and factor C (%d whole bits):\n\t", \
+                        c_nwhole_bits);
+        print_uint_as_bin(f);
+        printf(" (%LE)\n\t", ((long double) f / (1ul << FXP_INT_BITS)));
+        print_uint_as_bin(C);
+        printf(" (%LE)\n\t", ((long double) C) \
+                                / (1ul << FXP_INT_BITS - c_nwhole_bits));
+        printf("Product fxC (%d whole bits) is:\n\t", margin - 1);
+        print_uint_as_bin(fxC);
+        //printf(" (%LE)\n\t", ((long double) fxC) \
+        //                        / (1u << FXP_INT_BITS_M1 - c_nwhole_bits));
+        printf(" (%LE)\n\t", ((long double) fxC) \
+                                / (1ul << FXP_INT_BITS - c_nwhole_bits));
+        printf("w_fxC: %u\n\t", w_fxC);
+        printf("f_fxC (%d whole bits):\n\t", margin);
+        print_uint_as_bin(f_fxC);
+        printf(" (%LE)\n\t", ((long double) f_fxC) \
+                                / (1u << FXP_INT_BITS - c_nwhole_bits));
+        #endif
+
+        unsigned int wx, w, wxC, w_wxC, f_wxC;
+        int wx_nbits, wx_clz, wx_clz_m1, w_margin;
+        // whole part of x shifted
+        wx = fxp_get_whole_part(x);
+        wx_clz = (wx == 0)? FXP_INT_BITS: __builtin_clz(wx);
+        wx_nbits = FXP_INT_BITS - wx_clz;
+        wx_clz_m1 = wx_clz - 1;
+        w = wx << wx_clz;
+        // times the factor C
+        wxC = mul_distrib(w, C);
+        // Whole and frac parts of that product wxC
+        w_margin = wx_nbits + c_nwhole_bits;
+        unsigned int wfmask = UINT_ALL_ONES >> w_margin;
+        f_wxC = wxC & wfmask;
+        w_wxC = wxC >> (FXP_INT_BITS - w_margin);
+
+        #ifdef VERBOSE
+        printf("\n\tw (%d whole bits) and factor C (%d whole bits):\n\t", \
+                    wx_nbits, c_nwhole_bits);
+        print_uint_as_bin(w);
+        printf(" (%LE)\n\t", ((long double) w / (1u << wx_clz)));
+        print_uint_as_bin(C);
+        printf(" (%LE)\n\t", ((long double) C) \
+                                / (1u << FXP_INT_BITS - c_nwhole_bits));
+        printf("Product wxC (%d whole bits) is:\n\t", w_margin);
+        print_uint_as_bin(wxC);
+        printf(" (%LE)\n\t", ((long double) wxC) \
+                                / (1u << wx_clz_m1));
+        printf("w_wxC: %u\n\t", w_wxC);
+        printf("f_wxC (%d whole bits):\n\t", w_margin);
+        print_uint_as_bin(f_wxC);
+        printf(" (%LE)\n\t", ((long double) f_wxC) \
+                                / (1ul << FXP_INT_BITS - w_margin));
+        #endif
+
+        // Left-align both f_fxC and f_wxC leaving 1 whole bit
+        // in order to add them up
+        f_fxC <<= (margin - 1);
+        f_wxC <<= (w_margin - 1);
+        // Get final whole and frac parts, and calculate
+        // the corresponding pow2
+        unsigned int fplusf = f_fxC + f_wxC;
+        unsigned int w_fplusf = fplusf >> FXP_INT_BITS_M1;
+        unsigned int fsum = fplusf & UINT_ALL_ONES_RS1;
+        unsigned int wsum = w_wxC + w_fxC + w_fplusf;
+
+        #ifdef VERBOSE
+        printf("final wsum:\n\t");
+        print_uint_as_bin(wsum);
+        printf(" (%u)\n\t", wsum);
+        printf("final fsum:\n\t");
+        print_uint_as_bin(fsum);
+        printf(" (%LE)\n", ((long double) fsum) \
+                                / (1u << FXP_INT_BITS_M1));
+        #endif
+
+        struct tuple xC = { wsum, fsum };
+        return fxp_pow2_wneg_tuple( xC );
 }
 
 /*
- * Implementation of exp_l(x) from pow2_l(x)
- * Using logarithm properties:
- * e^x == 2^( lg2(e^x) ) == 2^( x * lg2(e) )
+ * Implementation of exp(x) using pow2() and lg2():
+ * e^x  == 2^( lg2(e^x) )
+ *      == 2^( x * lg2(e) )
  */
 int fxp_exp(int fxp1)
 {
@@ -1368,16 +1540,15 @@ int fxp_exp(int fxp1)
                 fxp_pow2_pos_arg_xfactor(fxp1, \
                                     FXP_LG2_E_I32, \
                                     FXP_LG2_E_WBITS):
-                fxp_pow2_neg_arg_xfactor(fxp1, \
+                fxp_pow2_neg_arg_xfactor(-fxp1, \
                                     FXP_LG2_E_I32, \
                                     FXP_LG2_E_WBITS);
-
 }
 
 /*
- * Implementation of pow10(x) from pow2(x)
- * Using logarithm properties:
- * 10^x == 2^( lg2(10^x) ) == 2^( x * lg2(10) )
+ * Implementation of pow10(x) using pow2() and lg2():
+ * 10^x == 2^( lg2(10^x) )
+ *      == 2^( x * lg2(10) )
  */
 int fxp_pow10(int fxp1)
 {
@@ -1388,9 +1559,30 @@ int fxp_pow10(int fxp1)
                 fxp_pow2_pos_arg_xfactor(fxp1, \
                                     FXP_LG2_10_I32, \
                                     FXP_LG2_10_WBITS):
-                fxp_pow2_neg_arg_xfactor(fxp1, \
+                fxp_pow2_neg_arg_xfactor(-fxp1, \
                                     FXP_LG2_10_I32, \
                                     FXP_LG2_10_WBITS);
+}
+
+/*
+ * Implementation of powxy(x) using pow2() and lg2():
+ * x^y  == 2^( lg2(x^y) )
+ *      == 2^( y * lg2(x) )
+ */
+int fxp_powxy(int x, int y)
+{
+        if ((x < 0) || (x == FXP_UNDEF) || (y == FXP_UNDEF))
+                return FXP_UNDEF;
+        if (x == 0) {
+                // lg2(x) is -INF
+                if (y < 0) return FXP_POS_INF;  // 2^(+INF)
+                if (y > 0) return 0;            // 2^(-INF)
+                return FXP_UNDEF;               // 2^(0 * -INF)
+        }
+        // x > 0
+        // TODO
+
+        return 0;
 }
 
 /*
