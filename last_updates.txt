@@ -252,9 +252,25 @@ Some border cases still pending for detailed testing and
 debugging, i.e.: exp(14.999...) triggers assert, but only
 when using 8 or 9 frac bits (???).
 
+2023-04-03
+Added rounding of the l-shifted fracs at the end
+in functions get_xc_as_tuple(_l), which helps minimizes
+frac precision loss for exp() and pow10() (a.k.a. the
+'LoFi' power functions).
+Finished testing the power function after identifying
+and adding tests for their 'kcrit' values, those which 
+when used as their exponents can incurr in large
+warning-triggering deltas for certain frag bit 
+configurations.
+Modified tester to use a more relaxed WDELTA_MAX when
+including tests for the 'LoFi' power functions, while
+keeping a much more strict error tolerance when skipping
+them.
+Added a summary list of warning counts per frac bit
+configurations at the end of the tester output.
+
 
 Pending:
-Finish testing exp() and pow10()
 Implement powxy_l() and powxy()
 Implement sqrt_l() and sqrt()
 Implement trigonometric functions

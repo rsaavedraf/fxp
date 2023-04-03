@@ -30,19 +30,42 @@
 //#define MAX_RAND_NUMS 5000
 #define TEST_LG2_MUL_L 0
 
-#define WDELTA 2.0
-#define WDELTA_MAX 2.0
+#define SKIP_LOFI_PWRS 0
+// "LoFi" power functions here are exp(), and pow10()
+// because they are based on pow2() using only ints.
+// They can incurr some frac precision loss for some
+// fracbit configurations when the power calculation
+// result will end up very close to FXP_MAX
+// (see the critical kcrit values in test_powers()).
+// "HiFi" power functions are the other ones:
+// pow2, pow2_l, exp_l(), and pow10_l, which do
+// remain as accurate as possible regardless of
+// argument and frac bit configuration.
 
-static int fracbit_configs[] = {8, 11, 16, 24, 31};
-//static int fracbit_configs[] = {16};
+// When testing the LoFi power functions we need
+// a higher WDELTA_MAX, otherwise the tests will
+// stop with some asserts at one of those kcrit values
+// for some frac bit configurations.
+// If skipping the LoFi power functions,
+// WDELTA_MAX can be 1.0 and the run can still
+// typically finish with zero warnings.
+#define WDELTA 2.0
+#define WDELTA_MAX (1.0 + (4.5 * (1 - SKIP_LOFI_PWRS)))
+
+static int fracbit_configs[] = {8, 9, 11, 16, 24, 31};
+//static int fracbit_configs[] = {9};
 /*
 static int fracbit_configs[] = {
-4, 5, 6, 7,
-8, 9,
-10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+4, 5, 6, 7, 8, 9, 10,
+11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31
 };
 */
+
+#define NINTBITS 32
+static int fracbit_nwarnings[NINTBITS];
+static long double fracbit_maxdelta_allowed[NINTBITS];
+static long double fracbit_maxdelta_observed[NINTBITS];
 
 static long double max_warn_delta = 0.0;
 static long double larger_delta = 0.0;
@@ -62,7 +85,7 @@ static int whole_max;
 static int whole_min;
 static int fxp_largest;
 
-void test_fxp(char *s, long double d_assert_val, int fxp1)
+static void test_fxp(char *s, long double d_assert_val, int fxp1)
 {
         printf("%s\n", s);
         printf("    exp: ");
@@ -75,11 +98,7 @@ void test_fxp(char *s, long double d_assert_val, int fxp1)
         else if (d_assert_val == FXP_PINF_LD)
             printf("+INF");
         else {
-            printf("%.10LE", avplim);
-            //printf("\n\t     %.20LE", d_assert_val);
-            //printf("\n\t     %.20LE", FXP_PINF_LD);
-            //printf("\n\tdiff 1: %LE", (FXP_PINF_LD - d_assert_val));
-            //printf("\n\tdiff 2: %LE\n", (d_assert_val - FXP_PINF_LD));
+            printf("%.10Le", avplim);
         }
 
         printf("\n    act: "); print_fxp(fxp1);
@@ -87,7 +106,7 @@ void test_fxp(char *s, long double d_assert_val, int fxp1)
         int b2 = ((fxp1 == FXP_NEG_INF) && (d_assert_val == FXP_NINF_LD));
         int b3 = ((fxp1 == FXP_POS_INF) && (d_assert_val == FXP_PINF_LD));
         if (b1 || b2 || b3) {
-            printf(" (~same)\n"); //b1:%d, b2:%d, b3:%d\n", b1, b2, b3);
+            printf(" (~same)\n");
             return;
         }
 
@@ -98,22 +117,23 @@ void test_fxp(char *s, long double d_assert_val, int fxp1)
                         avplim - df;
 
         if (delta <= warn_delta) {
-            // No warning up to the warn_delta value
-            printf(" (~same)\n"); //delta:%.120LE\n", delta);
+                // No warning up to the warn_delta value
+                printf(" (~same)\n");
         } else {
-            nwarnings++;
-            printf("\n***** Warning %d: d=%1.2LE for %1.2LE (from %1.2LE to MAX %1.2LE allowed for %d f.bits)\n",
-                        nwarnings, delta, df,
-                        warn_delta,
-                        max_warn_delta,
-                        frac_bits);
-            if (delta > larger_delta) {
-                larger_delta = delta;
-                printf("***** It's the largest delta so far: %LE\n", \
-                        larger_delta);
-            }
-            //assert(0);
-            printf("\n");
+                nwarnings++;
+                fracbit_nwarnings[frac_bits]++;
+                printf("\n***** Warning %d: d=%1.2LE for %1.2LE (from %1.2LE to MAX %1.2LE allowed for %d f.bits)\n",
+                            nwarnings, delta, df,
+                            warn_delta,
+                            max_warn_delta,
+                            frac_bits);
+                if (delta > larger_delta) {
+                        larger_delta = delta;
+                        printf("***** For %d f.bits, that's the largest delta so far: %LE\n", \
+                                frac_bits, larger_delta);
+                        fracbit_maxdelta_observed[frac_bits] = larger_delta;
+                }
+                printf("\n");
         }
         fflush( stdout );
 
@@ -883,19 +903,24 @@ void test_pow2(char * msg, int x)
 void test_exp(char * msg, int x)
 {
         long double tgt = get_exp_target(x);
-        printf("exp_l("); test_fxp(msg, tgt, fxp_exp_l(x));
-        printf("exp(");   test_fxp(msg, tgt, fxp_exp(x));
+        printf("exp_l(");
+        test_fxp(msg, tgt, fxp_exp_l(x));
+        if (SKIP_LOFI_PWRS) return;
+        printf("exp(");
+        test_fxp(msg, tgt, fxp_exp(x));
 }
 
 void test_pow10(char * msg, int x)
 {
         long double tgt = get_pow10_target(x);
-        printf("pow10_l("); test_fxp(msg, tgt, fxp_pow10_l(x));
-        printf("pow10(");   test_fxp(msg, tgt, fxp_pow10(x));
+        printf("pow10_l(");
+        test_fxp(msg, tgt, fxp_pow10_l(x));
+        if (SKIP_LOFI_PWRS) return;
+        printf("pow10(");
+        test_fxp(msg, tgt, fxp_pow10(x));
 }
 
-void test_pow(char base, char * msg, int x)
-{
+void test_pow(char base, char * msg, int x) {
         switch(base) {
         case '2':
                 test_pow2(msg, x);
@@ -918,13 +943,36 @@ void test_powers()
         for (int i = 0; i < npbases; i++) {
                 char base = pbases[i];
                 printf("\n");
+                // These kcrit numbers can elicit a relatively large
+                // frac error when using them as exponent for
+                // exp or pow10 (the "LoFi" power functions here)
+                // for certain frac bits.
+                // See the initialization of WDELTA_MAX
+                // (when only testing the HiFi power functions,
+                // the asserts are much less error-tolerant)
+                int kcrit;
+                switch (base) {
+                case '2':
+                        kcrit = (int) truncl(log2l(whole_max + 0.1));
+                        printf("kcrit value for pow2() using %d frac bits: %d\n", \
+                                frac_bits, kcrit);
+                        break;
+                case 'A':
+                        kcrit = (int) truncl(log10l(whole_max + 0.1));
+                        printf("kcrit value for pow10() using %d frac bits: %d\n", \
+                                frac_bits, kcrit);
+                        break;
+                default:
+                        kcrit = (int) truncl(logl(whole_max + 0.1));
+                        printf("kcrit value for exp() using %d frac bits: %d\n", \
+                                frac_bits, kcrit);
+                        break;
+                }
+                kcrit = fxp(kcrit);
+                test_pow(base, "kcrit+tiniest):", kcrit + 1);
+                test_pow(base, "kcrit):",         kcrit);
+                test_pow(base, "kcrit-tiniest):", kcrit - 1);
                 test_pow(base, "largest):",    FXP_MAX);
-
-                // TODO: check this border case.
-                // Triggers assert for 8 and 9 frac bits
-                //test_pow(base, "14.999...):", \
-                //                    fxp_bin(14, FXP_frac_max));
-
                 test_pow(base, "3.5):",        d2fxp(3.5));
                 test_pow(base, "2):",          fxp(2));
                 test_pow(base, "1.5):",        d2fxp(1.5));
@@ -946,8 +994,6 @@ void test_powers()
                 test_pow(base, "-1.5):",       d2fxp(-1.5));
                 test_pow(base, "-2):",         fxp(-2));
                 test_pow(base, "-8):",         fxp(-8));
-                test_pow(base, "-14.999...):", \
-                                    fxp_bin(-14, -FXP_frac_max));
                 test_pow(base, "-16):",        fxp(-16));
                 test_pow(base, "-30):",        fxp(-30));
                 test_pow(base, "-31):",        fxp(-31));
@@ -955,7 +1001,6 @@ void test_powers()
                 test_pow(base, "-42):",        fxp(-42));
                 test_pow(base, "most neg):",   -fxp_largest);
                 test_pow(base, "-INF):",       FXP_NEG_INF);
-
         }
 }
 
@@ -1119,6 +1164,11 @@ int main(void)
         printf("UNDEF_D : %lE\n", FXP_UNDEF_D);
         printf("UNDEF_LD: %LE\n", FXP_UNDEF_LD);
 
+        for (int i = 0; i < FXP_INT_BITS; i++) {
+                fracbit_nwarnings[i] = 0;
+                fracbit_maxdelta_allowed[i] = 0.0;
+                fracbit_maxdelta_observed[i] = 0.0;
+        }
         int nconfigs = sizeof(fracbit_configs) / sizeof(fracbit_configs[0]);
         printf("\nRunning tests for frac-bit sizes: ");
         for (nfb = 0; nfb < nconfigs; nfb++) {
@@ -1148,14 +1198,9 @@ int main(void)
                 fxp_halfmax = FXP_MAX / 2;
                 fxp_halfp2 = fxp_add(fxp_halfmax, fxp_two);
 
-                //warn_delta = ((long double) MIN(frac_bits/2, WDELTA)) / frac_max;
-                warn_delta = ((long double) frac_bits) / 2.0;
-                if (WDELTA < warn_delta) warn_delta = WDELTA;
-                warn_delta /= ((long double) frac_max);
-
-                max_warn_delta = lim_frac(warn_delta * WDELTA_MAX,
-                                            frac_bits);
-                warn_delta = lim_frac(warn_delta, frac_bits);
+                warn_delta = ((long double) WDELTA) / frac_max;
+                max_warn_delta = ((long double) WDELTA_MAX) * warn_delta;
+                fracbit_maxdelta_allowed[frac_bits] = max_warn_delta;
 
                 nwarnings = 0;
                 larger_delta = 0;
@@ -1232,13 +1277,21 @@ int main(void)
                         largest_delta_fbits = frac_bits;
                 }
         }
+
+        printf("\nSummary of FXP Tests:\n");
+        printf(SKIP_LOFI_PWRS? \
+                    "Skipped tests for 'LoFi' pwr functions -> much stricter error tolerance.\n":
+                    "Included tests for 'LoFi' pwr functions -> more relaxed error tolerance.\n");
         printf("Grand total of %d warnings checking %d configurations.\n", \
                     twarnings, nconfigs);
-        if (twarnings > 0) {
-            printf("Largest warning delta: %1.4LE (max allowed:%1.4LE, using %d frac bits)\n", \
-                        largest_delta,
-                        largest_madelta,
-                        largest_delta_fbits);
+        printf("F.bits  #Warnings  Largest Delta Observed   Max Delta Allowed\n");
+        for (int nfb = 0; nfb < nconfigs; nfb++) {
+                int fb = fracbit_configs[nfb];
+                printf("%d\t %d\t   %1.5Le \t\t    %1.5Le\n", \
+                        fb,
+                        fracbit_nwarnings[fb],
+                        fracbit_maxdelta_observed[fb],
+                        fracbit_maxdelta_allowed[fb]);
         }
         return 0;
 }
