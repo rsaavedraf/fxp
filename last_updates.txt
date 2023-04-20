@@ -253,33 +253,79 @@ when using 8 or 9 frac bits (???).
 
 2023-04-03
 Added rounding of the l-shifted fracs at the end in functions 
-get_xc_as_tuple(_l), which helps minimizes frac precision loss for exp() and 
-pow10() (a.k.a. the 'LoFi' power functions).
+get_xc_as_tuple(_l), which helps minimizes frac precision loss 
+for exp() and pow10() (a.k.a. the 'LoFi' power functions).
 
-Finished testing the power function after identifying and adding tests for 
-their 'kcrit' values, those which when used as their exponents can incurr in 
-large warning-triggering deltas for certain frag bit configurations.
+Finished testing the power function after identifying and adding 
+tests for their 'kcrit' values, those which when used as their 
+exponents can incurr in large warning-triggering deltas for 
+certain frag bit configurations.
 
-Modified tester to use a more relaxed WDELTA_MAX when including tests for the 
-'LoFi' power functions, while keeping a much more strict error tolerance when 
-skipping them.
+Modified tester to use a more relaxed WDELTA_MAX when including 
+tests for the 'LoFi' power functions, while keeping a much more 
+strict error tolerance when skipping them.
 
-Added a summary list of warning counts per frac bit configurations at the end 
-of the tester output.
+Added a summary list of warning counts per frac bit 
+configurations at the end of the tester output.
 
 2023-04-05
+Implementing the emulation of longs using uints (calling it 
+ulongy.) This abstraction not only simplifies the BKM-E/L 
+implementations in fxp.c greatly (they can mirror the code in 
+fxp_l.c almost line by line,) but more importantly, it also 
+enables us to preserve long precision all the way through the 
+intermediate calculations in fxp.c for all transcendental 
+functions that are ultimately based on lg2 and pow2, that is: ln, 
+exp, log10, pow10, powxy, and sqrt. With this, there will be no 
+such thing as 'LoFi' precision for any of the int-only 
+implementations of those functions, so they will all end up being 
+exactly as accurate as their fxp_l.c counterparts.
 
-Implementing the 'ulongie' struct and functions for it, basically to emulate 
-an ulong with two uints. This simple abstraction not only simplifies the 
-BKM-E/L implementations in fxp.c greatly (they can mirror the code in fxp_l.c 
-almost line by line,) but more importantly, it also enables us to preserve 
-long precision all the way through the intermediate calculations in fxp.c for 
-all functions that are ultimately based on lg2 and pow2, that is: ln, exp, 
-log10, pow10, powxy, and sqrt. The plan is to downgrade precision from using 
-these ulongies into ints only at the very end when returning the final 
-result. Aim: there will be no such thing as 'LoFi' precision for any of these 
-fxp.c functions. All will end up exactly just as accurate as their fxp_l.c 
-counterparts.
+2023-04-11
+Continuing with emulation of longs.
+Withholding the idea of reimplementing in Rust.
+
+2023-04-17
+
+Renaming the distributive multiplication functions (formerly 
+'mul_distrib') as 'dmul'.
+
+The distributive multiplication functions turned out to be quite 
+critical and needed in several places once trying to offer 
+ultimate precision for all fxp transcendental functions (ln, exp, 
+powxy etc) when using only ints. Also depending on where the dmul 
+functions are getting called from, different combinations of 
+argument types and result types are needed, so separate 
+implementations (so far 6) required to cover all use cases 
+encountered:
+
+Using only ints:
+    uint x uint --> uint
+    uint x uint --> ulongy
+    ulongy x uint --> ulongy
+    ulongy x ulongy --> ulongy
+Using longs:
+    ulong x uint --> ulong
+    ulong x ulong --> ulong
+
+Writing a separate tester for all of them: dmul_tester.c
+Separate and not in fxp_tester because the dmul functions
+are independent and agnostic of frac bits and fxp's.
+
+2023-04-18
+
+Finishing ulongy.c, and dmul_tester.c
+
+2023-04-19
+
+Refactoring code to make use of all the new
+dmul functions.
+
+2023-04-20
+
+Debugged rshift in ulongy testing the refactored lg2_x_factor
+and ln()
+
 
 
 Pending:

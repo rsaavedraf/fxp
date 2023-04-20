@@ -10,7 +10,6 @@
  */
 
 #include "ulongy.h"
-
 #include "stdio.h"
 
 
@@ -50,20 +49,25 @@ inline ulongy ulongy_add(ulongy x, ulongy y)
         return result;
 }
 
+// Returns the ulongy that would correspond to the representation
+// of the argument's value negated into two's complement
+inline ulongy ulongy_negate(ulongy x)
+{
+        x.hi = ~x.hi;
+        x.lo = ~x.lo;
+        return ulongy_add_uint(x, 1u);
+}
+
+inline ulongy ulongy_sub(ulongy x, ulongy y)
+{
+        return ulongy_add(x, ulongy_negate(y));
+}
+
 inline ulongy ulongy_add_uint(ulongy x, unsigned int b)
 {
         unsigned int sumlo = x.lo + b;
         ulongy result = { x.hi + (sumlo < x.lo), sumlo };
         return result;
-}
-
-inline ulongy ulongy_rshift(ulongy x, unsigned int rshift)
-{
-        ulongy shifted = { x.hi >> rshift,
-                            ((x.hi & ((1u << rshift) - 1)) \
-                                    << (FXP_INT_BITS - rshift)) | \
-                            (x.lo >> rshift) };
-        return shifted;
 }
 
 inline ulongy ulongy_lshift(ulongy x, unsigned int lshift)
@@ -75,21 +79,24 @@ inline ulongy ulongy_lshift(ulongy x, unsigned int lshift)
         return shifted;
 }
 
-inline void ulongy_rshift_inplace(ulongy *x, unsigned int rshift)
+inline ulongy ulongy_rshift(ulongy x, unsigned int rshift)
 {
-        unsigned int xa = x->hi;
-        x->hi = (xa >> rshift);
-        x->lo = ((xa & ((1u << rshift) - 1)) \
-                        << (FXP_INT_BITS - rshift)) | \
-                                (x->lo >> rshift);
+        return (rshift < FXP_INT_BITS)?
+                ulongy_create( x.hi >> rshift, \
+                                ((x.hi & ((1u << rshift) - 1)) \
+                                        << (FXP_INT_BITS - rshift)) | \
+                                (x.lo >> rshift) ):
+                ulongy_create( x.hi = 0u, \
+                                x.hi >> (rshift - FXP_INT_BITS) );
 }
 
-inline void ulongy_lshift_inplace(ulongy *x, unsigned int lshift)
+inline ulongy ulongy_rshift_rounding(ulongy x, unsigned int rshift)
 {
-        int xb = x->lo;
-        int d = FXP_INT_BITS - lshift;
-        x->hi = ((x->hi << lshift) | ((xb & ~((1u << d) - 1)) >> d));
-        x->lo = (xb << lshift);
+        if (rshift == 0) return x;
+        ulongy r = ulongy_rshift(x, rshift - 1);
+        unsigned int rbit = r.lo & 1u;
+        r = ulongy_rshift(r, 1);
+        return ulongy_add_uint(r, rbit);
 }
 
 /*
@@ -153,7 +160,7 @@ inline ulongy ulongy_from_dmul(unsigned int x, unsigned int y)
         return dproduct;
 }
 
-unsigned int dmul_into_uint(unsigned int x, unsigned int y)
+inline unsigned int dmul_into_uint(unsigned int x, unsigned int y)
 {
         return ulongy_hi_to_uint_rounded(ulongy_from_dmul(x, y));
 }
@@ -206,4 +213,25 @@ inline ulongy dmul_ulongy_x_uint(ulongy x, unsigned int y)
                         ulongy_add_uint(
                                 yaxa, yaxb.hi), rbit);
         return product;
+}
+
+void print_ulongy_as_hex(ulongy x)
+{
+        printf("%X%X", x.hi, x.lo);
+}
+
+void print_ulongy_as_bin(ulongy x)
+{
+        int i = FXP_INT_BITS;
+        while (i > 0) {
+                int bit = (x.hi >> (i - 1)) & 1u;
+                printf("%d", bit);
+                i--;
+        }
+        i = FXP_INT_BITS;
+        while (i > 0) {
+                int bit = (x.lo >> (i - 1)) & 1u;
+                printf("%d", bit);
+                i--;
+        }
 }
