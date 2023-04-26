@@ -269,8 +269,8 @@ Added a summary list of warning counts per frac bit
 configurations at the end of the tester output.
 
 2023-04-05
-Implementing the emulation of longs using uints (calling it 
-ulongy.) This abstraction not only simplifies the BKM-E/L 
+Implementing the emulation of longs using uints (calling struct
+and file ulongy.) This abstraction not only simplifies the BKM-E/L 
 implementations in fxp.c greatly (they can mirror the code in 
 fxp_l.c almost line by line,) but more importantly, it also 
 enables us to preserve long precision all the way through the 
@@ -322,13 +322,98 @@ Refactoring code to make use of all the new
 dmul functions.
 
 2023-04-20
-
 Debugged rshift in ulongy testing the refactored lg2_x_factor
 and ln()
+
+2023-04-22
+Defined the new long double infinity thresholds
+FXP_max_ldx = FXP_max_ld + "half tiniest"
+FXP_min_ldx = FXP_min_ld - "half tiniest"
+ 
+Problematic border case, pow2_l(-2*tiniest) when using 31 frac 
+bits. Expected result was +infinity, but the actual value 
+calculated was almost infinity, yet no quite there, just very 
+close to or equal to FXP_MAX. Extra accuracy increasing the 
+number of loops in bkm_emode to INT BITS + 3 does solve that 
+issue for 31 bits, but then a problematic case remains for 30 
+bits (?). This one, calculating pow2_l(1-tiniest), ended up 
+with infinity vs. non-infinity the other way around: pow2_l 
+returned infinity, but the expected long double was very close 
+to but not quite >= the +infinity threshold.
+
+2023-04-23
+
+The overall problem of those cases described above is not 
+related to any fxp calculation inaccuracy, but just to the way 
+the tester is mishandling very close values around the 
+infinity thresholds. It has been triggering asserts whenever 
+some expected vs. actual difference involves infinite vs. 
+non-infinite values. That is the actual problem.
+
+The fact is: regardless of bit accuracy in use, and how 
+extremely close to each other they are , e.g. well below the 
+max delta, expected vs. actual values CAN STILL POTENTIALLY 
+LAND ON DIFFERENT SIDES OF AN INFINITY THREASHOLD. AND THAT IS 
+A PERFECTLY FINE RESULT THAT WE SHOULD STILL ASSESS AS "SAME". 
+THE FACT THAT AN INFINITY THRESHOLD IS BETWEEN THEM DOESN'T 
+REALLY DETRACT FROM THEIR CLOSENESS. The tester, however, so 
+far has always triggered an assert whenever one of the values 
+either expected or actual is finite, while the other is an 
+infinity. This has been the real issue, not any of the fxp 
+calculations.
+
+Modified the assert logic so that when expected vs. actual 
+land on different sides of one of the tester's long double 
+infinity thresholds (e.g. FXP_max_ldx, or FXP_min_ldx), then 
+an effective delta will still get computed between the 
+non-infinity value (either the expected or the actual) and the 
+corresponding infinity threshold. If that delta is still 
+within the max allowed delta, then everything is fine. Those 
+expected vs. actual are effectively so close that, for all 
+practical purposes, they are still the 'same' value.
+
+Besides now not triggering those asserts, the tester will
+however count how many of these rare threshold cases are
+encountered per frac bit configuration, and the final
+report now includes these counts.
+
+Modified function print_fxp and the tester, so that the long
+double printouts of the exp vs. actual values are perfecly
+aligned on the output, for easier comparison.
+
+Logarithm tests done similarly to the pow tests, so as to 
+eliminate redundancies.
+
+2023-04-24
+
+Optimizing pow2_l, no need to use dmul since if one of the 
+operands is a 1 as it is the case here, then the result of the 
+dmul will for sure end up identical to the other operand 
+anyway. We just need to shift it properly.
+
+Double checking every iteration step of pow2_l for a border
+case, to make sure they match exactly the steps in the pow2
+implementation in bkm.c, which uses long doubles.
+
+2023-04-25
+
+Tester output refinements, specially displaying the
+long double values.
+
+Adjusting exp_l and pow10_l. Finished testing them.
+
+2023-04-26
+
+Completed refactoring in fxp.c, now uses an emulation of 
+unsigned longs with two uints in a struct (called "ulongy") 
+to process logarithms and power functions. Thanks to this, 
+there are no longer any "LoFi" power functions: even though 
+exp and pow10 technically still use only ints, they are now 
+exactly just as accurate as exp_l and pow10_l using longs.
 
 
 
 Pending:
-Implement powxy_l() and powxy()
 Implement sqrt_l() and sqrt()
+Implement powxy_l() and powxy()
 Implement trigonometric functions

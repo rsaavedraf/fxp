@@ -295,27 +295,27 @@ int main(void)
                 // Compare bits in e_chunk vs. the reference
                 unsigned int mask = first_mask;
                 while (mask > 0) {
-                    unsigned int ebit = e_chunk & mask;
-                    char c_refbit = STR_E_BIN[e_ref_index];
-                    if ((!binpoint_seen) && (c_refbit == '.')) {
-                        c_refbit = STR_E_BIN[++e_ref_index];
-                        binpoint_seen = 1;
-                        printf(".");
-                    }
-                    unsigned int refbit = (c_refbit == '1')? 1u: 0u;
-                    if ((refbit && (ebit == 0)) || ((!refbit) && (ebit > 0))) {
-                        printf("(%d)\n", (ebit == 0? 0: 1));
-                        printf("Exact match up to %d frac bits (%d-bit total match)\n", \
-                                match_count - 2, match_count);
-                        long double ddigits = (match_count - 2) / (logl(10)/logl(2));
-                        printf("Corresponds to exact match up to %d decimal frac digits.\n\n", (int) truncl(ddigits));
-                        checking = 0;
-                        break;
-                    }
-                    printf((ebit > 0)? "1": "0");
-                    match_count++;
-                    mask >>= 1;
-                    e_ref_index++;
+                        unsigned int ebit = e_chunk & mask;
+                        char c_refbit = STR_E_BIN[e_ref_index];
+                        if ((!binpoint_seen) && (c_refbit == '.')) {
+                                c_refbit = STR_E_BIN[++e_ref_index];
+                                binpoint_seen = 1;
+                                printf(".");
+                        }
+                        unsigned int refbit = (c_refbit == '1')? 1u: 0u;
+                        if ((refbit && (ebit == 0)) || ((!refbit) && (ebit > 0))) {
+                                printf("(%d)\n", (ebit == 0? 0: 1));
+                                printf("Exact match up to %d frac bits (%d-bit total match)\n", \
+                                        match_count - 2, match_count);
+                                long double ddigits = (match_count - 2) / (logl(10)/logl(2));
+                                printf("Corresponds to exact match up to %d decimal frac digits.\n\n", (int) truncl(ddigits));
+                                checking = 0;
+                                break;
+                        }
+                        printf((ebit > 0)? "1": "0");
+                        match_count++;
+                        mask >>= 1;
+                        e_ref_index++;
                 }
                 eshifted = eshifted - ((long double) e_chunk);
                 eshifted = eshifted * powl(2, intbits);

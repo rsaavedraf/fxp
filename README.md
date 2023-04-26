@@ -18,7 +18,7 @@ yet ultimate precision within the chosen number of frac bits.
 
 exp() and pow10() now also implemented based on pow2(). (powxy() and sqrt() coming very soon.)
 
-Once completed with trigonometric functions, planning to rewrite in Rust.
+Later: trigonometric functions.
 
 &nbsp;
 ## How To Try It
@@ -30,14 +30,15 @@ Simply clone this repo and then run the following script on its folder:
 That will compile locally and run the tester program.
 It should produce a long testing output, like the one in the 
 *output.\*.txt* file(s).
-At the end it will ideally show a total of zero warnings.
-If an error larger than the warning tolerance is found, then an assert 
+At the end it will ideally show a list with the observed number of
+warnings for the each of the frac bit configurations tested.
+If an error larger than the maximum tolerance is found, then an assert 
 will get triggered stopping the program immediately, showing the
 function call that was being tested right then.
 
-Up to now I have run and tested it successfully with zero warnings on 
-a couple of CPUs listed below, using gcc v11.3.0 both without and 
-with some -O options.
+Up to now I have run and tested it successfully on a couple of CPUs 
+listed below, using gcc v11.3.0 both without and 
+with some -O options:
 
 [Little Endian](https://en.wikipedia.org/wiki/Endianness) CPUs:
 - Intel Core i7-6700K

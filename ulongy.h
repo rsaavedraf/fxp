@@ -11,6 +11,8 @@ typedef struct ulongy {
 } ulongy;
 
 static const ulongy ULONGY_ZERO = { 0u, 0u };
+static const ulongy ULONGY_ALL_ONES = { ~0u, ~0u };
+static const ulongy ULONGY_ALL_ONES_RS1 = { ~0u >> 1, ~0u >> 1 };
 
 ulongy ulongy_create(unsigned int a, unsigned int b);
 unsigned int ulongy_get_hi(ulongy x);
@@ -24,6 +26,7 @@ ulongy ulongy_negate(ulongy x);
 ulongy ulongy_lshift(ulongy x, unsigned int lshift);
 ulongy ulongy_rshift(ulongy x, unsigned int rshift);
 ulongy ulongy_rshift_rounding(ulongy x, unsigned int rshift);
+ulongy ulongy_bitwise_and(ulongy x, ulongy y);
 
 ulongy ulongy_from_dmul(unsigned int a, unsigned int b);
 unsigned int dmul_into_uint(unsigned int a, unsigned int b);

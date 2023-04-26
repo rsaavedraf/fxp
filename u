@@ -1,0 +1,10 @@
+#!/bin/bash
+
+clear
+if [ -f "u.out" ]; then
+    rm u.out
+fi
+gcc fxp.h fxp_extern.h ulongy.h ulongy.c fxp_l.h fxp_l.c fxp_aux.h fxp_aux.c print_as_bits.h print_as_bits.c fxp.c fxp_conv.h fxp_conv.c ulongy_tester.c -lm -o u.out
+if [ -f "u.out" ]; then
+    ./u.out
+fi

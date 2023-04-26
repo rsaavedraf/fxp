@@ -4,7 +4,6 @@
  *
  * Provides functions to do conversions both ways
  * between fxp and float, or double, or long double
- *
  */
 
 #include <stdio.h>
@@ -36,6 +35,7 @@ float fxp2f(int fxp)
     if (fxp == FXP_UNDEF) return FXP_UNDEF_F;
     if (fxp == FXP_NEG_INF) return FXP_NINF_F;
     if (fxp == FXP_POS_INF) return FXP_PINF_F;
+    // TODO: double-check how this rounding is done
     // An IEEE-754 float uses 24 bits for the
     // mantissa part (first implicit, 23 explicit)
     // So we will round up that last bit in it
@@ -72,8 +72,8 @@ int f2fxp(float x)
     if (isnan(x)) return FXP_UNDEF;
     if (isinf(x)) return (signbit(x)? FXP_NEG_INF: FXP_POS_INF);
     if (x <= FXP_UNDEF_F) return FXP_UNDEF;
-    if ((x <= FXP_NINF_F) || (x < FXP_min_f)) return FXP_NEG_INF;
-    if ((x >= FXP_PINF_F) || (x > FXP_max_f)) return FXP_POS_INF;
+    if ((x <= FXP_NINF_F) || (x <= FXP_min_fx)) return FXP_NEG_INF;
+    if ((x >= FXP_PINF_F) || (x >= FXP_max_fx)) return FXP_POS_INF;
     float px = (x < 0)? -x: x;
     float pwf = truncf(px);
     float frac = px - pwf;
@@ -121,8 +121,8 @@ int d2fxp(double x)
     if (isnan(x)) return FXP_UNDEF;
     if (isinf(x)) return (signbit(x)? FXP_NEG_INF: FXP_POS_INF);
     if (x <= FXP_UNDEF_D) return FXP_UNDEF;
-    if (x < FXP_min_d) return FXP_NEG_INF;
-    if (x > FXP_max_d) return FXP_POS_INF;
+    if (x <= FXP_min_dx) return FXP_NEG_INF;
+    if (x >= FXP_max_dx) return FXP_POS_INF;
     double px = (x < 0)? -x: x;
     double pw = trunc(px);
     double frac = px - pw;
@@ -149,17 +149,20 @@ long double fxp2ld(int fxp)
     if (fxp == FXP_UNDEF) return FXP_UNDEF_LD;
     if (fxp == FXP_NEG_INF) return FXP_NINF_LD;
     if (fxp == FXP_POS_INF) return FXP_PINF_LD;
-    unsigned int twopower = 1 << FXP_frac_bits;
+    //printf("\nfxp2ld: fxp is %X\n", fxp);
+    unsigned int twopower = 1u << FXP_frac_bits;
     int frac = fxp_get_bin_frac(fxp);
     if (frac < 0) frac = -frac;
-    long double ldfrac = 0.0;
+    long double ldfrac = 0.0L;
     while (frac > 0) {
-        if (frac & 1) ldfrac += ((long double) 1.0) / twopower;
+        if (frac & 1u) ldfrac += ((long double) 1.0L) / twopower;
         frac = frac >> 1;
         twopower = twopower >> 1;
     }
     long double wld = (long double) fxp_get_whole_part(fxp);
-    return wld + ((fxp < 0)? -ldfrac: ldfrac);
+    long double num = wld + ((fxp < 0)? -ldfrac: ldfrac);
+    //printf("fxp2ld: ld num is %34.30Le\n", num);
+    return num;
 }
 
 /*
@@ -170,8 +173,8 @@ int ld2fxp(long double x)
     if (isnan(x)) return FXP_UNDEF;
     if (isinf(x)) return (signbit(x)? FXP_NEG_INF: FXP_POS_INF);
     if (x <= FXP_UNDEF_LD) return FXP_UNDEF;
-    if (x < FXP_min_ld) return FXP_NEG_INF;
-    if (x > FXP_max_ld) return FXP_POS_INF;
+    if (x <= FXP_min_ldx) return FXP_NEG_INF;
+    if (x >= FXP_max_ldx) return FXP_POS_INF;
     long double px = (x < 0)? -x: x;
     long double pwld = truncl(px);
     long double frac = px - pwld;

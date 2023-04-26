@@ -243,26 +243,26 @@ long double my_pow2_bkm(long double n, int nbits)
                 pow2w = 1.0 / ((long double) (1l << (-w + 1)));
                 argument = 1 + frac; // Notice argument in (0, 1]
         }
-        printf("n:%.5Lf,  w:%lld,  pow2w:%LE,  argument:%.5LE\n", \
+        printf("n:%.18Lf,  w:%lld,  pow2w:%18Lf,  argument:%.18Lf\n", \
                     n, w, pow2w, argument);
         // The BKM algorithm in E-Mode (for exponential)
         // calculates pow2(argument), argument in [0, 1) here
-        long double x = 1.0, y = 0.0, s = 1.0;
+        long double x = 1.0L, y = 0.0L, s = 1.0L;
         for (int k = 0; k < nbits; k++) {
                 long double const  z = y + A_2[k];
-                printf("\tpow2 bkm iteration %d, z:%.5LE, x:%.5LE\n", \
+                printf("\tpow2 bkm iteration %d, z:%.18Lf, x:%.18Lf\n", \
                             k, z, x);
                 if (z <= argument) {
                         y = z;
                         x = x + x*s;
-                        printf("\t\tUpdating y:%.5LE x:%.5LE\n", y, x);
+                        printf("\t\tUpdating y:%.18Lf x:%.18Lf\n", y, x);
                 }
-                s *= 0.5;
+                s *= 0.5L;
         }
         // Here x == 2^argument == pow2(f)
         // Calculate the full 2^n = pow2w * pow2f
         long double full_pow2 = pow2w * x;
-        printf("pow2(%.5Lf) = %.5Lf\n\n", n, full_pow2);
+        printf("pow2(%.18Lf) = %.18Lf\n", n, full_pow2);
         return full_pow2;
 }
 
@@ -273,7 +273,7 @@ int main(void)
         printf("\nValues for the BKM array, long hex format, %d frac bits:\n", nfbits);
         int n = sizeof(A_2) / sizeof(A_2[0]);
         int j = 1;
-        unsigned long long mult = 1L << nfbits;
+        unsigned long long mult = 1llu << nfbits;
         printf("\nstatic const unsigned long FXP_BKM_LOGS_L[] = {\n");
         for (int i=0; i < n; i++) {
                 long double numld = A_2[i];
@@ -293,7 +293,7 @@ int main(void)
         for (int i=0; i < n; i++) {
                 long double numld = A_2[i];
                 unsigned long long num = truncl( numld * mult );
-                msbits = (num & 0xFFFFFFFF00000000) >> 32;
+                msbits = (num & 0xFFFFFFFF00000000llu) >> 32;
                 printf("0x%llX", msbits);
                 if (num == 0L) break;
                 printf(", ");
@@ -305,7 +305,7 @@ int main(void)
         for (int i=0; i < n; i++) {
                 long double numld = A_2[i];
                 unsigned long long num = truncl( numld * mult );
-                lsbits = (num & 0x00000000FFFFFFFF);
+                lsbits = (num & 0x00000000FFFFFFFFllu);
                 printf("0x%llX", lsbits);
                 if (num == 0L) break;
                 printf(", ");
@@ -313,14 +313,17 @@ int main(void)
         }
         printf("\n};\n");
 
-        long double x1 = my_log2_bkm(1.9999999999, 31);
-        long double x2 = my_log2_bkm(0.9999999999, 31);
+        //long double x1 = my_log2_bkm(1.9999999999, 31);
+        //long double x2 = my_log2_bkm(0.9999999999, 31);
 
         printf("\n");
-        long double x3 = my_pow2_bkm(0.5, 31);
+        long double p = 1.0L - 1.0L/(1u << 30);
+        long double x3 = my_pow2_bkm(p, 60);
+        printf("Expected 2^(1 - 1/2^30):     %.18Lf\n\n", powl(2.0L, p));
         //long double x4 = my_pow2_bkm(1.5, 31);
         //long double x5 = my_pow2_bkm(2.0, 31);
         //long double x6 = my_pow2_bkm(2.5, 31);
+
 
 /*
         printf("\nPrecision of long double pow2() calculations using BKM:\n");

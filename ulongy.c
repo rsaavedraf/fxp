@@ -99,6 +99,13 @@ inline ulongy ulongy_rshift_rounding(ulongy x, unsigned int rshift)
         return ulongy_add_uint(r, rbit);
 }
 
+inline ulongy ulongy_bitwise_and(ulongy x, ulongy y)
+{
+        ulongy anded = { x.hi & y.hi, x.lo & y.lo };
+        return anded;
+}
+
+
 /*
  * Distributive multiplication approach for two uints,
  * returning a ulongy.
@@ -166,7 +173,7 @@ inline unsigned int dmul_into_uint(unsigned int x, unsigned int y)
 }
 
 /*
- * Equivalent to dmul_ulongs in fxp_l.c, but here using ulongies
+ * Equivalent to dmul_ulongs in fxp_l.c, but here using ulongys
  */
 inline ulongy dmul_ulongys(ulongy x, ulongy y)
 {

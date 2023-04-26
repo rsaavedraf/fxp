@@ -11,34 +11,49 @@
 #include <float.h>
 #include <time.h>
 #include <math.h>
+#include "fxp_extern.h"
 #include "fxp_aux.h"
 #include "print_as_bits.h"
 //#include <assert.h>
 
+#define VERBOSE 1
+
 /*
- * Limits the precision of a double to the specified
+ * Limits the precision of a long double to the specified
  * number of fractional bits. This eases the tester
  * comparisons between results from (precision limited)
  * fxp operations vs. long double operation results
  * used as the reference
  */
-long double lim_frac(long double x, int fbp)
+long double lim_frac(long double x, unsigned int fbp)
 {
         if (x <= FXP_UNDEF_LD) return FXP_UNDEF_LD;
-        if (x <= FXP_min_ld) return FXP_NINF_LD;
-        if (x >= FXP_max_ld) return FXP_PINF_LD;
+        if (x <= FXP_min_ldx) return FXP_NINF_LD;
+        if (x >= FXP_max_ldx) return FXP_PINF_LD;
+        return x;
+        //printf("\nlim_frac: input is %Lf, frac bits: %d\n", x, fbp);
+        //printf("\tfrac bits variable in here: %d\n", FXP_frac_bits);
         // get whole part
-        long double px = (x < 0)? -x: x;
+        long double px = (x < 0.0L)? -x: x;
         long double pxw = truncl(px);
+        //printf("\tpxw is %Lf\n", pxw);
         // keep only up to fbp fraction bits in frac part
-        long double dfrac = px - pxw;
-        unsigned long long shift = 1ull << fbp;
-        unsigned long long shift_x2 = shift << 1ull;
-        int rbit = (int) (((unsigned long long) \
-                        truncl(dfrac * shift_x2)) & 1ull);
-        dfrac = truncl(dfrac * shift) + rbit;
-        dfrac = dfrac / shift;
-        return (x < 0)? -pxw - dfrac: pxw + dfrac;
+        long double dfrac_0 = px - pxw;
+        //printf("\tdfrac_0 is %Lf\n", dfrac_0);
+        unsigned long long shift = 1llu << fbp;
+        unsigned long long shift_x2 = (shift << 1u);
+        //printf("\tshift    is %llX\n", shift);
+        //printf("\tshift_x2 is %llX\n", shift_x2);
+        int rbit = (((unsigned long long) \
+                        truncl(dfrac_0 * shift_x2)) & 1llu);
+        //printf("lim_frac rbit is %d\n", rbit);
+        dfrac_0 = truncl(dfrac_0 * shift) + rbit;
+        long double dfrac_1 = dfrac_0 / shift;
+        //printf("lim_frac dfrac_0 is %Lf\n", dfrac_0);
+        //printf("lim_frac dfrac_1 is %Lf\n", dfrac_1);
+        long double result = (x < 0.0L)? -pxw - dfrac_1: pxw + dfrac_1;
+        //printf("lim_frac: result is %Lf\n", result);
+        return result;
 }
 
 void print_fxp_as_bin(int n, int width)
@@ -81,18 +96,22 @@ void print_fxp(int x)
                 return;
         }
         long double n = fxp2ld(x);
-        int whole = fxp_get_whole_part(x);
-        int frac = fxp_get_dec_frac(x);
+        //int whole = fxp_get_whole_part(x);
+        //int frac = fxp_get_dec_frac(x);
         //printf("\nx:%d,  w:%d,  f:%d \n", x, whole, frac);
         if (x < 0) {
                 int px = -x;
-                if (whole < 0) whole = -whole;
-                if (frac < 0) frac = -frac;
-                printf("-%d.%7d (=%.10Le =%d =x(-)%X =b",
-                        whole, frac, n, x, px);
+                //if (whole < 0) whole = -whole;
+                //if (frac < 0) frac = -frac;
+                //printf("%.16Le (=-%d.%7d =%d =x(-)%X =b",
+                //        n, whole, frac, x, px);
+                printf("%.10Le (fxp: =x(-)%X =%d =b",
+                        n, px, x);
         } else {
-                printf("%d.%7d (=%.10Le =%d =x%X =b",
-                        whole, frac, n, x, x);
+                //printf("%.16Le (=%d.%7d =%d =x%X =b",
+                //        n, whole, frac, x, x);
+                printf("%.10Le (fxp: x%X =%d =b",
+                        n, x, x);
         }
         print_fxp_as_bin(x, 0);
         printf(")");
