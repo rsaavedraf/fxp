@@ -11,14 +11,17 @@ following CMU SEI's INT32-C recommendations. For further details:
 
 lg2(), pow2() implemented using the [BKM algorithm (Wikipedia)](https://en.wikipedia.org/wiki/BKM_algorithm)
 
-ln() and lg10() implemented multiplying lg2 by needed factor at full 
-int-size precision (not just current fxp frac bits) to avoid precision loss.
-Goals of this implementation are mostly flexibility (hence the configurable frac bits,)
-yet ultimate precision within the chosen number of frac bits.
+Additional logarithm and power functions (ln(), lg10(), exp(), pow10) implemented 
+through lg2 and pow2, using double the int-size precision (not just current fxp frac bits)
+to avoid any precision loss. Goals of this implementation are mostly flexibility (hence the
+configurable frac bits,) yet ultimate precision within the chosen number of frac bits.
+All tests, including those for exp() and pow10(), should run with zero inaccuracy warnings.
 
-exp() and pow10() now also implemented based on pow2(). (powxy() and sqrt() coming very soon.)
+powxy() and sqrt() coming very soon.
 
-Later: trigonometric functions.
+Later:
+- Trigonometric functions
+- Saturated mode
 
 &nbsp;
 ## How To Try It
@@ -36,8 +39,8 @@ If an error larger than the maximum tolerance is found, then an assert
 will get triggered stopping the program immediately, showing the
 function call that was being tested right then.
 
-Up to now I have run and tested it successfully on a couple of CPUs 
-listed below, using gcc v11.3.0 both without and 
+Up to now I have run and tested it successfully (zero warnings) 
+on a couple of CPUs listed below, using gcc v11.3.0 both without and 
 with some -O options:
 
 [Little Endian](https://en.wikipedia.org/wiki/Endianness) CPUs:
@@ -61,7 +64,7 @@ let me know as well, glad to also credit troubleshooting input/feedback.
 Just please mention compiler, compiler options used, and your hardware details.
 
 To use these Fix Point Numbers yourself, for now you only need 
-files *fxp.h* and *fxp.c* if strictly using ints and only ints.
+files *fxp.c* and its dependencies if strictly using ints and only ints.
 If also using longs, then also files *fxp_l.h* and *fxp_l.c*. 
-All the other files are auxiliary (to convert to and from floating points, 
-print out, test, etc.)
+Most other files are auxiliary (to convert to and from floating points, 
+to print out, test, etc.)

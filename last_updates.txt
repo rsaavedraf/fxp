@@ -411,9 +411,18 @@ there are no longer any "LoFi" power functions: even though
 exp and pow10 technically still use only ints, they are now 
 exactly just as accurate as exp_l and pow10_l using longs.
 
+2023-04-27
+Tests ran perfectly on an Intel pc, but failed on a Raspberry PI (Arm).
+The test that failed was lg10(largest). After deeper inspection,
+found out there was a bug in my r-shift function for ulongys,
+which did not manifest when running on the Intel cpu, go figure.
+Fixed it. Then ran successfully also on the Raspberry Pi.
+Generated output and xtimes from the Rasp Pi as well.
+
 
 
 Pending:
 Implement sqrt_l() and sqrt()
 Implement powxy_l() and powxy()
 Implement trigonometric functions
+Rewrite in Rust?
