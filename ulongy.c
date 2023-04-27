@@ -86,8 +86,7 @@ inline ulongy ulongy_rshift(ulongy x, unsigned int rshift)
                                 ((x.hi & ((1u << rshift) - 1)) \
                                         << (FXP_INT_BITS - rshift)) | \
                                 (x.lo >> rshift) ):
-                ulongy_create( x.hi = 0u, \
-                                x.hi >> (rshift - FXP_INT_BITS) );
+                ulongy_create( 0u, x.hi >> (rshift - FXP_INT_BITS) );
 }
 
 inline ulongy ulongy_rshift_rounding(ulongy x, unsigned int rshift)

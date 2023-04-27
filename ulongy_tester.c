@@ -73,9 +73,9 @@ int main(void)
         test_ulongy(sum, usum);
 
         unsigned long rs = sum >> 16;
-        print_ulong("\nRshifted", rs);
+        print_ulong("\nRshifted by 16", rs);
         ulongy urs = ulongy_rshift(usum, 16);
-        print_ulongy("Ulongy rshifted", urs);
+        print_ulongy("Ulongy rshifted by 16", urs);
         test_ulongy(rs, urs);
 
         unsigned long zero = 0lu;
@@ -101,6 +101,13 @@ int main(void)
         ulongy ud2 = ulongy_sub(urs, usum);
         print_ulongy("Ulongy difference 2", ud2);
         test_ulongy(d2, ud2);
+
+        unsigned long bigrs = d2 >> 33;
+        print_ulong("\nRshifted by 33", bigrs);
+        ulongy ubigrs = ulongy_rshift(ud2, 33);
+        print_ulongy("Ulongy rshifted by 33", ubigrs);
+        test_ulongy(bigrs, ubigrs);
+
 
         printf("\n\tAll tests passed!\n\n");
 }
