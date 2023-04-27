@@ -11,17 +11,19 @@ following CMU SEI's INT32-C recommendations. For further details:
 
 lg2(), pow2() implemented using the [BKM algorithm (Wikipedia)](https://en.wikipedia.org/wiki/BKM_algorithm)
 
-Additional logarithm and power functions (ln(), lg10(), exp(), pow10) implemented 
-through lg2 and pow2, using double the int-size precision (not just current fxp frac bits)
-to avoid any precision loss. Goals of this implementation are mostly flexibility (hence the
-configurable frac bits,) yet ultimate precision within the chosen number of frac bits.
-All tests, including those for exp() and pow10(), should run with zero inaccuracy warnings.
+Additional logarithm and power functions, ln(), lg10(), exp(), and pow10(), implemented 
+through lg2 and pow2, but now using double the int-size precision (emulated longs,) so as to 
+avoid calculation inaccuracies that would appear if only using the precision of the chosen 
+number of frac bits. Goals of this implementation are mostly flexibility (hence the 
+configurable frac bits,) yet ultimate precision. All tests, including those for exp() and 
+pow10(), should run with zero inaccuracy warnings.
 
-powxy() and sqrt() coming very soon.
+Functions powxy() and sqrt() coming very soon.
 
 Later:
 - Trigonometric functions
 - Saturated mode
+- Rewrite in Rust maybe?
 
 &nbsp;
 ## How To Try It
@@ -30,7 +32,7 @@ Simply clone this repo and then run the following script on its folder:
 
     ./r
 
-That will compile locally and run the tester program.
+That will compile with gcc locally, and will run the tester program.
 It should produce a long testing output, like the one in the 
 *output.\*.txt* file(s).
 At the end it will ideally show a list with the observed number of
