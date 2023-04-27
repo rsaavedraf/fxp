@@ -737,55 +737,6 @@ inline int fxp_nbits(unsigned int x)
 }
 
 /*
- * Multiplies two frac values represented as unsigned ints.
- * Notice that the multiplication of two frac values can never
- * overflow regardless of their representing magnitudes
- * (operands are < 1, so the product is always < 1.)
- * Assumes the arguments are already properly shifted.
- * Uses the distributive multiplication approach.
- * Identifying xa, xb, ya and yb as the inner "words"
- * (e.g. half ints) of the unsigned int arguments, so
- * with WORD_BITS = (FXP_INT_BITS / 2) :
- *      x == (xa << WORD_BITS) | xb
- *      y == (ya << WORD_BITS) | yb
- * Calculates the product as:
- *      x * y = (xa * ya) + ql1 + ql2 + ql3, where
- *      ql1 = lword of xa * yb
- *      ql2 = lword of ya * xb
- *      ql3 = lword of qrsum
- * and qrsum = qr1 + qr2 + qr3, where
- *      qr1 = rword of xa * yb
- *      qr2 = rword of ya * xb
- *      qr3 = lword of xb * yb
- *
-inline unsigned int dmul_uints(unsigned int x,
-                               unsigned int y)
-{
-        unsigned int xa, xb, ya, yb, xaya, xayb, yaxb, xbyb;
-        unsigned int qr1, qr2, qr3, qrsum, ql1, ql2, ql3, product;
-        xa = x >> FXP_WORD_BITS;
-        xb = (x & FXP_RWORD_MASK);
-        ya = y >> FXP_WORD_BITS;
-        yb = (y & FXP_RWORD_MASK);
-        xayb = xa * yb;
-        yaxb = ya * xb;
-        xaya = xa * ya;
-        xbyb = xb * yb;
-        qr1 = xayb & FXP_RWORD_MASK;
-        qr2 = yaxb & FXP_RWORD_MASK;
-        qr3 = xbyb >> FXP_WORD_BITS;
-        unsigned int rbit1 = ((xbyb >> FXP_WORD_BITS_M1) & 1u);
-        qrsum = qr1 + qr2 + qr3 + rbit1;
-        ql1 = xayb >> FXP_WORD_BITS;
-        ql2 = yaxb >> FXP_WORD_BITS;
-        unsigned int rbit2 = ((qrsum >> FXP_WORD_BITS_M1) & 1u);
-        ql3 = (qrsum >> FXP_WORD_BITS);
-        product = xaya + ql1 + ql2 + ql3 + rbit2;
-        return product;
-}
-*/
-
-/*
  * Safe implementation of fxp multiplication using only ints.
  *
  * Works for systems in which sizeof(long) is not larger
@@ -1059,6 +1010,10 @@ static inline struct tuple fxp_get_lg2_as_tuple(int fxp1, \
         ulongy x = FXP_BKM_X_ONE_ULONGY;
         ulongy y = ULONGY_ZERO;
         ulongy xs, z;
+        #ifdef VERBOSE
+        printf("\nfxp_get_lg2_as_tuple: clz%d, argument: {x%X,%X}\n", \
+                    clz, argument.hi, argument.lo);
+        #endif
         for (unsigned int shift = 1; shift <= MAX_LOOPS; shift++) {
                 //unsigned long xs = (x >> shift);
                 xs = ulongy_rshift(x, shift);
@@ -1066,13 +1021,30 @@ static inline struct tuple fxp_get_lg2_as_tuple(int fxp1, \
                 // z = x + xs;
                 z = ulongy_add(x, xs);
 
+                int c = ulongy_compare(z, argument);
+
+                #ifdef VERBOSE
+                printf("shift:%u looping\n", shift);
+                printf("\txs      : {x%X,%X}\n", xs.hi, xs.lo);
+                printf("\targument: {x%X,%X}\n", argument.hi, argument.lo);
+                printf("\tz       : {x%X,%X}\n", z.hi, z.lo);
+                printf("\tc:%d  ", c);
+                #endif
+
                 // if (z <= argument) {
-                if (ulongy_compare(z, argument) <= 0) {
+                if (c <= 0) {
                         x = z;
                         // Here we use the precalculated values
                         // y += FXP_BKM_LOGS_L[shift];
                         y = ulongy_add(y, FXP_BKM_LOGS_NEW[shift]);
+                        #ifdef VERBOSE
+                        printf("\tUpdated x:{x%X,%X}  Updated y:{x%X,%X}", \
+                                x.hi, x.lo, y.hi, y.lo);
+                        #endif
                 }
+                #ifdef VERBOSE
+                printf("\n");
+                #endif
         }
         result.pong = y;
         return result;
