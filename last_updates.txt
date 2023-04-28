@@ -420,6 +420,37 @@ Fixed it. Then ran successfully also on the Raspberry Pi.
 Generated output and xtimes from the Rasp Pi as well.
 
 
+2023-04-28
+
+Thinking about cleanest way to implement sqrt() and powxy() given the
+already written code, I'm realizing my internal "xc" functions
+(get_xc_as_tuple[_l]) have 3 parameters, which brings to mind some wise 
+observations from the book "Clean Code": likely some of these arguments
+ought to be wrapped into a class of their own, and likely the function
+is directly dealing with more than one level of abstraction.
+
+In my case, the arguments which ought to be wrapped into a class of their
+own would be the second and third. Those are the factor C, and 
+c_nwbits: how many bits in C are whole bits. The duo clearly constitutes
+a missing abstraction: a sort of independent or "self-configured" fixed point
+number.
+
+This is not just a "bigger FXP," it also has its own independent 
+fxp configuration, (it's own number of whole vs. frac bits,) independent of
+the global fxp setting, and in fact it carries this independent configuration
+within. So it's an FXP with significant superpowers, so to speak.
+Calling it super_fxp then.
+
+The elements in the table of logs are (or could be) basically also 
+instances of this abstraction, not just plain simple u. longs or ulongys.
+They are indeed "super FXP's" with their own independent configuration,
+and using more bits than normal fxps. All in the table with the same
+configuration, but still, one that is completely independent of the global
+fxp configuration.
+
+So planning to refactor the code with this abstraction in mind.
+
+
 
 Pending:
 Implement sqrt_l() and sqrt()
