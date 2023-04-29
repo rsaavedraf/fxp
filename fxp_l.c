@@ -17,7 +17,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "print_as_bits.h"
-//#include <assert.h>
+#include <assert.h>
 
 //#define VERBOSE 1
 #ifdef VERBOSE
@@ -657,7 +657,6 @@ static inline tuple_l get_xc_as_tuple_l(int x, \
 {
         unsigned long fc, wfc, ffc, ffmask;
         unsigned int sf;
-        int margin = c_nwbits + 1;
 
         // First calculating frac(x) * C
         // fraction part of x l-shifted so as
@@ -666,8 +665,8 @@ static inline tuple_l get_xc_as_tuple_l(int x, \
         // sf times the factor C
         fc = dmul_ulong_x_uint(C, sf);
         // whole and frac parts of that product fxC
-        ffmask = ULONG_ALL_ONES >> margin;
-        wfc = fc >> (FXP_LONG_BITS - margin);
+        ffmask = ULONG_ALL_ONES_RS1 >> c_nwbits;
+        wfc = fc >> (FXP_LONG_BITS_M1 - c_nwbits);
         ffc = fc & ffmask;
 
                 #ifdef VERBOSE
@@ -678,12 +677,12 @@ static inline tuple_l get_xc_as_tuple_l(int x, \
                 print_ulong_as_bin(C);
                 printf(" (%LE)\n\t", ((long double) C) \
                                         / (1ul << FXP_LONG_BITS - c_nwbits));
-                printf("Product fxC (%d whole bits) is:\n\t", margin);
+                printf("Product fxC (%d whole bits) is:\n\t", c_nwbits + 1);
                 print_ulong_as_bin(fc);
                 printf(" (%LE)\n\t", ((long double) fc) \
                                         / (1ul << FXP_LONG_BITS_M1 - c_nwbits));
                 printf("w_fxC: %lu\n\t", wfc);
-                printf("f_fxC (%d whole bits):\n\t", margin);
+                printf("f_fxC (%d whole bits):\n\t", c_nwbits + 1);
                 print_ulong_as_bin(ffc);
                 printf(" (%LE)\n\t", ((long double) ffc) \
                                         / (1ul << FXP_LONG_BITS_M1 - c_nwbits));
@@ -730,21 +729,21 @@ static inline tuple_l get_xc_as_tuple_l(int x, \
 
         // Left-align both f_fxC and f_wxC leaving 1 whole bit
         // in order to add them up
-        ffc <<= margin - 1;
+        //ffc <<= margin - 1;
+        ffc <<= c_nwbits;
         fwc <<= w_margin - 1;
 
-        // Get final whole and frac parts, and return as tuple_l
+        // Sum of frac parts
         unsigned long fplusf = ffc + fwc;
 
-        // TODO: double-check this rshift by LONG bits -1 really?
-        // a carry over or rounding bit?
+        // Carry over from frac sum into whole part
         unsigned long w_fplusf = fplusf >> FXP_LONG_BITS_M1;
-        int vping = (int) (wwc + wfc + w_fplusf);
-        struct tuple_l xc = {   wwc + wfc + w_fplusf,
+
+        // Tuple to return with final whole and frac parts
+        struct tuple_l xc = { (int) (wwc + wfc + w_fplusf), \
                                 fplusf & ULONG_ALL_ONES_RS1 };
 
                 #ifdef VERBOSE
-                printf("\n\tvping is: %d", vping);
                 printf("\n\tfinal wsum:\n\t");
                 print_uint_as_bin(xc.ping);
                 printf(" (%u)\n\t", xc.ping);

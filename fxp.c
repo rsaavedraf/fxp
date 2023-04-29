@@ -1420,7 +1420,6 @@ static inline tuple get_xc_as_tuple(int x, \
 {
         ulongy fc, wfc, ffc, ffmask;
         unsigned int sf;
-        int margin = c_nwbits + 1;
 
         // First calculating frac(x) * C
         // fraction part of x, l-shifted all the way
@@ -1430,8 +1429,8 @@ static inline tuple get_xc_as_tuple(int x, \
         // sf times the factor C
         fc = dmul_ulongy_x_uint(C, sf);
         // whole and frac parts of that product f * C
-        ffmask = ulongy_rshift(ULONGY_ALL_ONES, margin);
-        wfc = ulongy_rshift(fc, FXP_LONG_BITS - margin);
+        ffmask = ulongy_rshift(ULONGY_ALL_ONES_RS1, c_nwbits);
+        wfc = ulongy_rshift(fc, FXP_LONG_BITS_M1 - c_nwbits);
         ffc = ulongy_bitwise_and(fc, ffmask);
 
                 #ifdef VERBOSE
@@ -1442,12 +1441,12 @@ static inline tuple get_xc_as_tuple(int x, \
                 print_ulongy_as_bin(C);
                 //printf(" (%LE)\n\t", ((long double) C) \
                 //                        / (1ul << FXP_INT_BITS - c_nwbits));
-                printf("\n\tProduct fxC (%d whole bits) is:\n\t", margin);
+                printf("\n\tProduct fxC (%d whole bits) is:\n\t", c_nwbits + 1);
                 print_ulongy_as_bin(fc);
                 //printf(" (%LE)\n\t", ((long double) fc) \
                 //                        / (1ul << FXP_INT_BITS - c_nwbits));
                 printf("\n\tw_fxC: {%X,%X}", wfc.hi, wfc.lo);
-                printf("\n\tf_fxC (%d whole bits):\n\t", margin);
+                printf("\n\tf_fxC (%d whole bits):\n\t", c_nwbits + 1);
                 print_ulongy_as_bin(ffc);
                 //printf(" (%LE)\n\t", ((long double) ffc) \
                 //                        / (1u << FXP_INT_BITS - c_nwbits));
@@ -1496,20 +1495,20 @@ static inline tuple get_xc_as_tuple(int x, \
 
         // Left-align both f_fxC and f_wxC leaving 1 whole bit
         // in order to add them up
-        ffc = ulongy_lshift(ffc, margin - 1);
+        ffc = ulongy_lshift(ffc, c_nwbits);
         fwc = ulongy_lshift(fwc, w_margin - 1);
 
         // Get final whole and frac parts, and return as tuple
         ulongy fplusf = ulongy_add(ffc, fwc);
         ulongy w_fplusf = ulongy_rshift(fplusf, FXP_LONG_BITS_M1);
         ulongy vping_sum = ulongy_add( ulongy_add(wwc, wfc), w_fplusf );
-        int vping = vping_sum.lo;
-        struct tuple xc = { vping, \
+        //int vping = vping_sum.lo;
+        struct tuple xc = { vping_sum.lo, \
                             ulongy_bitwise_and(fplusf, \
                                         ULONGY_ALL_ONES_RS1) };
 
                 #ifdef VERBOSE
-                printf("\n\tvping is: %d", vping);
+                //printf("\n\tvping is: %d", vping);
                 printf("\n\tfinal wsum:\n\t");
                 print_uint_as_bin(xc.ping);
                 printf(" (%u)\n\t", xc.ping);
