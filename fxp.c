@@ -78,6 +78,7 @@ int FXP_frac_bits = FXP_FRAC_BITS_DEF;
 // variable name in lowercase
 
 int FXP_frac_bits_m1 = FXP_FRAC_BITS_DEF - 1;
+int FXP_frac_bits_p1 = FXP_FRAC_BITS_DEF + 1;
 
 // Default number of bits for the whole part (includes sign bit)
 int FXP_whole_bits = FXP_INT_BITS - FXP_FRAC_BITS_DEF;
@@ -367,6 +368,7 @@ int fxp_set_frac_bits(int nfracbits)
                             (nfracbits > FXP_FRAC_BITS_MAX?
                                 FXP_FRAC_BITS_MAX: nfracbits));
         FXP_frac_bits_m1 = FXP_frac_bits - 1;
+        FXP_frac_bits_p1 = FXP_frac_bits + 1;
         FXP_whole_bits = FXP_INT_BITS - FXP_frac_bits;
         FXP_whole_bits_m1 = FXP_whole_bits - 1;
         FXP_whole_bits_m2 = FXP_whole_bits - 2;

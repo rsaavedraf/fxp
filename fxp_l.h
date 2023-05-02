@@ -31,4 +31,3 @@ int fxp_powxy_l(int fxp1, int fxp2);
 
 unsigned long dmul_ulongs(unsigned long x, unsigned long y);
 unsigned long dmul_ulong_x_uint(unsigned long x, unsigned int y);
-
