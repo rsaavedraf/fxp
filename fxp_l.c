@@ -19,7 +19,8 @@
 #include "print_as_bits.h"
 #include <assert.h>
 
-#define VERBOSE 1
+//#define VERBOSE 1
+//#define VERBOSE_BKM 1
 #ifdef VERBOSE
 #include "print_as_bits.h"
 #endif
@@ -419,7 +420,7 @@ int fxp_lg2_mul_l(int fxp1)
  * For more details on BKM:
  * https://en.wikipedia.org/wiki/BKM_algorithm
  */
-static inline struct tuple_l fxp_get_lg2_as_tuple_l(int fxp1, \
+static inline tuple_l fxp_get_lg2_as_tuple_l(int fxp1, \
                                      const int MAX_LOOPS)
 {
         struct tuple_l result;
@@ -462,6 +463,25 @@ static inline struct tuple_l fxp_get_lg2_as_tuple_l(int fxp1, \
                         //printf("\tx:x%lX  Updating y:x%lX\n", x, y);
                 }
         }
+
+
+        // Testing if we could replace these tuples with a super_fxp
+        // by artificially truncating the precision of the mantissa,
+        // as if we were using just super_fxp's. That means, we need to
+        // zero from the mantissa as many lower significant bits as
+        // # of bits are used in the (positive) ping, not counting the
+        // sign bit, since the A alignment already uses only 63 frac bits
+        clz = (result.ping > 0)?
+                    __builtin_clz(result.ping):
+                    ((result.ping < 0)?
+                            __builtin_clz(-result.ping): FXP_INT_BITS);
+        //nbx = FXP_INT_BITS - clz;
+        nbx = FXP_INT_BITS;
+        // We have to zero the lowest nbx bits in the mantissa
+        unsigned long zeromask = (ULONG_ALL_ONES >> nbx) << nbx;
+        printf("zeromask is: %lX\n", zeromask);
+        result.pong = result.pong & zeromask;
+
         return result;
 }
 
@@ -573,7 +593,8 @@ unsigned long rshift_ulong_rounding(unsigned long x, unsigned int shift)
 
 
 static inline int neg_lg2_x_factor_l(tuple_l tup,
-                        const unsigned long FACTOR)
+                        //const unsigned long FACTOR)
+                        unsigned long FACTOR)
 {
         if ((tup.ping < FXP_whole_min_m1) \
                 || ((tup.ping == FXP_whole_min_m1) \
@@ -671,9 +692,18 @@ static inline int pos_lg2_x_factor_l(tuple_l tup,
  * using longs.
  */
 static inline int lg2_x_factor_l(int fxp1, \
-                        const unsigned long FACTOR)
+                        //const unsigned long FACTOR)
+                        unsigned long FACTOR)
 {
         struct tuple_l tup = fxp_get_lg2_as_tuple_l(fxp1, FXP_INT_BITS);
+
+        // truncating / zeroing out the lowest bits in the factor,
+        // to see when we start getting warnings/asserts
+        int nbits = FXP_INT_BITS;
+        unsigned long zeromask = ((ULONG_ALL_ONES >> nbits) << nbits);
+        FACTOR = FACTOR & zeromask;
+
+
         // The lg2(fxp1) is equals to c + m:
         // c == characteristic (tup.ping),
         // m == mantissa (tup.pong)
@@ -732,30 +762,47 @@ static long double print_as_ld(unsigned long x, int nfbits)
 
 static inline unsigned long fxp_bkm_emode_l(unsigned long argument)
 {
-        #ifdef VERBOSE
+        #ifdef VERBOSE_BKM
         printf("\nbkm_emode_l running with argument: %lX\n", argument);
         #endif
+        int nbits;
+        unsigned long zeromask;
+
+        // truncating / zeroing out the lowest bits in the argument
+        // of the bkm_emode, to see when we start getting warnings/asserts
+        nbits = FXP_INT_BITS - 3;
+        zeromask = ((ULONG_ALL_ONES >> nbits) << nbits);
+        argument = argument & zeromask;
+
+
         unsigned long x = FXP_BKM_X_ONE_L, y = 0;
         for (int k = 0; k < FXP_INT_BITS; k++) {
                 unsigned long const z = y + FXP_BKM_LOGS_L[k];
-                #ifdef VERBOSE
+                #ifdef VERBOSE_BKM
                 printf("k:%d,  z:%lX,  z as ld:%.19Lf\n", \
                         k, z, print_as_ld(z, 63));
                 #endif
                 if (z <= argument) {
                         y = z;
                         x = x + (x >> k);
-                        #ifdef VERBOSE
+                        #ifdef VERBOSE_BKM
                         printf("\tUpdating y (%lX) und x (%lX)\n", y, x);
                         printf("\tx as long double: %.19Lf\n", \
                                         print_as_ld(x, 62));
                         #endif
                 }
         }
-        #ifdef VERBOSE
+        #ifdef VERBOSE_BKM
         printf("bkm_emode_l returning x = %lX  (%.19Lf)\n", \
                         x, print_as_ld(x, 62));
         #endif
+
+        // truncating / zeroing out the lowest bits in the result
+        // of the bkm_emode, to see when we start getting warnings/asserts
+        nbits = FXP_INT_BITS;
+        zeromask = ((ULONG_ALL_ONES >> nbits) << nbits);
+        x = x & zeromask;
+
         return x;
 }
 
@@ -840,12 +887,19 @@ int fxp_pow2_l(int fxp1)
 // x times C and return it as an {int, ulong} tuple_l
 // with the ulong frac part having the same alignment
 // as the BKM array values (1 whole bit)
+                                        //const unsigned long C, 
 static inline tuple_l get_xc_as_tuple_l(int x, \
-                                        const unsigned long C, \
+                                        unsigned long C, \
                                         int c_nwbits)
 {
         unsigned long fc, wfc, ffc, ffmask;
         unsigned int sf;
+
+        // truncating / zeroing out the lowest bits in C
+        // to see when we start getting warnings/asserts
+        int nbits = FXP_INT_BITS - 4;
+        unsigned long zmask = ((ULONG_ALL_ONES >> nbits) << nbits);
+        C = C & zmask;
 
         // First calculating frac(x) * C
         // fraction part of x l-shifted so as
@@ -928,9 +982,27 @@ static inline tuple_l get_xc_as_tuple_l(int x, \
         // Carry over from frac sum into whole part
         unsigned long w_fplusf = fplusf >> FXP_LONG_BITS_M1;
 
+        int final_whole = (int) wwc + wfc + w_fplusf;
+
+        unsigned long final_frac = fplusf & ULONG_ALL_ONES_RS1;
+
+        // Here truncating / zeroing-out the least significant part
+        // of the final frac depending of # bits used by the whole,
+        // to test if we could replace with super_fxp's still
+        // running with zero warnings
+        int clz = (final_whole > 0)?
+                        __builtin_clz(final_whole):
+                        ((final_whole < 0)?
+                                __builtin_clz(-final_whole):
+                                FXP_INT_BITS);
+        int nwbits = FXP_INT_BITS - clz;
+        unsigned long zeromask = (ULONG_ALL_ONES >> nwbits) << nwbits;
+        final_frac = final_frac & zeromask;
+
         // Tuple to return with final whole and frac parts
-        struct tuple_l xc = { (int) (wwc + wfc + w_fplusf), \
-                                fplusf & ULONG_ALL_ONES_RS1 };
+        //struct tuple_l xc = { (int) (wwc + wfc + w_fplusf), \
+        //                        fplusf & ULONG_ALL_ONES_RS1 };
+        struct tuple_l xc = { final_whole, final_frac };
 
                 #ifdef VERBOSE
                 printf("\n\tfinal wsum:\n\t");
@@ -978,7 +1050,11 @@ static inline int fxp_pow2_pos_arg_xfactor_l( \
                 super_fxp_l sxc = get_fxp_x_super_fxp_l(x, superc);
                 print_super_l("Alternative super_fxp_l: ", sxc);
                 #endif
-        return fxp_pow2_wpos_tuple_l( xc );
+        int result1 = fxp_pow2_wpos_tuple_l( xc );
+        int result2 = 0; //fxp_pow2_wpos_super_fxp_l( sxc );
+        printf("result 1 w. tuple: %d\n", result1);
+        printf("result 2 w. sfxp : %d\n", result2);
+        return result1;
 }
 
 // Calculate the pow2 of a negative argument x
