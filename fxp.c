@@ -160,7 +160,7 @@ long double FXP_htiniest_ld = \
 
 typedef struct tuple {
         int ping;
-        ulongy pong;
+        ulongy pong; // <- could possibly be just unsigned int as in fxp_l
 } tuple;
 
 // transcendental constants (2 whole, 30 and 62 frac bits)
@@ -305,7 +305,7 @@ static const ulongy FXP_BKM_LOGS_NEW[] = {
 // right-shift of the value 4 positions earlier
 
 // BKM One aligned for Array/Argument: unsigned fxp with 1 whole bit
-static const unsigned int FXP_BKM_A_ONE = 1u << (FXP_INT_BITS - 1);
+const unsigned int FXP_BKM_A_ONE = 1u << (FXP_INT_BITS - 1);
 const ulongy FXP_BKM_A_ONE_ULONGY = { FXP_BKM_A_ONE, 0u };
 // BKM One aligned for X: unsigned fxp with 2 whole bits
 static const unsigned int FXP_BKM_X_ONE = 1u << (FXP_INT_BITS - 2);
@@ -329,6 +329,16 @@ int FXP_lg2_l_mshift_p1 = 2 * FXP_INT_BITS - FXP_FRAC_BITS_DEF;
 //static const unsigned int UINT_ALL_ONES_RS1 = ~0u >> 1;
 
 /*
+ * R-shifts an unsigned int rounding the last bit
+ */
+inline unsigned int rshift_uint_rounding(unsigned int x, \
+                                         int shift)
+{
+        unsigned int rbit = (x >> (shift - 1)) & 1u;
+        return (x >> shift) + rbit;
+}
+
+/*
  * Given an fxp with x number of frac bits, returns
  * the rounded representation using y frac bits.
  * Used internally to adjust the unsigned
@@ -339,8 +349,7 @@ static inline unsigned int fxp_rshift_tconst(unsigned int fxp, int x, int y)
 {
         int shift = x - y;
         if (shift <= 0) return (unsigned int) FXP_POS_INF;
-        unsigned int rbit = (fxp >> (shift - 1)) & 1u;
-        return (fxp >> shift) + rbit;
+        return rshift_uint_rounding(fxp, shift);
 }
 
 int fxp_get_whole_bits()
@@ -661,6 +670,12 @@ int fxp_get_dec_frac(int fxp)
         ldiv = num / FXP_frac_max_p1;
         return (int) ldiv;
 }
+
+inline unsigned int fxp_get_lshifted_frac(unsigned int fxp1)
+{
+        return (unsigned int) ((fxp1 & FXP_frac_mask) << FXP_whole_bits_m1);
+}
+
 
 /*
  * Simpler unsafe implementations of the arithmetic operations

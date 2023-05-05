@@ -450,6 +450,16 @@ fxp configuration.
 
 So planning to refactor the code with this abstraction in mind.
 
+2023-05-03
+
+Pinpointing where is the precision beyond that of int really making
+a difference, by zeroing-out the lowest bits wherever using longs.
+After this check, turns out the tuples with pong for the frac part as
+an unsigned long is overkill; an unsigned int there will do.
+
+2023-05-05
+
+Log and pow functions in fxp_l now working and tested after the refactoring.
 
 
 Pending:

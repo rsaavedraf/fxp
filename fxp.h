@@ -44,6 +44,11 @@ int fxp_dec(int whole, int dec_frac);
 int fxp_get_whole_part(int fxp1);
 int fxp_get_bin_frac(int fxp1);
 int fxp_get_dec_frac(int fxp1);
+unsigned int fxp_get_lshifted_frac(unsigned int fxp1);
+
+// Aux function to rshift withrounding of last bit
+unsigned int rshift_uint_rounding(unsigned int x, \
+                                  int shift);
 
 // Aux function to get position of most signif bit
 int fxp_nbits(unsigned int n);

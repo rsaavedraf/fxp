@@ -47,6 +47,7 @@ extern unsigned int FXP_frac_max;
 extern unsigned int FXP_frac_max_p1;
 extern int FXP_whole_bits;
 extern int FXP_whole_bits_m1;
+extern int FXP_whole_bits_m2;
 extern int FXP_whole_max;
 extern int FXP_whole_min;
 extern int FXP_whole_min_m1;
@@ -62,6 +63,7 @@ extern long double FXP_min_ld;
 extern long double FXP_max_ld;
 extern long double FXP_max_ldx;
 
+extern const unsigned int FXP_BKM_A_ONE;
 extern const unsigned long FXP_BKM_X_ONE_L;
 extern const unsigned long FXP_BKM_A_ONE_L;
 extern unsigned int FXP_shifted_e;
