@@ -29,8 +29,11 @@
 
 #define TEST_WITH_RANDS 1
 #define MAX_RAND_LOOPS 5
-//#define MAX_RAND_LOOPS 5000
+//#define MAX_RAND_LOOPS 500
+#define TEST_BASICS 1
 #define TEST_LG2_MUL_L 0
+#define TEST_LOGARITHMS 1
+#define TEST_POWERS 1
 
 #define WDELTA 2.0
 #define WDELTA_MAX 1.0
@@ -39,10 +42,10 @@ static int fracbit_configs[] = {8, 11, 16, 24, 30, 31};
 //static int fracbit_configs[] = {16};
 /*
 static int fracbit_configs[] = {
-4, 5, 6, 7, 8, 9, 10,
-11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-21, 22, 23, 24, 25, 26,
-27, 28, 29, 30, 31
+31, 30,
+29, 28, 27, 26, 25, 24, 23, 22, 21, 20,
+19, 18, 17, 16, 15, 14, 13, 12, 11, 10,
+9, 8, 7, 6, 5, 4
 };
 */
 
@@ -155,7 +158,8 @@ static void test_fxp(char *s, long double d_assert_val, int fxp1)
 
 static long double get_target(long double x, unsigned int fbits_precision)
 {
-        long double y = lim_frac(x, fbits_precision);
+        //long double y = lim_frac(x, fbits_precision);
+        long double y = x;
         if (y <= FXP_UNDEF_LD) return FXP_UNDEF_LD;
         if (y <= FXP_min_ldx) return FXP_NINF_LD;
         if (y >= FXP_max_ldx) return FXP_PINF_LD;
@@ -215,6 +219,14 @@ static long double get_pow10_target(int x)
         if (x == FXP_POS_INF) return FXP_PINF_LD;
         return get_target(powl(10.0L, fxp2ld(x)), FXP_INT_BITS);
 }
+
+static long double get_sqrt_target(int x)
+{
+        if ((x == FXP_UNDEF) || (x < 0)) return FXP_UNDEF_LD;
+        if (x == FXP_POS_INF) return FXP_PINF_LD;
+        return get_target(sqrtl(fxp2ld(x)), FXP_INT_BITS);
+}
+
 
 static long double get_div_target(int x, int y)
 {
@@ -812,7 +824,7 @@ void test_log(char base, char * msg, int x) {
         case 'A':
                 test_lg10(msg, x);
                 break;
-        default:
+        default:    // 'e'
                 test_ln(msg, x);
                 break;
         }
@@ -828,18 +840,18 @@ void test_logarithms()
         printf("ln(2)  : "); print_fxp(fxp_get_ln_2()); printf("\n");
         printf("lg10(2): "); print_fxp(fxp_get_lg10_2()); printf("\n");
 
-        printf("\nTesting logarithms:\n");
+        printf("\nTesting logarithms:");
         // M is also base 2 but using the multiplication algorithm
-        char pbases[] = {'2', 'M', 'A', 'e'};
+        char pbases[] = {'2', 'M', 'e', 'A'};
         int npbases = sizeof(pbases) / sizeof(pbases[0]);
         for (int i = 0; i < npbases; i++) {
                 char base = pbases[i];
                 if (base == 'M') {
                         if (!TEST_LG2_MUL_L) continue;
                         if (whole_bits < 3) {
-                                printf("Only %d whole bit(s); 3 or more needed for lg2_mul_l; skipping.", \
+                                printf("\nOnly %d whole bit(s); 3 or more needed for lg2_mul_l; skipping.", \
                                             whole_bits);
-                                continue;
+                                 continue;
                         }
                 }
                 printf("\nBase %c:\n", base);
@@ -855,6 +867,7 @@ void test_logarithms()
                 test_log(base, "1.00..01):",   fxp_add(fxp(1), 1));
                 test_log(base, "1):",          fxp(1));
                 test_log(base, "0.99...9):",   fxp_sub(fxp(1), 1));
+                test_log(base, "0.9):",        d2fxp(0.9));
                 test_log(base, "0.50..01):",   fxp_add(FXP_half, 1));
                 test_log(base, "0.5):",        FXP_half);
                 test_log(base, "2*tiniest):",  2);
@@ -875,12 +888,10 @@ void test_logarithms()
                                 test_lg2("k + tiniest):", fxp_add(k, 1));
                                 test_lg2("k):", k);
                                 test_lg2("k - tiniest):", fxp_sub(k, 1));
-                                printf("\n");
                         }
                 }
         }
 }
-
 
 void test_pow2(char * msg, int x)
 {
@@ -917,11 +928,17 @@ void test_pow(char base, char * msg, int x) {
         case 'A':
                 test_pow10(msg, x);
                 break;
-        default:
+        default:    // 'e'
                 test_exp(msg, x);
                 break;
         }
 
+}
+
+void test_sqrt(char * msg, int x) {
+        long double tgt = get_sqrt_target(x);
+        printf("sqrt_l("); test_fxp(msg, tgt, fxp_sqrt_l(x));
+        //printf("sqrt(");   test_fxp(msg, tgt, fxp_sqrt(x));
 }
 
 void test_powers()
@@ -962,6 +979,7 @@ void test_powers()
                         break;
                 }
                 kcrit = fxp(kcrit);
+
                 test_pow(base, "kcrit+tiniest):", fxp_add(kcrit, 1));
                 test_pow(base, "kcrit):",         kcrit);
                 test_pow(base, "kcrit-tiniest):", fxp_sub(kcrit, 1));
@@ -982,17 +1000,17 @@ void test_powers()
                 test_pow(base, "-tiniest):",   -1);
                 test_pow(base, "-2*tiniest):", -2);
                 test_pow(base, "-3*tiniest):", -3);
-                test_pow(base, "-0.5):",       ld2fxp(-0.5));
+                test_pow(base, "-0.5):",       d2fxp(-0.5));
                 test_pow(base, "-1+tiniest):", fxp_add(fxp(-1), 1));
                 test_pow(base, "-1):",         fxp(-1));
                 test_pow(base, "-1-tiniest):", fxp_sub(fxp(-1), 1));
                 test_pow(base, "-1.5):",       d2fxp(-1.5));
                 test_pow(base, "-2):",         fxp(-2));
-                test_pow(base, "-7.9):",       ld2fxp(-7.9));
+                test_pow(base, "-7.9):",       d2fxp(-7.9));
                 test_pow(base, "-8):",         fxp(-8));
-                test_pow(base, "-8.1):",       ld2fxp(-8.1));
-                test_pow(base, "-10.5):",      ld2fxp(-10.5));
-                test_pow(base, "-16.5):",      ld2fxp(-16.5));
+                test_pow(base, "-8.1):",       d2fxp(-8.1));
+                test_pow(base, "-10.5):",      d2fxp(-10.5));
+                test_pow(base, "-16.5):",      d2fxp(-16.5));
                 test_pow(base, "-30):",        fxp(-30));
                 test_pow(base, "-31):",        fxp(-31));
                 test_pow(base, "-32):",        fxp(-32));
@@ -1000,6 +1018,22 @@ void test_powers()
                 test_pow(base, "most neg):",   -fxp_largest);
                 test_pow(base, "-INF):",       FXP_NEG_INF);
         }
+        printf("\nTesting square roots for %d frac bits:\n", FXP_frac_bits);
+        test_sqrt("16)",     fxp(16));
+        test_sqrt("13.7)",   d2fxp(13.7));
+        test_sqrt("12.1)",   d2fxp(12.1));
+        test_sqrt("4)",      fxp(4));
+        test_sqrt("2)",      fxp(2));
+        test_sqrt("1.5)",    d2fxp(1.5));
+        test_sqrt("1)",      fxp(1));
+        test_sqrt("0.5)",    d2fxp(0.5));
+        test_sqrt("0.125)",  d2fxp(0.125));
+        test_sqrt("0.25)",   d2fxp(0.25));
+        test_sqrt("0.0625)", d2fxp(0.0625));
+        test_sqrt("0.333)",  d2fxp(0.333));
+        test_sqrt("0.07)",   d2fxp(0.07));
+        test_sqrt("0.75)",   d2fxp(0.75));
+        test_sqrt("0.00364)",d2fxp(0.00364));
 }
 
 
@@ -1020,106 +1054,109 @@ void test_ops_with_rand_nums()
                         // n3 always in (-1, 1)
                         n3 %= frac_max;
                 }
-                ldx = fxp2ld(n1);
-                ldy = fxp2ld(n2);
-                ldz = fxp2ld(n3);
 
-                printf("\nRandom Test #%d, ", i);
-                printf("frac bits: %d\n", frac_bits);
+                if (TEST_BASICS) {
+                        ldx = fxp2ld(n1);
+                        ldy = fxp2ld(n2);
+                        ldz = fxp2ld(n3);
+                        printf("\nRandom Test #%d, ", i);
+                        printf("frac bits: %d\n", frac_bits);
 
-                // Test that roundtrip conversions from fxp
-                // to double or long double, then back to fxp
-                // results in exactly the same original fxp
-                fflush( stdout );
-                assert( d2fxp(fxp2d(n1)) == n1 );
-                assert( d2fxp(fxp2d(n2)) == n2 );
-                assert( d2fxp(fxp2d(n3)) == n3 );
+                        // Test that roundtrip conversions from fxp
+                        // to double or long double, then back to fxp
+                        // results in exactly the same original fxp
+                        fflush( stdout );
+                        assert( d2fxp(fxp2d(n1)) == n1 );
+                        assert( d2fxp(fxp2d(n2)) == n2 );
+                        assert( d2fxp(fxp2d(n3)) == n3 );
 
-                assert( ld2fxp(fxp2ld(n1)) == n1 );
-                assert( ld2fxp(fxp2ld(n2)) == n2 );
-                assert( ld2fxp(fxp2ld(n3)) == n3 );
+                        assert( ld2fxp(fxp2ld(n1)) == n1 );
+                        assert( ld2fxp(fxp2ld(n2)) == n2 );
+                        assert( ld2fxp(fxp2ld(n3)) == n3 );
 
-                // Test that roundtrip conversions from fxp
-                // to float and back to fxp remains very close
-                // to the original
-                test_fxp("n1: ", get_f_target(n1), f2fxp(fxp2f(n1)));
-                test_fxp("n2: ", get_f_target(n2), f2fxp(fxp2f(n2)));
-                test_fxp("n3: ", get_f_target(n3), f2fxp(fxp2f(n3)));
+                        // Test that roundtrip conversions from fxp
+                        // to float and back to fxp remains very close
+                        // to the original
+                        test_fxp("n1: ", get_f_target(n1), f2fxp(fxp2f(n1)));
+                        test_fxp("n2: ", get_f_target(n2), f2fxp(fxp2f(n2)));
+                        test_fxp("n3: ", get_f_target(n3), f2fxp(fxp2f(n3)));
 
-                fxp1 = fxp_add(n1, n2);
-                tgt1 = get_target(ldx + ldy, frac_bits);
-                test_fxp("add   (n1+n2)", tgt1, fxp1);
-                fxp1 = fxp_add(n1, n3);
-                tgt2 = get_target(ldx + ldz, frac_bits);
-                test_fxp("add   (n1+n3)", tgt2, fxp1);
+                        fxp1 = fxp_add(n1, n2);
+                        tgt1 = get_target(ldx + ldy, frac_bits);
+                        test_fxp("add   (n1+n2)", tgt1, fxp1);
+                        fxp1 = fxp_add(n1, n3);
+                        tgt2 = get_target(ldx + ldz, frac_bits);
+                        test_fxp("add   (n1+n3)", tgt2, fxp1);
 
-                fxp1 = fxp_mul(n1, n2);
-                fxp2 = fxp_mul_l(n1, n2);
-                tgt1 = get_target(ldx * ldy, frac_bits);
-                test_fxp("mul   (n1*n2)", tgt1, fxp1);
-                test_fxp("mul_l (n1*n2)", tgt1, fxp2);
-                fxp1 = fxp_mul(n1, n3);
-                fxp2 = fxp_mul_l(n1, n3);
-                tgt2 = get_target(ldx * ldz, frac_bits);
-                test_fxp("mul   (n1*n3)", tgt2, fxp1);
-                test_fxp("mul_l (n1*n3)", tgt2, fxp2);
+                        fxp1 = fxp_mul(n1, n2);
+                        fxp2 = fxp_mul_l(n1, n2);
+                        tgt1 = get_target(ldx * ldy, frac_bits);
+                        test_fxp("mul   (n1*n2)", tgt1, fxp1);
+                        test_fxp("mul_l (n1*n2)", tgt1, fxp2);
+                        fxp1 = fxp_mul(n1, n3);
+                        fxp2 = fxp_mul_l(n1, n3);
+                        tgt2 = get_target(ldx * ldz, frac_bits);
+                        test_fxp("mul   (n1*n3)", tgt2, fxp1);
+                        test_fxp("mul_l (n1*n3)", tgt2, fxp2);
 
-                fxp1 = fxp_div_l(n1, n2);
-                fxp2 = fxp_div(n1, n2);
-                tgt1 = get_div_target(n1, n2);
-                test_fxp("div_l (n1/n2)", tgt1, fxp1);
-                test_fxp("div   (n1/n2)", tgt1, fxp2);
-                fxp1 = fxp_div_l(n1, n3);
-                fxp2 = fxp_div(n1, n3);
-                tgt2 = get_div_target(n1, n3);
-                test_fxp("div_l (n1/n3)", tgt2, fxp1);
-                test_fxp("div   (n1/n3)", tgt2, fxp2);
+                        fxp1 = fxp_div_l(n1, n2);
+                        fxp2 = fxp_div(n1, n2);
+                        tgt1 = get_div_target(n1, n2);
+                        test_fxp("div_l (n1/n2)", tgt1, fxp1);
+                        test_fxp("div   (n1/n2)", tgt1, fxp2);
+                        fxp1 = fxp_div_l(n1, n3);
+                        fxp2 = fxp_div(n1, n3);
+                        tgt2 = get_div_target(n1, n3);
+                        test_fxp("div_l (n1/n3)", tgt2, fxp1);
+                        test_fxp("div   (n1/n3)", tgt2, fxp2);
+                }
 
                 // Make arguments positive for the log tests
                 n1 = n1 < 0? -n1: n1;
                 n2 = n2 < 0? -n2: n2;
                 n3 = n3 < 0? -n3: n3;
-                printf("Testing lg2 and pow2 implementations, ");
-                printf("frac bits: %d", frac_bits);
-                printf("\nn1 = "); print_fxp(n1);
-                printf("\nn2 = "); print_fxp(n2);
-                printf("\nn3 = "); print_fxp(n3); printf("\n");
+                if (TEST_LOGARITHMS) {
+                        printf("Testing lg2 and pow2 implementations, ");
+                        printf("frac bits: %d", frac_bits);
+                        printf("\nn1 = "); print_fxp(n1);
+                        printf("\nn2 = "); print_fxp(n2);
+                        printf("\nn3 = "); print_fxp(n3); printf("\n");
 
-                tgt1 = get_lg2_target(n1);
-                tgt2 = get_lg2_target(n2);
-                tgt3 = get_lg2_target(n3);
-                if ((whole_bits >= 3) && (TEST_LG2_MUL_L)) {
-                        test_lg2_mul_l("n1)", n1);
-                        test_lg2_mul_l("n2)", n2);
-                        test_lg2_mul_l("n3)", n3);
+                        test_lg2("n1)", n1);
+                        test_lg2("n2)", n2);
+                        test_lg2("n3)", n3);
+                        if ((whole_bits >= 3) && (TEST_LG2_MUL_L)) {
+                                test_lg2_mul_l("n1)", n1);
+                                test_lg2_mul_l("n2)", n2);
+                                test_lg2_mul_l("n3)", n3);
+                        }
+
+                        test_ln("n1)", n1);
+                        test_ln("n2)", n2);
+                        test_ln("n3)", n3);
+
+                        test_lg10("n1)", n1);
+                        test_lg10("n2)", n2);
+                        test_lg10("n3)", n3);
                 }
-                test_lg2("n1)", n1);
-                test_lg2("n2)", n2);
-                test_lg2("n3)", n3);
-
-                test_ln("n1)", n1);
-                test_ln("n2)", n2);
-                test_ln("n3)", n3);
-
-                test_lg10("n1)", n1);
-                test_lg10("n2)", n2);
-                test_lg10("n3)", n3);
 
                 // Test powers with rand nums
-                n4 = -fxp_get_bin_frac(n1);
-                tgt1 = get_pow2_target(n4);
-                tgt2 = get_pow2_target(n3);
-                tgt3 = get_pow2_target(-n3);
-                test_pow2("-frac(n1))", n4);
-                test_pow2("n3)", n3);
-                test_pow2("-n3)", -n3);
-                test_exp("-frac(n1))", n4);
-                test_exp("n3)", n3);
-                test_exp("-n3)", -n3);
-                test_pow10("-frac(n1))", n4);
-                test_pow10("n3)", n3);
-                test_pow10("-n3)", -n3);
+                if (TEST_POWERS) {
+                        n4 = -fxp_get_bin_frac(n1);
+                        test_pow2("-frac(n1))", n4);
+                        test_pow2("n3)", n3);
+                        test_pow2("-n3)", -n3);
+                        test_exp("-frac(n1))", n4);
+                        test_exp("n3)", n3);
+                        test_exp("-n3)", -n3);
+                        test_pow10("-frac(n1))", n4);
+                        test_pow10("n3)", n3);
+                        test_pow10("-n3)", -n3);
 
+                        test_sqrt("n1)", n1);
+                        test_sqrt("n2)", n2);
+                        test_sqrt("n3)", n3);
+                }
         }
 }
 
@@ -1285,17 +1322,24 @@ int main(void)
                 printf("%s\n", DASHES);
 
                 // Tests to run =============================
-                tests_01();
-                tests_02();
-                tests_03();
-                test_decbin_mappings();
-                test_fracs();
-                test_ops_with_whole_bits();
-                test_ops_with_values_of_interest();
-                test_logarithms();
-                test_powers();
-                if (TEST_WITH_RANDS)
+                if (TEST_BASICS) {
+                        tests_01();
+                        tests_02();
+                        tests_03();
+                        test_decbin_mappings();
+                        test_fracs();
+                        test_ops_with_whole_bits();
+                        test_ops_with_values_of_interest();
+                }
+                if (TEST_LOGARITHMS) {
+                        test_logarithms();
+                }
+                if (TEST_POWERS) {
+                        test_powers();
+                }
+                if (TEST_WITH_RANDS) {
                         test_ops_with_rand_nums();
+                }
                 // ==========================================
 
                 printf("\n%d Warnings for %d frac bits.\n", \

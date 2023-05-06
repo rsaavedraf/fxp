@@ -1638,6 +1638,7 @@ int fxp_powxy(int x, int y)
 
         return 0;
 }
+*/
 
 // Square root implementation
 int fxp_sqrt(int fxp1)
@@ -1646,4 +1647,4 @@ int fxp_sqrt(int fxp1)
         return 0;
 }
 
-*/
+
