@@ -19,13 +19,15 @@ unsigned int ulongy_get_hi(ulongy x);
 unsigned int ulongy_get_lo(ulongy x);
 unsigned int ulongy_hi_to_uint_rounded(ulongy x);
 int ulongy_compare(ulongy x, ulongy y);
+int ulongy_compare_to_uint(ulongy x, unsigned int y);
 ulongy ulongy_add(ulongy x, ulongy y);
 ulongy ulongy_add_uint(ulongy x, unsigned int y);
 ulongy ulongy_sub(ulongy x, ulongy y);
 ulongy ulongy_negate(ulongy x);
-ulongy ulongy_lshift(ulongy x, unsigned int lshift);
-ulongy ulongy_rshift(ulongy x, unsigned int rshift);
-ulongy ulongy_rshift_rounding(ulongy x, unsigned int rshift);
+ulongy lshift_ulongy(ulongy x, unsigned int lshift);
+ulongy rshift_ulongy(ulongy x, unsigned int rshift);
+ulongy rshift_ulongy_rounding(ulongy x, unsigned int rshift);
+unsigned int rshift_ulongy_into_uint_rounding(ulongy x);
 ulongy ulongy_bitwise_and(ulongy x, ulongy y);
 
 ulongy ulongy_from_dmul(unsigned int a, unsigned int b);

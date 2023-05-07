@@ -10,6 +10,15 @@
 
 #include <limits.h>
 
+#ifndef FXP_HEADER
+#define FXP_HEADER
+
+// Aux struct used internally
+typedef struct tuple {
+        int ping;
+        unsigned int pong;
+} tuple;
+
 // Number of bits to use for the whole vs. frac parts
 int fxp_get_frac_bits();
 int fxp_set_frac_bits(int nfb);
@@ -81,9 +90,9 @@ int fxp_lg10(int fxp1);
 int fxp_pow2(int fxp1);
 int fxp_exp(int fxp1);
 int fxp_pow10(int fxp_x);
-
 int fxp_powxy(int fxp_x, int fxp_y);
 int fxp_sqrt(int fxp1);
 
 // Trigonometric functions
 
+#endif

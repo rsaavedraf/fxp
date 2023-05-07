@@ -450,20 +450,47 @@ fxp configuration.
 
 So planning to refactor the code with this abstraction in mind.
 
+
 2023-05-03
 
-Pinpointing where is the precision beyond that of int really making
-a difference, by zeroing-out the lowest bits wherever using longs.
-After this check, turns out the tuples with pong for the frac part as
-an unsigned long is overkill; an unsigned int there will do.
+Pinpointing where is the precision beyond that of int really making a 
+difference, by zeroing-out the lowest bits wherever using longs. After this 
+check, turns out the tuple_l with pong as an unsigned long is overkill; an 
+unsigned int there will do.
+
 
 2023-05-05
 
 Log and pow functions in fxp_l now working and tested after the refactoring.
 
 
+2023-05-06
+
+Tricky halving of the tuple negative values returned from the lg2 functions. 
+sqrt_l implemented. Testing it.
+
+Depprecated function lim_frac in fxp_aux, no longer used after the 
+refinements in handling values near infinity thresholds.
+
+
+2023-05-07
+
+Added rounding in the halving of tuples in sqrt_l -> results in zero 
+warnings in all tests for sqrt.
+
+Documented refactoring TODO's specially in the comment for 
+fxp_pow2_wneg_tuple_l (pending abstraction issue with the tuple it needs as 
+input.)
+Made pong in the tuple in fxp be an unsigned int, since it's overkill
+to have it as ulongy (see 2023-05-03). Then eliminated the tuple_l, since
+fxp_l is now using the exact same tuple struct used by fxp.
+Added measuring sqrt_l and sqrt to fxp_xtimes.
+
+
+
+
 Pending:
-Implement sqrt_l() and sqrt()
+Refactor fxp to also use super_fxp's as fxp_l is doing now.
 Implement powxy_l() and powxy()
 Implement trigonometric functions
 Rewrite in Rust?

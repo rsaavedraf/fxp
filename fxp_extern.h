@@ -82,7 +82,6 @@ extern unsigned long FXP_max_lshifted;
 extern int FXP_pow2_wpos_shift;
 extern int FXP_pow2_wneg_shift;
 
-
 extern const int FXP_WORD_BITS;
 extern const int FXP_WORD_BITS_M1;
 extern const unsigned int FXP_LWORD_MASK;
@@ -92,3 +91,4 @@ extern const unsigned long FXP_RINT_MASK;
 
 extern const int FXP_LONG_BITS;
 extern const int FXP_LONG_BITS_M1;
+extern const unsigned int FXP_POINT5_PONG;

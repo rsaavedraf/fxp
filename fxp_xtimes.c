@@ -17,8 +17,8 @@
 #include "fxp_aux.h"
 
 #define DASHES "=================================================\n"
-#define MAX_NUMS 500
-#define MAX_OPS  100
+#define MAX_NUMS 250
+#define MAX_OPS  50
 
 int main(void) {
 
@@ -26,13 +26,13 @@ int main(void) {
 
         long double tadd, tadd_l, tmul, tmul_l, tmul_d, tdiv, tdiv_l;
         long double tlg2, tlg2_l, tlg2_mul, tlg2_mul_l, tln, tln_l;
-        long double tlg10, tlg10_l;
         long double tpow2, tpow2_l, texp, texp_l, tpow10, tpow10_l;
+        long double tlg10, tlg10_l, tsqrt, tsqrt_l;
         long double avgadd, avgadd_l, avgmul, avgmul_l, avgmul_d;
         long double avgdiv, avgdiv_l, avglg2, avglg2_l, avglg2_mul;
         long double avglg2_mul_l, avgln, avgln_l, avglg10, avglg10_l;
         long double avgpow2, avgpow2_l, avgexp, avgexp_l;
-        long double avgpow10, avgpow10_l;
+        long double avgpow10, avgpow10_l, avgsqrt, avgsqrt_l;
         // Times for the system's native operations
         long double tadd_sys, tmul_sys, tdiv_sys;
         long double avgadd_sys, avgmul_sys, avgdiv_sys;
@@ -75,6 +75,8 @@ int main(void) {
         avgexp_l = 0.0;
         avgpow10 = 0.0;
         avgpow10_l = 0.0;
+        avgsqrt = 0.0;
+        avgsqrt_l = 0.0;
         avgadd_sys = 0.0;
         avgmul_sys = 0.0;
         avgdiv_sys = 0.0;
@@ -102,6 +104,8 @@ int main(void) {
                 texp_l = 0.0;
                 tpow10 = 0.0;
                 tpow10_l = 0.0;
+                tsqrt = 0.0;
+                tsqrt_l = 0.0;
                 lastp = -1;
                 tadd_sys = 0.0;
                 tmul_sys = 0.0;
@@ -240,7 +244,7 @@ int main(void) {
                                         x = fxp_div(n3, y);
                                 }
                         }
-                        t1= clock();
+                        t1 = clock();
                         dt = ((double) t1 - t0);
                         tdiv += dt;
                         avgdiv += dt;
@@ -257,7 +261,7 @@ int main(void) {
                                         x = fxp_div_l(n3, y);
                                 }
                         }
-                        t1= clock();
+                        t1 = clock();
                         dt = ((double) t1 - t0);
                         tdiv_l += dt;
                         avgdiv_l += dt;
@@ -280,13 +284,13 @@ int main(void) {
                                         x = fxp_pow2(n3);
                                 }
                         }
-                        t1= clock();
+                        t1 = clock();
                         dt = ((double) t1 - t0);
                         tpow2 += dt;
                         avgpow2 += dt;
 
                         // Calculation of pow2_l of fxp's using
-                        // BKM and only ints
+                        // BKM and longs
                         t0 = clock();
                         for (int i = 0; i < MAX_OPS; i++) {
                                 x = fxp_pow2_l(n1);
@@ -298,7 +302,7 @@ int main(void) {
                                         x = fxp_pow2_l(n3);
                                 }
                         }
-                        t1= clock();
+                        t1 = clock();
                         dt = ((double) t1 - t0);
                         tpow2_l += dt;
                         avgpow2_l += dt;
@@ -318,7 +322,7 @@ int main(void) {
                                         x = fxp_exp(n3);
                                 }
                         }
-                        t1= clock();
+                        t1 = clock();
                         dt = ((double) t1 - t0);
                         texp += dt;
                         avgexp += dt;
@@ -336,7 +340,7 @@ int main(void) {
                                         x = fxp_exp_l(n3);
                                 }
                         }
-                        t1= clock();
+                        t1 = clock();
                         dt = ((double) t1 - t0);
                         texp_l += dt;
                         avgexp_l += dt;
@@ -354,7 +358,7 @@ int main(void) {
                                         x = fxp_pow10(n3);
                                 }
                         }
-                        t1= clock();
+                        t1 = clock();
                         dt = ((double) t1 - t0);
                         tpow10 += dt;
                         avgpow10 += dt;
@@ -372,7 +376,7 @@ int main(void) {
                                         x = fxp_pow10_l(n3);
                                 }
                         }
-                        t1= clock();
+                        t1 = clock();
                         dt = ((double) t1 - t0);
                         tpow10_l += dt;
                         avgpow10_l += dt;
@@ -394,7 +398,7 @@ int main(void) {
                                         x = fxp_lg2(n3);
                                 }
                         }
-                        t1= clock();
+                        t1 = clock();
                         dt = ((double) t1 - t0);
                         tlg2 += dt;
                         avglg2 += dt;
@@ -411,7 +415,7 @@ int main(void) {
                                         x = fxp_lg2_l(n3);
                                 }
                         }
-                        t1= clock();
+                        t1 = clock();
                         dt = ((double) t1 - t0);
                         tlg2_l += dt;
                         avglg2_l += dt;
@@ -429,7 +433,7 @@ int main(void) {
                                         x = fxp_lg2_mul_l(n3);
                                 }
                         }
-                        t1= clock();
+                        t1 = clock();
                         dt = ((double) t1 - t0);
                         tlg2_mul_l += dt;
                         avglg2_mul_l += dt;
@@ -446,7 +450,7 @@ int main(void) {
                                         x = fxp_ln(n3);
                                 }
                         }
-                        t1= clock();
+                        t1 = clock();
                         dt = ((double) t1 - t0);
                         tln += dt;
                         avgln += dt;
@@ -463,7 +467,7 @@ int main(void) {
                                         x = fxp_ln_l(n3);
                                 }
                         }
-                        t1= clock();
+                        t1 = clock();
                         dt = ((double) t1 - t0);
                         tln_l += dt;
                         avgln_l += dt;
@@ -480,7 +484,7 @@ int main(void) {
                                         x = fxp_lg10(n3);
                                 }
                         }
-                        t1= clock();
+                        t1 = clock();
                         dt = ((double) t1 - t0);
                         tlg10 += dt;
                         avglg10 += dt;
@@ -497,10 +501,44 @@ int main(void) {
                                         x = fxp_lg10_l(n3);
                                 }
                         }
-                        t1= clock();
+                        t1 = clock();
                         dt = ((double) t1 - t0);
                         tlg10_l += dt;
                         avglg10_l += dt;
+
+                        // Calculation of sqrt_l of fxp's using longs
+                        t0 = clock();
+                        for (int i = 0; i < MAX_OPS; i++) {
+                                x = fxp_sqrt_l(n1);
+                                x = fxp_sqrt_l(n2);
+                                for (int j = 0; j < nvals; j++) {
+                                        y = val[j];
+                                        x = fxp_sqrt_l(n1);
+                                        x = fxp_sqrt_l(n2);
+                                        x = fxp_sqrt_l(n3);
+                                }
+                        }
+                        t1 = clock();
+                        dt = ((double) t1 - t0);
+                        tsqrt_l += dt;
+                        avgsqrt_l += dt;
+
+                        // Calculation of sqrt of fxp's
+                        t0 = clock();
+                        for (int i = 0; i < MAX_OPS; i++) {
+                                x = fxp_sqrt(n1);
+                                x = fxp_sqrt(n2);
+                                for (int j = 0; j < nvals; j++) {
+                                        y = val[j];
+                                        x = fxp_sqrt(n1);
+                                        x = fxp_sqrt(n2);
+                                        x = fxp_sqrt(n3);
+                                }
+                        }
+                        t1 = clock();
+                        dt = ((double) t1 - t0);
+                        tsqrt += dt;
+                        avgsqrt += dt;
                 }
 
                 // Results for this configuration of frag bits
@@ -535,6 +573,10 @@ int main(void) {
                             tpow10 / tadd, tpow10 / tpow2);
                 printf("pow10_l  : %6.2Lf  (about %5.2Lfx pow2, using pow2_l)\n", \
                             tpow10_l / tadd, tpow2_l / tpow2);
+                printf("sqrt     : %6.2Lf  (about %5.2Lfx pow2, using lg2 & pow2)\n", \
+                            tsqrt / tadd, tsqrt / tpow2);
+                printf("sqrt_l   : %6.2Lf  (about %5.2Lfx pow2, using lg2_l & pow2_l)\n", \
+                            tsqrt_l / tadd, tsqrt_l / tpow2);
         }
 
         // Overall results
@@ -565,6 +607,8 @@ int main(void) {
         avgpow10_l /= nconfigs;
         avgexp /= nconfigs;
         avgexp_l /= nconfigs;
+        avgsqrt /= nconfigs;
+        avgsqrt_l /= nconfigs;
         printf("add      : %6.2Lf  (%6.2Lfx system's native addition of ints)\n", \
                     1.0L, avgadd / avgadd_sys);
         printf("mul      : %6.2Lf  (%6.2Lfx system's native multiplication of ints)\n", \
@@ -607,6 +651,12 @@ int main(void) {
         printf("pow10_l  : %6.2Lf  (about %5.2Lfx pow2, using pow2_l)\n", \
                     avgpow10_l / avgadd, \
                     avgpow10_l / avgpow2);
+        printf("sqrt     : %6.2Lf  (about %5.2Lfx pow2, using lg2 & pow2)\n", \
+                    avgsqrt / avgadd, \
+                    avgsqrt / avgpow2);
+        printf("sqrt_l   : %6.2Lf  (about %5.2Lfx pow2, using lg2_l & pow2_l)\n", \
+                    avgsqrt_l / avgadd, \
+                    avgsqrt_l / avgpow2);
 
         printf("%s", DASHES);
         printf("(Keep in mind: compiler optimization options used/not used can ");

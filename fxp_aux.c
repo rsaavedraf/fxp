@@ -18,44 +18,6 @@
 
 #define VERBOSE 1
 
-/*
- * Limits the precision of a long double to the specified
- * number of fractional bits. This eases the tester
- * comparisons between results from (precision limited)
- * fxp operations vs. long double operation results
- * used as the reference
- */
-long double lim_frac(long double x, unsigned int fbp)
-{
-        if (x <= FXP_UNDEF_LD) return FXP_UNDEF_LD;
-        if (x <= FXP_min_ldx) return FXP_NINF_LD;
-        if (x >= FXP_max_ldx) return FXP_PINF_LD;
-        return x;
-        //printf("\nlim_frac: input is %Lf, frac bits: %d\n", x, fbp);
-        //printf("\tfrac bits variable in here: %d\n", FXP_frac_bits);
-        // get whole part
-        long double px = (x < 0.0L)? -x: x;
-        long double pxw = truncl(px);
-        //printf("\tpxw is %Lf\n", pxw);
-        // keep only up to fbp fraction bits in frac part
-        long double dfrac_0 = px - pxw;
-        //printf("\tdfrac_0 is %Lf\n", dfrac_0);
-        unsigned long long shift = 1llu << fbp;
-        unsigned long long shift_x2 = (shift << 1u);
-        //printf("\tshift    is %llX\n", shift);
-        //printf("\tshift_x2 is %llX\n", shift_x2);
-        int rbit = (((unsigned long long) \
-                        truncl(dfrac_0 * shift_x2)) & 1llu);
-        //printf("lim_frac rbit is %d\n", rbit);
-        dfrac_0 = truncl(dfrac_0 * shift) + rbit;
-        long double dfrac_1 = dfrac_0 / shift;
-        //printf("lim_frac dfrac_0 is %Lf\n", dfrac_0);
-        //printf("lim_frac dfrac_1 is %Lf\n", dfrac_1);
-        long double result = (x < 0.0L)? -pxw - dfrac_1: pxw + dfrac_1;
-        //printf("lim_frac: result is %Lf\n", result);
-        return result;
-}
-
 void print_fxp_as_bin(int n, int width)
 {
         int an;

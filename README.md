@@ -16,9 +16,11 @@ through lg2 and pow2, but now using double the int-size precision (emulated long
 avoid calculation inaccuracies that would appear if only using the precision of the chosen 
 number of frac bits. Goals of this implementation are mostly flexibility (hence the 
 configurable frac bits,) yet ultimate precision. All tests, including those for exp() and 
-pow10(), should run with zero inaccuracy warnings, regardless of frac bits in use.
+pow10(), should ideally run with zero inaccuracy warnings, regardless of frac bits in use.
 
-Functions powxy() and sqrt() coming very soon.
+Function sqrt() now implemented.
+
+Functions powxy() coming very soon.
 
 Later:
 - Trigonometric functions
@@ -67,6 +69,6 @@ Just please mention compiler, compiler options used, and your hardware details.
 
 To use these Fix Point Numbers yourself, for now you only need 
 files *fxp.c* and its dependencies if strictly using ints and only ints.
-If also using longs, then also files *fxp_l.h* and *fxp_l.c*. 
+If allowing longs, then also file *fxp_l.c*. 
 Most other files are auxiliary (to convert to and from floating points, 
 to print out, test, etc.)

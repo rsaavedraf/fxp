@@ -42,6 +42,14 @@ inline int ulongy_compare(ulongy x, ulongy y)
                     (x.lo == y.lo)? 0: ((x.lo < y.lo)? -1: 1);
 }
 
+// Compares the ulongy x to y as if y was the .hi half of
+// another ulongy that had lo == 0
+inline int ulongy_compare_to_uint(ulongy x, unsigned int y)
+{
+    return (x.hi < y)? -1:
+                (x.hi > y)? 1: (x.lo > 0);
+}
+
 inline ulongy ulongy_add(ulongy x, ulongy y)
 {
         unsigned int sumlo = x.lo + y.lo;
@@ -70,7 +78,7 @@ inline ulongy ulongy_add_uint(ulongy x, unsigned int b)
         return result;
 }
 
-inline ulongy ulongy_lshift(ulongy x, unsigned int lshift)
+inline ulongy lshift_ulongy(ulongy x, unsigned int lshift)
 {
         int d = FXP_INT_BITS - lshift;
         ulongy shifted = { (x.hi << lshift) | \
@@ -79,7 +87,7 @@ inline ulongy ulongy_lshift(ulongy x, unsigned int lshift)
         return shifted;
 }
 
-inline ulongy ulongy_rshift(ulongy x, unsigned int rshift)
+inline ulongy rshift_ulongy(ulongy x, unsigned int rshift)
 {
         return (rshift < FXP_INT_BITS)?
                 ulongy_create( x.hi >> rshift, \
@@ -89,13 +97,22 @@ inline ulongy ulongy_rshift(ulongy x, unsigned int rshift)
                 ulongy_create( 0u, x.hi >> (rshift - FXP_INT_BITS) );
 }
 
-inline ulongy ulongy_rshift_rounding(ulongy x, unsigned int rshift)
+inline ulongy rshift_ulongy_rounding(ulongy x, unsigned int rshift)
 {
         if (rshift == 0) return x;
-        ulongy r = ulongy_rshift(x, rshift - 1);
+        ulongy r = rshift_ulongy(x, rshift - 1);
         unsigned int rbit = r.lo & 1u;
-        r = ulongy_rshift(r, 1);
+        r = rshift_ulongy(r, 1);
         return ulongy_add_uint(r, rbit);
+}
+
+inline unsigned int rshift_ulongy_into_uint_rounding(ulongy x)
+{
+        ulongy r = rshift_ulongy(x, FXP_INT_BITS_M1);
+        unsigned int rbit = r.lo & 1u;
+        r = rshift_ulongy(r, 1);
+        r = ulongy_add_uint(r, rbit);
+        return r.lo;
 }
 
 inline ulongy ulongy_bitwise_and(ulongy x, ulongy y)

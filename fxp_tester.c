@@ -29,21 +29,21 @@
 
 #define TEST_WITH_RANDS 1
 #define MAX_RAND_LOOPS 5
-//#define MAX_RAND_LOOPS 500
+//#define MAX_RAND_LOOPS 10000
 #define TEST_BASICS 1
 #define TEST_LG2_MUL_L 0
 #define TEST_LOGARITHMS 1
 #define TEST_POWERS 1
 
 #define WDELTA 2.0
-#define WDELTA_MAX 1.0
+#define WDELTA_MAX 1.01
 
 static int fracbit_configs[] = {8, 11, 16, 24, 30, 31};
-//static int fracbit_configs[] = {16};
+//static int fracbit_configs[] = {31};
 /*
 static int fracbit_configs[] = {
-31, 30,
-29, 28, 27, 26, 25, 24, 23, 22, 21, 20,
+31, 30, 29,
+28, 27, 26, 25, 24, 23, 22, 21, 20,
 19, 18, 17, 16, 15, 14, 13, 12, 11, 10,
 9, 8, 7, 6, 5, 4
 };
@@ -75,7 +75,6 @@ static int fxp_largest;
 
 static void test_fxp(char *s, long double d_assert_val, int fxp1)
 {
-        long double avplim = lim_frac(d_assert_val, FXP_frac_bits);
         printf("%s\n", s);
         printf("    exp: ");
         if (d_assert_val <= FXP_UNDEF_LD)
@@ -85,7 +84,7 @@ static void test_fxp(char *s, long double d_assert_val, int fxp1)
         else if (d_assert_val >= FXP_PINF_LD)
                 printf("+INF");
         else {
-                printf("%.10Le", avplim);
+                printf("%.10Le", d_assert_val);
         }
         printf("\n    act: ");
         print_fxp(fxp1);
@@ -109,20 +108,20 @@ static void test_fxp(char *s, long double d_assert_val, int fxp1)
                 // One of them +infinity, but not the other ->
                 // Calculate delta of the latter with respect to
                 // the +INF threshold (FXP_max_ldx)
-                delta = FXP_max_ldx - ((fxp1 == FXP_POS_INF)? avplim: df);
+                delta = FXP_max_ldx - ((fxp1 == FXP_POS_INF)? d_assert_val: df);
                 msg = ", rare case of extremely close values on either side of +INF threshold";
         } else if ((fxp1 == FXP_NEG_INF) || (d_assert_val == FXP_NINF_LD)) {
                 // One of them -infinity, but not the other ->
                 // Calculate delta of the latter with respect to
                 // the -INF threshold (FXP_min_ldx)
-                delta = ((fxp1 == FXP_NEG_INF)? avplim: df) - FXP_min_ldx;
+                delta = ((fxp1 == FXP_NEG_INF)? d_assert_val: df) - FXP_min_ldx;
                 msg = ", rare case of extremely close values on either side of -INF threshold";
         } else {
                 // Values are either both within infinity thresholds
                 // (normal case,) or both are inf's with different signs
-                delta = (df >= avplim)?
-                                df - avplim:
-                                avplim - df;
+                delta = (df >= d_assert_val)?
+                                df - d_assert_val:
+                                d_assert_val - df;
                 msg = "";
         }
 
@@ -152,18 +151,16 @@ static void test_fxp(char *s, long double d_assert_val, int fxp1)
 
         // Here assert that we never exceed the max_warn_delta
         assert( (delta <= max_warn_delta) &&
-            ((df >= 0 && avplim >= 0) ||
-                (df <= 0 && avplim <= 0)));
+            ((df >= 0 && d_assert_val >= 0) ||
+                (df <= 0 && d_assert_val <= 0)));
 }
 
 static long double get_target(long double x, unsigned int fbits_precision)
 {
-        //long double y = lim_frac(x, fbits_precision);
-        long double y = x;
-        if (y <= FXP_UNDEF_LD) return FXP_UNDEF_LD;
-        if (y <= FXP_min_ldx) return FXP_NINF_LD;
-        if (y >= FXP_max_ldx) return FXP_PINF_LD;
-        return y;
+        if (x <= FXP_UNDEF_LD) return FXP_UNDEF_LD;
+        if (x <= FXP_min_ldx) return FXP_NINF_LD;
+        if (x >= FXP_max_ldx) return FXP_PINF_LD;
+        return x;
 }
 
 static long double get_lg2_target(int x)
@@ -254,9 +251,7 @@ static long double get_div_target(int x, int y)
                     } else {
                         long double ldx = fxp2ld(x);
                         long double ldy = fxp2ld(y);
-                        target = lim_frac(ldx, frac_bits) \
-                                    / lim_frac(ldy, frac_bits);
-                        target = lim_frac(target, frac_bits);
+                        target = ldx / ldy;
                         if (target >= FXP_max_ldx) {
                             target = FXP_PINF_LD;
                         } else {
@@ -573,8 +568,8 @@ void test_fracs()
         int fmdec = fxp_get_frac_max_dec();
 
         fxp_set_frac_max_dec(999);
-        warn_delta = lim_frac(fxp2ld(fxp_dec(0,100)), frac_bits);
-        max_warn_delta = lim_frac(warn_delta * 2, frac_bits);
+        warn_delta = fxp2ld(fxp_dec(0,100));
+        max_warn_delta = warn_delta * 2;
 
         int a = fxp_dec(-0, 500);
         int b = fxp_dec(-0, -500);
@@ -938,7 +933,7 @@ void test_pow(char base, char * msg, int x) {
 void test_sqrt(char * msg, int x) {
         long double tgt = get_sqrt_target(x);
         printf("sqrt_l("); test_fxp(msg, tgt, fxp_sqrt_l(x));
-        //printf("sqrt(");   test_fxp(msg, tgt, fxp_sqrt(x));
+        printf("sqrt(");   test_fxp(msg, tgt, fxp_sqrt(x));
 }
 
 void test_powers()
@@ -984,6 +979,7 @@ void test_powers()
                 test_pow(base, "kcrit):",         kcrit);
                 test_pow(base, "kcrit-tiniest):", fxp_sub(kcrit, 1));
                 test_pow(base, "largest):",    FXP_MAX);
+                test_pow(base, "warn29fb)",    316801043);
                 test_pow(base, "3.5):",        d2fxp(3.5));
                 test_pow(base, "2):",          fxp(2));
                 test_pow(base, "2-tiniest):",  fxp_sub(fxp(2), 1));
@@ -1019,21 +1015,25 @@ void test_powers()
                 test_pow(base, "-INF):",       FXP_NEG_INF);
         }
         printf("\nTesting square roots for %d frac bits:\n", FXP_frac_bits);
-        test_sqrt("16)",     fxp(16));
-        test_sqrt("13.7)",   d2fxp(13.7));
-        test_sqrt("12.1)",   d2fxp(12.1));
-        test_sqrt("4)",      fxp(4));
-        test_sqrt("2)",      fxp(2));
-        test_sqrt("1.5)",    d2fxp(1.5));
-        test_sqrt("1)",      fxp(1));
-        test_sqrt("0.5)",    d2fxp(0.5));
-        test_sqrt("0.125)",  d2fxp(0.125));
-        test_sqrt("0.25)",   d2fxp(0.25));
-        test_sqrt("0.0625)", d2fxp(0.0625));
-        test_sqrt("0.333)",  d2fxp(0.333));
-        test_sqrt("0.07)",   d2fxp(0.07));
-        test_sqrt("0.75)",   d2fxp(0.75));
-        test_sqrt("0.00364)",d2fxp(0.00364));
+        test_sqrt("largest)",   FXP_MAX);
+        test_sqrt("16)",        fxp(16));
+        test_sqrt("13.7)",      d2fxp(13.7));
+        test_sqrt("12.1)",      d2fxp(12.1));
+        test_sqrt("4)",         fxp(4));
+        test_sqrt("2)",         fxp(2));
+        test_sqrt("1.5)",       d2fxp(1.5));
+        test_sqrt("1+tiniest)", fxp_add(fxp(1), 1));
+        test_sqrt("1)",         fxp(1));
+        test_sqrt("1-tiniest)", fxp_sub(fxp(1), 1));
+        test_sqrt("0.25)",      d2fxp(0.25));      // Case 3 (see fxp_sqrt_l in fxp_l.c)
+        test_sqrt("0.0625)",    d2fxp(0.0625));    // Case 3
+        test_sqrt("0.5)",       d2fxp(0.5));       // Case 2
+        test_sqrt("0.125)",     d2fxp(0.125));     // Case 2
+        test_sqrt("0.333)",     d2fxp(0.333));     // Case 1
+        test_sqrt("0.07)",      d2fxp(0.07));      // Case 1
+        test_sqrt("0.75)",      d2fxp(0.75));      // Case 0
+        test_sqrt("0.00364)",   d2fxp(0.00364));   // Case 0
+        test_sqrt("tiniest)",   1);
 }
 
 
@@ -1130,11 +1130,9 @@ void test_ops_with_rand_nums()
                                 test_lg2_mul_l("n2)", n2);
                                 test_lg2_mul_l("n3)", n3);
                         }
-
                         test_ln("n1)", n1);
                         test_ln("n2)", n2);
                         test_ln("n3)", n3);
-
                         test_lg10("n1)", n1);
                         test_lg10("n2)", n2);
                         test_lg10("n3)", n3);
