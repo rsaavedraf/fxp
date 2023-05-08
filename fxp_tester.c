@@ -36,7 +36,7 @@
 #define TEST_POWERS 1
 
 #define WDELTA 2.0
-#define WDELTA_MAX 1.01
+#define WDELTA_MAX 1.0
 
 static int fracbit_configs[] = {8, 11, 16, 24, 30, 31};
 //static int fracbit_configs[] = {31};
