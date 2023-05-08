@@ -374,7 +374,7 @@ int fxp_lg2_mul_l(int fxp1)
  * https://en.wikipedia.org/wiki/BKM_algorithm
  */
 static inline tuple fxp_get_lg2_as_tuple_l(int fxp1, \
-                                     const int MAX_LOOPS)
+                                const int MAX_LOOPS)
 {
         tuple result;
         // Assumes fxp1 is for sure > 0
@@ -632,7 +632,7 @@ static inline int pos_lg2_x_factor_l(tuple tup, super_fxp_l factor)
  */
 static inline int lg2_x_factor_l(int fxp1, super_fxp_l factor)
 {
-        tuple tup = fxp_get_lg2_as_tuple_l(fxp1, FXP_INT_BITS);
+        tuple tup = fxp_get_lg2_as_tuple_l(fxp1, FXP_INT_BITS_M1);
 
         // The lg2(fxp1) is equals to c + m:
         // c == characteristic (tup.ping),
@@ -1009,7 +1009,7 @@ int fxp_sqrt_l(int fxp1)
         if (fxp1 == 0) return 0;
         if (fxp1 == FXP_POS_INF) return FXP_POS_INF;
         // First get the lg2 of the argument
-        tuple tup = fxp_get_lg2_as_tuple_l(fxp1, FXP_INT_BITS);
+        tuple tup = fxp_get_lg2_as_tuple_l(fxp1, FXP_INT_BITS_M1);
         // Halve that value before passing it as argument for pow2
         if (tup.ping >= 0) {
                 int rbit = tup.pong & 1u; // rounding bit for frac

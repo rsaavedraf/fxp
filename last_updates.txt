@@ -497,6 +497,22 @@ After this fix, reverting it to 1.0, and absolutely zero warnings.
 Added super_fxp to fxp.c, refactored some of pow-related functions
 to have super_fxp arguments, as in fxp_l.c
 
+Minor optimization in ulongy bitwise_and apllied only on the hi uint 
+when we now the lo will remain the same. This optimizes a bit get_xc and 
+therefore the pow functions in general.
+
+Optimizations for lg functions by lowering the FXP_lg2_maxloops from 
+FXP_frac_bits + 1 to FXP_frac_bits, realizing still no warnings 
+whatsoever occur. If lowering it to frac bits -1, then asserts do occur.
+
+Also optimizing the maxloops to use in lg2_x_factor, lowering from 
+FXP_INT_BITS to FXP_INT_BITS_M1 -> still no asserts. If lowering one 
+more, then asserts do occur.
+
+So far bkm_emode always running FXP_INT_BITS loops. And yes that must 
+remain, lowering it by even one does brings asserts right away in sqrt.
+
+Clean up of a few variables no longer used in fxp.c.
 
 
 Pending:

@@ -78,9 +78,6 @@ extern int FXP_lg2_l_mshift;
 extern int FXP_lg2_l_mshift_m1;
 extern int FXP_lg2_l_mshift_p1;
 extern unsigned long FXP_max_lshifted;
-//extern unsigned long FXP_one_l;
-extern int FXP_pow2_wpos_shift;
-extern int FXP_pow2_wneg_shift;
 
 extern const int FXP_WORD_BITS;
 extern const int FXP_WORD_BITS_M1;

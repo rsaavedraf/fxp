@@ -20,165 +20,165 @@ long double has a size of 16 bytes.
 Number of frac bits: 8
 10%  20%  30%  40%  50%  60%  70%  80%  90%  100%  
 add      :   1.00
-mul      :  11.34
-mul_l    :   1.59
-div      :  16.57
-div_l    :   2.96
-lg2      :  56.09  (BKM-L, only ints)
-lg2_l    :   7.73  (about  0.14x lg2, using BKM-L and longs)
-lg2_mul_l:  20.28  (about  0.36x lg2, using mult. and longs)
-ln       : 210.77  (using lg2)
-ln_l     :  27.04  (about  0.48x lg2, using lg2_l)
-lg10     : 210.51  (using lg2)
-lg10_l   :  26.97  (about  0.48x lg2, using lg2_l)
-pow2     : 120.92  (BKM-E, only ints)
-pow2_l   :  17.14  (about  0.14x pow2, using BKM-E and longs)
-exp      : 157.50  (about  1.30x pow2, using pow2)
-exp_l    :  23.29  (about  0.19x pow2, using pow2_l)
-pow10    : 144.98  (about  1.20x pow2, using pow2)
-pow10_l  :  21.71  (about  0.14x pow2, using pow2_l)
-sqrt     : 304.48  (about  2.52x pow2, using lg2 & pow2)
-sqrt_l   :  38.58  (about  0.32x pow2, using lg2_l & pow2_l)
+mul      :  11.40
+mul_l    :   1.60
+div      :  16.48
+div_l    :   2.94
+lg2      :  50.31  (BKM-L, only ints)
+lg2_l    :   7.45  (about  0.15x lg2, using BKM-L and longs)
+lg2_mul_l:  20.46  (about  0.41x lg2, using mult. and longs)
+ln       : 207.73  (using lg2)
+ln_l     :  26.67  (about  0.53x lg2, using lg2_l)
+lg10     : 207.85  (using lg2)
+lg10_l   :  26.57  (about  0.53x lg2, using lg2_l)
+pow2     : 120.10  (BKM-E, only ints)
+pow2_l   :  17.12  (about  0.14x pow2, using BKM-E and longs)
+exp      : 154.07  (about  1.28x pow2, using pow2)
+exp_l    :  23.11  (about  0.19x pow2, using pow2_l)
+pow10    : 141.63  (about  1.18x pow2, using pow2)
+pow10_l  :  21.62  (about  0.14x pow2, using pow2_l)
+sqrt     : 300.24  (about  2.50x pow2, using lg2 & pow2)
+sqrt_l   :  38.17  (about  0.32x pow2, using lg2_l & pow2_l)
 
 Number of frac bits: 12
 10%  20%  30%  40%  50%  60%  70%  80%  90%  100%  
 add      :   1.00
-mul      :  11.78
-mul_l    :   1.62
-div      :  17.50
-div_l    :   2.91
-lg2      :  76.55  (BKM-L, only ints)
-lg2_l    :  10.12  (about  0.13x lg2, using BKM-L and longs)
-lg2_mul_l:  29.97  (about  0.39x lg2, using mult. and longs)
-ln       : 212.13  (using lg2)
-ln_l     :  27.34  (about  0.36x lg2, using lg2_l)
-lg10     : 212.01  (using lg2)
-lg10_l   :  27.35  (about  0.36x lg2, using lg2_l)
-pow2     : 115.59  (BKM-E, only ints)
-pow2_l   :  16.36  (about  0.14x pow2, using BKM-E and longs)
-exp      : 153.71  (about  1.33x pow2, using pow2)
-exp_l    :  22.86  (about  0.20x pow2, using pow2_l)
-pow10    : 143.20  (about  1.24x pow2, using pow2)
-pow10_l  :  21.48  (about  0.14x pow2, using pow2_l)
-sqrt     : 306.60  (about  2.65x pow2, using lg2 & pow2)
-sqrt_l   :  38.88  (about  0.34x pow2, using lg2_l & pow2_l)
+mul      :  11.81
+mul_l    :   1.61
+div      :  17.31
+div_l    :   2.93
+lg2      :  70.27  (BKM-L, only ints)
+lg2_l    :   9.77  (about  0.14x lg2, using BKM-L and longs)
+lg2_mul_l:  30.03  (about  0.43x lg2, using mult. and longs)
+ln       : 208.37  (using lg2)
+ln_l     :  26.82  (about  0.38x lg2, using lg2_l)
+lg10     : 208.36  (using lg2)
+lg10_l   :  26.88  (about  0.38x lg2, using lg2_l)
+pow2     : 116.50  (BKM-E, only ints)
+pow2_l   :  16.62  (about  0.14x pow2, using BKM-E and longs)
+exp      : 151.44  (about  1.30x pow2, using pow2)
+exp_l    :  22.76  (about  0.20x pow2, using pow2_l)
+pow10    : 139.27  (about  1.20x pow2, using pow2)
+pow10_l  :  21.25  (about  0.14x pow2, using pow2_l)
+sqrt     : 301.51  (about  2.59x pow2, using lg2 & pow2)
+sqrt_l   :  38.43  (about  0.33x pow2, using lg2_l & pow2_l)
 
 Number of frac bits: 16
 10%  20%  30%  40%  50%  60%  70%  80%  90%  100%  
 add      :   1.00
-mul      :  12.48
-mul_l    :   1.57
-div      :  18.80
-div_l    :   2.94
-lg2      :  97.99  (BKM-L, only ints)
-lg2_l    :  12.65  (about  0.13x lg2, using BKM-L and longs)
-lg2_mul_l:  40.14  (about  0.41x lg2, using mult. and longs)
-ln       : 215.22  (using lg2)
-ln_l     :  27.85  (about  0.28x lg2, using lg2_l)
-lg10     : 215.14  (using lg2)
-lg10_l   :  27.82  (about  0.28x lg2, using lg2_l)
-pow2     : 113.44  (BKM-E, only ints)
-pow2_l   :  16.19  (about  0.14x pow2, using BKM-E and longs)
-exp      : 152.00  (about  1.34x pow2, using pow2)
-exp_l    :  22.56  (about  0.20x pow2, using pow2_l)
-pow10    : 144.01  (about  1.27x pow2, using pow2)
-pow10_l  :  21.50  (about  0.14x pow2, using pow2_l)
-sqrt     : 310.89  (about  2.74x pow2, using lg2 & pow2)
-sqrt_l   :  39.57  (about  0.35x pow2, using lg2_l & pow2_l)
+mul      :  12.42
+mul_l    :   1.59
+div      :  18.67
+div_l    :   2.93
+lg2      :  91.67  (BKM-L, only ints)
+lg2_l    :  12.16  (about  0.13x lg2, using BKM-L and longs)
+lg2_mul_l:  40.28  (about  0.44x lg2, using mult. and longs)
+ln       : 210.89  (using lg2)
+ln_l     :  27.24  (about  0.30x lg2, using lg2_l)
+lg10     : 211.16  (using lg2)
+lg10_l   :  27.19  (about  0.30x lg2, using lg2_l)
+pow2     : 110.06  (BKM-E, only ints)
+pow2_l   :  15.84  (about  0.14x pow2, using BKM-E and longs)
+exp      : 148.89  (about  1.35x pow2, using pow2)
+exp_l    :  22.47  (about  0.20x pow2, using pow2_l)
+pow10    : 139.39  (about  1.27x pow2, using pow2)
+pow10_l  :  21.24  (about  0.14x pow2, using pow2_l)
+sqrt     : 306.10  (about  2.78x pow2, using lg2 & pow2)
+sqrt_l   :  38.96  (about  0.35x pow2, using lg2_l & pow2_l)
 
 Number of frac bits: 20
 10%  20%  30%  40%  50%  60%  70%  80%  90%  100%  
 add      :   1.00
-mul      :  13.04
-mul_l    :   1.58
-div      :  16.38
-div_l    :   2.93
-lg2      : 118.46  (BKM-L, only ints)
-lg2_l    :  14.93  (about  0.13x lg2, using BKM-L and longs)
-lg2_mul_l:  49.84  (about  0.42x lg2, using mult. and longs)
-ln       : 214.04  (using lg2)
-ln_l     :  27.67  (about  0.23x lg2, using lg2_l)
-lg10     : 213.90  (using lg2)
-lg10_l   :  27.65  (about  0.23x lg2, using lg2_l)
-pow2     : 106.46  (BKM-E, only ints)
+mul      :  12.99
+mul_l    :   1.59
+div      :  16.31
+div_l    :   2.88
+lg2      : 112.44  (BKM-L, only ints)
+lg2_l    :  14.53  (about  0.13x lg2, using BKM-L and longs)
+lg2_mul_l:  50.01  (about  0.44x lg2, using mult. and longs)
+ln       : 210.50  (using lg2)
+ln_l     :  27.26  (about  0.24x lg2, using lg2_l)
+lg10     : 210.30  (using lg2)
+lg10_l   :  27.20  (about  0.24x lg2, using lg2_l)
+pow2     : 105.45  (BKM-E, only ints)
 pow2_l   :  15.26  (about  0.14x pow2, using BKM-E and longs)
-exp      : 146.32  (about  1.37x pow2, using pow2)
-exp_l    :  21.81  (about  0.20x pow2, using pow2_l)
-pow10    : 139.29  (about  1.31x pow2, using pow2)
-pow10_l  :  20.93  (about  0.14x pow2, using pow2_l)
-sqrt     : 310.14  (about  2.91x pow2, using lg2 & pow2)
-sqrt_l   :  39.28  (about  0.37x pow2, using lg2_l & pow2_l)
+exp      : 144.58  (about  1.37x pow2, using pow2)
+exp_l    :  21.96  (about  0.21x pow2, using pow2_l)
+pow10    : 138.21  (about  1.31x pow2, using pow2)
+pow10_l  :  21.14  (about  0.14x pow2, using pow2_l)
+sqrt     : 304.56  (about  2.89x pow2, using lg2 & pow2)
+sqrt_l   :  38.79  (about  0.37x pow2, using lg2_l & pow2_l)
 
 Number of frac bits: 24
 10%  20%  30%  40%  50%  60%  70%  80%  90%  100%  
 add      :   1.00
-mul      :  13.25
+mul      :  13.31
 mul_l    :   1.61
-div      :  15.82
-div_l    :   2.92
-lg2      : 139.83  (BKM-L, only ints)
-lg2_l    :  17.27  (about  0.12x lg2, using BKM-L and longs)
-lg2_mul_l:  59.82  (about  0.43x lg2, using mult. and longs)
-ln       : 215.03  (using lg2)
-ln_l     :  27.85  (about  0.20x lg2, using lg2_l)
-lg10     : 214.63  (using lg2)
-lg10_l   :  27.78  (about  0.20x lg2, using lg2_l)
-pow2     :  98.99  (BKM-E, only ints)
-pow2_l   :  14.39  (about  0.15x pow2, using BKM-E and longs)
-exp      : 143.13  (about  1.45x pow2, using pow2)
-exp_l    :  21.38  (about  0.22x pow2, using pow2_l)
-pow10    : 138.76  (about  1.40x pow2, using pow2)
-pow10_l  :  20.86  (about  0.15x pow2, using pow2_l)
-sqrt     : 309.65  (about  3.13x pow2, using lg2 & pow2)
-sqrt_l   :  39.43  (about  0.40x pow2, using lg2_l & pow2_l)
+div      :  15.87
+div_l    :   2.89
+lg2      : 134.33  (BKM-L, only ints)
+lg2_l    :  16.94  (about  0.13x lg2, using BKM-L and longs)
+lg2_mul_l:  60.47  (about  0.45x lg2, using mult. and longs)
+ln       : 210.81  (using lg2)
+ln_l     :  27.31  (about  0.20x lg2, using lg2_l)
+lg10     : 210.90  (using lg2)
+lg10_l   :  27.27  (about  0.20x lg2, using lg2_l)
+pow2     :  95.33  (BKM-E, only ints)
+pow2_l   :  14.14  (about  0.15x pow2, using BKM-E and longs)
+exp      : 138.23  (about  1.45x pow2, using pow2)
+exp_l    :  21.25  (about  0.22x pow2, using pow2_l)
+pow10    : 135.90  (about  1.43x pow2, using pow2)
+pow10_l  :  20.88  (about  0.15x pow2, using pow2_l)
+sqrt     : 305.40  (about  3.20x pow2, using lg2 & pow2)
+sqrt_l   :  39.05  (about  0.41x pow2, using lg2_l & pow2_l)
 
 Number of frac bits: 28
 10%  20%  30%  40%  50%  60%  70%  80%  90%  100%  
 add      :   1.00
-mul      :  13.59
-mul_l    :   1.61
-div      :  15.46
-div_l    :   2.91
-lg2      : 162.92  (BKM-L, only ints)
-lg2_l    :  19.77  (about  0.12x lg2, using BKM-L and longs)
-lg2_mul_l:  70.35  (about  0.43x lg2, using mult. and longs)
-ln       : 216.21  (using lg2)
-ln_l     :  28.09  (about  0.17x lg2, using lg2_l)
-lg10     : 216.24  (using lg2)
-lg10_l   :  28.00  (about  0.17x lg2, using lg2_l)
-pow2     : 107.82  (BKM-E, only ints)
-pow2_l   :  15.50  (about  0.14x pow2, using BKM-E and longs)
-exp      : 149.64  (about  1.39x pow2, using pow2)
-exp_l    :  22.27  (about  0.21x pow2, using pow2_l)
-pow10    : 137.15  (about  1.27x pow2, using pow2)
-pow10_l  :  20.61  (about  0.14x pow2, using pow2_l)
-sqrt     : 314.49  (about  2.92x pow2, using lg2 & pow2)
-sqrt_l   :  39.91  (about  0.37x pow2, using lg2_l & pow2_l)
+mul      :  13.27
+mul_l    :   1.58
+div      :  15.10
+div_l    :   2.80
+lg2      : 153.65  (BKM-L, only ints)
+lg2_l    :  19.11  (about  0.12x lg2, using BKM-L and longs)
+lg2_mul_l:  69.56  (about  0.45x lg2, using mult. and longs)
+ln       : 207.82  (using lg2)
+ln_l     :  26.89  (about  0.17x lg2, using lg2_l)
+lg10     : 207.82  (using lg2)
+lg10_l   :  26.94  (about  0.18x lg2, using lg2_l)
+pow2     : 105.05  (BKM-E, only ints)
+pow2_l   :  15.16  (about  0.14x pow2, using BKM-E and longs)
+exp      : 140.92  (about  1.34x pow2, using pow2)
+exp_l    :  21.49  (about  0.20x pow2, using pow2_l)
+pow10    : 131.24  (about  1.25x pow2, using pow2)
+pow10_l  :  20.13  (about  0.14x pow2, using pow2_l)
+sqrt     : 302.23  (about  2.88x pow2, using lg2 & pow2)
+sqrt_l   :  38.58  (about  0.37x pow2, using lg2_l & pow2_l)
 
 
 =================================================
 Relative Xtime averages for frac bit configurations {8, 12, 16, 20, 24, 28}
 =================================================
 add      :   1.00  (  4.53x system's native addition of ints)
-mul      :  12.58  ( 55.51x system's native multiplication of ints)
-mul_l    :   1.60  (  7.04x system's native multiplication of ints)
-div      :  16.76  ( 32.59x system's native division of ints)
-div_l    :   2.93  (  5.70x system's native division of ints)
-lg2      : 108.54  (BKM, only ints)
-lg2_l    :  13.73  (about  0.13x lg2, using BKM and longs)
-lg2_mul_l:  45.02  (about  0.41x lg2, using mult. and longs)
-ln       : 213.90  (about  1.97x lg2, using lg2)
-ln_l     :  27.64  (about  0.25x lg2, using lg2_l)
-lg10     : 213.73  (about  1.97x lg2, using lg2)
-lg10_l   :  27.59  (about  0.25x lg2, using lg2_l)
-pow2     : 110.54  (BKM, only ints)
-pow2_l   :  15.81  (about  0.14x pow2, using BKM and longs)
-exp      : 150.39  (about  1.36x pow2, using pow2)
-exp_l    :  22.36  (about  0.20x pow2, using pow2_l)
-pow10    : 141.24  (about  1.28x pow2, using pow2)
-pow10_l  :  21.18  (about  0.19x pow2, using pow2_l)
-sqrt     : 309.36  (about  2.80x pow2, using lg2 & pow2)
-sqrt_l   :  39.27  (about  0.36x pow2, using lg2_l & pow2_l)
+mul      :  12.54  ( 56.16x system's native multiplication of ints)
+mul_l    :   1.60  (  7.15x system's native multiplication of ints)
+div      :  16.62  ( 32.38x system's native division of ints)
+div_l    :   2.89  (  5.64x system's native division of ints)
+lg2      : 102.21  (BKM, only ints)
+lg2_l    :  13.34  (about  0.13x lg2, using BKM and longs)
+lg2_mul_l:  45.18  (about  0.44x lg2, using mult. and longs)
+ln       : 209.35  (about  2.05x lg2, using lg2)
+ln_l     :  27.03  (about  0.26x lg2, using lg2_l)
+lg10     : 209.39  (about  2.05x lg2, using lg2)
+lg10_l   :  27.01  (about  0.26x lg2, using lg2_l)
+pow2     : 108.75  (BKM, only ints)
+pow2_l   :  15.69  (about  0.14x pow2, using BKM and longs)
+exp      : 146.34  (about  1.35x pow2, using pow2)
+exp_l    :  22.17  (about  0.20x pow2, using pow2_l)
+pow10    : 137.59  (about  1.27x pow2, using pow2)
+pow10_l  :  21.04  (about  0.19x pow2, using pow2_l)
+sqrt     : 303.33  (about  2.79x pow2, using lg2 & pow2)
+sqrt_l   :  38.66  (about  0.36x pow2, using lg2_l & pow2_l)
 =================================================
 (Keep in mind: compiler optimization options used/not used can affect these measurements significantly.)
 
