@@ -1047,10 +1047,8 @@ static inline tuple fxp_get_lg2_as_tuple(int fxp1, \
         result.ping = ((fxp1 < FXP_one) || (fxp1 >= FXP_two))?
                 (nbx - FXP_frac_bits - 1): 0;
         // Here we replicate what the lg2_l implementation does,
-        // but now using the 'ulongy' struct to emulate an ulong,
-        // instead of handling two separate uints for each
-        unsigned int aa = ((unsigned int) fxp1) << (clz - 1);
-        ulongy argument = ulongy_create(aa, 0u);
+        // just not using longs but ulongys
+        unsigned int argument = ((unsigned int) fxp1) << (clz - 1);
         ulongy x = FXP_BKM_X_ONE_ULONGY;
         ulongy y = ULONGY_ZERO;
         ulongy xs, z;
@@ -1065,7 +1063,7 @@ static inline tuple fxp_get_lg2_as_tuple(int fxp1, \
                 // z = x + xs;
                 z = ulongy_add(x, xs);
 
-                int c = ulongy_compare(z, argument);
+                int c = ulongy_compare_to_uint(z, argument);
 
                 #ifdef VERBOSE
                 printf("shift:%u looping\n", shift);
