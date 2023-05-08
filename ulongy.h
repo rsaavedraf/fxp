@@ -12,7 +12,7 @@ typedef struct ulongy {
 
 static const ulongy ULONGY_ZERO = { 0u, 0u };
 static const ulongy ULONGY_ALL_ONES = { ~0u, ~0u };
-static const ulongy ULONGY_ALL_ONES_RS1 = { ~0u >> 1, ~0u >> 1 };
+static const ulongy ULONGY_ALL_ONES_RS1 = { ~0u >> 1, ~0u };
 
 ulongy ulongy_create(unsigned int a, unsigned int b);
 unsigned int ulongy_get_hi(ulongy x);
