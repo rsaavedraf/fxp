@@ -486,6 +486,16 @@ to have it as ulongy (see 2023-05-03). Then eliminated the tuple_l, since
 fxp_l is now using the exact same tuple struct used by fxp.
 Added measuring sqrt_l and sqrt to fxp_xtimes.
 
+2023-05-08
+
+Debugged initialization of ULONGY_ALL_ONES_RS1 in ulongy.h, which was
+causing a least significant bit difference between final frac results
+from pow10_l and pow10 in some specific random cases. This was enough
+to trigger assert if WDELTA_MAX was 1.0, even if not for 1.01.
+After this fix, reverting it to 1.0, and absolutely zero warnings.
+
+Added super_fxp to fxp.c, refactored some of pow-related functions
+to have super_fxp arguments, as in fxp_l.c
 
 
 

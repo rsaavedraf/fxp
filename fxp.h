@@ -19,6 +19,8 @@ typedef struct tuple {
         unsigned int pong;
 } tuple;
 
+void print_tuple(char * msg, tuple t);
+
 // Number of bits to use for the whole vs. frac parts
 int fxp_get_frac_bits();
 int fxp_set_frac_bits(int nfb);
