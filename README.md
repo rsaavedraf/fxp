@@ -1,6 +1,6 @@
 # fxp
-Implementation of Fixed Point numbers in C using integers. Number of bits
-to use for fraction part configurable at runtime.
+Implementation of Fixed Point numbers in C using integers. Number of 
+bits to use for fraction part configurable at runtime.
 
 For more information about Fixed Point arithmetic:
 [Wikipedia: Fixed-point arithmetic](https://en.wikipedia.org/wiki/Fixed-point_arithmetic)
@@ -11,16 +11,19 @@ following CMU SEI's INT32-C recommendations. For further details:
 
 lg2(), pow2() implemented using the [BKM algorithm (Wikipedia)](https://en.wikipedia.org/wiki/BKM_algorithm)
 
-Additional logarithm and power functions, ln(), lg10(), exp(), and pow10(), implemented 
-through lg2 and pow2, but now using double the int-size precision (emulated longs,) so as to 
-avoid calculation inaccuracies that would appear if only using the precision of the chosen 
-number of frac bits. Goals of this implementation are mostly flexibility (hence the 
-configurable frac bits,) yet ultimate precision. All tests, including those for exp() and 
-pow10(), should ideally run with zero inaccuracy warnings, regardless of frac bits in use.
+Additional logarithm and power functions, ln(), lg10(), exp(), and 
+pow10(), implemented through lg2 and pow2, but now using double the 
+int-size precision (emulated longs,) so as to avoid calculation 
+inaccuracies that would appear if only using the precision of the 
+chosen number of frac bits. Goals of this implementation are mostly 
+flexibility (hence the configurable frac bits,) yet ultimate 
+precision. All tests, including those for exp() and pow10(), should 
+ideally run with zero inaccuracy warnings, regardless of frac bits 
+in use.
 
 Function sqrt() now implemented.
 
-Functions powxy() coming very soon.
+Function powxy() coming very soon.
 
 Later:
 - Trigonometric functions
@@ -34,14 +37,14 @@ Simply clone this repo and then run the following script on its folder:
 
     ./r
 
-That will compile with gcc locally, and will run the tester program.
+That will compile with gcc locally, and will run the tester program. 
 It should produce a long testing output, like the one in the 
-*output.\*.txt* file(s).
-At the end it will ideally show a list with the observed number of
-warnings for the each of the frac bit configurations tested.
-If an error larger than the maximum tolerance is found, then an assert 
-will get triggered stopping the program immediately, showing the
-function call that was being tested right then.
+*output.\*.txt* file(s). At the end it will ideally show a list with 
+the observed number of warnings for each of the frac bit 
+configurations tested. If an error larger than the maximum tolerance 
+is found, then an assert will get triggered stopping the program 
+immediately, showing the function call that was being tested right 
+then.
 
 Up to now I have run and tested it successfully (zero warnings) 
 on a couple of CPUs listed below, using gcc v11.3.0 both without and 
@@ -64,11 +67,12 @@ Either email me or send a PR for an output file named along the
 lines of *output.cpu_model.txt*
 
 If you encounter any problems or errors, please don't hesitate to 
-let me know as well, glad to also credit troubleshooting input/feedback.
-Just please mention compiler, compiler options used, and your hardware details.
+let me know as well, glad to also credit troubleshooting 
+input/feedback. Just please mention compiler, compiler options used, 
+and your hardware details.
 
-To use these Fix Point Numbers yourself, for now you only need 
-files *fxp.c* and its dependencies if strictly using ints and only ints.
-If allowing longs, then also file *fxp_l.c*. 
-Most other files are auxiliary (to convert to and from floating points, 
-to print out, test, etc.)
+To use these Fix Point Numbers yourself, for now you only need files 
+*fxp.c* and its dependencies if strictly using ints and only ints. 
+If allowing longs, then also file *fxp_l.c*. Most other files are 
+auxiliary (to convert to and from floating points, to print out, 
+test, etc.)
