@@ -24,6 +24,7 @@
 #define DASHES "========================\n"
 #define RULER "----*----1----*----2----*----3-][-*----4----*----5----*----6----\n"
 
+extern const unsigned int ALL_ONES;
 
 static void test_ulongy(unsigned long expected, ulongy actual)
 {
@@ -56,7 +57,15 @@ static void print_ulongy(char * msg, ulongy u)
 int main(void)
 {
         printf("\n%sTester of ulongy:\n%s", DASHES, DASHES);
-
+        printf("Behavior of shifts on this platform's uints:\n");
+        printf("All ones << 0 : %8X\n", (ALL_ONES << 0));
+        printf("All ones << 1 : %8X\n", (ALL_ONES << 1));
+        printf("All ones >> 0 : %8X\n", (ALL_ONES >> 0));
+        printf("All ones >> 1 : %8X\n", (ALL_ONES >> 1));
+        printf("All ones << 31: %8X\n", (ALL_ONES << 31));
+        printf("All ones >> 31: %8X\n", (ALL_ONES >> 31));
+        // Note: shifting by size of the type or more -> undefined behavior
+        printf("\n");
         unsigned int x = FXP_POS_INF - 1, y = 10;
         unsigned long tgt = (((unsigned long) x) << FXP_INT_BITS) | y;
         printf(RULER);
@@ -74,7 +83,7 @@ int main(void)
 
         unsigned long rs = sum >> 16;
         print_ulong("\nRshifted by 16", rs);
-        ulongy urs = ulongy_rshift(usum, 16);
+        ulongy urs = rshift_ulongy(usum, 16);
         print_ulongy("Ulongy rshifted by 16", urs);
         test_ulongy(rs, urs);
 
@@ -104,9 +113,27 @@ int main(void)
 
         unsigned long bigrs = d2 >> 33;
         print_ulong("\nRshifted by 33", bigrs);
-        ulongy ubigrs = ulongy_rshift(ud2, 33);
+        ulongy ubigrs = rshift_ulongy(ud2, 33);
         print_ulongy("Ulongy rshifted by 33", ubigrs);
         test_ulongy(bigrs, ubigrs);
+
+        unsigned long bigls = bigrs << 35;
+        print_ulong("\nLshifted by 35", bigls);
+        ulongy ubigls = lshift_ulongy(ubigrs, 35);
+        print_ulongy("Ulongy lshifted by 35", ubigls);
+        test_ulongy(bigls, ubigls);
+
+        unsigned long bigls2 = bigls << 0;
+        print_ulong("\nLshifted by 0", bigls2);
+        ulongy ubigls2 = lshift_ulongy(ubigls, 0);
+        print_ulongy("Ulongy lshifted by 0", ubigls2);
+        test_ulongy(bigls2, ubigls2);
+
+        unsigned long bigrs3 = bigls2 >> 0;
+        print_ulong("\nRshifted by 0", bigrs3);
+        ulongy ubigrs3 = rshift_ulongy(ubigls2, 0);
+        print_ulongy("Ulongy rshifted by 0", ubigrs3);
+        test_ulongy(bigrs3, ubigrs3);
 
 
         printf("\n\tAll tests passed!\n\n");

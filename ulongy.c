@@ -12,6 +12,7 @@
 #include "ulongy.h"
 #include "stdio.h"
 
+const unsigned int ALL_ONES = ~0u;
 
 inline ulongy ulongy_create(unsigned int vhi, unsigned int vlo)
 {
@@ -53,7 +54,13 @@ inline int ulongy_compare_to_uint(ulongy x, unsigned int y)
 inline ulongy ulongy_add(ulongy x, ulongy y)
 {
         unsigned int sumlo = x.lo + y.lo;
-        ulongy result = { x.hi + y.hi + (sumlo < x.lo), sumlo };
+        unsigned int co = (sumlo < x.lo);
+        unsigned int sumhi = x.hi + y.hi + co;
+        //printf("x.lo : x%X,  y.lo: x%X\n", x.lo, y.lo);
+        //printf("sumlo: x%X,  co: x%X\n", sumlo, co);
+        //printf("x.hi : x%X,  y.hi: x%X\n", x.hi, y.hi);
+        //printf("sumhi: x%X\n", sumhi);
+        ulongy result = { sumhi, sumlo };
         return result;
 }
 
@@ -80,21 +87,34 @@ inline ulongy ulongy_add_uint(ulongy x, unsigned int b)
 
 inline ulongy lshift_ulongy(ulongy x, unsigned int lshift)
 {
-        int d = FXP_INT_BITS - lshift;
-        ulongy shifted = { (x.hi << lshift) | \
-                                ((x.lo & ~((1u << d) - 1)) >> d),
-                            x.lo << lshift };
-        return shifted;
+        if (lshift < FXP_INT_BITS) {
+                if (lshift == 0) return x;
+                int d = FXP_INT_BITS - lshift;
+                ulongy shifted = { (x.hi << lshift) | \
+                                        ((x.lo & (ALL_ONES << d)) >> d),
+                                   x.lo << lshift };
+                return shifted;
+        } else {
+                if (lshift >= FXP_LONG_BITS) return ULONGY_ZERO;
+                ulongy shifted = { x.lo << (lshift - FXP_INT_BITS), 0u};
+                return shifted;
+        }
 }
 
 inline ulongy rshift_ulongy(ulongy x, unsigned int rshift)
 {
-        return (rshift < FXP_INT_BITS)?
-                ulongy_create( x.hi >> rshift, \
-                                ((x.hi & ((1u << rshift) - 1)) \
-                                        << (FXP_INT_BITS - rshift)) | \
-                                (x.lo >> rshift) ):
-                ulongy_create( 0u, x.hi >> (rshift - FXP_INT_BITS) );
+        if (rshift < FXP_INT_BITS) {
+                if (rshift == 0) return x;
+                int d = FXP_INT_BITS - rshift;
+                ulongy shifted = {  x.hi >> rshift, \
+                                    ((x.hi & (ALL_ONES >> d)) << d) | \
+                                            (x.lo >> rshift) };
+                return shifted;
+        } else {
+                if (rshift >= FXP_LONG_BITS) return ULONGY_ZERO;
+                ulongy shifted = { 0u, x.hi >> (rshift - FXP_INT_BITS) };
+                return shifted;
+        }
 }
 
 inline ulongy rshift_ulongy_rounding(ulongy x, unsigned int rshift)
