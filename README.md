@@ -21,7 +21,7 @@ precision. All tests, including those for exp() and pow10(), should
 ideally run with zero inaccuracy warnings, regardless of frac bits 
 in use.
 
-Functions sqrt() and powxy now implemented, also using lg2 and pow2.
+Functions sqrt() and powxy() now implemented, also using lg2 and pow2.
 
 Later:
 - Trigonometric functions
