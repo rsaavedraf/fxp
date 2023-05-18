@@ -266,7 +266,7 @@ inline ulongy dmul_ulongy_x_uint(ulongy x, unsigned int y)
 
 void print_ulongy_as_hex(ulongy x)
 {
-        printf("%X%X", x.hi, x.lo);
+        printf("x%X%X", x.hi, x.lo);
 }
 
 void print_ulongy_as_bin(ulongy x)

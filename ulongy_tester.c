@@ -87,9 +87,9 @@ int main(void)
         print_ulongy("Ulongy rshifted by 16", urs);
         test_ulongy(rs, urs);
 
-        unsigned long zero = 0lu;
-        unsigned long one = 1lu;
-        unsigned long two = 2lu;
+        unsigned long zero = 0ul;
+        unsigned long one = 1ul;
+        unsigned long two = 2ul;
         ulongy uzero = ulongy_create(0u, 0u);
         ulongy uone = ulongy_create(0u, 1u);
         ulongy utwo = ulongy_create(0u, 2u);

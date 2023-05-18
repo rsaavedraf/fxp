@@ -55,7 +55,7 @@ static void dump_uint(char * msg, unsigned int x)
 
 static void dump_ulong(char * msg, unsigned long x)
 {
-        printf("%s: %20lu  (x%16lX,\n\tb", msg, x, x);
+        printf("%s: %20ul  (x%16lX,\n\tb", msg, x, x);
         print_ulong_as_bin(x);
         printf(")\n");
 }
@@ -180,7 +180,7 @@ int main(void)
         // The shifted and rounded expected results
         unsigned int rbit = (FXP_PI_I32 >> FXP_WORD_BITS_M1) & 1u;
         unsigned int expected_uint = (FXP_PI_I32 >> FXP_WORD_BITS) + rbit;
-        rbit = (unsigned int) ((FXP_PI_I64 >> FXP_WORD_BITS_M1) & 1lu);
+        rbit = (unsigned int) ((FXP_PI_I64 >> FXP_WORD_BITS_M1) & 1ul);
         unsigned long expected_ulong = (FXP_PI_I64 >> FXP_WORD_BITS) + rbit;
         ulongy expected_ulongy_1 = ulongy_from_ulong(expected_ulong);
         unsigned long xy = ((unsigned long) x) * y;

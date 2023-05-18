@@ -515,8 +515,63 @@ remain, lowering it by even one does brings asserts right away in sqrt.
 Clean up of a few variables no longer used in fxp.c.
 
 
+2023-05-11
+
+Debugged bit-shift operations in ulongys, added some additional tests for them.
+
+powxy_l and powxy now implemented.
+
+Test runs show clearly that ensuring a precise powxy() function is a lot 
+more demanding than ensuring precision for the individual ln, exp, log10 
+and pow10 functions. For the latter, tuple.pong as unsigned int (instead 
+of ulongy or long) was good enough to allow test runs with zero warnings 
+for all log and pow functions using WDELTA=2, WDELTA_MAX=1. But for the 
+powxy() functions, those values are nowhere near enough to prevent 
+warnings/asserts. Ultimately had to raise the MAX to >6.5.
+
+Btw changed the scheme to define the delta control values. Now defining 
+the max directly first (for 2 and 6.5 before, the max would be 13), then 
+the min value where warnings start based on the max, i.e. half of it. 
+I think this scheme is a lot clearer.
+
+
+Returning to having a dedicated tuple_l in fxp_l.c, with an unsigned long
+in it for the frac part.
+
+
+2023-05-15
+
+Checking all combinations of sign cases for powxy with extreme values.
+
+powxy_l() and powxy() implemented!
+
+While still using an uint in the tuple, max delta needs to be relaxed
+a lot, up to WDELTA_MAX=49 in order to avoid asserts for certain frac bits and
+random parameters for powxy (using SET_RAND_SEED 1, and MAX_RAND_LOOPS = 10000).
+
+Making the pow-related functions in fxp_l use tuple_l (with a ulong inside)
+instead of tuple.
+
+2023-05-18
+
+Simplified the sqrt functions calling negate_tuple() before halving it.
+
+More granularity to control the # of loops to use when calculating
+the different functions based on lg2 and pow2.
+Lg2 and pow2 themselves can use just frac_bits + 1 loops, but 
+for example ln and lg10 need 31 loops to remain warning/assert-free
+in all frac bit configs using WDELTA_MAX = 2, the sqrt requires 32 loops,
+and powxy 36. This can likely be refined further later on, not using
+the same constant # of loops for all configurations, but just like 
+FXP_lg2_maxloops, using a number of loops that depends on the current
+number of frac bits.
+
+Without a ulongy in the tuple in fxp.c, functions pow2, sqrt, and powxy
+cannot match the precision of corresponding ones in fxp_l.c.
+
+
 Pending:
-Refactor fxp to also use super_fxp's as fxp_l is doing now.
-Implement powxy_l() and powxy()
+In fxp.c's tuple, use again a ulongy instead of just an uint.
+Include powxy_l and powxy in report from fxp_xtimes.c
 Implement trigonometric functions
 Rewrite in Rust?

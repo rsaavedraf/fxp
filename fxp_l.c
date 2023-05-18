@@ -1,3 +1,4 @@
+
 /* SPDX-License-Identifier: MIT */
 /*
  * fxp_l.c
@@ -24,7 +25,7 @@
 #include "print_as_bits.h"
 #endif
 
-const int SFXP_MAX_WBITS = ((int) sizeof(long)*8) - 4;
+//const int SFXP_MAX_WBITS = ((int) sizeof(long)*8) - 4;
 
 const unsigned long FXP_E_I64 = 0xADF85458A2BB4A9Bul;
 const unsigned long FXP_PI_I64 = 0xC90FDAA22168C235ul;
@@ -54,7 +55,7 @@ static const unsigned long FXP_BKM_LOGS_L[] = {
         0xB8AA3ACD06, 0x5C551D7D98, 0x2E2A8EC491, 0x17154763BA,
         0xB8AA3B239, 0x5C551D933, 0x2E2A8EC9F, 0x171547651,
         0xB8AA3B28, 0x5C551D94, 0x2E2A8ECA, 0x17154765,
-        //0xB8AA3B2, 0x5C551D9, 0x2E2A8EC, 0x1715476,       // <---- *
+        0xB8AA3B2, 0x5C551D9, 0x2E2A8EC, 0x1715476,       // <---- *
         //0xB8AA3B, 0x5C551D, 0x2E2A8E, 0x171547,
         //0xB8AA3, 0x5C551, 0x2E2A8, 0x17154,
         //0xB8AA, 0x5C55, 0x2E2A, 0x1715,
@@ -66,6 +67,12 @@ static const unsigned long FXP_BKM_LOGS_L[] = {
 // a 4-bit right-shift of the value 4 positions earlier
 };
 
+// Auxiliary struct used internally for logarithms
+typedef struct tuple_l {
+        int ping;
+        unsigned long pong;
+} tuple_l;
+
 // A super_fxp is not just a "bigger FXP," it also has its own
 // fxp configuration (it's own number of whole vs. frac bits,)
 // independent of the global fxp setting, always carrying this
@@ -75,11 +82,30 @@ typedef struct super_fxp_l {
         unsigned long number;   // <- The super fxp number
 } super_fxp_l;
 
-const super_fxp_l SFXP_ZERO_L = {0, 0lu};
+const super_fxp_l SFXP_ZERO_L = {0, 0ul};
 const super_fxp_l SFXP_LG2_E_FACTOR_L = {1, FXP_LG2_E_I64};
 const super_fxp_l SFXP_LG2_10_FACTOR_L = {2, FXP_LG2_10_I64};
 const super_fxp_l SFXP_LN_2_FACTOR_L = {0, FXP_LN_2_I64};
 const super_fxp_l SFXP_LG10_2_FACTOR_L = {0, FXP_LG10_2_I64};
+
+static inline int fxp_nbits_l(unsigned long x)
+{
+        if (x == 0) return 0;
+        return FXP_LONG_BITS - __builtin_clzl(x);
+};
+
+static inline unsigned long fxp_get_lshifted_frac_l(unsigned int fxp1)
+{
+        return ((unsigned long) (fxp1 & FXP_frac_mask)) << (FXP_INT_BITS + FXP_whole_bits_m1);
+}
+
+static inline tuple_l tuple_l_from_fxp(int fxp1)
+{
+        tuple_l tup = {   fxp_get_whole_part(fxp1),
+                          fxp_get_lshifted_frac_l(fxp1) };
+        return tup;
+}
+
 
 static inline int super_fxp_l_get_nwbits(super_fxp_l x)
 {
@@ -89,6 +115,18 @@ static inline int super_fxp_l_get_nwbits(super_fxp_l x)
 static inline unsigned long super_fxp_l_get_unumber(super_fxp_l x)
 {
         return x.number;
+}
+
+static inline tuple_l negate_tuple_l(tuple_l tup)
+{
+        if (tup.pong == 0ul) {
+                tuple_l negtup = { -tup.ping, 0ul };
+                return negtup;
+        } else {
+                tuple_l negtup = { -tup.ping - 1, \
+                                 FXP_BKM_A_ONE_L - tup.pong};
+                return negtup;
+        }
 }
 
 #ifdef VERBOSE
@@ -134,11 +172,16 @@ void print_super_fxp_l(super_fxp_l x)
         printf("Super_fxp_l: {x%X, x%lX}\n", x.nwbits, x.number);
         printf("Fxp equiv. : "); print_fxp(super_fxp_l_2_fxp(x)); printf("\n");
 }
-#endif
 
-/*
-// Commenting out these functions which aren't being used right now,
-// although might use them in the powxy implementation, we'll see
+void print_tuple_l(char * msg, tuple_l tup)
+{
+        long double num = (long double) tup.ping \
+                + ((long double) tup.pong) / (1ul << FXP_LONG_BITS_M1);
+        printf("%s: ", msg);
+        printf("{x%X, x%lX} == %.10Lf\n", \
+                tup.ping, tup.pong, num);
+}
+#endif
 
 static inline super_fxp_l super_fxp_l_create(unsigned int nwbits, \
                                              unsigned long num)
@@ -148,6 +191,37 @@ static inline super_fxp_l super_fxp_l_create(unsigned int nwbits, \
         return x;
 }
 
+static inline super_fxp_l super_fxp_l_from_tuple_l(tuple_l tup)
+{
+        // Notice, not rounding when rshifting pong
+        // TODO: make sure no precision loss impact
+        unsigned long nwb = fxp_nbits(tup.ping);
+        unsigned long number;
+        if (nwb == 0) {
+                number = tup.pong << 1;
+        } else if (nwb == 1) {
+                number = (((unsigned long) tup.ping) << (FXP_LONG_BITS - nwb)) \
+                                + tup.pong;
+        } else {
+                unsigned long notrounded = tup.pong >> (nwb - 1);
+                unsigned long rbit = (tup.pong >> (nwb - 2)) & 1ul;
+                notrounded = (((unsigned long) tup.ping) << (FXP_LONG_BITS - nwb)) \
+                                    + notrounded;
+                number = notrounded;
+                /*
+                number = notrounded + rbit;
+                if (number < notrounded) {
+                        number = FXP_BKM_A_ONE_L | (number >> 1);
+                        nwb += 1;
+                }
+                */
+        }
+        return super_fxp_l_create(nwb, number);
+}
+
+// Commenting out these functions which aren't being used right now,
+
+/*
 static inline long super_fxp_l_get_signed_num(super_fxp_l x)
 {
         return (x.nwbits < 0)? -((long) x.number): (long) x.number;
@@ -208,12 +282,6 @@ static inline super_fxp_l get_fxp_x_super_fxp_l(int x, super_fxp_l c)
         }
 }
 */
-
-static inline int fxp_nbits_l(unsigned long x)
-{
-        if (x == 0) return 0;
-        return FXP_LONG_BITS - __builtin_clzl(x);
-};
 
 /*
  * r-shift an unsigned long by shift, rounding its last bit
@@ -326,7 +394,7 @@ int fxp_lg2_mul_l(int fxp1)
         if (fxp1 == FXP_POS_INF) return FXP_POS_INF;
         int nx, c;
         int nbx = fxp_nbits(fxp1);
-        if (fxp1 < FXP_one) {
+        if (fxp1 <= FXP_almost1) {
                 c = nbx - FXP_frac_bits - 1;
                 nx = fxp1 << (-c);
         } else if (fxp1 >= FXP_two) {
@@ -373,17 +441,17 @@ int fxp_lg2_mul_l(int fxp1)
  * For more details on BKM:
  * https://en.wikipedia.org/wiki/BKM_algorithm
  */
-static inline tuple fxp_get_lg2_as_tuple_l(int fxp1, \
+static inline tuple_l fxp_get_lg2_as_tuple_l(int fxp1, \
                                 const int MAX_LOOPS)
 {
-        tuple result;
+        tuple_l result;
         // Assumes fxp1 is for sure > 0
         int clz = __builtin_clz((unsigned int) fxp1);
         // clz > 0 since at least sign bit == 0
         int nbx = FXP_INT_BITS - clz;
         // Assign the characteristic
         result.ping = \
-                ((fxp1 < FXP_one) || (fxp1 >= FXP_two))? \
+                ((fxp1 <= FXP_almost1) || (fxp1 >= FXP_two))? \
                         (nbx - FXP_frac_bits - 1): 0;
         #ifdef VERBOSE
         printf("\nlg2_as_tuple: fxp1: x%X  clz: %d,  nbx: %d\n", fxp1, clz, nbx);
@@ -400,7 +468,7 @@ static inline tuple fxp_get_lg2_as_tuple_l(int fxp1, \
         //   mantissa all have 1 unsigned whole and 63 frac bits
         //   for more accuracy
         // - "X" alignment:
-        //   x aligned with FXP_BKM_ONE_L: 2 whole and 62 frac bits
+        //   x aligned with FXP_BKM_X_ONE_L: 2 whole and 62 frac bits
         //   (again at least 2 whole bits for the BKM log algorithm,
         //   given that z can occasionally exceed 2)
         unsigned long argument = ((unsigned long) fxp1) << \
@@ -409,7 +477,7 @@ static inline tuple fxp_get_lg2_as_tuple_l(int fxp1, \
         unsigned long z, xs, y;
         // The mantissa value will remain in the range of lg2(x),
         // x in [1, 2), meaning mantissa always in [0, 1)
-        y = 0lu;
+        y = 0ul;
         for (int shift = 1; shift <= MAX_LOOPS; shift++) {
                 #ifdef VERBOSE_BKM
                 printf("bkm lg2 shift:%2d - ", shift);
@@ -427,9 +495,10 @@ static inline tuple fxp_get_lg2_as_tuple_l(int fxp1, \
                 printf("\n");
                 #endif
         }
-        result.pong = rshift_ulong_into_uint_rounding(y);
+        //result.pong = rshift_ulong_into_uint_rounding(y);
+        result.pong = y;
         #ifdef VERBOSE
-        printf("lg2_as_tuple_l: mantissa is : x%X\n", result.pong);
+        printf("lg2_as_tuple_l: mantissa is: x%lX\n", result.pong);
         #endif
         return result;
 }
@@ -443,12 +512,14 @@ int fxp_lg2_l(int fxp1)
         if (fxp1 == 0) return FXP_NEG_INF;
         if (fxp1 == FXP_POS_INF) return FXP_POS_INF;
         // Get the separate characteristic and full mantissa
-        tuple tup = fxp_get_lg2_as_tuple_l(fxp1, FXP_lg2_maxloops);
+        tuple_l tup = fxp_get_lg2_as_tuple_l(fxp1, FXP_lg2_maxloops);
         // Round and shift the mantissa
-        int rbit = (tup.pong >> FXP_whole_bits_m2) & 1u;
-        int m = (tup.pong >> FXP_whole_bits_m1) + rbit;
+        //int rbit = (tup.pong >> FXP_whole_bits_m2) & 1u;
+        //int m = (tup.pong >> FXP_whole_bits_m1) + rbit;
+        int rbit = (tup.pong >> (FXP_INT_BITS + FXP_whole_bits_m2)) & 1u;
+        int m = (int) (tup.pong >> FXP_INT_BITS + FXP_whole_bits_m1) + rbit;
         #ifdef VERBOSE
-        printf("\nlg2 as tuple result: {%d, %u} == {x%X,x%X}\n", \
+        printf("\nlg2 as tuple result: {%d, %lu} == {x%X,x%lX}\n", \
                         tup.ping, tup.pong, tup.ping, tup.pong);
         printf("Final mantissa: x%X  (rounding bit was %d)\n", m, (int) rbit);
         #endif
@@ -534,11 +605,11 @@ unsigned long dmul_ulong_x_uint(unsigned long x, unsigned int ya)
         return product;
 }
 
-static inline int neg_lg2_x_factor_l(tuple tup, super_fxp_l factor)
+static inline int neg_lg2_x_factor_l(tuple_l tup, super_fxp_l factor)
 {
         if ((tup.ping < FXP_whole_min_m1) \
                 || ((tup.ping == FXP_whole_min_m1) \
-                    && (tup.pong == 0u))) {
+                    && (tup.pong == 0ul))) {
                 return FXP_NEG_INF;
         }
         unsigned int posc = (-tup.ping);
@@ -547,7 +618,7 @@ static inline int neg_lg2_x_factor_l(tuple tup, super_fxp_l factor)
         unsigned long fval = super_fxp_l_get_unumber(factor);
         long cxf = -dmul_ulong_x_uint(fval, shifted_posc);
 
-        unsigned long mxf = dmul_ulong_x_uint(fval, tup.pong);
+        unsigned long mxf = dmul_ulongs(fval, tup.pong);
         int shift_for_m = FXP_INT_BITS_M1 - shift_for_c;
         long shifted_mxf = rshift_ulong_rounding(mxf, shift_for_m);
         long sum = cxf + shifted_mxf;
@@ -579,7 +650,7 @@ static inline int neg_lg2_x_factor_l(tuple tup, super_fxp_l factor)
         return final_lg;
 }
 
-static inline int pos_lg2_x_factor_l(tuple tup, super_fxp_l factor)
+static inline int pos_lg2_x_factor_l(tuple_l tup, super_fxp_l factor)
 {
         int shift_for_c;
         unsigned int shifted_c;
@@ -595,7 +666,7 @@ static inline int pos_lg2_x_factor_l(tuple tup, super_fxp_l factor)
                 cxf = 0l;
         }
 
-        unsigned long mxf = dmul_ulong_x_uint(fval, tup.pong);
+        unsigned long mxf = dmul_ulongs(fval, tup.pong);
         int shift_for_m = FXP_INT_BITS_M1 - shift_for_c;
         long shifted_mxf = rshift_ulong_rounding(mxf, shift_for_m);
         long sum = cxf + shifted_mxf;
@@ -632,7 +703,7 @@ static inline int pos_lg2_x_factor_l(tuple tup, super_fxp_l factor)
  */
 static inline int lg2_x_factor_l(int fxp1, super_fxp_l factor)
 {
-        tuple tup = fxp_get_lg2_as_tuple_l(fxp1, FXP_INT_BITS_M1);
+        tuple_l tup = fxp_get_lg2_as_tuple_l(fxp1, FXP_LOGX_LOOPS);
 
         // The lg2(fxp1) is equals to c + m:
         // c == characteristic (tup.ping),
@@ -645,7 +716,7 @@ static inline int lg2_x_factor_l(int fxp1, super_fxp_l factor)
                 printf("\nlg2_x_factor_l:\n");
                 printf("\tlg2 c : %d (x%X,  b", tup.ping, tup.ping);
                 print_int_as_bin(tup.ping, 0); printf(")\n");
-                printf("\tlg2 m : x%16X\n", tup.pong);
+                printf("\tlg2 m : x%16lX\n", tup.pong);
                 //printf("\tFACTOR: x%16lX\n", FACTOR);
                 printf("\tFACTOR: ");
                 print_super_fxp_l(factor);
@@ -699,14 +770,16 @@ static long double print_ulong_as_ld(unsigned long x, int nfbits)
  * here the argument must come BKM A-aligned with the values in the log
  * table, that is: 1 unsigned whole, and 63 frac bits
  */
-static inline unsigned int fxp_bkm_emode_l(unsigned int a)
+static inline unsigned long fxp_bkm_emode_l(unsigned long argument, \
+                                            const int MAX_LOOPS)
 {
         #ifdef VERBOSE_BKM
-        printf("\nbkm_emode_l running with argument: x%X\n", a);
+        printf("\nbkm_emode_l running with argument: x%lX\n", argument);
+        print_ulong_as_bin(argument); printf("\n");
         #endif
-        unsigned long argument = ((unsigned long) a) << FXP_INT_BITS;
+        //unsigned long argument = ((unsigned long) a) << FXP_INT_BITS;
         unsigned long x = FXP_BKM_X_ONE_L, y = 0;
-        for (int k = 0; k < FXP_INT_BITS; k++) {
+        for (int k = 0; k < MAX_LOOPS; k++) {
                 unsigned long const z = y + FXP_BKM_LOGS_L[k];
                 #ifdef VERBOSE_BKM
                 printf("k:%d,  z:%lX,  z as ld:%.19Lf\n", \
@@ -726,7 +799,8 @@ static inline unsigned int fxp_bkm_emode_l(unsigned int a)
         printf("bkm_emode_l returning x = %lX  (%.19Lf)\n", \
                         x, print_ulong_as_ld(x, 62));
         #endif
-        return rshift_ulong_into_uint_rounding(x);
+        //return rshift_ulong_into_uint_rounding(x);
+        return x;
 }
 
 /*
@@ -737,21 +811,30 @@ static inline unsigned int fxp_bkm_emode_l(unsigned int a)
  * as the BKM array values (1 whole bit).
  * Input value for 2^x here is x = whole + frac
  */
-static inline int fxp_pow2_wpos_tuple_l(tuple tup)
+static inline int fxp_pow2_wpos_tuple_l(tuple_l tup, \
+                                        const int MAX_LOOPS)
 {
-        if (tup.ping >= FXP_whole_bits_m1) return FXP_POS_INF;
-        // Argument tup.pong will be in [0, 1)
         #ifdef VERBOSE
-        print_tuple("\npow2_wpos_tuple_l for ", tup);
+        print_tuple_l("\npow2_wpos_tuple_l for ", tup);
         #endif
-        unsigned int x = fxp_bkm_emode_l(tup.pong);
+        if (tup.ping >= FXP_whole_bits_m1) return FXP_POS_INF;
+        if ((tup.ping == 0) && (tup.pong == 0ul)) return FXP_one;
+        // Argument tup.pong will be in [0, 1)
+        unsigned long x = fxp_bkm_emode_l(tup.pong, MAX_LOOPS);
         // When one of the operands is a shifted 1, we don't really
         // need to call the (expensive) dmul operation, since the
         // result will be identical to the other operand anyway,
         // just shifted appropriately
-        int shift = FXP_whole_bits_m2 - tup.ping;
-        int shifted = rshift_uint_rounding(x, shift);
-        return shifted;
+        int shift = FXP_INT_BITS + FXP_whole_bits_m2 - tup.ping;
+        int shifted = (int) rshift_ulong_rounding(x, shift);
+        #ifdef VERBOSE
+        printf("x from bkm_e: x%lX\n", x);
+        print_ulong_as_bin(x); printf("\n");
+        printf("shift is %d\n", shift);
+        print_ulong_as_bin(x); printf("\n");
+        print_uint_as_bin(shifted); printf("\n");
+        #endif
+        return (shifted != FXP_UNDEF)? shifted: FXP_POS_INF;
 }
 
 /*
@@ -778,18 +861,26 @@ static inline int fxp_pow2_wpos_tuple_l(tuple tup)
  * eliminating tuples alltogether? Using only ulongys/super_fxp's?
  * See also long comment in sqrt_l
  */
-static inline int fxp_pow2_wneg_tuple_l(tuple tup)
+static inline int fxp_pow2_wneg_tuple_l(tuple_l tup, \
+                                        const int MAX_LOOPS)
 {
-        if (tup.ping > FXP_frac_bits) return 0;
         #ifdef VERBOSE
-        print_tuple("\npow2_wneg_tuple_l for (-)", tup);
+        print_tuple_l("\npow2_wneg_tuple_l for (-)", tup);
         #endif
+        if (tup.ping > FXP_frac_bits) return 0;
+        if ((tup.ping == 0) && (tup.pong == 0ul)) return FXP_one;
         // Notice argument a for bkm_emode will be in (0, 1]
-        unsigned int a = FXP_BKM_A_ONE - tup.pong;
-        unsigned int x = fxp_bkm_emode_l(a);
-        int shift = FXP_whole_bits_m1 + tup.ping;
-        int shifted = rshift_uint_rounding(x, shift);
-        return shifted;
+        unsigned long a = FXP_BKM_A_ONE_L - tup.pong;
+        unsigned long x = fxp_bkm_emode_l(a, MAX_LOOPS);
+        int shift = FXP_INT_BITS + FXP_whole_bits_m1 + tup.ping;
+        int shifted = (int) rshift_ulong_rounding(x, shift);
+        #ifdef VERBOSE
+        printf("x from bkm_e: x%lX\n", x);
+        printf("shift is %d\n", shift);
+        print_ulong_as_bin(x); printf("\n");
+        print_uint_as_bin(shifted); printf("\n");
+        #endif
+        return (shifted != FXP_UNDEF)? shifted: FXP_POS_INF;
 }
 
 /*
@@ -806,14 +897,11 @@ int fxp_pow2_l(int fxp1)
         printf("\n\npow2_l running for x%X (int = %d)\n", fxp1, fxp1);
         #endif
         if (fxp1 >= 0) {
-                tuple tup = {   fxp_get_whole_part(fxp1),
-                                fxp_get_lshifted_frac(fxp1) };
-                return fxp_pow2_wpos_tuple_l( tup );
+                tuple_l tup = tuple_l_from_fxp(fxp1);
+                return fxp_pow2_wpos_tuple_l( tup, FXP_POWX_LOOPS );
         } else {
-                int pfxp1 = -fxp1;
-                tuple ntup = {  fxp_get_whole_part(pfxp1),
-                                fxp_get_lshifted_frac(pfxp1) };
-                return fxp_pow2_wneg_tuple_l( ntup );
+                tuple_l ntup = tuple_l_from_fxp(-fxp1);
+                return fxp_pow2_wneg_tuple_l( ntup, FXP_POWX_LOOPS );
         }
 }
 
@@ -821,7 +909,7 @@ int fxp_pow2_l(int fxp1)
 // x times C and return it as an {int, ulong} tuple
 // with the ulong frac part having the same alignment
 // as the BKM array values (1 whole bit)
-static inline tuple get_xc_as_tuple_l(int x, super_fxp_l factorc)
+static inline tuple_l get_xc_as_tuple_l(int x, super_fxp_l factorc)
 {
         unsigned long fc, wfc, ffc, ffmask;
         unsigned int sf;
@@ -858,17 +946,16 @@ static inline tuple get_xc_as_tuple_l(int x, super_fxp_l factorc)
                                         / (1ul << FXP_LONG_BITS_M1 - c_nwbits));
                 #endif
 
-        // Now calculating whole(x) * C
+        // Now calculating whole(x) * factorc
         unsigned long wc, wwc, wfmask, fwc;
         int wx_nbits, wx_clz, w_margin;
         unsigned int wx, swx;
-        // whole part of x shifted
         wx = fxp_get_whole_part(x);
         wx_clz = (wx == 0)? FXP_INT_BITS: __builtin_clz(wx);
         wx_nbits = FXP_INT_BITS - wx_clz;
         // swx is whole(x) l-shifted all the way
         swx = wx << wx_clz;
-        // times the factor C
+        // times factorc
         wc = dmul_ulong_x_uint(cval, swx);
 
         // Whole and frac parts of that product wxC
@@ -909,20 +996,25 @@ static inline tuple get_xc_as_tuple_l(int x, super_fxp_l factorc)
         unsigned long w_fplusf = fplusf >> FXP_LONG_BITS_M1;
 
         int final_whole = (int) wwc + wfc + w_fplusf;
-        unsigned int final_frac = rshift_ulong_into_uint_rounding( \
-                                        fplusf & ULONG_ALL_ONES_RS1);
+        //unsigned int final_frac = rshift_ulong_into_uint_rounding( \
+        //                                fplusf & ULONG_ALL_ONES_RS1);
+        unsigned long final_frac = fplusf & ULONG_ALL_ONES_RS1;
 
         // Tuple to return with final whole and frac parts
-        tuple xc = { final_whole, final_frac };
+        tuple_l xc = { final_whole, final_frac };
 
                 #ifdef VERBOSE
-                printf("\n\tfinal wsum:\n\t");
-                print_uint_as_bin(xc.ping);
+                //printf("\n\tffc + fwc:\n\t");
+                //print_ulong_as_bin(ffc); printf("\n\t");
+                //print_ulong_as_bin(fwc);
+                printf("\n\tfplusf:\n\t");
+                print_ulong_as_bin(fplusf);
+                printf("\n\tw_fplusf is: %lu", w_fplusf);
                 printf(" (%u)\n\t", xc.ping);
                 printf("final fsum:\n\t");
-                print_uint_as_bin(xc.pong);
+                print_ulong_as_bin(xc.pong);
                 printf(" (%LE)\n", ((long double) xc.pong) \
-                                        / (1lu << FXP_INT_BITS_M1));
+                                        / (1ul << FXP_LONG_BITS_M1));
                 #endif
 
         return xc;
@@ -930,24 +1022,28 @@ static inline tuple get_xc_as_tuple_l(int x, super_fxp_l factorc)
 
 // Calculate the pow2 of a NON-negative argument x
 // multiplied by a factor c
-static inline int fxp_pow2_pos_arg_xfactor_l(int x, super_fxp_l factorc)
+static inline int fxp_pow2_pos_arg_xfactor_l(int x, \
+                                        super_fxp_l factorc, \
+                                        const int MAX_LOOPS)
 {
-        tuple xc = get_xc_as_tuple_l(x, factorc);
+        tuple_l xc = get_xc_as_tuple_l(x, factorc);
                 #ifdef VERBOSE
-                print_tuple("Pos tuple is: ", xc);
+                print_tuple_l("Pos tuple is: ", xc);
                 #endif
-        return fxp_pow2_wpos_tuple_l( xc );
+        return fxp_pow2_wpos_tuple_l( xc, MAX_LOOPS );
 }
 
 // Calculate the pow2 of a negative argument x
 // multiplied by a factor c
-static inline int fxp_pow2_neg_arg_xfactor_l(int x, super_fxp_l factorc)
+static inline int fxp_pow2_neg_arg_xfactor_l(int x, \
+                                        super_fxp_l factorc, \
+                                        const int MAX_LOOPS)
 {
-        tuple xc = get_xc_as_tuple_l(x, factorc);
+        tuple_l xc = get_xc_as_tuple_l(x, factorc);
                 #ifdef VERBOSE
-                print_tuple("Neg tuple is: ", xc);
+                print_tuple_l("Neg tuple is: ", xc);
                 #endif
-        return fxp_pow2_wneg_tuple_l( xc );
+        return fxp_pow2_wneg_tuple_l( xc, MAX_LOOPS );
 }
 
 // Implementation of exp_l(x) using pow2_l():
@@ -960,9 +1056,11 @@ int fxp_exp_l(int fxp1)
         if (fxp1 == FXP_POS_INF) return FXP_POS_INF;
         return (fxp1 >= 0)?
                 fxp_pow2_pos_arg_xfactor_l(fxp1, \
-                                    SFXP_LG2_E_FACTOR_L):
+                                    SFXP_LG2_E_FACTOR_L, \
+                                    FXP_POWX_LOOPS):
                 fxp_pow2_neg_arg_xfactor_l( -fxp1, \
-                                    SFXP_LG2_E_FACTOR_L);
+                                    SFXP_LG2_E_FACTOR_L, \
+                                    FXP_POWX_LOOPS);
 }
 
 // Implementation of pow10_l(x) pow2_l():
@@ -975,121 +1073,165 @@ int fxp_pow10_l(int fxp1)
         if (fxp1 == FXP_POS_INF) return FXP_POS_INF;
         return (fxp1 >= 0)?
                 fxp_pow2_pos_arg_xfactor_l(fxp1, \
-                                    SFXP_LG2_10_FACTOR_L):
+                                    SFXP_LG2_10_FACTOR_L, \
+                                    FXP_POWX_LOOPS):
                 fxp_pow2_neg_arg_xfactor_l( -fxp1, \
-                                    SFXP_LG2_10_FACTOR_L);
+                                    SFXP_LG2_10_FACTOR_L, \
+                                    FXP_POWX_LOOPS);
 }
-
-/*
-// Implementation of powxy_l(x) using pow2_l() and lg2_l():
-// x^y  == 2^( lg2(x^y) )
-//      == 2^( y * lg2(x) )
-int fxp_powxy_l(int x, int y)
-{
-        if ((x < 0) || (x == FXP_UNDEF) || (y == FXP_UNDEF))
-                return FXP_UNDEF;
-        if (x == 0) {
-                // lg2(x) is -INF
-                if (y < 0) return FXP_POS_INF;  // 2^(+INF)
-                if (y > 0) return 0;            // 2^(-INF)
-                return FXP_UNDEF;               // 2^(UNDEF)
-        }
-        // X > 0
-        // TODO
-
-        return 0;
-}
-*/
 
 // Square root implementation as:
-// sqrt(x) = 2^( 1/2 * lg2(x) )
+// sqrt(x) = 2^( 0.5 * lg2(x) )
 int fxp_sqrt_l(int fxp1)
 {
         if (fxp1 < 0) return FXP_UNDEF;
         if (fxp1 == 0) return 0;
         if (fxp1 == FXP_POS_INF) return FXP_POS_INF;
         // First get the lg2 of the argument
-        tuple tup = fxp_get_lg2_as_tuple_l(fxp1, FXP_INT_BITS_M1);
-        // Halve that value before passing it as argument for pow2
+        tuple_l tup = fxp_get_lg2_as_tuple_l(fxp1, FXP_SQRT_LOOPS);
+        // TODO:
+        // Div by 2 on a normal fxp or a super_fxp would be a simple
+        // matter of r-shifting 1 bit + adding rounding bit.
+        // But converting to long/super_fxp, r-shifting there,
+        // then back, seems quite expensive.
+        // Later will try not using tuples at all, only super_fxp's
+        // comparing possible performance and simplicity gains/losses,
+        // while also keeping an eye on potential precision loss
+        unsigned long notrounded, rbit = tup.pong & 1ul; // rounding bit for frac
         if (tup.ping >= 0) {
-                int rbit = tup.pong & 1u; // rounding bit for frac
-                // Halving a positive tuple is trivial
-                tup.pong = (tup.ping % 2)? \
-                        // odd characteristic, add 0.5 to the rshifted mantissa
-                        FXP_POINT5_PONG + ((tup.pong >> 1) + rbit): \
-                        // even characteristic, simply r-shift the mantissa
-                        ((tup.pong >> 1) + rbit);
-                tup.ping = tup.ping >> 1;
+                // Halve the non-negative tuple before passing it to pow2_wpos
+                notrounded = (tup.ping % 2)? \
+                                // odd characteristic, add 0.5 to the rshifted mantissa
+                                FXP_BKM_A_POINT5_L + (tup.pong >> 1): \
+                                // even characteristic, simply r-shift the mantissa
+                                tup.pong >> 1;
+                tup.pong = notrounded + rbit;
+                tup.ping = (tup.ping >> 1) + (tup.pong < notrounded);
                 #ifdef VERBOSE
-                print_tuple("sqrt_l: halved pos tuple for pow2: ", tup);
+                print_tuple_l("sqrt_l: halved pos tuple for pow2: ", tup);
                 #endif
-                return fxp_pow2_wpos_tuple_l(tup);
-        } else {
-                // For an fxp x < 0, representing it with our {a, b}
-                // tuple, we have the restriction that a (whole) can be negative
-                // (int), but b (frac part) is always positive (uint).
-                // Any negative number x < 0, x == w.f (whole and frac parts)
-                // can still be represented with our non-negative frac'ed tuple:
-                //          if f == 0: tuple {a, b} = {w, 0}
-                //          if f < 0 : tuple {a, b} = {w - 1, 1 + f}
-                // So a < 0, b > 0, but still a + b == w.f == x.
-                // These tuples are convenient for the BKM calculations to
-                // preserve max possible frac precision, but makes
-                // dividing a negative tuple by 2 quite a tricky transformation.
-
-                // TODO:
-                // Div by 2 on a normal fxp would be a simple matter of
-                // r-shifting the magnitude by 1 bit. We could convert to
-                // ulongy/super_fxp, r-shift there, then back into the sort of
-                // tuple we need to build for pow2_wneg_tuple (<-- abstraction
-                // issue here) but it seems expensive.
-                // The actual alternative to try could be to not use these
-                // tuples at all, only ulongys/super_fxp's. Evalute this
-                // possibility and check performance vs. simplicity trade-offs
-
-                // Dividing such a negative tuple by 2 means changing it so that
-                // the resulting a + b would correspond to x/2.
-                // But after that, we also need to adjust it the way
-                // pow2_wneg_tuple expects it: the (non-negative) tuple that
-                // gets created from negating the originally negative argument.
-                // So what we ultimately need here is the tuple for -x/2.
-
-                // Four different cases, depending on whether the
-                // frac part (pong == b) is null or not, and also
-                // whether the whole part (ping == a) is odd or even.
-                if (tup.pong != 0) {
-                        int rbit = tup.pong & 1u; // rounding bit for frac
-                        if (tup.ping % 2) {
-                                #ifdef VERBOSE
-                                printf("sqrt_l: Neg tuple Case 0: odd whole, some frac");
-                                #endif
-                                tup.pong = FXP_POINT5_PONG - ((tup.pong >> 1) + rbit);
-                        } else {
-                                #ifdef VERBOSE
-                                printf("sqrt_l: Neg tuple Case 1: even whole, some frac");
-                                #endif
-                                tup.pong = FXP_BKM_A_ONE_L - ((tup.pong >> 1) + rbit);
-                        }
-                        tup.ping = (-tup.ping >> 1);
-                } else {
-                        if (tup.ping % 2) {
-                                #ifdef VERBOSE
-                                printf("sqrt_l: Neg tuple Case 2: odd whole, 0 frac");
-                                #endif
-                                tup.ping = (-(tup.ping + 1) >> 1);
-                                tup.pong = FXP_POINT5_PONG;
-                        } else {
-                                #ifdef VERBOSE
-                                printf("sqrt_l: Neg tuple Case 3: even whole, 0 frac");
-                                #endif
-                                tup.ping = (-tup.ping >> 1);
-                        }
-                }
-                #ifdef VERBOSE
-                print_tuple("\nsqrt_l: 'halved neg' tuple for pow2: ", tup);
-                #endif
-                return fxp_pow2_wneg_tuple_l(tup);
+                return fxp_pow2_wpos_tuple_l(tup, FXP_SQRT_LOOPS);
         }
+        // Negative tuple: negate and halve before passing to pow2_wneg
+        tuple_l ntup = negate_tuple_l(tup);
+        notrounded = (ntup.ping % 2)? \
+                        FXP_BKM_A_POINT5_L + (ntup.pong >> 1): \
+                        ntup.pong >> 1;
+        ntup.pong = notrounded + rbit;
+        ntup.ping = (ntup.ping >> 1) + (ntup.pong < notrounded);
+        #ifdef VERBOSE
+        print_tuple_l("\nsqrt_l: 'halved neg' tuple for pow2: ", ntup);
+        #endif
+        return fxp_pow2_wneg_tuple_l(ntup, FXP_SQRT_LOOPS);
 }
 
+/*
+Implementation of powxy_l(x) using pow2_l() and lg2_l():
+     x^y == 2^( y * lg2(x) )
+Expected output given the combination of inputs x and y:
 
+  x     y:  Und. -INF [MIN,-1)  -1  (-1,0)   0   (0,1)   1  (1,MAX] +INF
+< 0         Und.  Und.   Und.   Und.  Und.  Und.  Und.  Und.  Und.   Und.
+  0         Und.  +INF  +INF   +INF  +INF   Und.   0     0     0      0
+(0,1)       Und.   0      *      *     *     1     *     *     *      0
+  1         Und.  Und.    1      1     1     1     1     1     1     Und.
+(1,MAX]     Und.   0      *      *     *     1     *     *     *     +INF
+ +INF       Und.   0      0      0     0    Und.  +INF  +INF  +INF   +INF
+
+The * means doing the actual calculations for x and y
+*/
+int fxp_powxy_l(int x, int y)
+{
+        if ((x < 0) || (y == FXP_UNDEF)) {
+                return FXP_UNDEF;
+        }
+        if (x == 0) {
+                return (y < 0)? FXP_POS_INF : \
+                            (y == 0)? FXP_UNDEF: 0;
+        }
+        if (x == FXP_POS_INF) {
+                return (y < 0)? 0: \
+                            (y == 0)? FXP_UNDEF: FXP_POS_INF;
+        }
+        if (y == FXP_NEG_INF) {
+                return (x == FXP_one)? FXP_UNDEF: 0;
+        }
+        if (y == FXP_POS_INF) {
+                return (x < FXP_one)? 0: \
+                            (x == FXP_one)? FXP_UNDEF: FXP_POS_INF;
+        }
+        // First get the lg2 of x
+        tuple_l tup = fxp_get_lg2_as_tuple_l(x, FXP_POWXY_LOOPS);
+        #ifdef VERBOSE
+        print_tuple_l("powxy_l: lg2 tuple", tup);
+        #endif
+        // Create superfxp from the tuple and return
+        // appropriately signed 2^( y*superfxp )
+        if (tup.ping >= 0) {
+                super_fxp_l superposlog = super_fxp_l_from_tuple_l(tup);
+                // Now compute number of whole bits we will get in the product
+                if (y >= 0) {
+                        int pnwbits = superposlog.nwbits + fxp_nbits(y) \
+                                        - FXP_frac_bits;
+                        #ifdef VERBOSE
+                        printf("\ncase 0: +ping +y, product would have %d whole bits\n", pnwbits);
+                        printf("Whole bit counts:  factor: %d,  y: %d\n", \
+                                        superposlog.nwbits, \
+                                        fxp_nbits(y) - FXP_frac_bits);
+                        #endif
+                        return (pnwbits >= FXP_whole_bits)? \
+                                FXP_POS_INF: \
+                                fxp_pow2_pos_arg_xfactor_l(y, \
+                                                    superposlog, \
+                                                    FXP_POWXY_LOOPS);
+                } else {
+                        int posy = -y;
+                        int pnwbits = superposlog.nwbits + fxp_nbits(posy) \
+                                        - FXP_frac_bits;
+                        #ifdef VERBOSE
+                        printf("\ncase 1: +ping -y, product would have %d whole bits\n", pnwbits);
+                        printf("Whole bit counts:  factor: %d,  y: %d\n", \
+                                        superposlog.nwbits, \
+                                        fxp_nbits(posy) - FXP_frac_bits);
+                        #endif
+                        return (pnwbits >= FXP_whole_bits)? \
+                                0: \
+                                fxp_pow2_neg_arg_xfactor_l(posy, \
+                                                    superposlog, \
+                                                    FXP_POWXY_LOOPS);
+                }
+        } else {
+                // TODO: Check if tuple could ever be -INF?
+                // It should be possible if x was extremely close to 0, so that neg characteristic
+                // of the logarithm ends up < -FXP_whole_bits
+                //assert( tup.ping != FXP_NEG_INF );
+
+                super_fxp_l superposlog = super_fxp_l_from_tuple_l( \
+                                                    negate_tuple_l(tup));
+                if (y >= 0) {
+                        #ifdef VERBOSE
+                        int pnwbits = superposlog.nwbits + fxp_nbits(y) \
+                                        - FXP_frac_bits;
+                        printf("\ncase 2: -ping +y, product would have %d whole bits\n", pnwbits);
+                        printf("Whole bit counts:  factor: %d,  y: %d\n", \
+                                        superposlog.nwbits, fxp_nbits(y) - FXP_frac_bits);
+                        #endif
+                        return fxp_pow2_neg_arg_xfactor_l(y, \
+                                                    superposlog, \
+                                                    FXP_POWXY_LOOPS);
+                } else {
+                        int posy = -y;
+                        int pnwbits = superposlog.nwbits + fxp_nbits(posy) - FXP_frac_bits;
+                        #ifdef VERBOSE
+                        printf("\ncase 3: -ping -y, product would have %d whole bits\n", pnwbits);
+                        printf("Whole bit counts:  factor: %d,  y: %d\n", \
+                                        superposlog.nwbits, fxp_nbits(posy) - FXP_frac_bits);
+                        #endif
+                        return (pnwbits >= FXP_whole_bits)? \
+                                FXP_POS_INF: \
+                                fxp_pow2_pos_arg_xfactor_l(posy, \
+                                                    superposlog, \
+                                                    FXP_POWXY_LOOPS);
+                }
+        }
+}

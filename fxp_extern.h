@@ -10,7 +10,6 @@
 
 extern const int FXP_INT_BITS;
 extern const int FXP_INT_BITS_M1;
-extern const int FXP_INT_BITS_P3;
 extern const int FXP_INT_BITS_M1_NEG;
 extern const int FXP_FRAC_BITS_DEF;
 extern const int FXP_POS_INF;
@@ -63,16 +62,14 @@ extern long double FXP_min_ld;
 extern long double FXP_max_ld;
 extern long double FXP_max_ldx;
 
-extern const unsigned int FXP_BKM_A_ONE;
-extern const unsigned long FXP_BKM_X_ONE_L;
-extern const unsigned long FXP_BKM_A_ONE_L;
 extern unsigned int FXP_shifted_e;
 extern unsigned int FXP_shifted_pi;
 extern unsigned int FXP_shifted_ln_2;
 extern unsigned int FXP_shifted_lg10_2;
 extern int FXP_half;
-extern unsigned int FXP_one;
+extern int FXP_one;
 extern int FXP_two;
+extern int FXP_almost1;
 extern int FXP_lg2_maxloops;
 extern int FXP_lg2_l_mshift;
 extern int FXP_lg2_l_mshift_m1;
@@ -88,4 +85,14 @@ extern const unsigned long FXP_RINT_MASK;
 
 extern const int FXP_LONG_BITS;
 extern const int FXP_LONG_BITS_M1;
-extern const unsigned int FXP_POINT5_PONG;
+extern const unsigned long FXP_BKM_A_ONE_L;
+extern const unsigned long FXP_BKM_A_POINT5_L;
+extern const unsigned long FXP_BKM_X_ONE_L;
+
+extern const unsigned int SFXP_MAX_WBITS;
+
+extern const int FXP_LOGX_LOOPS;
+extern const int FXP_POWX_LOOPS;
+extern const int FXP_SQRT_LOOPS;
+extern const int FXP_POWXY_LOOPS;
+

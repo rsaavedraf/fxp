@@ -34,7 +34,10 @@ void print_fxp_as_bin(int n, int width)
                 printf(" ");
                 width--;
         }
-        if (signspace) printf("(-)");
+        if (signspace)
+                printf("(-)");
+        else
+                printf("   ");
         int i = (nbn == 0)? 1: nbn;
         if (FXP_frac_bits > i) i = FXP_frac_bits;
         while (i > 0) {
@@ -67,12 +70,12 @@ void print_fxp(int x)
                 //if (frac < 0) frac = -frac;
                 //printf("%.16Le (=-%d.%7d =%d =x(-)%X =b",
                 //        n, whole, frac, x, px);
-                printf("%.10Le (fxp: =x(-)%X =%d =b",
+                printf("%17.10Le (fxp: x(-)%8X =%12d =b",
                         n, px, x);
         } else {
                 //printf("%.16Le (=%d.%7d =%d =x%X =b",
                 //        n, whole, frac, x, x);
-                printf("%.10Le (fxp: x%X =%d =b",
+                printf("%17.10Le (fxp:    x%8X =%12d =b",
                         n, x, x);
         }
         print_fxp_as_bin(x, 0);

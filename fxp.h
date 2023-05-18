@@ -13,6 +13,7 @@
 #ifndef FXP_HEADER
 #define FXP_HEADER
 
+/*
 // Aux struct used internally
 typedef struct tuple {
         int ping;
@@ -20,6 +21,8 @@ typedef struct tuple {
 } tuple;
 
 void print_tuple(char * msg, tuple t);
+tuple negate_tuple(tuple t);
+*/
 
 // Number of bits to use for the whole vs. frac parts
 int fxp_get_frac_bits();
@@ -57,11 +60,11 @@ int fxp_get_bin_frac(int fxp1);
 int fxp_get_dec_frac(int fxp1);
 unsigned int fxp_get_lshifted_frac(unsigned int fxp1);
 
-// Aux function to rshift withrounding of last bit
+// Aux function to rshift with rounding of last bit
 unsigned int rshift_uint_rounding(unsigned int x, \
                                   int shift);
 
-// Aux function to get position of most signif bit
+// Aux function to get position of most significant 1 bit
 int fxp_nbits(unsigned int n);
 
 // Aux function for distrib. multiplication
@@ -92,8 +95,8 @@ int fxp_lg10(int fxp1);
 int fxp_pow2(int fxp1);
 int fxp_exp(int fxp1);
 int fxp_pow10(int fxp_x);
-int fxp_powxy(int fxp_x, int fxp_y);
 int fxp_sqrt(int fxp1);
+int fxp_powxy(int fxp_x, int fxp_y);
 
 // Trigonometric functions
 
