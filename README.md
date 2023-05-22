@@ -17,9 +17,9 @@ int-size precision (emulated longs,) so as to avoid calculation
 inaccuracies that would appear if only using the precision of the 
 chosen number of frac bits. Goals of this implementation are mostly 
 flexibility (hence the configurable frac bits,) yet ultimate 
-precision. All tests, including those for exp() and pow10(), should 
-ideally run with zero inaccuracy warnings, regardless of frac bits 
-in use.
+precision. All tests, including those for the power functions, 
+should ideally run with no inaccuracy warnings, or as few as possible, 
+regardless of frac bits in use.
 
 Functions sqrt() and powxy() now implemented, also using lg2 and pow2.
 
