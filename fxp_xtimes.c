@@ -18,7 +18,7 @@
 
 #define DASHES "=================================================\n"
 #define MAX_NUMS 250
-#define MAX_OPS  50
+#define MAX_OPS  100
 
 int main(void) {
 
@@ -27,12 +27,13 @@ int main(void) {
         long double tadd, tadd_l, tmul, tmul_l, tmul_d, tdiv, tdiv_l;
         long double tlg2, tlg2_l, tlg2_mul, tlg2_mul_l, tln, tln_l;
         long double tpow2, tpow2_l, texp, texp_l, tpow10, tpow10_l;
-        long double tlg10, tlg10_l, tsqrt, tsqrt_l;
+        long double tlg10, tlg10_l, tsqrt, tsqrt_l, tpowxy, tpowxy_l;
         long double avgadd, avgadd_l, avgmul, avgmul_l, avgmul_d;
         long double avgdiv, avgdiv_l, avglg2, avglg2_l, avglg2_mul;
         long double avglg2_mul_l, avgln, avgln_l, avglg10, avglg10_l;
         long double avgpow2, avgpow2_l, avgexp, avgexp_l;
         long double avgpow10, avgpow10_l, avgsqrt, avgsqrt_l;
+        long double avgpowxy, avgpowxy_l;
         // Times for the system's native operations
         long double tadd_sys, tmul_sys, tdiv_sys;
         long double avgadd_sys, avgmul_sys, avgdiv_sys;
@@ -75,6 +76,8 @@ int main(void) {
         avgexp_l = 0.0;
         avgpow10 = 0.0;
         avgpow10_l = 0.0;
+        avgpowxy = 0.0;
+        avgpowxy_l = 0.0;
         avgsqrt = 0.0;
         avgsqrt_l = 0.0;
         avgadd_sys = 0.0;
@@ -104,6 +107,8 @@ int main(void) {
                 texp_l = 0.0;
                 tpow10 = 0.0;
                 tpow10_l = 0.0;
+                tpowxy = 0.0;
+                tpowxy_l = 0.0;
                 tsqrt = 0.0;
                 tsqrt_l = 0.0;
                 lastp = -1;
@@ -539,6 +544,44 @@ int main(void) {
                         dt = ((double) t1 - t0);
                         tsqrt += dt;
                         avgsqrt += dt;
+
+                        // Calculation of powxy of fxp's using
+                        // lg2 and pow2
+                        // make n3 negative to enforce the calculations
+                        n3 = -n3;
+                        t0 = clock();
+                        for (int i = 0; i < MAX_OPS; i++) {
+                                x = fxp_powxy(n1, n3);
+                                x = fxp_powxy(n2, n3);
+                                for (int j = 0; j < nvals; j++) {
+                                        y = val[j];
+                                        x = fxp_powxy(n1, n3);
+                                        x = fxp_powxy(n2, n3);
+                                        x = fxp_powxy(n1, n3);
+                                }
+                        }
+                        t1 = clock();
+                        dt = ((double) t1 - t0);
+                        tpowxy += dt;
+                        avgpowxy += dt;
+
+                        // Calculation of powxy_l of fxp's using
+                        // lg2_l and pow2_l (-> longs)
+                        t0 = clock();
+                        for (int i = 0; i < MAX_OPS; i++) {
+                                x = fxp_powxy_l(n1, n3);
+                                x = fxp_powxy_l(n2, n3);
+                                for (int j = 0; j < nvals; j++) {
+                                        y = val[j];
+                                        x = fxp_powxy_l(n1, n3);
+                                        x = fxp_powxy_l(n2, n3);
+                                        x = fxp_powxy_l(n1, n3);
+                                }
+                        }
+                        t1 = clock();
+                        dt = ((double) t1 - t0);
+                        tpowxy_l += dt;
+                        avgpowxy_l += dt;
                 }
 
                 // Results for this configuration of frag bits
@@ -572,11 +615,15 @@ int main(void) {
                 printf("pow10    : %6.2Lf  (about %5.2Lfx pow2, using pow2)\n", \
                             tpow10 / tadd, tpow10 / tpow2);
                 printf("pow10_l  : %6.2Lf  (about %5.2Lfx pow2, using pow2_l)\n", \
-                            tpow10_l / tadd, tpow2_l / tpow2);
+                            tpow10_l / tadd, tpow10_l / tpow2);
                 printf("sqrt     : %6.2Lf  (about %5.2Lfx pow2, using lg2 & pow2)\n", \
                             tsqrt / tadd, tsqrt / tpow2);
                 printf("sqrt_l   : %6.2Lf  (about %5.2Lfx pow2, using lg2_l & pow2_l)\n", \
                             tsqrt_l / tadd, tsqrt_l / tpow2);
+                printf("powxy    : %6.2Lf  (about %5.2Lfx pow2, using lg2 & pow2)\n", \
+                            tpowxy / tadd, tpowxy / tpow2);
+                printf("powxy_l  : %6.2Lf  (about %5.2Lfx pow2, using lg2_l & pow2_l)\n", \
+                            tpowxy_l / tadd, tpowxy_l / tpow2);
         }
 
         // Overall results
@@ -609,6 +656,8 @@ int main(void) {
         avgexp_l /= nconfigs;
         avgsqrt /= nconfigs;
         avgsqrt_l /= nconfigs;
+        avgpowxy /= nconfigs;
+        avgpowxy_l /= nconfigs;
         printf("add      : %6.2Lf  (%6.2Lfx system's native addition of ints)\n", \
                     1.0L, avgadd / avgadd_sys);
         printf("mul      : %6.2Lf  (%6.2Lfx system's native multiplication of ints)\n", \
@@ -657,6 +706,12 @@ int main(void) {
         printf("sqrt_l   : %6.2Lf  (about %5.2Lfx pow2, using lg2_l & pow2_l)\n", \
                     avgsqrt_l / avgadd, \
                     avgsqrt_l / avgpow2);
+        printf("powxy    : %6.2Lf  (about %5.2Lfx pow2, using lg2 & pow2)\n", \
+                    avgpowxy / avgadd, \
+                    avgpowxy / avgpow2);
+        printf("powxy_l  : %6.2Lf  (about %5.2Lfx pow2, using lg2_l & pow2_l)\n", \
+                    avgpowxy_l / avgadd, \
+                    avgpowxy_l / avgpow2);
 
         printf("%s", DASHES);
         printf("(Keep in mind: compiler optimization options used/not used can ");

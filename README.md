@@ -39,14 +39,14 @@ That will compile with gcc locally, and will run the tester program.
 It should produce a long testing output, like the one in the 
 *output.\*.txt* file(s). At the end it will ideally show a list with 
 the observed number of warnings for each of the frac bit 
-configurations tested. If an error larger than the maximum tolerance 
-is found, then an assert will get triggered stopping the program 
+configurations tested. If an error larger than the maximum allowed 
+is found, an assert will get triggered stopping the program 
 immediately, showing the function call that was being tested right 
 then.
 
-Up to now I have run and tested it successfully (zero warnings) 
-on a couple of CPUs listed below, using gcc v11.3.0 both without and 
-with some -O options:
+Up to now I have run and tested it successfully (zero asserts)
+on the CPUs listed below, using gcc v11.3.0 both without and with some 
+-O options:
 
 [Little Endian](https://en.wikipedia.org/wiki/Endianness) CPUs:
 - Intel Core i7-6700K

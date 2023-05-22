@@ -147,6 +147,12 @@ inline ulongy ulongy_hi_bitwise_and(ulongy x, unsigned int y)
         return anded;
 }
 
+inline ulongy ulongy_hi_bitwise_or(ulongy x, unsigned int y)
+{
+        ulongy ored = { x.hi | y, x.lo };
+        return ored;
+}
+
 
 /*
  * Distributive multiplication approach for two uints,

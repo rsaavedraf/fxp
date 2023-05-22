@@ -52,6 +52,9 @@ extern int FXP_whole_min;
 extern int FXP_whole_min_m1;
 extern long fxp_frac_max_dec;
 extern long fxp_frac_max_dec_p1;
+extern int FXP_int_plus_whole_bits_m1;
+extern int FXP_int_plus_whole_bits_m2;
+
 
 extern float FXP_min_fx;
 extern float FXP_max_fx;
@@ -94,5 +97,6 @@ extern const unsigned int SFXP_MAX_WBITS;
 extern const int FXP_LOGX_LOOPS;
 extern const int FXP_POWX_LOOPS;
 extern const int FXP_SQRT_LOOPS;
-extern const int FXP_POWXY_LOOPS;
+extern const int FXP_POWXY_LG_LOOPS;
+extern const int FXP_POWXY_POW_LOOPS;
 

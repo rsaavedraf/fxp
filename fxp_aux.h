@@ -12,7 +12,7 @@
 #include "fxp_conv.h"
 
 long double lim_frac(long double x, unsigned int fbp);
-void print_fxp_as_bin(int x, int width);
+void print_fxp_as_bin(int x);
 void print_fxp(int fxp);
 void print_fxp_div(int startmask, int nmaskbits, int n, int frac_bits);
 void trace_fxp_div( char * msg,

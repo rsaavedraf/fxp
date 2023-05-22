@@ -30,6 +30,7 @@ ulongy rshift_ulongy_rounding(ulongy x, unsigned int rshift);
 unsigned int rshift_ulongy_into_uint_rounding(ulongy x);
 ulongy ulongy_bitwise_and(ulongy x, ulongy y);
 ulongy ulongy_hi_bitwise_and(ulongy x, unsigned int y);
+ulongy ulongy_hi_bitwise_or(ulongy x, unsigned int y);
 
 ulongy ulongy_from_dmul(unsigned int a, unsigned int b);
 unsigned int dmul_into_uint(unsigned int a, unsigned int b);

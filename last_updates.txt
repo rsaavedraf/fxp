@@ -569,9 +569,56 @@ number of frac bits.
 Without a ulongy in the tuple in fxp.c, functions pow2, sqrt, and powxy
 cannot match the precision of corresponding ones in fxp_l.c.
 
+2023-05-20
+
+Separate constants for # of loops to use for lg and pow calculations
+in different functions. Using WDELTA = 3, the following values allow
+tester runs with no asserts:
+int FXP_lg2_maxloops = FXP_FRAC_BITS_DEF;           // for lg2
+const int FXP_LOGX_LOOPS = FXP_INT_BITS_M1 - 1;     // for ln and lg10
+const int FXP_POWX_LOOPS = FXP_INT_BITS_M1;         // for pow2, exp, and pow10
+const int FXP_SQRT_LOOPS = FXP_INT_BITS_M1;         // for sqrt
+const int FXP_POWXY_POW_LOOPS = FXP_INT_BITS + 1;   // for pow2 in powxy
+const int FXP_POWXY_LG_LOOPS = FXP_INT_BITS + 3;    // for lg2 in powxy
+
+The most sensitive and demanding is clearly the lg2 calculation in powxy.
+
+2023-05-21
+
+Checking different WDELTA_MAX values vs. the different number
+of loops required in particular for the lg2 calculation in powxy:
+WDELTA_MAX   FXP_POWXY_LG_LOOPS
+    1.75        +7
+    2.0         +7
+    2.025       +5
+    2.05        +4
+    2.25        +4
+    2.5         +3
+    3.0         +3
+    4.0         +3
+    8.0         +2
+
+The implemented division already requires a WDELTA_MAX >= 1.84, otherwise
+asserts can get triggered for some few problematic cases. For example,
+with 31 frac bits, x/y with the following values will trigger the assert
+if WDELTA_MAX < 1.84. This specific case is now tested in
+test_ops_with_values_of_interest():
+x      : -1046690937 =b(-).0111110011000110011110001111001
+y      : -1094861345 =b(-).1000001010000100100001000100001
+
+Using WDELTA_MAX = 3, and WDELTA_DIV = 1.2 as defaults.
+
+2023-05-22
+
+Tuples in fxp.c now again using ulongy's, so all functions in fxp.c
+now with the exact same accuracy as those in fxp_l.c
+
+Changes for better alignment in the log output, also reactivating the
+tracing of division in fxp.c when VERBOSE defined
+
+
 
 Pending:
-In fxp.c's tuple, use again a ulongy instead of just an uint.
 Include powxy_l and powxy in report from fxp_xtimes.c
 Implement trigonometric functions
 Rewrite in Rust?

@@ -16,31 +16,21 @@
 #include "print_as_bits.h"
 //#include <assert.h>
 
-#define VERBOSE 1
-
-void print_fxp_as_bin(int n, int width)
+void print_fxp_as_bin(int n)
 {
         int an;
         int signspace = 0;
         if (n < 0) {
                 an = -n;
-                signspace = 1;
+                printf("-b");
         } else {
                 an = n;
+                printf(" b");
         }
         int nbn = fxp_nbits(an);
-        int margin = (nbn == 0? 1: nbn) - signspace;
-        while (width > margin) {
-                printf(" ");
-                width--;
-        }
-        if (signspace)
-                printf("(-)");
-        else
-                printf("   ");
-        int i = (nbn == 0)? 1: nbn;
-        if (FXP_frac_bits > i) i = FXP_frac_bits;
+        int i = FXP_INT_BITS;
         while (i > 0) {
+                //if (i == FXP_WORD_BITS) printf("_");
                 if (i == FXP_frac_bits) printf(".");
                 if (i <= nbn) {
                         int bit = (an >> (i - 1)) & 1;
@@ -61,26 +51,16 @@ void print_fxp(int x)
                 return;
         }
         long double n = fxp2ld(x);
-        //int whole = fxp_get_whole_part(x);
-        //int frac = fxp_get_dec_frac(x);
-        //printf("\nx:%d,  w:%d,  f:%d \n", x, whole, frac);
         if (x < 0) {
                 int px = -x;
-                //if (whole < 0) whole = -whole;
-                //if (frac < 0) frac = -frac;
-                //printf("%.16Le (=-%d.%7d =%d =x(-)%X =b",
-                //        n, whole, frac, x, px);
-                printf("%17.10Le (fxp: x(-)%8X =%12d =b",
-                        n, px, x);
+                printf("%17.10Le (fxp: %11d, -x%08X, ",
+                        n, x, px);
         } else {
-                //printf("%.16Le (=%d.%7d =%d =x%X =b",
-                //        n, whole, frac, x, x);
-                printf("%17.10Le (fxp:    x%8X =%12d =b",
+                printf("%17.10Le (fxp: %11d,  x%08X, ",
                         n, x, x);
         }
-        print_fxp_as_bin(x, 0);
+        print_fxp_as_bin(x);
         printf(")");
-        //printf(", %d bits)", nbits);
 }
 
 void print_fxp_div(int startmask, int nmaskbits, int n, int frac_bits)
@@ -132,10 +112,6 @@ void trace_fxp_div( char * msg,
         }
         printf(" m:");
         print_int_as_bin(mc, bindex);
-        //printf("  (x%x, %d bits) \tq:%d (x%x, %d bits,  last q bit:%d)\n",
-        //        (unsigned int) mc, bmc, \
-        //        quotient, (unsigned int) quotient, \
-        //        fxp_nbits(quotient), lastqbit);
         printf("  (x%x, %d bits) \tq:",
                 (unsigned int) mc, bmc);
                 print_fxp(quotient);
