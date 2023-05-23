@@ -11,17 +11,15 @@ following CMU SEI's INT32-C recommendations. For further details:
 
 lg2(), pow2() implemented using the [BKM algorithm (Wikipedia)](https://en.wikipedia.org/wiki/BKM_algorithm)
 
-Additional logarithm and power functions, ln(), lg10(), exp(), and 
-pow10(), implemented through lg2 and pow2, but now using double the 
-int-size precision (emulated longs,) so as to avoid calculation 
-inaccuracies that would appear if only using the precision of the 
-chosen number of frac bits. Goals of this implementation are mostly 
-flexibility (hence the configurable frac bits,) yet ultimate 
-precision. All tests, including those for the power functions, 
-should ideally run with no inaccuracy warnings, or as few as possible, 
-regardless of frac bits in use.
-
-Functions sqrt() and powxy() now implemented, also using lg2 and pow2.
+Additional logarithm and power functions (ln, lg10, exp, pow10, sqrt, and 
+powxy,) all implemented through lg2 and pow2. Behind the scenes, these 
+functions work with longs or emulated longs, so as to avoid calculation 
+inaccuracies that would inevitably appear if working just with the chosen 
+number of frac bits, or just with int-size precision. Goals of this 
+implementation are mostly flexibility (hence the configurable frac bits,) yet 
+also ultimate precision if desired. All tests, including those for the power 
+functions, should ideally run with no inaccuracy warnings, or as few as 
+possible, regardless of frac bits in use.
 
 Later:
 - Trigonometric functions
