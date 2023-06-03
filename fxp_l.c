@@ -25,15 +25,27 @@
 #include "print_as_bits.h"
 #endif
 
+/*
 const unsigned long FXP_E_I64 = 0xADF85458A2BB4A9Bul;
 const unsigned long FXP_PI_I64 = 0xC90FDAA22168C235ul;
 const unsigned long FXP_LN_2_I64 = 0xB17217F7D1CF7C72ul;
 const unsigned long FXP_LG10_2_I64 = 0x4D104D427DE7FD01ul;
 const unsigned long FXP_LG2_E_I64 = 0xB8AA3B295C17F19Eul;
 const unsigned long FXP_LG2_10_I64 = 0xD49A784BCD1B8B51ul;
+*/
+
+// Always reserving most significant bit for sign:
+const unsigned long FXP_E_I64 = 0x56FC2A2C515DA54Dul;
+const unsigned long FXP_PI_I64 = 0x6487ED5110B4611Aul;
+const unsigned long FXP_LG2_10_I64 = 0x6A4D3C25E68DC5A8ul;
+const unsigned long FXP_LG2_E_I64 = 0x5C551D94AE0BF8CFul;
+const unsigned long FXP_LN_2_I64 = 0x58B90BFBE8E7BE3Aul;
+const unsigned long FXP_LG10_2_I64 = 0x268826A13EF3FE7Ful;
+
 
 const unsigned long ULONG_ALL_ONES = ~0ul;
 const unsigned long ULONG_ALL_ONES_RS1 = ~0ul >> 1;
+const unsigned long ULONG_SIGN = ~ULONG_ALL_ONES_RS1;
 
 // For the BKM lg2 calculation when using longs.
 // Values in this array are: a[k] = lg2(1 + 1/2^k) represented as
@@ -65,26 +77,15 @@ static const unsigned long FXP_BKM_LOGS_L[] = {
 // a 4-bit right-shift of the value 4 positions earlier
 };
 
-// Auxiliary struct used internally for logarithms
-typedef struct tuple_l {
-        int ping;
-        unsigned long pong;
-} tuple_l;
-
 // A super_fxp is not just a "bigger FXP," it also has its own
 // fxp configuration (it's own number of whole vs. frac bits,)
 // independent of the global fxp setting, always carrying this
-// independent configuration within.
-typedef struct super_fxp_l {
-        int nwbits;             // <- Number of whole bits
-        unsigned long number;   // <- The super fxp number
-} super_fxp_l;
-
-const super_fxp_l SFXP_ZERO_L = {0, 0ul};
-const super_fxp_l SFXP_LG2_E_FACTOR_L = {1, FXP_LG2_E_I64};
-const super_fxp_l SFXP_LG2_10_FACTOR_L = {2, FXP_LG2_10_I64};
-const super_fxp_l SFXP_LN_2_FACTOR_L = {0, FXP_LN_2_I64};
-const super_fxp_l SFXP_LG10_2_FACTOR_L = {0, FXP_LG10_2_I64};
+// individual configuration within.
+const super_fxp_l SFXP_ZERO_L = {0, 1, 0ul};
+const super_fxp_l SFXP_LG2_10_FACTOR_L = {0, 3, FXP_LG2_10_I64};
+const super_fxp_l SFXP_LG2_E_FACTOR_L = {0, 2, FXP_LG2_E_I64};
+const super_fxp_l SFXP_LN_2_FACTOR_L = {0, 1, FXP_LN_2_I64};
+const super_fxp_l SFXP_LG10_2_FACTOR_L = {0, 1, FXP_LG10_2_I64};
 
 static inline int fxp_nbits_l(unsigned long x)
 {
@@ -92,54 +93,104 @@ static inline int fxp_nbits_l(unsigned long x)
         return FXP_LONG_BITS - __builtin_clzl(x);
 };
 
-static inline unsigned long fxp_get_lshifted_frac_l(unsigned int fxp1)
+// Functions for super_fxp_l structs
+
+static inline int sfxp_l_get_nwbits(super_fxp_l x)
 {
-        return ((unsigned long) (fxp1 & FXP_frac_mask)) << FXP_int_plus_whole_bits_m1;
+        return x.nwbits;
 }
 
-static inline tuple_l tuple_l_from_fxp(int fxp1)
-{
-        tuple_l tup = {   fxp_get_whole_part(fxp1),
-                          fxp_get_lshifted_frac_l(fxp1) };
-        return tup;
-}
-
-
-static inline int super_fxp_l_get_nwbits(super_fxp_l x)
-{
-        return (x.nwbits < 0)? -x.nwbits: x.nwbits;
-}
-
-static inline unsigned long super_fxp_l_get_unumber(super_fxp_l x)
+static inline unsigned long sfxp_l_get_unumber(super_fxp_l x)
 {
         return x.number;
 }
 
-static inline tuple_l negate_tuple_l(tuple_l tup)
+static inline int super_fxp_l_get_sign(super_fxp_l x)
 {
-        if (tup.pong == 0ul) {
-                tuple_l negtup = { -tup.ping, 0ul };
-                return negtup;
+        return x.sign;
+}
+
+static inline super_fxp_l sfxp_l_create(unsigned int sign, \
+                                        unsigned int nwbits, \
+                                        unsigned long num)
+{
+        nwbits = (nwbits > SFXP_MAX_WBITS)? SFXP_MAX_WBITS: nwbits;
+        super_fxp_l x = { (sign != 0), nwbits, num };
+        return x;
+}
+
+static inline super_fxp_l sfxp_l_from_cm(int c, \
+                                         unsigned long m)
+{
+        #ifdef VERBOSE
+        printf("c: %d, m: %lX\n", c, m);
+        printf("characteristic:  "); print_int_as_bin(c, 0); printf("\n");
+        printf("mantissa      :  "); print_ulong_as_bin(m); printf("\n");
+        #endif
+        if (c >= 0) {
+                int nb = fxp_nbits(c);
+                unsigned long num = (((unsigned long) c) << (FXP_LONG_BITS_M1 - nb));
+                int rbit = (m >> (nb - 1)) & 1;
+                m = (m >> nb) + rbit;
+                num = num + m;
+                super_fxp_l x = { 0, nb + 1, num };
+                #ifdef VERBOSE
+                printf("sfxp num      :  "); print_ulong_as_bin(num); printf("\n");
+                #endif
+                return x;
         } else {
-                tuple_l negtup = { -tup.ping - 1, \
-                                 FXP_BKM_A_ONE_L - tup.pong};
-                return negtup;
+                int pc = -c;
+                int nb = fxp_nbits(pc);
+                unsigned long num = (((unsigned long) pc) << (FXP_LONG_BITS_M1 - nb));
+                int rbit = (m >> (nb - 1)) & 1;
+                m = (m >> nb) + rbit;
+                num = num - m;
+                super_fxp_l x = { 1, nb + 1, num };
+                #ifdef VERBOSE
+                printf("sfxp num      : -"); print_ulong_as_bin(num); printf("\n");
+                #endif
+                return x;
         }
 }
 
-#ifdef VERBOSE
-static inline int super_fxp_l_2_fxp(super_fxp_l x)
+inline super_fxp_l sfxp_l_from_fxp(int fxp1)
 {
-        if (x.nwbits >= 0) {
-                int sfb = FXP_LONG_BITS - x.nwbits;
-                int fbdiff = sfb - FXP_frac_bits;
+        super_fxp_l sup;
+        if (fxp1 >= 0) {
+                int w = fxp_get_whole_part(fxp1);
+                int f = fxp_get_frac_part_bin(fxp1);
+                sup.sign = 0;
+                sup.nwbits = fxp_nbits(w) + 1;
+                sup.number = (((unsigned long) w) << (FXP_LONG_BITS - sup.nwbits)) \
+                                | (((unsigned long) f) << (FXP_long_mfrac_bits - sup.nwbits));
+        } else {
+                int posf = -fxp1;
+                int w = fxp_get_whole_part(posf);
+                int f = fxp_get_frac_part_bin(posf);
+                int nb = fxp_nbits(w) + 1;
+                long pnum = (((long) w) << (FXP_LONG_BITS - nb)) \
+                                | (((long) f) << (FXP_long_mfrac_bits - nb));
+                sup.sign = 1;
+                sup.nwbits = nb;
+                sup.number = ((unsigned long) pnum);
+        }
+        return sup;
+}
+
+inline int sfxp_l_2_fxp(super_fxp_l x)
+{
+        int sfb = FXP_LONG_BITS - x.nwbits;
+        int fbdiff = sfb - FXP_frac_bits;
+        if (x.sign == 0) {
                 if (fbdiff >= 0) {
+                        // As many or more frac bits than in fxp's
                         int rbit = (x.number >> (fbdiff - 1)) & 1u;
                         unsigned long num = (x.number >> fbdiff) + rbit;
                         unsigned long whole = num >> FXP_frac_bits;
                         if (whole > FXP_whole_max) return FXP_POS_INF;
                         return (int) num;
                 } else {
+                        // Fewer frac bits than in fxp's
                         unsigned long whole = x.number >> sfb;
                         if (whole > FXP_whole_max) return FXP_POS_INF;
                         int frac = (int) (x.number & (ULONG_ALL_ONES >> x.nwbits));
@@ -147,8 +198,6 @@ static inline int super_fxp_l_2_fxp(super_fxp_l x)
                         return fxp_bin((int) whole, frac);
                 }
         } else {
-                int sfb = FXP_LONG_BITS + x.nwbits;
-                int fbdiff = sfb - FXP_frac_bits;
                 if (fbdiff >= 0) {
                         int rbit = (x.number >> (fbdiff - 1)) & 1u;
                         unsigned long num = (x.number >> fbdiff) + rbit;
@@ -165,109 +214,58 @@ static inline int super_fxp_l_2_fxp(super_fxp_l x)
         }
 }
 
-void print_super_fxp_l(super_fxp_l x)
+void print_sfxp_l(char * msg, super_fxp_l x)
 {
-        printf("Super_fxp_l: {x%X, x%lX}\n", x.nwbits, x.number);
-        printf("Fxp equiv. : "); print_fxp(super_fxp_l_2_fxp(x)); printf("\n");
+        printf("\n%s", msg);
+        printf("Sfxp_l : {%d, %d, x%lX}\n", x.sign, x.nwbits, x.number);
+        printf("    Fxp eq: "); print_fxp(sfxp_l_2_fxp(x)); printf("\n");
 }
 
-#endif
-
-void print_tuple_l(char * msg, tuple_l tup)
+static inline long sfxp_l_get_signed_num(super_fxp_l x)
 {
-        long double num = (long double) tup.ping \
-                + ((long double) tup.pong) / FXP_BKM_A_ONE_L;
-        printf("%s: ", msg);
-        printf("{x%X, x%lX} == %.10Lf\n", \
-                tup.ping, tup.pong, num);
+        return x.sign? -((long) x.number): (long) x.number;
 }
 
-static inline super_fxp_l super_fxp_l_create(unsigned int nwbits, \
-                                             unsigned long num)
+static inline unsigned long sfxp_l_get_poswhole(super_fxp_l x)
 {
-        nwbits = (nwbits > SFXP_MAX_WBITS)? SFXP_MAX_WBITS: nwbits;
-        super_fxp_l x = { nwbits, num };
-        return x;
+        return (x.nwbits == 0)? 0ul: x.number >> (FXP_LONG_BITS - x.nwbits);
 }
 
-static inline super_fxp_l super_fxp_l_from_tuple_l(tuple_l tup)
+static inline unsigned long get_sfxp_frac_for_bkme_l(super_fxp_l x)
 {
-        unsigned long nwb = fxp_nbits(tup.ping);
-        unsigned long number;
-        if (nwb == 0) {
-                number = tup.pong << 1;
-        } else if (nwb == 1) {
-                number = FXP_BKM_A_ONE_L | tup.pong;
-        } else {
-                number = (((unsigned long) tup.ping) << (FXP_LONG_BITS - nwb)) \
-                                    | (tup.pong >> (nwb - 1));
-        }
-        return super_fxp_l_create(nwb, number);
+        return (x.number << x.nwbits) >> 1;
 }
 
-// Commenting out these functions which aren't being used right now,
-
-/*
-static inline long super_fxp_l_get_signed_num(super_fxp_l x)
+static inline super_fxp_l sfxp_l_negate(super_fxp_l x)
 {
-        return (x.nwbits < 0)? -((long) x.number): (long) x.number;
-}
-
-static inline unsigned long sfxp_l_get_poswhole_ul(super_fxp_l x)
-{
-        return x.number >> (FXP_LONG_BITS - x.nwbits);
-}
-
-static inline unsigned long super_fxp_l_get_lshifted_frac(super_fxp_l x)
-{
-        return (x.nwbits >= 0)? x.number << x.nwbits:
-                                x.number << -x.nwbits;
-}
-
-static inline super_fxp_l super_fxp_l_negate(super_fxp_l x)
-{
-        super_fxp_l y = { -x.nwbits, x.number };
+        super_fxp_l y = { (x.sign == 0), x.nwbits, x.number };
         return y;
 }
 
-static inline super_fxp_l posfxp_x_possuper_fxp_l(int x, super_fxp_l c)
+static inline super_fxp_l posfxp_x_possfxp_l(int x, super_fxp_l c)
 {
         int clz_m1 = __builtin_clz(x) - 1;
         unsigned int shifted_x = x << clz_m1;
         unsigned long product = dmul_ulong_x_uint(c.number, x);
         int nwb = c.nwbits + FXP_whole_bits;
-        super_fxp_l super_product = super_fxp_l_create_unsigned(nwb, product);
+        super_fxp_l super_product = sfxp_l_create(0, nwb, product);
         return super_product;
 }
 
-static inline super_fxp_l get_fxp_x_super_fxp_l(int x, super_fxp_l c)
+static inline super_fxp_l get_fxp_x_sfxp_l(int x, super_fxp_l c)
 {
         int sx = (x >= 0);
-        int sc = (c.nwbits >= 0);
+        int sc = (c.sign == 0);
+        super_fxp_l prod;
         if (sx) {
-                if (sc) {
-                        // Both NON-negative
-                        return posfxp_x_possuper_fxp_l(x, c);
-                } else {
-                        // Only c negative
-                        return super_fxp_l_negate( \
-                                    posfxp_x_possuper_fxp_l(x, \
-                                            super_fxp_l_negate(c)));
-                }
+                prod = posfxp_x_possfxp_l(x, c);
+                prod.sign = c.sign;
         } else {
-                if (sc) {
-                        // Only x negative
-                        return super_fxp_l_negate( \
-                                    posfxp_x_possuper_fxp_l(-x, c));
-                } else {
-                        // Both negative
-                        return super_fxp_l_negate( \
-                                    posfxp_x_possuper_fxp_l(-x, \
-                                            super_fxp_l_negate(c)));
-                }
+                prod = posfxp_x_possfxp_l(-x, c);
+                prod.sign = sc;
         }
+        return prod;
 }
-*/
 
 /*
  * r-shift an unsigned long by shift, rounding its last bit
@@ -416,32 +414,30 @@ int fxp_lg2_mul_l(int fxp1)
 
 /*
  * Internal auxiliary function that calculates the characteristic
- * and rounded mantissa of lg2, returning them separately in a
- * struct (tuple), both at their maximum int-sized precision:
- * The characteristic as int with 0 frac bits,
- * the mantissa as unsigned int with 31 frac bits (exact same
- * alignment as hi int in the BKM array values)
+ * and rounded mantissa of lg2, returning them already summed up
+ * into a super_fxp_l
  * Uses the BKM L-Mode algorithm (requires table of pre-calculated
  * values) and longs.
  *
  * For more details on BKM:
  * https://en.wikipedia.org/wiki/BKM_algorithm
  */
-static inline tuple_l fxp_get_lg2_as_tuple_l(int fxp1, \
-                                const int MAX_LOOPS)
+static inline super_fxp_l fxp_get_lg2_as_sfxp_l( \
+                                    int fxp1, \
+                                    const int MAX_LOOPS)
 {
-        tuple_l result;
+        super_fxp_l result;
         // Assumes fxp1 is for sure > 0
         int clz = __builtin_clz((unsigned int) fxp1);
         // clz > 0 since at least sign bit == 0
         int nbx = FXP_INT_BITS - clz;
         // Assign the characteristic
-        result.ping = \
+        int c = \
                 ((fxp1 <= FXP_almost1) || (fxp1 >= FXP_two))? \
-                        (nbx - FXP_frac_bits - 1): 0;
+                        (nbx - FXP_frac_bits_p1): 0;
         #ifdef VERBOSE
-        printf("\nlg2_as_tuple: fxp1: x%X  clz: %d,  nbx: %d\n", fxp1, clz, nbx);
-        printf("lg2_as_tuple: characteristic is : %d\n", result.ping);
+        printf("\nlg2_as_sfxp_l: fxp1: x%X  clz: %d,  nbx: %d\n", fxp1, clz, nbx);
+        printf("lg2_as_sfxp_l: characteristic is : %d\n", c);
         #endif
 
         // Here we have already calculated the log characteristic c
@@ -482,12 +478,10 @@ static inline tuple_l fxp_get_lg2_as_tuple_l(int fxp1, \
                 printf("\n");
                 #endif
         }
-        //result.pong = rshift_ulong_into_uint_rounding(y);
-        result.pong = y;
         #ifdef VERBOSE
-        printf("lg2_as_tuple_l: mantissa is: x%lX\n", result.pong);
+        printf("lg2_as_sfxp_l: mantissa is: x%lX\n", y);
         #endif
-        return result;
+        return sfxp_l_from_cm(c, y);
 }
 
 /*
@@ -498,34 +492,13 @@ int fxp_lg2_l(int fxp1)
         if (fxp1 < 0) return FXP_UNDEF;
         if (fxp1 == 0) return FXP_NEG_INF;
         if (fxp1 == FXP_POS_INF) return FXP_POS_INF;
-        // Get the separate characteristic and full mantissa
-        tuple_l tup = fxp_get_lg2_as_tuple_l(fxp1, FXP_lg2_maxloops);
-        // Round and shift the mantissa
-        int rbit = (tup.pong >> FXP_int_plus_whole_bits_m2) & 1u;
-        int m = (int) (tup.pong >> FXP_int_plus_whole_bits_m1) + rbit;
+        super_fxp_l slg = fxp_get_lg2_as_sfxp_l(fxp1, FXP_lg2_maxloops);
         #ifdef VERBOSE
-        printf("\nlg2 as tuple result: {%d, %lu} == {x%X,x%lX}\n", \
-                        tup.ping, tup.pong, tup.ping, tup.pong);
-        printf("Final mantissa: x%X  (rounding bit was %d)\n", m, (int) rbit);
+        printf("\nlg2 as sfxp result: {%d, %d, %lu} == {%d, x%X,x%lX}\n", \
+                        slg.sign, slg.nwbits, slg.number, \
+                        slg.sign, slg.nwbits, slg.number);
         #endif
-        // Return the complete logarithm (charact + mantissa) as fxp
-        if (tup.ping < FXP_whole_min) {
-                if ((tup.ping == FXP_whole_min_m1) \
-                        && (m > 0ul)) {
-                        // Special case: in spite of not enough whole
-                        // bits available for the characteristic, there
-                        // are for characteristic + 1, which is what will
-                        // get returned as whole part of this logarithm
-                        return INT_MIN + m;
-                }
-                // Overflow: the characteristic of the logarithm
-                // will not fit in the whole bits part of our
-                // current fxp settings
-                return FXP_NEG_INF;
-        }
-        return (tup.ping >= 0)?
-                        ((tup.ping << FXP_frac_bits) + m):
-                        (-(-tup.ping << FXP_frac_bits) + m);
+        return sfxp_l_2_fxp(slg);
 }
 
 /*
@@ -590,96 +563,12 @@ unsigned long dmul_ulong_x_uint(unsigned long x, unsigned int ya)
         return product;
 }
 
-static inline int neg_lg2_x_factor_l(tuple_l tup, super_fxp_l factor)
+static inline super_fxp_l get_sfxp_x_sfxp_l(super_fxp_l x, super_fxp_l y)
 {
-        if ((tup.ping < FXP_whole_min_m1) \
-                || ((tup.ping == FXP_whole_min_m1) \
-                    && (tup.pong == 0ul))) {
-                return FXP_NEG_INF;
-        }
-        unsigned int posc = (-tup.ping);
-        int shift_for_c = __builtin_clz(posc) - 1;
-        unsigned int shifted_posc = posc << shift_for_c;
-        unsigned long fval = super_fxp_l_get_unumber(factor);
-        long cxf = -dmul_ulong_x_uint(fval, shifted_posc);
-
-        unsigned long mxf = dmul_ulongs(fval, tup.pong);
-        int shift_for_m = FXP_INT_BITS_M1 - shift_for_c;
-        long shifted_mxf = rshift_ulong_rounding(mxf, shift_for_m);
-        long sum = cxf + shifted_mxf;
-
-                #ifdef VERBOSE
-                printf("\tShifted c (by %d): x%X,  b", shift_for_c, shifted_posc);
-                print_uint_as_bin(shifted_posc); printf("\n");
-                printf("\tcxf: x%16lX\n\tb", cxf);
-                print_ulong_as_bin(cxf); printf("\n");
-                printf("\tmxf: x%16lX\n\tb", mxf);
-                print_ulong_as_bin(mxf); printf("\n");
-                printf("\tR-shifted mxf (by %d): x%lX\n\tb", shift_for_m, shifted_mxf);
-                print_ulong_as_bin((unsigned long) shifted_mxf); printf("\n");
-                printf("\tSum: x%lX\n\tb", sum);
-                print_ulong_as_bin((unsigned long) sum); printf("\n");
-                #endif
-
-        int final_rshift = FXP_whole_bits + shift_for_c;
-        // Finally round and shift for current fxp configuration
-        long psum = -sum;
-        int final_lg = (int) -(rshift_ulong_rounding(psum, final_rshift));
-
-                #ifdef VERBOSE
-                printf("\tfinal_rshift: %d\n", final_rshift);
-                printf("\tFinal lg: x%X,  b", final_lg);
-                print_int_as_bin(final_lg, 0); printf("\n");
-                #endif
-
-        return final_lg;
-}
-
-static inline int pos_lg2_x_factor_l(tuple_l tup, super_fxp_l factor)
-{
-        int shift_for_c;
-        unsigned int shifted_c;
-        long cxf;
-        unsigned long fval = super_fxp_l_get_unumber(factor);
-        if (tup.ping > 0) {
-                shift_for_c = __builtin_clz(tup.ping) - 1;
-                shifted_c = tup.ping << shift_for_c;
-                cxf = dmul_ulong_x_uint(fval, shifted_c);
-        } else {
-                shift_for_c = FXP_INT_BITS_M1;
-                shifted_c = 0;
-                cxf = 0l;
-        }
-
-        unsigned long mxf = dmul_ulongs(fval, tup.pong);
-        int shift_for_m = FXP_INT_BITS_M1 - shift_for_c;
-        long shifted_mxf = rshift_ulong_rounding(mxf, shift_for_m);
-        long sum = cxf + shifted_mxf;
-
-                #ifdef VERBOSE
-                printf("\tShifted c (by %d): x%X,  b", shift_for_c, shifted_c);
-                print_uint_as_bin(shifted_c); printf("\n");
-                printf("\tcxf: x%16lX\n\tb", cxf);
-                print_ulong_as_bin(cxf); printf("\n");
-                printf("\tmxf: x%16lX\n\tb", mxf);
-                print_ulong_as_bin(mxf); printf("\n");
-                printf("\tR-shifted mxf (by %d): x%lX\n\tb", shift_for_m, shifted_mxf);
-                print_ulong_as_bin((unsigned long) shifted_mxf); printf("\n");
-                printf("\tSum: x%lX\n\tb", sum);
-                print_ulong_as_bin((unsigned long) sum); printf("\n");
-                #endif
-
-        int final_rshift = FXP_whole_bits + shift_for_c;
-        // Finally round and shift for current fxp configuration
-        int final_lg = (int) rshift_ulong_rounding(sum, final_rshift);
-
-                #ifdef VERBOSE
-                printf("\tfinal_rshift: %d\n", final_rshift);
-                printf("\tFinal lg: x%X,  b", final_lg);
-                print_int_as_bin(final_lg, 0); printf("\n");
-                #endif
-
-        return final_lg;
+        super_fxp_l prod = { x.sign | y.sign, \
+                             x.nwbits + y.nwbits,
+                             dmul_ulongs(x.number, y.number) };
+        return prod;
 }
 
 /*
@@ -688,27 +577,9 @@ static inline int pos_lg2_x_factor_l(tuple_l tup, super_fxp_l factor)
  */
 static inline int lg2_x_factor_l(int fxp1, super_fxp_l factor)
 {
-        tuple_l tup = fxp_get_lg2_as_tuple_l(fxp1, FXP_LOGX_LOOPS);
-
-        // The lg2(fxp1) is equals to c + m:
-        // c == characteristic (tup.ping),
-        // m == mantissa (tup.pong)
-        // We multiply each part by FACTOR separately keeping maximum
-        // possible precision (l-shifting them first to the max,)
-        // then we align the results properly to sum them together
-
-                #ifdef VERBOSE
-                printf("\nlg2_x_factor_l:\n");
-                printf("\tlg2 c : %d (x%X,  b", tup.ping, tup.ping);
-                print_int_as_bin(tup.ping, 0); printf(")\n");
-                printf("\tlg2 m : x%16lX\n", tup.pong);
-                printf("\tFACTOR: ");
-                print_super_fxp_l(factor);
-                #endif
-
-        return (tup.ping < 0)?
-                neg_lg2_x_factor_l(tup, factor):
-                pos_lg2_x_factor_l(tup, factor);
+        super_fxp_l lg2x = fxp_get_lg2_as_sfxp_l(fxp1, FXP_LOGX_LOOPS);
+        super_fxp_l prod = get_sfxp_x_sfxp_l(factor, lg2x);
+        return sfxp_l_2_fxp(prod);
 }
 
 /*
@@ -795,21 +666,22 @@ static inline unsigned long fxp_bkm_emode_l(unsigned long argument, \
  * as the BKM array values (1 whole bit).
  * Input value for 2^x here is x = whole + frac
  */
-static inline int fxp_pow2_wpos_tuple_l(tuple_l tup, \
-                                        const int MAX_LOOPS)
+static inline int fxp_pow2_wpos_l(int whole, \
+                                  unsigned long frac, \
+                                  const int MAX_LOOPS)
 {
         #ifdef VERBOSE
-        print_tuple_l("\npow2_wpos_tuple_l for ", tup);
+        printf("pow2_wpos_l for x%X.%lX\n", whole, frac);
         #endif
-        if (tup.ping >= FXP_whole_bits_m1) return FXP_POS_INF;
-        if ((tup.ping == 0) && (tup.pong == 0ul)) return FXP_one;
-        // Argument tup.pong will be in [0, 1)
-        unsigned long x = fxp_bkm_emode_l(tup.pong, MAX_LOOPS);
+        if (whole >= FXP_whole_bits_m1) return FXP_POS_INF;
+        if ((whole == 0) && (frac == 0ul)) return FXP_one;
+        // Argument frac will be in [0, 1)
+        unsigned long x = fxp_bkm_emode_l(frac, MAX_LOOPS);
         // When one of the operands is a shifted 1, we don't really
         // need to call the (expensive) dmul operation, since the
         // result will be identical to the other operand anyway,
         // just shifted appropriately
-        int shift = FXP_int_plus_whole_bits_m2 - tup.ping;
+        int shift = FXP_int_plus_whole_bits_m2 - whole;
         int shifted = (int) rshift_ulong_rounding(x, shift);
         #ifdef VERBOSE
         printf("x from bkm_e: x%lX\n", x);
@@ -830,33 +702,20 @@ static inline int fxp_pow2_wpos_tuple_l(tuple_l tup, \
  * negative fxp (see how the argument gets built
  * in fxp_pow2_l.) Frac component must already have the same
  * alignment as the BKM array values (1 whole bit).
- *
- * TODO:
- * These functions for fxp_pow2_l were written with performance
- * in mind but we have an abstraction issue here:
- * we can't pass in just any tuple as argument.
- * Whenever we need to call fxp_pow2_wpos_tuple_l or
- * fxp_pow2_wneg_tuple_l, we will need to know what the
- * exact sign and alignment requirements for the members in
- * those tuples are, and build them accordingly and precisely.
- * A tuple can hold values matching these requirements, but
- * these requirements really transcend the tuple abstraction.
- * In any case, consider some refactoring, maybe even
- * eliminating tuples altogether? Using only ulongys/super_fxp's?
- * See also long comment in sqrt_l
  */
-static inline int fxp_pow2_wneg_tuple_l(tuple_l tup, \
-                                        const int MAX_LOOPS)
+static inline int fxp_pow2_wneg_l(int whole, \
+                                  unsigned long frac, \
+                                  const int MAX_LOOPS)
 {
         #ifdef VERBOSE
-        print_tuple_l("\npow2_wneg_tuple_l for (-)", tup);
+        printf("pow2_wneg_l for -x%X.%lX\n", whole, frac);
         #endif
-        if (tup.ping > FXP_frac_bits) return 0;
-        if ((tup.ping == 0) && (tup.pong == 0ul)) return FXP_one;
+        if (whole > FXP_frac_bits) return 0;
+        if ((whole == 0) && (frac == 0ul)) return FXP_one;
         // Notice argument a for bkm_emode will be in (0, 1]
-        unsigned long a = FXP_BKM_A_ONE_L - tup.pong;
+        unsigned long a = FXP_BKM_A_ONE_L - frac;
         unsigned long x = fxp_bkm_emode_l(a, MAX_LOOPS);
-        int shift = FXP_int_plus_whole_bits_m1 + tup.ping;
+        int shift = FXP_int_plus_whole_bits_m1 + whole;
         int shifted = (int) rshift_ulong_rounding(x, shift);
         #ifdef VERBOSE
         printf("x from bkm_e: x%lX\n", x);
@@ -865,6 +724,16 @@ static inline int fxp_pow2_wneg_tuple_l(tuple_l tup, \
         print_uint_as_bin(shifted); printf("\n");
         #endif
         return (shifted != FXP_UNDEF)? shifted: FXP_POS_INF;
+}
+
+static inline unsigned long get_fxp_frac_for_bkme_l(int frac)
+{
+        #ifdef VERBOSE
+        printf("get_fxp_frac_for_bkme_l: Fracbits is %d\n", FXP_frac_bits);
+        printf("Frac is x%X (d: %d)\n", frac, frac);
+        printf("Shift for frac is: %d\n", FXP_int_plus_whole_bits_m1);
+        #endif
+        return ((unsigned long) frac) << FXP_int_plus_whole_bits_m1;
 }
 
 /*
@@ -881,122 +750,17 @@ int fxp_pow2_l(int fxp1)
         printf("\n\npow2_l running for x%X (int = %d)\n", fxp1, fxp1);
         #endif
         if (fxp1 >= 0) {
-                tuple_l tup = tuple_l_from_fxp(fxp1);
-                return fxp_pow2_wpos_tuple_l( tup, FXP_POWX_LOOPS );
+                int w = fxp_get_whole_part(fxp1);
+                unsigned long bkmearg = get_fxp_frac_for_bkme_l( \
+                                                fxp_get_frac_part_bin(fxp1));
+                return fxp_pow2_wpos_l( w, bkmearg, FXP_POWX_LOOPS );
         } else {
-                tuple_l ntup = tuple_l_from_fxp(-fxp1);
-                return fxp_pow2_wneg_tuple_l( ntup, FXP_POWX_LOOPS );
+                int pfxp1 = -fxp1;
+                int w = fxp_get_whole_part(pfxp1);
+                unsigned long bkmearg = get_fxp_frac_for_bkme_l( \
+                                                fxp_get_frac_part_bin(pfxp1));
+                return fxp_pow2_wneg_l( w, bkmearg, FXP_POWX_LOOPS );
         }
-}
-
-// Internal function to calculate the product of
-// x times C and return it as an {int, ulong} tuple
-// with the ulong frac part having the same alignment
-// as the BKM array values (1 whole bit)
-static inline tuple_l get_xc_as_tuple_l(int x, super_fxp_l factorc)
-{
-        unsigned long fc, wfc, ffc, ffmask;
-        unsigned int sf;
-
-        // First calculating frac(x) * C
-        // fraction part of x l-shifted so as
-        // to leave just 1 whole bit
-        unsigned long cval = super_fxp_l_get_unumber(factorc);
-        unsigned int c_nwbits = super_fxp_l_get_nwbits(factorc);
-        sf = fxp_get_bin_frac(x) << FXP_whole_bits_m1;
-        // sf times the factor C
-        fc = dmul_ulong_x_uint(cval, sf);
-        // whole and frac parts of that product fxC
-        ffmask = ULONG_ALL_ONES_RS1 >> c_nwbits;
-        wfc = fc >> (FXP_LONG_BITS_M1 - c_nwbits);
-        ffc = fc & ffmask;
-
-                #ifdef VERBOSE
-                printf("\n\tf (1 whole bit) and factor C (%d whole bits):\n\t", \
-                                c_nwbits);
-                print_uint_as_bin(sf);
-                printf(" (%LE)\n\t", ((long double) sf / (1ul << FXP_INT_BITS_M1)));
-                print_ulong_as_bin(cval);
-                printf(" (%LE)\n\t", ((long double) cval) \
-                                        / (1ul << FXP_LONG_BITS - c_nwbits));
-                printf("Product fxC (%d whole bits) is:\n\t", c_nwbits + 1);
-                print_ulong_as_bin(fc);
-                printf(" (%LE)\n\t", ((long double) fc) \
-                                        / (1ul << FXP_LONG_BITS_M1 - c_nwbits));
-                printf("w_fxC: %lu\n\t", wfc);
-                printf("f_fxC (%d whole bits):\n\t", c_nwbits + 1);
-                print_ulong_as_bin(ffc);
-                printf(" (%LE)\n\t", ((long double) ffc) \
-                                        / (1ul << FXP_LONG_BITS_M1 - c_nwbits));
-                #endif
-
-        // Now calculating whole(x) * factorc
-        unsigned long wc, wwc, wfmask, fwc;
-        int wx_nbits, wx_clz, w_margin;
-        unsigned int wx, swx;
-        wx = fxp_get_whole_part(x);
-        wx_clz = (wx == 0)? FXP_INT_BITS: __builtin_clz(wx);
-        wx_nbits = FXP_INT_BITS - wx_clz;
-        // swx is whole(x) l-shifted all the way
-        swx = wx << wx_clz;
-        // times factorc
-        wc = dmul_ulong_x_uint(cval, swx);
-
-        // Whole and frac parts of that product wxC
-        w_margin = wx_nbits + c_nwbits;
-        wfmask = ULONG_ALL_ONES >> w_margin;
-        wwc = wc >> (FXP_LONG_BITS - w_margin);
-        fwc = wc & wfmask;
-
-                #ifdef VERBOSE
-                printf("\n\tw (%d whole bits) and factor C (%d whole bits):\n\t", \
-                            wx_nbits, c_nwbits);
-                print_uint_as_bin(swx);
-                printf(" (%LE)\n\t", ((long double) swx / (1ul << wx_clz)));
-                print_ulong_as_bin(cval);
-                printf(" (%LE)\n\t", ((long double) cval) \
-                                        / (1ul << FXP_LONG_BITS - c_nwbits));
-                printf("Product wxC (%d whole bits) is:\n\t", w_margin);
-                print_ulong_as_bin(wc);
-                printf(" (%LE)\n\t", ((long double) wc) \
-                                        / (1ul << (FXP_LONG_BITS - w_margin)));
-
-                printf("w_wxC: %lu\n\t", wwc);
-                printf("f_wxC (%d whole bits):\n\t", w_margin);
-                print_ulong_as_bin(fwc);
-                printf(" (%LE)\n\t", ((long double) fwc) \
-                                        / (1ul << FXP_LONG_BITS - w_margin));
-                #endif
-
-        // Left-align both f_fxC and f_wxC leaving 1 whole bit
-        // in order to add them up
-        ffc <<= c_nwbits;
-        fwc <<= w_margin - 1;
-
-        // Sum of frac parts
-        unsigned long fplusf = ffc + fwc;
-
-        // Carry over from frac sum into whole part
-        unsigned long w_fplusf = fplusf >> FXP_LONG_BITS_M1;
-
-        int final_whole = (int) wwc + wfc + w_fplusf;
-        unsigned long final_frac = fplusf & ULONG_ALL_ONES_RS1;
-
-        // Tuple to return with final whole and frac parts
-        tuple_l xc = { final_whole, final_frac };
-
-                #ifdef VERBOSE
-                printf("\n\tfplusf:\n\t");
-                print_ulong_as_bin(fplusf);
-                printf("\n\tw_fplusf is: %lu", w_fplusf);
-                printf(" (%u)\n\t", xc.ping);
-                printf("final fsum:\n\t");
-                print_ulong_as_bin(xc.pong);
-                printf(" (%LE)\n", ((long double) xc.pong) \
-                                        / (1ul << FXP_LONG_BITS_M1));
-                #endif
-
-        return xc;
 }
 
 // Calculate the pow2 of a NON-negative argument x
@@ -1005,11 +769,13 @@ static inline int fxp_pow2_pos_arg_xfactor_l(int x, \
                                         super_fxp_l factorc, \
                                         const int MAX_LOOPS)
 {
-        tuple_l xc = get_xc_as_tuple_l(x, factorc);
-                #ifdef VERBOSE
-                print_tuple_l("Pos tuple is: ", xc);
-                #endif
-        return fxp_pow2_wpos_tuple_l( xc, MAX_LOOPS );
+        super_fxp_l xc = get_fxp_x_sfxp_l(x, factorc);
+        #ifdef VERBOSE
+        print_sfxp_l("Pos xc (sfxp) is ", xc);
+        #endif
+        int w = (int) sfxp_l_get_poswhole(xc);
+        unsigned long bkmearg = get_sfxp_frac_for_bkme_l(xc);
+        return fxp_pow2_wpos_l( w, bkmearg, MAX_LOOPS );
 }
 
 // Calculate the pow2 of a negative argument x
@@ -1018,11 +784,13 @@ static inline int fxp_pow2_neg_arg_xfactor_l(int x, \
                                         super_fxp_l factorc, \
                                         const int MAX_LOOPS)
 {
-        tuple_l xc = get_xc_as_tuple_l(x, factorc);
-                #ifdef VERBOSE
-                print_tuple_l("Neg tuple is: ", xc);
-                #endif
-        return fxp_pow2_wneg_tuple_l( xc, MAX_LOOPS );
+        super_fxp_l xc = get_fxp_x_sfxp_l(x, factorc);
+        #ifdef VERBOSE
+        print_sfxp_l("Neg xc (sfxp) is ", xc);
+        #endif
+        int w = (int) sfxp_l_get_poswhole(xc);
+        unsigned long bkmearg = get_sfxp_frac_for_bkme_l(xc);
+        return fxp_pow2_wneg_l( w, bkmearg, MAX_LOOPS );
 }
 
 // Implementation of exp_l(x) using pow2_l():
@@ -1067,42 +835,15 @@ int fxp_sqrt_l(int fxp1)
         if (fxp1 == 0) return 0;
         if (fxp1 == FXP_POS_INF) return FXP_POS_INF;
         // First get the lg2 of the argument
-        tuple_l tup = fxp_get_lg2_as_tuple_l(fxp1, FXP_SQRT_LOOPS);
-        // TODO:
-        // Div by 2 on a normal fxp or a super_fxp would be a simple
-        // matter of r-shifting 1 bit + adding rounding bit.
-        // But converting to long/super_fxp, r-shifting there,
-        // then back, seems quite expensive.
-        // Later will try not using tuples at all, only super_fxp's
-        // comparing possible performance and simplicity gains/losses,
-        // while also keeping an eye on potential precision loss
-        unsigned long notrounded, rbit = tup.pong & 1ul; // rounding bit for frac
-        if (tup.ping >= 0) {
-                // Halve the non-negative tuple before passing it to pow2_wpos
-                notrounded = (tup.ping % 2)? \
-                                // odd characteristic, add 0.5 to the rshifted mantissa
-                                FXP_BKM_A_POINT5_L + (tup.pong >> 1): \
-                                // even characteristic, simply r-shift the mantissa
-                                tup.pong >> 1;
-                tup.pong = notrounded + rbit;
-                tup.ping = (tup.ping >> 1) + (tup.pong < notrounded);
-                #ifdef VERBOSE
-                print_tuple_l("sqrt_l: halved pos tuple for pow2: ", tup);
-                #endif
-                return fxp_pow2_wpos_tuple_l(tup, FXP_SQRT_LOOPS);
-        } else {
-                // Negative tuple: negate and halve before passing to pow2_wneg
-                tuple_l ntup = negate_tuple_l(tup);
-                notrounded = (ntup.ping % 2)? \
-                                FXP_BKM_A_POINT5_L + (ntup.pong >> 1): \
-                                ntup.pong >> 1;
-                ntup.pong = notrounded + rbit;
-                ntup.ping = (ntup.ping >> 1) + (ntup.pong < notrounded);
-                #ifdef VERBOSE
-                print_tuple_l("\nsqrt_l: 'halved neg' tuple for pow2: ", ntup);
-                #endif
-                return fxp_pow2_wneg_tuple_l(ntup, FXP_SQRT_LOOPS);
-        }
+        super_fxp_l slg = fxp_get_lg2_as_sfxp_l(fxp1, FXP_SQRT_LOOPS);
+        // Halving that value
+        slg.nwbits -= 1;
+        // parameters for pow2
+        int w = (int) sfxp_l_get_poswhole(slg);
+        unsigned long bkmearg = get_sfxp_frac_for_bkme_l(slg);
+        return (slg.sign)?
+                fxp_pow2_wneg_l(w, bkmearg, FXP_SQRT_LOOPS):
+                fxp_pow2_wpos_l(w, bkmearg, FXP_SQRT_LOOPS);
 }
 
 /*
@@ -1141,72 +882,64 @@ int fxp_powxy_l(int x, int y)
                             (x == FXP_one)? FXP_UNDEF: FXP_POS_INF;
         }
         // First get the lg2 of x
-        tuple_l tup = fxp_get_lg2_as_tuple_l(x, FXP_POWXY_LG_LOOPS);
+        super_fxp_l slg2x = fxp_get_lg2_as_sfxp_l(x, FXP_POWXY_LG_LOOPS);
         #ifdef VERBOSE
-        print_tuple_l("powxy_l: lg2 tuple", tup);
+        printf("powxy_l: x: "); print_fxp(x); printf("\n");
+        printf("         y: "); print_fxp(y);
+        print_sfxp_l("    lg2(x): ", slg2x);
         #endif
-        // Create superfxp from the tuple and return
-        // appropriately signed 2^( y*superfxp )
-        if (tup.ping >= 0) {
-                super_fxp_l superposlog = super_fxp_l_from_tuple_l(tup);
+        //int whole = (int) sfxp_l_get_poswhole(slg2x);
+        // Return appropriately signed 2^( y * lg2x )
+        if (slg2x.sign == 0) {
                 // Now compute number of whole bits we will get in the product
                 if (y >= 0) {
-                        int pnwbits = superposlog.nwbits + fxp_nbits(y) \
-                                        - FXP_frac_bits;
+                        int pnwbits = slg2x.nwbits + fxp_nbits(y) - FXP_frac_bits;
                         #ifdef VERBOSE
-                        printf("\ncase 0: +ping +y, product would have %d whole bits\n", pnwbits);
+                        printf("\ncase 0: +lgx +y, product would have %d whole bits\n", pnwbits);
                         printf("Whole bit counts:  factor: %d,  y: %d\n", \
-                                        superposlog.nwbits, \
+                                        slg2x.nwbits, \
                                         fxp_nbits(y) - FXP_frac_bits);
                         #endif
-                        return (pnwbits >= FXP_whole_bits)? \
-                                FXP_POS_INF: \
-                                fxp_pow2_pos_arg_xfactor_l(y, \
-                                                    superposlog, \
-                                                    FXP_POWXY_POW_LOOPS);
+                        return (pnwbits > FXP_whole_bits)?
+                                        FXP_POS_INF: \
+                                        fxp_pow2_pos_arg_xfactor_l(y, slg2x, \
+                                                                FXP_POWXY_POW_LOOPS);
                 } else {
                         int posy = -y;
-                        int pnwbits = superposlog.nwbits + fxp_nbits(posy) \
-                                        - FXP_frac_bits;
+                        int pnwbits = slg2x.nwbits + fxp_nbits(posy) - FXP_frac_bits;
                         #ifdef VERBOSE
-                        printf("\ncase 1: +ping -y, product would have %d whole bits\n", pnwbits);
+                        printf("\ncase 1: +lgx -y, product would have %d whole bits\n", pnwbits);
                         printf("Whole bit counts:  factor: %d,  y: %d\n", \
-                                        superposlog.nwbits, \
+                                        slg2x.nwbits, \
                                         fxp_nbits(posy) - FXP_frac_bits);
                         #endif
-                        return (pnwbits >= FXP_whole_bits)? \
-                                0: \
-                                fxp_pow2_neg_arg_xfactor_l(posy, \
-                                                    superposlog, \
-                                                    FXP_POWXY_POW_LOOPS);
+                        return (pnwbits > FXP_whole_bits)?
+                                        0: \
+                                        fxp_pow2_neg_arg_xfactor_l(posy, slg2x, \
+                                                                FXP_POWXY_POW_LOOPS);
                 }
         } else {
-                super_fxp_l superposlog = super_fxp_l_from_tuple_l( \
-                                                    negate_tuple_l(tup));
+                super_fxp_l pslg2x = sfxp_l_negate(slg2x);
                 if (y >= 0) {
                         #ifdef VERBOSE
-                        int pnwbits = superposlog.nwbits + fxp_nbits(y) \
-                                        - FXP_frac_bits;
-                        printf("\ncase 2: -ping +y, product would have %d whole bits\n", pnwbits);
+                        int pnwbits = pslg2x.nwbits + fxp_nbits(y) - FXP_frac_bits;
+                        printf("\ncase 2: -lgx +y, product would have %d whole bits\n", pnwbits);
                         printf("Whole bit counts:  factor: %d,  y: %d\n", \
-                                        superposlog.nwbits, fxp_nbits(y) - FXP_frac_bits);
+                                        pslg2x.nwbits, fxp_nbits(y) - FXP_frac_bits);
                         #endif
-                        return fxp_pow2_neg_arg_xfactor_l(y, \
-                                                    superposlog, \
-                                                    FXP_POWXY_POW_LOOPS);
+                        return fxp_pow2_neg_arg_xfactor_l(y, pslg2x, FXP_POWXY_POW_LOOPS);
                 } else {
                         int posy = -y;
-                        int pnwbits = superposlog.nwbits + fxp_nbits(posy) - FXP_frac_bits;
+                        int pnwbits = pslg2x.nwbits + fxp_nbits(posy) - FXP_frac_bits_p1;
                         #ifdef VERBOSE
-                        printf("\ncase 3: -ping -y, product would have %d whole bits\n", pnwbits);
+                        printf("\ncase 3: -lgx -y, product would have %d whole bits\n", pnwbits);
                         printf("Whole bit counts:  factor: %d,  y: %d\n", \
-                                        superposlog.nwbits, fxp_nbits(posy) - FXP_frac_bits);
+                                        pslg2x.nwbits, fxp_nbits(posy) - FXP_frac_bits);
                         #endif
-                        return (pnwbits >= FXP_whole_bits)? \
-                                FXP_POS_INF: \
-                                fxp_pow2_pos_arg_xfactor_l(posy, \
-                                                    superposlog, \
-                                                    FXP_POWXY_POW_LOOPS);
+                        return (pnwbits > FXP_whole_bits)? \
+                                        FXP_POS_INF: \
+                                        fxp_pow2_pos_arg_xfactor_l(posy, pslg2x, \
+                                                                FXP_POWXY_POW_LOOPS);
                 }
         }
 }

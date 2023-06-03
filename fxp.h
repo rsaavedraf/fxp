@@ -56,8 +56,8 @@ int fxp_dec(int whole, int dec_frac);
 
 // Inspect an fxp
 int fxp_get_whole_part(int fxp1);
-int fxp_get_bin_frac(int fxp1);
-int fxp_get_dec_frac(int fxp1);
+int fxp_get_frac_part_bin(int fxp1);
+int fxp_get_frac_part_dec(int fxp1);
 unsigned int fxp_get_lshifted_frac(unsigned int fxp1);
 
 // Aux function to rshift with rounding of last bit

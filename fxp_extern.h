@@ -41,6 +41,7 @@ extern const unsigned int FXP_LG2_10_WBITS;
 
 extern int FXP_frac_bits;
 extern int FXP_frac_bits_m1;
+extern int FXP_frac_bits_p1;
 extern unsigned int FXP_frac_mask;
 extern unsigned int FXP_frac_max;
 extern unsigned int FXP_frac_max_p1;
@@ -54,7 +55,7 @@ extern long fxp_frac_max_dec;
 extern long fxp_frac_max_dec_p1;
 extern int FXP_int_plus_whole_bits_m1;
 extern int FXP_int_plus_whole_bits_m2;
-
+extern int FXP_long_mfrac_bits;
 
 extern float FXP_min_fx;
 extern float FXP_max_fx;

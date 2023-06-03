@@ -42,7 +42,7 @@ float fxp2f(int fxp)
     int pfxp = fxp < 0? -fxp: fxp;
     int nbits = fxp_nbits(pfxp);
     int pw = fxp_get_whole_part(fxp);
-    int frac = fxp_get_bin_frac(fxp);
+    int frac = fxp_get_frac_part_bin(fxp);
     if (frac < 0) frac = -frac;
     unsigned int twopower = 1 << FXP_frac_bits;
     float ffrac = 0.0;
@@ -101,7 +101,7 @@ double fxp2d(int fxp)
     if (fxp == FXP_NEG_INF) return FXP_NINF_D;
     if (fxp == FXP_POS_INF) return FXP_PINF_D;
     unsigned int twopower = 1 << FXP_frac_bits;
-    int frac = fxp_get_bin_frac(fxp);
+    int frac = fxp_get_frac_part_bin(fxp);
     if (frac < 0) frac = -frac;
     double dfrac = 0.0;
     while (frac > 0) {
@@ -151,7 +151,7 @@ long double fxp2ld(int fxp)
     if (fxp == FXP_POS_INF) return FXP_PINF_LD;
     //printf("\nfxp2ld: fxp is %X\n", fxp);
     unsigned int twopower = 1u << FXP_frac_bits;
-    int frac = fxp_get_bin_frac(fxp);
+    int frac = fxp_get_frac_part_bin(fxp);
     if (frac < 0) frac = -frac;
     long double ldfrac = 0.0L;
     while (frac > 0) {

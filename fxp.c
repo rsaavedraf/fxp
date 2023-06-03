@@ -95,8 +95,12 @@ int FXP_frac_bits_p1 = FXP_FRAC_BITS_DEF + 1;
 int FXP_whole_bits = FXP_INT_BITS - FXP_FRAC_BITS_DEF;
 int FXP_whole_bits_m1 = FXP_INT_BITS_M1 - FXP_FRAC_BITS_DEF;
 int FXP_whole_bits_m2 = FXP_INT_BITS_M1 - FXP_FRAC_BITS_DEF - 1;
+
+//TODO: are these _m1 _m2, or actually _p1 _p2?
 int FXP_int_plus_whole_bits_m1 = 2*FXP_INT_BITS - FXP_FRAC_BITS_DEF - 1;
 int FXP_int_plus_whole_bits_m2 = 2*FXP_INT_BITS - FXP_FRAC_BITS_DEF - 2;
+
+int FXP_long_mfrac_bits = FXP_LONG_BITS - FXP_FRAC_BITS_DEF;
 
 // FXP_FRAC_MASK should correspond to 2^FXP_FRAC_BITS - 1
 unsigned int FXP_frac_mask = ((1u << FXP_FRAC_BITS_DEF) - 1);
@@ -344,8 +348,8 @@ const ulongy FXP_BKM_A_ONE_ULONGY = { FXP_BKM_A_ONE, 0u };
 const ulongy FXP_BKM_A_POINT5_ULONGY = { FXP_BKM_A_POINT5, 0u };
 
 // Auxiliary variables for the implementations that use longs (fxp_l.c)
-const unsigned long FXP_BKM_X_ONE_L = 1lu << (FXP_LONG_BITS - 2);
-const unsigned long FXP_BKM_A_ONE_L = 1lu << FXP_LONG_BITS_M1;
+const unsigned long FXP_BKM_X_ONE_L = 1ul << (FXP_LONG_BITS - 2);
+const unsigned long FXP_BKM_A_ONE_L = 1ul << FXP_LONG_BITS_M1;
 const unsigned long FXP_BKM_A_POINT5_L = FXP_BKM_A_ONE_L >> 1;
 
 unsigned long FXP_max_lshifted = (FXP_MAX_L << FXP_FRAC_BITS_DEF) \
@@ -452,6 +456,7 @@ int fxp_set_frac_bits(int nfracbits)
         FXP_whole_bits_m2 = FXP_whole_bits - 2;
         FXP_int_plus_whole_bits_m1 = FXP_INT_BITS + FXP_whole_bits_m1;
         FXP_int_plus_whole_bits_m2 = FXP_INT_BITS + FXP_whole_bits_m2;
+        FXP_long_mfrac_bits = FXP_LONG_BITS - FXP_frac_bits;
 
         // fxp_frac_mask should correspond to 2^FXP_FRAC_BITS - 1
         FXP_frac_mask = (1u << FXP_frac_bits) - 1;
@@ -673,7 +678,7 @@ inline int fxp_get_whole_part(int fxp)
                         // returning just what our whole-part values for
                         // -INF (and also UNDEF) actually correspond to.
                         // However, see also the comment in
-                        // fxp_get_bin_frac()
+                        // fxp_get_frac_part_bin()
                         return -FXP_whole_max;
                 else
                         return -((-fxp) >> FXP_frac_bits);
@@ -684,7 +689,7 @@ inline int fxp_get_whole_part(int fxp)
 /*
  * Get the frac part directly (binary)
  */
-inline int fxp_get_bin_frac(int fxp)
+inline int fxp_get_frac_part_bin(int fxp)
 {
         if (fxp < 0)
                 if (fxp <= FXP_NEG_INF)
@@ -719,7 +724,7 @@ inline int fxp_get_bin_frac(int fxp)
  * Get the frac part as decimal between 0 and fxp_frac_max_dec,
  * e.g. 0 .. 9999
  */
-int fxp_get_dec_frac(int fxp)
+int fxp_get_frac_part_dec(int fxp)
 {
         // Watch out the bin to dec conversion itself can overflow when
         // the chosen frac_bits is large, and the frac_max_dec
@@ -872,16 +877,16 @@ int fxp_mul(int fxp1, int fxp2)
 
         ab = a * b;
         // Frac parts, and nbits in them
-        x = fxp_get_bin_frac(v1);
-        y = fxp_get_bin_frac(v2);
+        x = fxp_get_frac_part_bin(v1);
+        y = fxp_get_frac_part_bin(v2);
         nbx = fxp_nbits(x);
         nby = fxp_nbits(y);
         // Compute pf1, pf2, pf3, and pfsum
         ay = a * y;
         bx = b * x;
         //printf("ab: %d\nay: %d\nbx: %d\n", ab, ay, bx);
-        int pf1 = fxp_get_bin_frac(ay);
-        int pf2 = fxp_get_bin_frac(bx);
+        int pf1 = fxp_get_frac_part_bin(ay);
+        int pf2 = fxp_get_frac_part_bin(bx);
         int pf3, rbit;
 
         // Calculate pf3 using distributive multiplication
@@ -905,7 +910,7 @@ int fxp_mul(int fxp1, int fxp2)
                 return ((fxp1 >= 0 && fxp2 >= 0) || (fxp1 < 0 && fxp2 < 0))?
                             FXP_POS_INF: FXP_NEG_INF;
         }
-        int pffrac = fxp_get_bin_frac(pfsum);
+        int pffrac = fxp_get_frac_part_bin(pfsum);
 
         // Compute remaining whole parts (pw2, pw3, pw4)
         int pw1 = fxp_get_whole_part(ay);
@@ -920,7 +925,7 @@ int fxp_mul(int fxp1, int fxp2)
                             || (fxp1 < 0 && fxp2 < 0))?
                             FXP_POS_INF: FXP_NEG_INF;
         }
-        //printf("pwsum:%d, pfsum_frac:%d\n", pwsum, fxp_get_bin_frac(pfsum));
+        //printf("pwsum:%d, pfsum_frac:%d\n", pwsum, fxp_get_frac_part_bin(pfsum));
         // No overflow, return the appropriately signed product
         int pproduct = fxp_bin(pwsum, pffrac);
         return ((fxp1 >= 0 && fxp2 >= 0) || (fxp1 < 0 && fxp2 < 0))?
@@ -1113,7 +1118,7 @@ static inline tuple fxp_get_lg2_as_tuple(int fxp1, \
         int nbx = FXP_INT_BITS - clz;
         // Assign the characteristic
         result.ping = ((fxp1 <= FXP_almost1) || (fxp1 >= FXP_two))?
-                (nbx - FXP_frac_bits - 1): 0;
+                (nbx - FXP_frac_bits_p1): 0;
         // Here we replicate what the lg2_l implementation does,
         // just not using longs but ulongys
         unsigned int argument = ((unsigned int) fxp1) << (clz - 1);
@@ -1121,8 +1126,8 @@ static inline tuple fxp_get_lg2_as_tuple(int fxp1, \
         ulongy y = ULONGY_ZERO;
         ulongy xs, z;
         #ifdef VERBOSE
-        printf("\nlg2_as_tuple: clz: %d, argument: {x%X}\n", \
-                    clz, argument);
+        printf("\nlg2_as_tuple: c: %d, clz: %d, argument: {x%X}\n", \
+                    result.ping, clz, argument);
         #endif
         for (int shift = 1; shift <= MAX_LOOPS; shift++) {
                 //unsigned long xs = (x >> shift);
@@ -1349,7 +1354,7 @@ static inline int lg2_x_factor(int fxp1, super_fxp factor)
                 printf(")\n\t");
                 printf("Whole: %d,  dec frac: %d (/%ld)\n\t", \
                         fxp_get_whole_part(fxp1),
-                        fxp_get_dec_frac(fxp1),
+                        fxp_get_frac_part_dec(fxp1),
                         fxp_frac_max_dec_p1);
                 #endif
 
@@ -1384,7 +1389,7 @@ int fxp_lg10(int fxp1)
 #ifdef VERBOSE
 static long double ulongy_as_ld(ulongy x, int nfbits)
 {
-    unsigned long twopower = 1lu << nfbits;
+    unsigned long twopower = 1ul << nfbits;
     long double ldfrac = 0.0L;
     ulongy frac = x;
     while (ulongy_compare(frac, ULONGY_ZERO) > 0) {
@@ -1501,7 +1506,7 @@ static inline tuple get_xc_as_tuple(int x, super_fxp factorc)
         // First calculating frac(x) * factorc
         // fraction part of x, l-shifted all the way
         // so we leave no whole bits, just 1 sign bit
-        sf = ((unsigned int) fxp_get_bin_frac(x)) \
+        sf = ((unsigned int) fxp_get_frac_part_bin(x)) \
                                     << FXP_whole_bits_m1;
         // sf x factorc
         ulongy cval = super_fxp_get_unumber(factorc);

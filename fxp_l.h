@@ -32,3 +32,12 @@ int fxp_powxy_l(int fxp1, int fxp2);
 
 unsigned long dmul_ulongs(unsigned long x, unsigned long y);
 unsigned long dmul_ulong_x_uint(unsigned long x, unsigned int y);
+
+typedef struct super_fxp_l {
+        int sign;
+        int nwbits;             // <- Number of whole bits
+        unsigned long number;   // <- The super fxp number
+} super_fxp_l;
+
+super_fxp_l sfxp_l_from_fxp(int fxp1);
+int sfxp_l_2_fxp(super_fxp_l x);

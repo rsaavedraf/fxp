@@ -80,16 +80,27 @@
 unsigned long long bex_from_bin(char * pbinnum, int wbits, int fbits, int rounded)
 {
         char * p = pbinnum;
-        if ((wbits <= 0) || (wbits > 32)) wbits = 32;
-        if ((fbits <= 0) || (fbits + wbits > 64)) fbits = 64 - wbits;
-        int roomleft = wbits + fbits;
+        // Check how many whole bits in pbinnum
+        int nwb = 0;
+        while (*p != '\0') {
+                char cbit = *p;
+                if (cbit == '.') break;
+                p++;
+                nwb++;
+        }
+        if (nwb > wbits) wbits = nwb;
+        int roomleft = wbits - nwb + fbits;
         unsigned long long bnum = 0;
+        p = pbinnum;
         while ((roomleft > 0) && (*p != '\0')) {
                 char cbit = *p;
                 if (cbit != '.') {
-                        bnum = (bnum << 1) | ((cbit == '1')? 1: 0);
+                        bnum = (bnum << 1) | (cbit == '1');
                         roomleft--;
+                } else {
+                        roomleft = fbits;
                 }
+                //printf("bnum is %X, roomleft is %d\n", bnum, roomleft);
                 p++;
         }
         if (roomleft > 0) {
@@ -98,7 +109,7 @@ unsigned long long bex_from_bin(char * pbinnum, int wbits, int fbits, int rounde
                 // so return already
                 return bnum;
         }
-        if (rounded) {
+        if ((fbits > 0) && (rounded)) {
                 //printf("  (Next bit:");
                 int nextbit = 0;
                 char cbit = *p;
@@ -117,8 +128,10 @@ unsigned long long bex_from_bin(char * pbinnum, int wbits, int fbits, int rounde
 unsigned long long bex_from_dec(char * pdecnum, int wbits, int fbits, int rounded)
 {
         char * p = pdecnum;
-        if ((wbits < 0) || (wbits > 31)) wbits = 31;
-        if ((fbits < 0) || (fbits + wbits > 64)) fbits = 63 - wbits;
+        if ((wbits < 0) || (wbits > FXP_INT_BITS))
+                wbits = FXP_INT_BITS;
+        if ((fbits < 0) || (fbits + wbits > FXP_LONG_BITS))
+                fbits = FXP_LONG_BITS - wbits;
         // Process whole part first
         int nwd = 0;
         int ptens = 1;
@@ -323,44 +336,51 @@ int main(void)
 
         //printf("bin e (expl()): %lx\n\n", bin_e);
 
-        int frbits = 30;
+        // Always reserving 1 bit for the sign
+        int wbits = 3;
+        int frbits = FXP_INT_BITS - wbits;
+        int frbitsl = FXP_LONG_BITS - wbits;
         printf("e as binary: %s\n", STR_E_BIN);
         printf("e as fxp (%d frac bits) %llX\n", \
-                    frbits, bex_from_bin(STR_E_BIN, 2, frbits, 1));
+                    frbits, bex_from_bin(STR_E_BIN, wbits, frbits, 1));
         printf("e as fxp (%d frac bits) %llX\n\n", \
-                    32 + frbits, bex_from_bin(STR_E_BIN, 2, 32 + frbits, 1));
+                    frbitsl, bex_from_bin(STR_E_BIN, wbits, frbitsl, 1));
 
         printf("pi as binary: %s\n", STR_PI_BIN);
         printf("pi as fxp (%d frac bits) %llX\n", \
-                    frbits, bex_from_bin(STR_PI_BIN, 2, frbits, 1));
+                    frbits, bex_from_bin(STR_PI_BIN, wbits, frbits, 1));
         printf("pi as fxp (%d frac bits) %llX\n\n", \
-                    32 + frbits, bex_from_bin(STR_PI_BIN, 2, 32 + frbits, 1));
+                    frbitsl, bex_from_bin(STR_PI_BIN, wbits, frbitsl, 1));
 
         printf("lg2(10) as decimal: %s\n", STR_LG2_10_DEC);
         printf("lg2(10)  as fxp (%d frac bits) %llX\n", \
-                    frbits, bex_from_dec(STR_LG2_10_DEC, 0, frbits, 1));
+                    frbits, bex_from_dec(STR_LG2_10_DEC, wbits, frbits, 1));
         printf("lg2(10)  as fxp (%d frac bits) %llX\n\n", \
-                    32 + frbits, bex_from_dec(STR_LG2_10_DEC, 0, 32 + frbits, 1));
+                    frbitsl, bex_from_dec(STR_LG2_10_DEC, wbits, frbitsl, 1));
 
-        frbits = 31;
+        wbits = 2;
+        frbits = FXP_INT_BITS - wbits;
+        frbitsl = FXP_LONG_BITS - wbits;
         printf("lg2(e)  as decimal: %s\n", STR_LG2_E_DEC);
         printf("lg2(e)  as fxp (%d frac bits) %llX\n", \
-                    frbits, bex_from_dec(STR_LG2_E_DEC, 0, frbits, 1));
+                    frbits, bex_from_dec(STR_LG2_E_DEC, wbits, frbits, 1));
         printf("lg2(e)  as fxp (%d frac bits) %llX\n\n", \
-                    32 + frbits, bex_from_dec(STR_LG2_E_DEC, 0, 32 + frbits, 1));
+                    frbitsl, bex_from_dec(STR_LG2_E_DEC, wbits, frbitsl, 1));
 
-        frbits = 32;
+        wbits = 1;
+        frbits = FXP_INT_BITS - wbits;
+        frbitsl = FXP_LONG_BITS - wbits;
         printf("ln(2) as decimal: %s\n", STR_LN_2_DEC);
         printf("ln(2) as fxp (%d frac bits) %llX\n", \
-                    frbits, bex_from_dec(STR_LN_2_DEC, 0, frbits, 1));
+                    frbits, bex_from_dec(STR_LN_2_DEC, wbits, frbits, 1));
         printf("ln(2) as fxp (%d frac bits) %llX\n\n", \
-                    32 + frbits, bex_from_dec(STR_LN_2_DEC, 0, 32 + frbits, 1));
+                    frbitsl, bex_from_dec(STR_LN_2_DEC, wbits, frbitsl, 1));
 
         printf("lg10(2) as decimal: %s\n", STR_LG10_2_DEC);
         printf("lg10(2) as fxp (%d frac bits) %llX\n", \
-                    frbits, bex_from_dec(STR_LG10_2_DEC, 0, frbits, 1));
+                    frbits, bex_from_dec(STR_LG10_2_DEC, wbits, frbits, 1));
         printf("lg10(2) as fxp (%d frac bits) %llX\n\n", \
-                    32 + frbits, bex_from_dec(STR_LG10_2_DEC, 0, 32 + frbits, 1));
+                    frbitsl, bex_from_dec(STR_LG10_2_DEC, wbits, frbitsl, 1));
 
         return 0;
 }
