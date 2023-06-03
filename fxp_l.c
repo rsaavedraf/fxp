@@ -77,6 +77,12 @@ static const unsigned long FXP_BKM_LOGS_L[] = {
 // a 4-bit right-shift of the value 4 positions earlier
 };
 
+// Auxiliary struct used internally for logarithms
+typedef struct tuple_l {
+        int ping;
+        unsigned long pong;
+} tuple_l;
+
 // A super_fxp is not just a "bigger FXP," it also has its own
 // fxp configuration (it's own number of whole vs. frac bits,)
 // independent of the global fxp setting, always carrying this
@@ -218,7 +224,7 @@ void print_sfxp_l(char * msg, super_fxp_l x)
 {
         printf("\n%s", msg);
         printf("Sfxp_l : {%d, %d, x%lX}\n", x.sign, x.nwbits, x.number);
-        printf("    Fxp eq: "); print_fxp(sfxp_l_2_fxp(x)); printf("\n");
+        printf(" Fxp eq: "); print_fxp(sfxp_l_2_fxp(x)); printf("\n");
 }
 
 static inline long sfxp_l_get_signed_num(super_fxp_l x)
@@ -412,6 +418,90 @@ int fxp_lg2_mul_l(int fxp1)
             return -(-c << FXP_frac_bits) + m;
 }
 
+static inline unsigned long fxp_bkm_lmode_l(unsigned long argument, \
+                                            const int MAX_LOOPS)
+{
+        #ifdef VERBOSE_BKM
+        printf("bkm_lmode_l argument: x%lX\n", argument);
+        #endif
+        unsigned long x = FXP_BKM_X_ONE_L;
+        unsigned long z, xs, y;
+        // The mantissa value will remain in the range of lg2(x),
+        // x in [1, 2), meaning mantissa always in [0, 1)
+        y = 0ul;
+        // Watch out we are using two different shifted
+        // configurations simultaneously, but independently:
+        // - "A" alignment (A for Array and argument)
+        //   BKM_LOGS Array values, argument, and the
+        //   mantissa all have 1 unsigned whole and 63 frac bits
+        //   for more accuracy
+        // - "X" alignment:
+        //   x aligned with FXP_BKM_X_ONE_L: 2 whole and 62 frac bits
+        //   (at least 2 whole bits for the BKM log algorithm,
+        //   given that z can occasionally exceed 2)
+        for (int shift = 1; shift <= MAX_LOOPS; shift++) {
+                #ifdef VERBOSE_BKM
+                printf("bkm_lmode_l shift:%2d - ", shift);
+                #endif
+                xs = (x >> shift);
+                z = x + xs;
+                if (z <= argument) {
+                        x = z;
+                        y += FXP_BKM_LOGS_L[shift];
+                        #ifdef VERBOSE_BKM
+                        printf("Updated x:x%16lX  Updated y:x%16lX", x, y);
+                        #endif
+                }
+                #ifdef VERBOSE_BKM
+                printf("\n");
+                #endif
+        }
+        #ifdef VERBOSE
+        printf("bkm_lmode_l final mantissa is: x%lX\n", y);
+        #endif
+        return y;
+}
+
+/*
+ * Internal auxiliary function that calculates the characteristic
+ * and rounded mantissa of lg2, returning them separately in a
+ * struct (tuple):
+ * The characteristic as int with 0 frac bits,
+ * the mantissa as unsigned long frac bits (exact same
+ * alignment as the BKM array values: 63 frac bits)
+ * Uses the BKM L-Mode algorithm (requires table of pre-calculated
+ * values) and longs.
+ *
+ * For more details on BKM:
+ * https://en.wikipedia.org/wiki/BKM_algorithm
+ */
+static inline tuple_l fxp_get_lg2_as_tuple_l(int fxp1, \
+                                    const int MAX_LOOPS)
+{
+        tuple_l result;
+        // Assumes fxp1 is for sure > 0
+        int clz = __builtin_clz((unsigned int) fxp1);
+        // clz > 0 since at least sign bit == 0
+        int nbx = FXP_INT_BITS - clz;
+        // Assign the characteristic
+        result.ping = \
+                ((fxp1 <= FXP_almost1) || (fxp1 >= FXP_two))? \
+                        (nbx - FXP_frac_bits - 1): 0;
+        #ifdef VERBOSE
+        printf("\nlg2_as_tuple: fxp1: x%X  clz: %d,  nbx: %d\n", fxp1, clz, nbx);
+        printf("lg2_as_tuple: characteristic is : %d\n", result.ping);
+        #endif
+
+        // Here we have already calculated the log characteristic c
+        // Now lshifting the original number to have it as unsigned
+        // long fxp with 2 whole bits (2 needed because z in the
+        // bkm_lmode algorithm can intermitently get a value > 2)
+        unsigned long argument = ((unsigned long) fxp1) << \
+                            (clz + FXP_INT_BITS_M1);
+        result.pong = fxp_bkm_lmode_l(argument, MAX_LOOPS);
+        return result;
+}
+
 /*
  * Internal auxiliary function that calculates the characteristic
  * and rounded mantissa of lg2, returning them already summed up
@@ -422,66 +512,23 @@ int fxp_lg2_mul_l(int fxp1)
  * For more details on BKM:
  * https://en.wikipedia.org/wiki/BKM_algorithm
  */
-static inline super_fxp_l fxp_get_lg2_as_sfxp_l( \
-                                    int fxp1, \
-                                    const int MAX_LOOPS)
+static inline super_fxp_l fxp_get_lg2_as_sfxp_l(int fxp1, \
+                                        const int MAX_LOOPS)
 {
         super_fxp_l result;
-        // Assumes fxp1 is for sure > 0
         int clz = __builtin_clz((unsigned int) fxp1);
-        // clz > 0 since at least sign bit == 0
         int nbx = FXP_INT_BITS - clz;
         // Assign the characteristic
-        int c = \
-                ((fxp1 <= FXP_almost1) || (fxp1 >= FXP_two))? \
+        int c = ((fxp1 <= FXP_almost1) || (fxp1 >= FXP_two))? \
                         (nbx - FXP_frac_bits_p1): 0;
         #ifdef VERBOSE
         printf("\nlg2_as_sfxp_l: fxp1: x%X  clz: %d,  nbx: %d\n", fxp1, clz, nbx);
         printf("lg2_as_sfxp_l: characteristic is : %d\n", c);
         #endif
-
-        // Here we have already calculated the log characteristic c
-        // Now lshifting the original number to have it as unsigned
-        // long fxp with 2 whole bits (2 needed because z can
-        // intermitently get a value > 2)
-        // Watch out we are using two different shifted
-        // configurations simultaneously, but independently:
-        // - "A" alignment (A for Array and argument)
-        //   BKM_LOGS Array values, argument, and the
-        //   mantissa all have 1 unsigned whole and 63 frac bits
-        //   for more accuracy
-        // - "X" alignment:
-        //   x aligned with FXP_BKM_X_ONE_L: 2 whole and 62 frac bits
-        //   (again at least 2 whole bits for the BKM log algorithm,
-        //   given that z can occasionally exceed 2)
         unsigned long argument = ((unsigned long) fxp1) << \
                             (clz + FXP_INT_BITS_M1);
-        unsigned long x = FXP_BKM_X_ONE_L;
-        unsigned long z, xs, y;
-        // The mantissa value will remain in the range of lg2(x),
-        // x in [1, 2), meaning mantissa always in [0, 1)
-        y = 0ul;
-        for (int shift = 1; shift <= MAX_LOOPS; shift++) {
-                #ifdef VERBOSE_BKM
-                printf("bkm lg2 shift:%2d - ", shift);
-                #endif
-                xs = (x >> shift);
-                z = x + xs;
-                if (z <= argument) {
-                        x = z;
-                        y += FXP_BKM_LOGS_L[shift];
-                        #ifdef VERBOSE_BKM
-                        printf("Udated x:x%lX  Updated y:x%lX", x, y);
-                        #endif
-                }
-                #ifdef VERBOSE_BKM
-                printf("\n");
-                #endif
-        }
-        #ifdef VERBOSE
-        printf("lg2_as_sfxp_l: mantissa is: x%lX\n", y);
-        #endif
-        return sfxp_l_from_cm(c, y);
+        unsigned long m = fxp_bkm_lmode_l(argument, MAX_LOOPS);
+        return sfxp_l_from_cm(c, m);
 }
 
 /*
@@ -492,13 +539,32 @@ int fxp_lg2_l(int fxp1)
         if (fxp1 < 0) return FXP_UNDEF;
         if (fxp1 == 0) return FXP_NEG_INF;
         if (fxp1 == FXP_POS_INF) return FXP_POS_INF;
-        super_fxp_l slg = fxp_get_lg2_as_sfxp_l(fxp1, FXP_lg2_maxloops);
+        tuple_l tup = fxp_get_lg2_as_tuple_l(fxp1, FXP_lg2_maxloops);
+        int rbit = (tup.pong >> FXP_int_plus_whole_bits_m2) & 1u;
+        int m = (int) (tup.pong >> FXP_int_plus_whole_bits_m1) + rbit;
         #ifdef VERBOSE
-        printf("\nlg2 as sfxp result: {%d, %d, %lu} == {%d, x%X,x%lX}\n", \
-                        slg.sign, slg.nwbits, slg.number, \
-                        slg.sign, slg.nwbits, slg.number);
+        printf("\nlg2 as tuple result: {%d, %lu} == {x%X,x%lX}\n", \
+                        tup.ping, tup.pong, tup.ping, tup.pong);
+        printf("Final mantissa: x%X  (rounding bit was %d)\n", m, (int) rbit);
         #endif
-        return sfxp_l_2_fxp(slg);
+        // Return the complete logarithm (charact + mantissa) as fxp
+        if (tup.ping < FXP_whole_min) {
+                if ((tup.ping == FXP_whole_min_m1) \
+                        && (m > 0ul)) {
+                        // Special case: in spite of not enough whole
+                        // bits available for the characteristic, there
+                        // are for characteristic + 1, which is what will
+                        // get returned as whole part of this logarithm
+                        return INT_MIN + m;
+                }
+                // Overflow: the characteristic of the logarithm
+                // will not fit in the whole bits part of our
+                // current fxp settings
+                return FXP_NEG_INF;
+        }
+        return (tup.ping >= 0)?
+                        ((tup.ping << FXP_frac_bits) + m):
+                        (-(-tup.ping << FXP_frac_bits) + m);
 }
 
 /*
@@ -638,14 +704,14 @@ static inline unsigned long fxp_bkm_emode_l(unsigned long argument, \
         for (int k = 0; k < MAX_LOOPS; k++) {
                 unsigned long const z = y + FXP_BKM_LOGS_L[k];
                 #ifdef VERBOSE_BKM
-                printf("k:%d,  z:%lX,  z as ld:%.19Lf\n", \
+                printf("k:%2d,  z:%16lX,  z as ld:%.19Lf\n", \
                         k, z, print_ulong_as_ld(z, 63));
                 #endif
                 if (z <= argument) {
                         y = z;
                         x = x + (x >> k);
                         #ifdef VERBOSE_BKM
-                        printf("\tUpdating y (%lX) und x (%lX)\n", y, x);
+                        printf("\tUpdating y (x%16lX) und x (x%16lX)\n", y, x);
                         printf("\tx as long double: %.19Lf\n", \
                                         print_ulong_as_ld(x, 62));
                         #endif
@@ -884,9 +950,10 @@ int fxp_powxy_l(int x, int y)
         // First get the lg2 of x
         super_fxp_l slg2x = fxp_get_lg2_as_sfxp_l(x, FXP_POWXY_LG_LOOPS);
         #ifdef VERBOSE
-        printf("powxy_l: x: "); print_fxp(x); printf("\n");
-        printf("         y: "); print_fxp(y);
-        print_sfxp_l("    lg2(x): ", slg2x);
+        printf("powxy_l:\n");
+        printf("      x: "); print_fxp(x); printf("\n");
+        printf("      y: "); print_fxp(y);
+        print_sfxp_l(" lg2(x): ", slg2x);
         #endif
         //int whole = (int) sfxp_l_get_poswhole(slg2x);
         // Return appropriately signed 2^( y * lg2x )
