@@ -180,13 +180,6 @@ static long double get_lg2_target(int x)
 
 static long double get_ln_target(int x)
 {
-        /*
-        long double l2 = get_lg2_target(x);
-        if ((l2 == FXP_UNDEF_LD) \
-                || (l2 == FXP_NINF_LD) \
-                || (l2 == FXP_PINF_LD))
-                return l2;
-        */
         if (x < 0) return FXP_UNDEF_LD;
         if (x == 0) return FXP_NINF_LD;
         if (x == FXP_POS_INF) return FXP_PINF_LD;
@@ -195,13 +188,6 @@ static long double get_ln_target(int x)
 
 static long double get_lg10_target(int x)
 {
-        /*
-        long double l2 = get_lg2_target(x);
-        if ((l2 == FXP_UNDEF_LD) \
-                || (l2 == FXP_NINF_LD) \
-                || (l2 == FXP_PINF_LD))
-                return l2;
-        */
         if (x < 0) return FXP_UNDEF_LD;
         if (x == 0) return FXP_NINF_LD;
         if (x == FXP_POS_INF) return FXP_PINF_LD;
@@ -849,7 +835,6 @@ void test_super_fxp_l()
         test_fxp("-5.5<->sfxp_l", fxp2ld(neg), vneg);
 }
 
-
 void test_lg2(char * msg, int x)
 {
         long double tgt = get_lg2_target(x);
@@ -964,7 +949,6 @@ void test_pow2(char * msg, int x)
         printf("pow2("); test_fxp(msg, tgt, fxp_pow2(x));
 }
 
-
 void test_exp(char * msg, int x)
 {
         long double tgt = get_exp_target(x);
@@ -978,7 +962,6 @@ void test_pow10(char * msg, int x)
         printf("pow10_l("); test_fxp(msg, tgt, fxp_pow10_l(x));
         printf("pow10("); test_fxp(msg, tgt, fxp_pow10(x));
 }
-
 
 void test_pow(char base, char * msg, int x) {
         switch(base) {
@@ -1161,12 +1144,11 @@ void test_powersxy()
         like x = 1 + tiniest, and y close to or == Largest. And that should be the case for
         all frac bit configurations.
 
-        Such cases are only allowed in the generation of random inputs for the powxy tests
-        only if the variable AVOID_EXTREME_INPUTS_FOR_POWXY is 0. But such combinations
-        might not even be likely arguments for the powxy functions within a given
-        application domain. Or for such extreme combinations, ultimate precision
-        specifically to cope with them might be impractically expensive, while not
-        of general interest.
+        Such cases are allowed in the generation of random inputs for the powxy tests
+        only if AVOID_EXTREME_INPUTS_FOR_POWXY is 0. But such combinations might not
+        even be likely arguments for the powxy functions within a given application
+        domain. Or for such extreme combinations, ultimate precision just to cope
+        with them might be impractically expensive, while not of general interest.
 
         In any case, increasing the overall error tolerance of this tester (WDELTA_MAX), or
         increasing the number of loops used in the powxy functions, are always available
@@ -1420,16 +1402,16 @@ int main(void)
         fxp_set_frac_bits( nfb );
         if ((e != fxp_get_e()) || (pi != fxp_get_pi()) || \
             (ln2 != fxp_get_ln_2()) || (lg10_2 != fxp_get_lg10_2())) {
-            // These differences might happen if rounding for least-significant
-            // bit of the constants is done differently between the startup vs.
-            // what fxp_set_frac_bits() does when called
-            printf("Constant difference detected after resetting frac bits to default:\n");
-            printf("  \tstarting\tafter\n");
-            printf("e:\t%x\t\t%x\n", e, fxp_get_e());
-            printf("pi:\t%x\t\t%x\n", pi, fxp_get_pi());
-            printf("ln2:\t%x\t\t%x\n", ln2, fxp_get_ln_2());
-            printf("lg10_2:\t%x\t\t%x\n", lg10_2, fxp_get_lg10_2());
-            assert( 0 );
+                // These differences might happen if rounding for least-significant
+                // bit of the constants is done differently between the startup vs.
+                // what fxp_set_frac_bits() does when called
+                printf("Constant difference detected after resetting frac bits to default:\n");
+                printf("  \tstarting\tafter\n");
+                printf("e:\t%x\t\t%x\n", e, fxp_get_e());
+                printf("pi:\t%x\t\t%x\n", pi, fxp_get_pi());
+                printf("ln2:\t%x\t\t%x\n", ln2, fxp_get_ln_2());
+                printf("lg10_2:\t%x\t\t%x\n", lg10_2, fxp_get_lg10_2());
+                assert( 0 );
         }
 
         printf("+INF_LD : %.10LE\n", FXP_PINF_LD);
@@ -1474,8 +1456,8 @@ int main(void)
         int nconfigs = sizeof(fracbit_configs) / sizeof(fracbit_configs[0]);
         printf("\nRunning tests for frac-bit sizes: ");
         for (nfb = 0; nfb < nconfigs; nfb++) {
-            printf("%d", fracbit_configs[nfb]);
-            if ((nfb + 1) < nconfigs) printf(", ");
+                printf("%d", fracbit_configs[nfb]);
+                if ((nfb + 1) < nconfigs) printf(", ");
         }
         printf("\n");
 
