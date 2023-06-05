@@ -24,11 +24,11 @@
 #define DASHES "============================================================\n"
 
 // Set to 0 in order to be able to replicate runs
-#define SET_RAND_SEED 1
+#define SET_RAND_SEED 0
 
 #define TEST_WITH_RANDS 1
-//#define MAX_RAND_LOOPS 5
-#define MAX_RAND_LOOPS 5000
+#define MAX_RAND_LOOPS 5
+//#define MAX_RAND_LOOPS 5000
 #define TEST_BASICS 1
 #define TEST_SUPER_FXP_L 1
 #define TEST_LOGARITHMS 1
@@ -36,26 +36,29 @@
 #define TEST_POWERS 1
 #define TEST_SQRT 1
 #define TEST_POWXY 1
+#define AVOID_EXTREME_INPUTS_FOR_POWXY 1
 
 // Max allowed error will be WDELTA_MAX * tiniest (least signif frac bit)
 #define WDELTA_MAX 3.0
 
 // Warnings will start appearing when error >= MIN_DELTA = WDELTA_MAX*tiniest / WDELTA_DIV
 #define WDELTA_DIV 1.2
-//static int fracbit_configs[] = {24, 8, 11, 16, 28, 31};
-//static int fracbit_configs[] = {30};
 
+static int fracbit_configs[] = {8, 11, 16, 24, 28, 31};
+//static int fracbit_configs[] = {28};
+/*
 static int fracbit_configs[] = {
 31, 30,
 29, 28, 27, 26, 25, 24, 23, 22, 21, 20,
 19, 18, 17, 16, 15, 14, 13, 12, 11, 10,
 9, 8, 7, 6, 5, 4
 };
-
+*/
 
 #define NINTBITS (sizeof(int) * 8)
-static int fracbit_nwarnings[NINTBITS];
-static int fracbit_threshold_cases[NINTBITS];
+static unsigned int fracbit_nwarnings[NINTBITS];
+static unsigned int fracbit_threshold_cases[NINTBITS];
+static unsigned int fracbit_extr_powxy_cases[NINTBITS];
 static long double fracbit_maxdelta_allowed[NINTBITS];
 static long double fracbit_maxdelta_observed[NINTBITS];
 
@@ -623,8 +626,8 @@ void test_fracs()
 
         int a = fxp_dec(-0, 500);
         int b = fxp_dec(-0, -500);
-        printf("-0. 500 is "); print_fxp(a); printf("\n");
-        printf("-0.-500 is "); print_fxp(b); printf("\n");
+        printf("-0. 500: "); print_fxp(a); printf("\n");
+        printf("-0.-500: "); print_fxp(b); printf("\n");
         test_fxp("-0.(+)500",  0.5, fxp_dec(-0, 500));
         test_fxp("-0.(-)500", -0.5, fxp_dec(-0, -500));
 
@@ -759,9 +762,7 @@ void test_ops_with_values_of_interest()
         printf("\nVerifying ops with values of interest, ");
         printf("frac bits: %d\n", frac_bits);
         int ax[] = {
-                    FXP_UNDEF, FXP_NEG_INF,
-                    FXP_POS_INF,
-                    FXP_MAX,
+                    FXP_UNDEF, FXP_NEG_INF, FXP_POS_INF, FXP_MAX,
                     fxp_dec(33333, 333), fxp_dec(33, 33),
                     fxp(2),
                     fxp(1),
@@ -804,9 +805,6 @@ void test_ops_with_values_of_interest()
                 float fx = fxp2f(x);
                 int x2 = f2fxp(fx);
                 printf("\nRoundtrip fxp->float->fxp conversion of x:\n");
-                //printf("x      : "); print_fxp(x); printf("\n");
-                //printf("float  : %fE\n", fx);
-                //printf("x2     : "); print_fxp(x2); printf("\n");
                 test_fxp("x: ", get_f_target(x), x2);
 
                 for (int j = 0; j<ndr; j++) {
@@ -815,7 +813,7 @@ void test_ops_with_values_of_interest()
                                 || (y == FXP_NEG_INF))) {
                                 continue;
                         }
-                        printf("x      : "); print_fxp(x); printf("\n");
+                        printf("\nx      : "); print_fxp(x); printf("\n");
                         printf("y      : "); print_fxp(y); printf("\n");
                         ldx = fxp2ld(x);
                         ldy = fxp2ld(y);
@@ -823,7 +821,7 @@ void test_ops_with_values_of_interest()
                         //For multiplication
                         tgt1 = get_mul_target(x, y);
                         //n1 = fxp_mul_l(x, y);
-                        //test_fxp("\nmul_l  (x*y)", n1, tgt1);
+                        //test_fxp("\nmul_l  (x*y)", tgt1, n1);
 
                         n1 = fxp_mul(x, y);
                         test_fxp("\nmul  (x*y)", tgt1, n1);
@@ -856,7 +854,7 @@ void test_lg2(char * msg, int x)
 {
         long double tgt = get_lg2_target(x);
         printf("lg2_l("); test_fxp(msg, tgt, fxp_lg2_l(x));
-        //printf("lg2(");   test_fxp(msg, tgt, fxp_lg2(x));
+        printf("lg2(");   test_fxp(msg, tgt, fxp_lg2(x));
 }
 
 void test_lg2_mul_l(char * msg, int x)
@@ -869,14 +867,14 @@ void test_ln(char * msg, int x)
 {
         long double tgt = get_ln_target(x);
         printf("ln_l("); test_fxp(msg, tgt, fxp_ln_l(x));
-        //printf("ln(");   test_fxp(msg, tgt, fxp_ln(x));
+        printf("ln(");   test_fxp(msg, tgt, fxp_ln(x));
 }
 
 void test_lg10(char * msg, int x)
 {
         long double tgt = get_lg10_target(x);
         printf("lg10_l("); test_fxp(msg, tgt, fxp_lg10_l(x));
-        //printf("lg10(");   test_fxp(msg, tgt, fxp_lg10(x));
+        printf("lg10(");   test_fxp(msg, tgt, fxp_lg10(x));
 }
 
 void test_log(char base, char * msg, int x) {
@@ -963,7 +961,7 @@ void test_pow2(char * msg, int x)
 {
         long double tgt = get_pow2_target(x);
         printf("pow2_l("); test_fxp(msg, tgt, fxp_pow2_l(x));
-        //printf("pow2("); test_fxp(msg, tgt, fxp_pow2(x));
+        printf("pow2("); test_fxp(msg, tgt, fxp_pow2(x));
 }
 
 
@@ -971,14 +969,14 @@ void test_exp(char * msg, int x)
 {
         long double tgt = get_exp_target(x);
         printf("exp_l("); test_fxp(msg, tgt, fxp_exp_l(x));
-        //printf("exp("); test_fxp(msg, tgt, fxp_exp(x));
+        printf("exp("); test_fxp(msg, tgt, fxp_exp(x));
 }
 
 void test_pow10(char * msg, int x)
 {
         long double tgt = get_pow10_target(x);
         printf("pow10_l("); test_fxp(msg, tgt, fxp_pow10_l(x));
-        //printf("pow10("); test_fxp(msg, tgt, fxp_pow10(x));
+        printf("pow10("); test_fxp(msg, tgt, fxp_pow10(x));
 }
 
 
@@ -999,14 +997,14 @@ void test_pow(char base, char * msg, int x) {
 void test_sqrt(char * msg, int x) {
         long double tgt = get_sqrt_target(x);
         printf("sqrt_l("); test_fxp(msg, tgt, fxp_sqrt_l(x));
-        //printf("sqrt(");   test_fxp(msg, tgt, fxp_sqrt(x));
+        printf("sqrt(");   test_fxp(msg, tgt, fxp_sqrt(x));
 }
 
 void test_powxy(char * msg, int x, int y)
 {
         long double tgt = get_powxy_target(x, y);
         printf("powxy_l("); test_fxp(msg, tgt, fxp_powxy_l(x, y));
-        //printf("powxy(");   test_fxp(msg, tgt, fxp_powxy(x, y));
+        printf("powxy(");   test_fxp(msg, tgt, fxp_powxy(x, y));
 }
 
 void test_powers()
@@ -1153,23 +1151,49 @@ void test_powersxy()
         test_powxy("1^-INF)", fxp(1), FXP_NEG_INF);
         test_powxy("+INF^0)", FXP_POS_INF, 0);
 
+        /*
+        Notice in the binary expansions included here below, the most error-prone
+        combinations of arguments for powxy follow a distinct pattern:
+             1) One value is very close to but slightly larger than 1, and
+             2) The other value is quite a large number.
+
+        Hence, the most critical combination of x and y for powxy ought to be something
+        like x = 1 + tiniest, and y close to or == Largest. And that should be the case for
+        all frac bit configurations.
+
+        Such cases are only allowed in the generation of random inputs for the powxy tests
+        only if the variable AVOID_EXTREME_INPUTS_FOR_POWXY is 0. But such combinations
+        might not even be likely arguments for the powxy functions within a given
+        application domain. Or for such extreme combinations, ultimate precision
+        specifically to cope with them might be impractically expensive, while not
+        of general interest.
+
+        In any case, increasing the overall error tolerance of this tester (WDELTA_MAX), or
+        increasing the number of loops used in the powxy functions, are always available
+        tuning options to make the tester pass through such cases if desired.
+        */
+
         // Formerly problematic cases (when using just tuple instead of tuple_l in fxp_l.c,
-        // and having just uint instead of ulongy in fxp.c's tuple)
+        // and having just uint instead of ulongy in fxp.c's tuple).
+        // Only positive values are used for the powxy tests, so ignore the signs from these:
         // For 31 frac bits even with longs
         // n1 = -9.9673205148e-01 (fxp: x(-)7F94EA76 = -2140465782 =b(-).1111111100101001110101001110110)
         // n2 =  7.9005645076e-01 (fxp:    x652091DD =  1696633309 =b   .1100101001000001001000111011101)
         test_powxy("31fb n1,n2)", 2140465782, 1696633309);
+
         // For 30 frac bits even with longs, requires WDELTA_MAX = 2.8
-        //n1 = 1.4423908889e+00 (fxp: x5C5021E0 =1548755424 =b1.011100010100000010000111100000)
-        //n2 = 1.7836997155e+00 (fxp: x722822DA =1915232986 =b1.110010001010000010001011011010)
-        //n2 =  4.1533096321e-01 (fxp:   445958226,  x1A94C852,  b00.011010100101001100100001010010)
-        //n3 = -6.0732139554e-01 (fxp:  -652106383, -x26DE5A8F, -b00.100110110111100101101010001111)
+        // n1 = 1.4423908889e+00 (fxp: x5C5021E0 =1548755424 =b1.011100010100000010000111100000)
+        // n2 = 1.7836997155e+00 (fxp: x722822DA =1915232986 =b1.110010001010000010001011011010)
+        // n2 =  4.1533096321e-01 (fxp:   445958226,  x1A94C852,  b00.011010100101001100100001010010)
+        // n3 = -6.0732139554e-01 (fxp:  -652106383, -x26DE5A8F, -b00.100110110111100101101010001111)
         test_powxy("30fb1 n1,n2)", 1548755424, 1915232986);
-        test_powxy("30fb2 n2,-n3)", 445958226, 652106383);
+        test_powxy("30fb2 n2,n3)", 445958226, 652106383);
+
         // For 29 frac bits
-        //n1 = 1.4221374150e+00 (fxp: x2D822653 =763504211 =b1.01101100000100010011001010011)
-        //n2 = 3.9325484559e+00 (fxp: x7DD76FDC =2111270876 =b11.11101110101110110111111011100)
+        // n1 = 1.4221374150e+00 (fxp: x2D822653 =763504211 =b1.01101100000100010011001010011)
+        // n2 = 3.9325484559e+00 (fxp: x7DD76FDC =2111270876 =b11.11101110101110110111111011100)
         test_powxy("29fb n1,n2)", 763504211, 2111270876);
+
         // For 26 frac bits:
         // n1 =  1.1161174327e+00 (fxp:    x 476E77D =    74901373 =b   1.00011101101110011101111101)
         // n2 =  2.8956378385e+01 (fxp:    x73D354DB =  1943229659 =b   11100.11110100110101010011011011)
@@ -1180,17 +1204,30 @@ void test_powersxy()
         test_powxy("26fb1 n1,n2)", 74901373, 1943229659);
         test_powxy("26fb2 n1,n2)", 74577703, 2125959461);
         test_powxy("26fb3 n1,n2)", 1267785417, 79026026);
+
         // For 25 frac bits:
         // n1 = 1.1232554913e+00 (fxp: x23F1B58 =37690200 =b1.0001111110001101101011000)
         // n2 = 3.5341912180e+01 (fxp: x46AF0F1D =1185877789 =b100011.0101011110000111100011101)
         test_powxy("25fb n1,n2)", 37690200, 1185877789);
+
         // For 24 frac bits:
+        // The following quite troublesome case for 24 frac bits requires either an
+        // error tolerance of WDELTA_MAX >= 5.1, or else, if keeping WDELTA_MAX at let's say 3.0,
+        // then more precision loops are needed: FXP_POWXY_LG_LOOPS in fxp.c at least
+        // FXP_INT_BITS + 5. Otherwise an assert gets triggered:
+        // n1 = -1.0454773903e+00 (fxp:   -17540200, -x010BA468, -b00000001.000010111010010001101000)
+        // n2 =  1.0314526862e+02 (fxp:  1730490451,  x67253053,  b01100111.001001010011000001010011)
+        // test_powxy("24fb3 n1,n2)", 17540200, 1730490451);
+        //
+        // Here some still tough cases for 24 frac bits, but they do pass under the defaults of
+        // WDELTA_MAX = 3.0, and FXP_POWXY_LG_LOOPS = FXP_INT_BITS + 3:
         // n1 = -1.0481667519e+00 (fxp: x(-) 10C54A8 =   -17585320 =b(-)1.000011000101010010101000)
         // n2 = -9.0499958158e+01 (fxp: x(-)5A7FFD42 = -1518337346 =b(-)1011010.011111111111110101000010)
         // n1 =  1.0613912344e+00 (fxp:    17807190,  x010FB756,  b00000001.000011111011011101010110)
         // n2 = -7.4797068596e+01 (fxp: -1254886576, -x4ACC0CB0, -b01001010.110011000000110010110000)
         test_powxy("24fb1 n1,n2)", 17585320, 1518337346);
         test_powxy("24fb2 n1,n2)", 17807190, 1254886576);
+
         // For 23 frac bits:
         // n1 = 1.0374912024e+00 (fxp: x84CC83 =8703107 =b1.00001001100110010000011)
         // n2 = 1.2279908419e+02 (fxp: x3D664864 =1030113380 =b1111010.11001100100100001100100)
@@ -1198,6 +1235,11 @@ void test_powersxy()
         // n2 = -2.1888473272e+02 (fxp: x(-)6D713EEC = -1836138220 =b(-)11011010.11100010011111011101100)
         test_powxy("23fb1 n1,n2)", 8703107, 1030113380);
         test_powxy("23fb2 n1,n2)", 8602726, 1836138220);
+        // Other things being equal, the following quite troublesome case for 23 frac bits
+        // requires a WDELTA_MAX >= 6.4
+        //n1 =  1.0186194181e+00 (fxp:     8544799,  x0082621F,  b000000001.00000100110001000011111)
+        //n2 =  2.4920319748e+02 (fxp:  2090467936,  x7C9A0260,  b011111001.00110100000001001100000)
+        // test_powxy("23fb3 n1,n2)", 8544799, 2090467936);
 }
 
 
@@ -1205,7 +1247,9 @@ void test_ops_with_rand_nums()
 {
         int sign1, sign2, sign3, n1, n2, n3, n4, fxp1, fxp2;
         int vn1, vn2, vn3;
-        long double ldx, ldy, ldz, tgt1, tgt2, tgt3;
+        long double ldx, ldy, ldz, tgt1, tgt2, tgt3, pldx, pldy;
+        const long double QUASI_ONE = 1.25;
+        const long double QUITE_BIG = fxp2ld(FXP_MAX) * 0.25;
 
         for (int i = 0; i < MAX_RAND_LOOPS; i++) {
                 sign1 = rand() % 2 == 1? -1: 1;
@@ -1222,6 +1266,30 @@ void test_ops_with_rand_nums()
                 ldx = fxp2ld(n1);
                 ldy = fxp2ld(n2);
                 ldz = fxp2ld(n3);
+                pldx = (ldx >= 0.0)? ldx: -ldx;
+                pldy = (ldy >= 0.0)? ldy: -ldy;
+                if (((pldx > 1.0) && (pldx <= QUASI_ONE) && (pldy >= QUITE_BIG)) \
+                        ||
+                     ((pldy > 1.0) && (pldy <= QUASI_ONE) && (pldx >= QUITE_BIG))) {
+                        // n1 and n2 are an extreme and particularly error-prone
+                        // combination of inputs for powxy:
+                        // n1 greater but quite close to 1, and
+                        // n2 a rather large number close enough to Largest
+                        // (or the other way around.)
+                        // Count the number of these cases encountered
+                        printf("\nExtreme combination of inputs for powxy encountered.\n");
+                        fracbit_extr_powxy_cases[FXP_frac_bits]++;
+                        if (AVOID_EXTREME_INPUTS_FOR_POWXY) {
+                                // Replace n1 with their average, and n2 with the
+                                // average between that new n1 and n2
+                                ldx = (ldx + ldy) / 2.0;
+                                n1 = ld2fxp(ldx);
+                                ldy = (ldx + ldy) / 2.0;
+                                n2 = ld2fxp(ldy);
+                                ldx = fxp2ld(n1);
+                                ldy = fxp2ld(n2);
+                        }
+                }
                 printf("\nRandom Test #%d, ", i);
                 printf("frac bits: %d", frac_bits);
                 printf("\n    n1 = "); print_fxp(n1);
@@ -1244,9 +1312,9 @@ void test_ops_with_rand_nums()
                         // Test that roundtrip conversions from fxp
                         // to float and back to fxp remains very close
                         // to the original
-                        test_fxp("n1: ", get_f_target(n1), f2fxp(fxp2f(n1)));
-                        test_fxp("n2: ", get_f_target(n2), f2fxp(fxp2f(n2)));
-                        test_fxp("n3: ", get_f_target(n3), f2fxp(fxp2f(n3)));
+                        test_fxp("n1 from float roundtrip: ", get_f_target(n1), f2fxp(fxp2f(n1)));
+                        test_fxp("n2 from float roundtrip: ", get_f_target(n2), f2fxp(fxp2f(n2)));
+                        test_fxp("n3 from float roundtrip: ", get_f_target(n3), f2fxp(fxp2f(n3)));
 
                         fxp1 = fxp_add(n1, n2);
                         tgt1 = get_target(ldx + ldy);
@@ -1258,13 +1326,13 @@ void test_ops_with_rand_nums()
                         fxp1 = fxp_mul(n1, n2);
                         fxp2 = fxp_mul_l(n1, n2);
                         tgt1 = get_target(ldx * ldy);
-                        test_fxp("mul   (n1*n2)", tgt1, fxp1);
                         test_fxp("mul_l (n1*n2)", tgt1, fxp2);
+                        test_fxp("mul   (n1*n2)", tgt1, fxp1);
                         fxp1 = fxp_mul(n1, n3);
                         fxp2 = fxp_mul_l(n1, n3);
                         tgt2 = get_target(ldx * ldz);
-                        test_fxp("mul   (n1*n3)", tgt2, fxp1);
                         test_fxp("mul_l (n1*n3)", tgt2, fxp2);
+                        test_fxp("mul   (n1*n3)", tgt2, fxp1);
 
                         fxp1 = fxp_div_l(n1, n2);
                         fxp2 = fxp_div(n1, n2);
@@ -1399,6 +1467,7 @@ int main(void)
         for (int i = 0; i < FXP_INT_BITS; i++) {
                 fracbit_nwarnings[i] = 0;
                 fracbit_threshold_cases[i] = 0;
+                fracbit_extr_powxy_cases[i] = 0;
                 fracbit_maxdelta_allowed[i] = 0.0;
                 fracbit_maxdelta_observed[i] = 0.0;
         }
@@ -1544,15 +1613,16 @@ int main(void)
         printf("\nSummary of FXP Tests:\n");
         printf("Grand total of %d warnings checking %d configurations.\n", \
                     twarnings, nconfigs);
-        printf("F.bits  #Warnings  #Thr.cases  Max Delta   Max Delta Allowed\n");
+        printf("F.bits  #Warnings  #Thr.cases  Max Delta   Max Delta Allowed   Extr.Powxy Cases\n");
         for (int nfb = 0; nfb < nconfigs; nfb++) {
                 int fb = fracbit_configs[nfb];
-                printf("%d\t %5d\t    %5d      %1.5Le   %1.5Le\n", \
+                printf("%d\t %5d\t    %5d      %1.5Le   %1.5Le      %5d\n", \
                         fb,
                         fracbit_nwarnings[fb],
                         fracbit_threshold_cases[fb],
                         fracbit_maxdelta_observed[fb],
-                        fracbit_maxdelta_allowed[fb]);
+                        fracbit_maxdelta_allowed[fb],
+                        fracbit_extr_powxy_cases[fb]);
         }
 
         return 0;

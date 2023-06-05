@@ -617,8 +617,34 @@ Changes for better alignment in the log output, also reactivating the
 tracing of division in fxp.c when VERBOSE defined
 
 
+2023-06-03
+
+Found another troublesome case, this one for 24 frac bits (look for
+"24fb3" in fxp_tester.c:
+test_powxy("24fb3 n1,n2)", 17540200, 1730490451);
+Either WDELTA_MAX must be at least 5.1, or 
+FXP_POWXY_LG_LOOPS must be increased to at least FXP_INT_BITS + 5.
+Otherwise assert.
+Rare to hit such cases (only once after several runs with 10K random
+numbers for all frac bits configs), so commenting it out, and keeping the
+defaults the same: WDELTA_MAX 3, FXP_POWXY_LG_LOOPS = FXP_INT_BITS + 3
+
+Changed fxp_l.c to use tuple_l only for lg2_l, but super_fxp_l for
+other lg and all power functions. This makes the code for the 
+power functions simpler and also slightly faster.
+
+2023-06-05
+
+Changed fxp.c to mirror the same refactoring done in fxp_l.c:
+The tuple only used for lg2, while super_fxp's used for all other
+functions dealing with extended precision.
+
+Variable added to the tester to control whether to avoid or not 
+extreme inputs for the powxy tests. Counting such extreme cases 
+when encountered, and showing the totals per frac bits in the 
+final table.
+
 
 Pending:
-Include powxy_l and powxy in report from fxp_xtimes.c
 Implement trigonometric functions
 Rewrite in Rust?
