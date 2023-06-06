@@ -216,17 +216,15 @@ static inline super_fxp_l posfxp_x_possfxp_l(int x, super_fxp_l c)
 
 static inline super_fxp_l get_fxp_x_sfxp_l(int x, super_fxp_l c)
 {
-        int sx = (x >= 0);
-        int sc = (!c.sign);
-        super_fxp_l prod;
-        if (sx) {
-                prod = posfxp_x_possfxp_l(x, c);
-                prod.sign = c.sign;
+        super_fxp_l product;
+        if (x >= 0) {
+                product = posfxp_x_possfxp_l(x, c);
+                product.sign = c.sign;
         } else {
-                prod = posfxp_x_possfxp_l(-x, c);
-                prod.sign = sc;
+                product = posfxp_x_possfxp_l(-x, c);
+                product.sign = !c.sign;
         }
-        return prod;
+        return product;
 }
 
 /*
@@ -626,6 +624,7 @@ unsigned long dmul_ulong_x_uint(unsigned long x, unsigned int ya)
 
 static inline super_fxp_l get_sfxp_x_sfxp_l(super_fxp_l x, super_fxp_l y)
 {
+        // Sign of the product assuming arguments are never both negative
         super_fxp_l prod = { x.sign | y.sign, \
                              x.nwbits + y.nwbits,
                              dmul_ulongs(x.number, y.number) };
@@ -838,7 +837,7 @@ static inline int fxp_pow2_pos_arg_xfactor_l(int x, \
 }
 
 // Calculate the pow2 of a negative argument x
-// multiplied by a factor c
+// multiplied by a factor C
 static inline int fxp_pow2_neg_arg_xfactor_l(int x, \
                                         super_fxp_l factorc, \
                                         const int MAX_LOOPS)
@@ -853,8 +852,7 @@ static inline int fxp_pow2_neg_arg_xfactor_l(int x, \
 }
 
 // Implementation of exp_l(x) using pow2_l():
-// e^x  == 2^( lg2(e^x) )
-//      == 2^( x * lg2(e) )
+// e^x == 2^( x * lg2(e) )
 int fxp_exp_l(int fxp1)
 {
         if (fxp1 == FXP_UNDEF) return FXP_UNDEF;
@@ -869,9 +867,8 @@ int fxp_exp_l(int fxp1)
                                     FXP_POWX_LOOPS);
 }
 
-// Implementation of pow10_l(x) pow2_l():
-// 10^x == 2^( lg2(10^x) )
-//      == 2^( x * lg2(10) )
+// Implementation of pow10_l(x) using pow2_l() and lg2_l:
+// 10^x == 2^( x * lg2(10) )
 int fxp_pow10_l(int fxp1)
 {
         if (fxp1 == FXP_UNDEF) return FXP_UNDEF;
@@ -896,7 +893,7 @@ int fxp_sqrt_l(int fxp1)
         // First get the lg2 of the argument
         super_fxp_l slg = fxp_get_lg2_as_sfxp_l(fxp1, FXP_SQRT_LOOPS);
         // Halving that value
-        slg.nwbits -= 1;
+        slg.nwbits--;
         // parameters for pow2
         int w = (int) sfxp_l_get_poswhole(slg);
         unsigned long bkmearg = get_sfxp_frac_for_bkme_l(slg);
@@ -950,7 +947,7 @@ int fxp_powxy_l(int x, int y)
         #endif
         // Return appropriately signed 2^( y * lg2x )
         if (slg2x.sign) {
-                slg2x.sign = 0; // <- negating in place: just flipping the sign
+                slg2x.sign = 0; // <- negating in place
                 if (y >= 0) {
                         #ifdef VERBOSE
                         int pnwbits = slg2x.nwbits + fxp_nbits(y) - FXP_frac_bits;

@@ -459,17 +459,15 @@ static inline super_fxp posfxp_x_possfxp(int x, super_fxp c)
 
 static inline super_fxp get_fxp_x_sfxp(int x, super_fxp c)
 {
-        int sx = (x >= 0);
-        int sc = !c.sign;
-        super_fxp prod;
-        if (sx) {
-                prod = posfxp_x_possfxp(x, c);
-                prod.sign = c.sign;
+        super_fxp product;
+        if (x >= 0) {
+                product = posfxp_x_possfxp(x, c);
+                product.sign = c.sign;
         } else {
-                prod = posfxp_x_possfxp(-x, c);
-                prod.sign = sc;
+                product = posfxp_x_possfxp(-x, c);
+                product.sign = !c.sign;
         }
-        return prod;
+        return product;
 }
 
 /*
@@ -1239,9 +1237,13 @@ int fxp_lg2(int fxp1)
         if (fxp1 == FXP_POS_INF) return FXP_POS_INF;
         // Get the separate characteristic and full mantissa
         lg2tuple tup = fxp_get_lg2tuple(fxp1, FXP_lg2_maxloops);
+
         // Shift the mantissa (rounding it) for current fxp config
-        int m = (int) (rshift_ulongy_rounding(tup.mantissa, \
-                        FXP_int_plus_whole_bits_m1)).lo;
+        ulongy r = rshift_ulongy(tup.mantissa, FXP_int_plus_whole_bits_m2);
+        unsigned int rbit = r.lo & 1u;
+        r = rshift_ulongy(r, 1);
+        int m = (int) ulongy_add_uint(r, rbit).lo;
+
         // Return the complete logarithm (c + m) as fxp
         if (tup.characteristic < FXP_whole_min) {
                 if ((tup.characteristic == FXP_whole_min_m1) \
@@ -1320,6 +1322,7 @@ static inline super_fxp fxp_get_lg2_as_sfxp(int fxp1, \
 
 static inline super_fxp get_sfxp_x_sfxp(super_fxp x, super_fxp y)
 {
+        // Sign of the product assuming arguments are never both negative
         super_fxp prod = { x.sign | y.sign, \
                            x.nwbits + y.nwbits,
                            dmul_ulongys(x.number, y.number) };
@@ -1566,7 +1569,7 @@ int fxp_sqrt(int fxp1)
         // First get the lg2 of the argument
         super_fxp slg = fxp_get_lg2_as_sfxp(fxp1, FXP_SQRT_LOOPS);
         // Halving that value
-        slg.nwbits -= 1;
+        slg.nwbits--;
         // parameters for pow2
         int w = (int) sfxp_get_poswhole(slg);
         ulongy bkmearg = get_sfxp_frac_for_bkme(slg);
@@ -1607,7 +1610,7 @@ int fxp_powxy(int x, int y)
         #endif
         // Return appropriately signed 2^( y * lg2x )
         if (slg2x.sign) {
-                slg2x.sign = 0; // negating in place: just flipping the sign
+                slg2x.sign = 0; // negating in place
                 if (y >= 0) {
                         #ifdef VERBOSE
                         int pnwbits = slg2x.nwbits + fxp_nbits(y) - FXP_frac_bits;
