@@ -998,3 +998,33 @@ int fxp_powxy_l(int x, int y)
                 }
         }
 }
+
+// Trigonometric functions
+int fxp_sin_l(int fxp1)
+{
+        return 0;
+}
+
+int fxp_cos_l(int fxp1)
+{
+        return 0;
+}
+
+int fxp_tan_l(int fxp1)
+{
+        return 0;
+}
+
+int fxp_asin_l(int fxp1)
+{
+        return 0;
+}
+
+int fxp_acos_l(int fxp1)
+{
+        return 0;
+}
+
+int fxp_atan_l(int fxp1){
+        return 0;
+}

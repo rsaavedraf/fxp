@@ -237,6 +237,7 @@ unsigned int FXP_shifted_lg10_2 = (FXP_LG10_2_I32 >> FXP_DEF_SHIFT);
 
 // Auxiliary variables used in the lg2 implementations
 int FXP_one = 1 << FXP_FRAC_BITS_DEF;
+int FXP_minus_one = -(1 << FXP_FRAC_BITS_DEF);
 int FXP_half = 1 << (FXP_FRAC_BITS_DEF - 1);
 int FXP_two = 1 << (FXP_FRAC_BITS_DEF + 1);
 int FXP_almost1 = (1 << FXP_FRAC_BITS_DEF) - 1;
@@ -598,9 +599,11 @@ int fxp_set_frac_bits(int nfracbits)
         if (FXP_whole_bits == 1) {
                 FXP_one = FXP_POS_INF;
                 FXP_two = FXP_POS_INF;
+                FXP_minus_one = FXP_NEG_INF;
         } else {
                 FXP_one = 1 << FXP_frac_bits;
                 FXP_two = (FXP_whole_bits >= 3)? FXP_one << 1: FXP_POS_INF;
+                FXP_minus_one = -FXP_one;
         }
         FXP_lg2_maxloops = FXP_frac_bits;
 
@@ -1660,4 +1663,34 @@ int fxp_powxy(int x, int y)
                                                                 FXP_POWXY_POW_LOOPS);
                 }
         }
+}
+
+// Trigonometric functions
+int fxp_sin(int fxp1)
+{
+        return 0;
+}
+
+int fxp_cos(int fxp1)
+{
+        return 0;
+}
+
+int fxp_tan(int fxp1)
+{
+        return 0;
+}
+
+int fxp_asin(int fxp1)
+{
+        return 0;
+}
+
+int fxp_acos(int fxp1)
+{
+        return 0;
+}
+
+int fxp_atan(int fxp1){
+        return 0;
 }

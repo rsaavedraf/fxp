@@ -30,6 +30,13 @@ int fxp_pow10_l(int fxp1);
 int fxp_sqrt_l(int fxp1);
 int fxp_powxy_l(int fxp1, int fxp2);
 
+int fxp_sin_l(int fxp1);
+int fxp_cos_l(int fxp1);
+int fxp_tan_l(int fxp1);
+int fxp_asin_l(int fxp1);
+int fxp_acos_l(int fxp1);
+int fxp_atan_l(int fxp1);
+
 unsigned long dmul_ulongs(unsigned long x, unsigned long y);
 unsigned long dmul_ulong_x_uint(unsigned long x, unsigned int y);
 

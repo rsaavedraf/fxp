@@ -29,14 +29,15 @@
 #define TEST_WITH_RANDS 1
 #define MAX_RAND_LOOPS 5
 //#define MAX_RAND_LOOPS 5000
-#define TEST_BASICS 1
-#define TEST_SUPER_FXP_L 1
-#define TEST_LOGARITHMS 1
+#define TEST_BASICS 0
+#define TEST_SUPER_FXP_L 0
+#define TEST_LOGARITHMS 0
 #define TEST_LG2_MUL_L 0
-#define TEST_POWERS 1
-#define TEST_SQRT 1
-#define TEST_POWXY 1
+#define TEST_POWERS 0
+#define TEST_SQRT 0
+#define TEST_POWXY 0
 #define AVOID_EXTREME_INPUTS_FOR_POWXY 1
+#define TEST_TRIGONOM 1
 
 // Max allowed error will be WDELTA_MAX * tiniest (least signif frac bit)
 #define WDELTA_MAX 3.0
@@ -345,6 +346,57 @@ static long double get_f_target(int x)
         if (f <= FXP_min_fx) return FXP_NINF_LD;
         if (f >= FXP_max_fx) return FXP_PINF_LD;
         return (long double) f;
+}
+
+static long double get_sin_target(int x)
+{
+        if ((x == FXP_UNDEF) || (x == FXP_NEG_INF) || (x == FXP_POS_INF))
+                return FXP_UNDEF_LD;
+        long double ldvalue = sinl(fxp2ld(x));
+        long double target = get_target(ldvalue);
+        return target;
+}
+
+static long double get_cos_target(int x)
+{
+        if ((x == FXP_UNDEF) || (x == FXP_NEG_INF) || (x == FXP_POS_INF))
+                return FXP_UNDEF_LD;
+        long double ldvalue = cosl(fxp2ld(x));
+        long double target = get_target(ldvalue);
+        return target;
+}
+
+static long double get_tan_target(int x)
+{
+        if ((x == FXP_UNDEF) || (x == FXP_NEG_INF) || (x == FXP_POS_INF))
+                return FXP_UNDEF_LD;
+        long double ldvalue = tanl(fxp2ld(x));
+        long double target = get_target(ldvalue);
+        return target;
+}
+
+static long double get_asin_target(int x)
+{
+        if ((x > FXP_one) || (x < FXP_minus_one)) return FXP_UNDEF_LD;
+        long double ldvalue = asinl(fxp2ld(x));
+        long double target = get_target(ldvalue);
+        return target;
+}
+
+static long double get_acos_target(int x)
+{
+        if ((x > FXP_one) || (x < FXP_minus_one)) return FXP_UNDEF_LD;
+        long double ldvalue = acosl(fxp2ld(x));
+        long double target = get_target(ldvalue);
+        return target;
+}
+
+static long double get_atan_target(int x)
+{
+        if (x == FXP_UNDEF) return FXP_UNDEF_LD;
+        long double ldvalue = atanl(fxp2ld(x));
+        long double target = get_target(ldvalue);
+        return target;
 }
 
 static int FXP_TINIEST = 1;
@@ -862,7 +914,8 @@ void test_lg10(char * msg, int x)
         printf("lg10(");   test_fxp(msg, tgt, fxp_lg10(x));
 }
 
-void test_log(char base, char * msg, int x) {
+void test_log(char base, char * msg, int x)
+{
         switch(base) {
         case '2':
                 test_lg2(msg, x);
@@ -963,7 +1016,8 @@ void test_pow10(char * msg, int x)
         printf("pow10("); test_fxp(msg, tgt, fxp_pow10(x));
 }
 
-void test_pow(char base, char * msg, int x) {
+void test_pow(char base, char * msg, int x)
+{
         switch(base) {
         case '2':
                 test_pow2(msg, x);
@@ -977,7 +1031,8 @@ void test_pow(char base, char * msg, int x) {
         }
 }
 
-void test_sqrt(char * msg, int x) {
+void test_sqrt(char * msg, int x)
+{
         long double tgt = get_sqrt_target(x);
         printf("sqrt_l("); test_fxp(msg, tgt, fxp_sqrt_l(x));
         printf("sqrt(");   test_fxp(msg, tgt, fxp_sqrt(x));
@@ -1224,6 +1279,65 @@ void test_powersxy()
         // test_powxy("23fb3 n1,n2)", 8544799, 2090467936);
 }
 
+void test_sin(char * msg, int x)
+{
+        long double tgt = get_sin_target(x);
+        printf("sin_l("); test_fxp(msg, tgt, fxp_sin_l(x));
+        printf("sin("); test_fxp(msg, tgt, fxp_sin(x));
+}
+
+void test_cos(char * msg, int x)
+{
+        long double tgt = get_cos_target(x);
+        printf("cos_l("); test_fxp(msg, tgt, fxp_cos_l(x));
+        printf("cos("); test_fxp(msg, tgt, fxp_cos(x));
+}
+
+void test_tan(char * msg, int x)
+{
+        long double tgt = get_tan_target(x);
+        printf("tan_l("); test_fxp(msg, tgt, fxp_tan_l(x));
+        printf("tan("); test_fxp(msg, tgt, fxp_tan(x));
+}
+
+
+void test_asin(char * msg, int x)
+{
+        long double tgt = get_asin_target(x);
+        printf("asin_l("); test_fxp(msg, tgt, fxp_asin_l(x));
+        printf("asin("); test_fxp(msg, tgt, fxp_asin(x));
+}
+
+
+void test_acos(char * msg, int x)
+{
+        long double tgt = get_acos_target(x);
+        printf("acos_l("); test_fxp(msg, tgt, fxp_acos_l(x));
+        printf("acos("); test_fxp(msg, tgt, fxp_acos(x));
+}
+
+
+void test_atan(char * msg, int x)
+{
+        long double tgt = get_atan_target(x);
+        printf("atan_l("); test_fxp(msg, tgt, fxp_atan_l(x));
+        printf("atan("); test_fxp(msg, tgt, fxp_atan(x));
+}
+
+
+void test_trigonometrics()
+{
+        printf("\nTesting Trigonometric functions for %d frac bits:\n", FXP_frac_bits);
+        int angle = 0;
+        test_sin("0)", angle);
+        test_cos("0)", angle);
+        test_tan("0)", angle);
+        int num = FXP_half;
+        test_asin("0.5)", num);
+        test_acos("0.5)", num);
+        test_atan("0.5)", num);
+
+}
 
 void test_ops_with_rand_nums()
 {
@@ -1570,6 +1684,9 @@ int main(void)
                 }
                 if (TEST_POWXY) {
                         test_powersxy();
+                }
+                if (TEST_TRIGONOM) {
+                        test_trigonometrics();
                 }
                 if (TEST_WITH_RANDS) {
                         test_ops_with_rand_nums();

@@ -74,6 +74,7 @@ extern int FXP_half;
 extern int FXP_one;
 extern int FXP_two;
 extern int FXP_almost1;
+extern int FXP_minus_one;
 extern int FXP_lg2_maxloops;
 extern int FXP_lg2_l_mshift;
 extern int FXP_lg2_l_mshift_m1;

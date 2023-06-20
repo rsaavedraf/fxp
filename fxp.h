@@ -99,5 +99,11 @@ int fxp_sqrt(int fxp1);
 int fxp_powxy(int fxp_x, int fxp_y);
 
 // Trigonometric functions
+int fxp_sin(int fxp1);
+int fxp_cos(int fxp1);
+int fxp_tan(int fxp1);
+int fxp_asin(int fxp1);
+int fxp_acos(int fxp1);
+int fxp_atan(int fxp1);
 
 #endif
