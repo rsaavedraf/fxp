@@ -23,8 +23,6 @@
 
 #define DASHES "========================\n"
 
-#define LONGLONG_BITS ((int) (sizeof(long long) * 8))
-
 #define STR_TEST1 "0000000000000000011111100000000000"
 #define STR_TEST2 "0000000000000000100100000000000000"
 #define STR_TEST3 "0000000000000001111100000000000000"
@@ -70,14 +68,16 @@
 //  https://oeis.org/A002193
 //  https://oeis.org/A004539
 
-
-//const long double FXP_ZERO_LD = 1.0E-124;
+// The Cordic scaling factor K(n)
+// = Multiplication from i=0 to n-1 of 1 / sqrt(1 + 2^(-2i))
+//#define STR_CORDIC_K ".6072529350088812561694"
+#define STR_CORDIC_K   ".607252935008881256169446752504929"
 
 /*
  * Return binary expansion (up to nbits) of a string representation
  * of a binary number, with last bit either verbatim or rounded
  */
-unsigned long long bex_from_bin(char * pbinnum, int wbits, int fbits, int rounded)
+unsigned long bex_from_bin(char * pbinnum, int wbits, int fbits, int rounded)
 {
         char * p = pbinnum;
         // Check how many whole bits in pbinnum
@@ -90,7 +90,7 @@ unsigned long long bex_from_bin(char * pbinnum, int wbits, int fbits, int rounde
         }
         if (nwb > wbits) wbits = nwb;
         int roomleft = wbits - nwb + fbits;
-        unsigned long long bnum = 0;
+        unsigned long bnum = 0;
         p = pbinnum;
         while ((roomleft > 0) && (*p != '\0')) {
                 char cbit = *p;
@@ -125,7 +125,7 @@ unsigned long long bex_from_bin(char * pbinnum, int wbits, int fbits, int rounde
  * Return binary expansion (up to wbits.fbits) of a string representation
  * of a decimal number, with last bit either verbatim or rounded
  */
-unsigned long long bex_from_dec(char * pdecnum, int wbits, int fbits, int rounded)
+unsigned long bex_from_dec(char * pdecnum, int wbits, int fbits, int rounded)
 {
         char * p = pdecnum;
         if ((wbits < 0) || (wbits > FXP_INT_BITS))
@@ -149,7 +149,7 @@ unsigned long long bex_from_dec(char * pdecnum, int wbits, int fbits, int rounde
                 p++;
         }
         //printf("Whole part is d:%d (%d dec digits)\n", wnum, nwd);
-        long long binnum = 0;
+        long binnum = 0;
         int nb = 0;
         while (wnum > 0) {
                 int r = wnum % 2;
@@ -158,7 +158,7 @@ unsigned long long bex_from_dec(char * pdecnum, int wbits, int fbits, int rounde
                 nb++; // here count the whole bits
                 wnum /= 2;
         }
-        //printf("binnum: (x:%llx. , %d bits)\n", binnum, nb);
+        //printf("binnum: (x:%lx. , %d bits)\n", binnum, nb);
         // Process fractional part
         p++; // skip the '.'
         int ndd = nwd;
@@ -266,14 +266,33 @@ long double Lf_from_bin(char * pbinnum)
         return num;
 }
 
+unsigned long left_aligned_bex_from_Lf(long double x)
+{
+        // Processing the magnitude of the number, so ignoring negatives
+        unsigned long whole, frac, rbit, bex;
+        long double px = (x < 0.0L)? -x: x;
+        long double pwld = truncl(px);
+        whole = (unsigned) pwld;
+        int nwb = (whole == 0ul)? 1: FXP_LONG_BITS - __builtin_clzl(whole);
+        long double ldfrac = px - pwld;
+        int nfb = FXP_LONG_BITS - nwb;
+        frac = (unsigned long) truncl(ldfrac * powl(2.0L, nfb));
+        rbit = ((unsigned long) truncl(ldfrac * powl(2.0L, (nfb+1)))) & 1ul;
+        //printf("nwb: %d,  nfb: %d,   whole: %lu  frac:%lu  rbit:%d\n", \
+        //                nwb, nfb, whole, frac, (int) rbit);
+        bex = ((whole << nfb) | frac) + rbit;
+        return bex;
+}
+
+
 int main(void)
 {
         printf("\n%sfxp_tconst.c\n%s", DASHES, DASHES);
         print_sys_info();
 
-        //printf("\ntest1 %llx\n", bex_from_bin(STR_TEST1, 16, 1));
-        //printf("\ntest2 %llx\n", bex_from_bin(STR_TEST2, 16, 1));
-        //printf("\ntest3 %llx\n", bex_from_bin(STR_TEST3, 16, 1));
+        //printf("\ntest1 %lx\n", bex_from_bin(STR_TEST1, 16, 1));
+        //printf("\ntest2 %lx\n", bex_from_bin(STR_TEST2, 16, 1));
+        //printf("\ntest3 %lx\n", bex_from_bin(STR_TEST3, 16, 1));
 
         printf("\nPrecisions of e on this system:\n");
         printf("Frac digits   :   ----*----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8----*----9----*----0\n");
@@ -341,46 +360,70 @@ int main(void)
         int frbits = FXP_INT_BITS - wbits;
         int frbitsl = FXP_LONG_BITS - wbits;
         printf("e as binary: %s\n", STR_E_BIN);
-        printf("e as fxp (%d frac bits) %llX\n", \
+        printf("e as fxp (%d frac bits) %lX\n", \
                     frbits, bex_from_bin(STR_E_BIN, wbits, frbits, 1));
-        printf("e as fxp (%d frac bits) %llX\n\n", \
+        printf("e as fxp (%d frac bits) %lX\n\n", \
                     frbitsl, bex_from_bin(STR_E_BIN, wbits, frbitsl, 1));
 
         printf("pi as binary: %s\n", STR_PI_BIN);
-        printf("pi as fxp (%d frac bits) %llX\n", \
+        printf("pi as fxp (%d frac bits) %lX\n", \
                     frbits, bex_from_bin(STR_PI_BIN, wbits, frbits, 1));
-        printf("pi as fxp (%d frac bits) %llX\n\n", \
+        printf("pi as fxp (%d frac bits) %lX\n\n", \
                     frbitsl, bex_from_bin(STR_PI_BIN, wbits, frbitsl, 1));
 
         printf("lg2(10) as decimal: %s\n", STR_LG2_10_DEC);
-        printf("lg2(10)  as fxp (%d frac bits) %llX\n", \
+        printf("lg2(10)  as fxp (%d frac bits) %lX\n", \
                     frbits, bex_from_dec(STR_LG2_10_DEC, wbits, frbits, 1));
-        printf("lg2(10)  as fxp (%d frac bits) %llX\n\n", \
+        printf("lg2(10)  as fxp (%d frac bits) %lX\n\n", \
                     frbitsl, bex_from_dec(STR_LG2_10_DEC, wbits, frbitsl, 1));
 
         wbits = 2;
         frbits = FXP_INT_BITS - wbits;
         frbitsl = FXP_LONG_BITS - wbits;
         printf("lg2(e)  as decimal: %s\n", STR_LG2_E_DEC);
-        printf("lg2(e)  as fxp (%d frac bits) %llX\n", \
+        printf("lg2(e)  as fxp (%d frac bits) %lX\n", \
                     frbits, bex_from_dec(STR_LG2_E_DEC, wbits, frbits, 1));
-        printf("lg2(e)  as fxp (%d frac bits) %llX\n\n", \
+        printf("lg2(e)  as fxp (%d frac bits) %lX\n\n", \
                     frbitsl, bex_from_dec(STR_LG2_E_DEC, wbits, frbitsl, 1));
 
         wbits = 1;
         frbits = FXP_INT_BITS - wbits;
         frbitsl = FXP_LONG_BITS - wbits;
         printf("ln(2) as decimal: %s\n", STR_LN_2_DEC);
-        printf("ln(2) as fxp (%d frac bits) %llX\n", \
+        printf("ln(2) as fxp (%d frac bits) %lX\n", \
                     frbits, bex_from_dec(STR_LN_2_DEC, wbits, frbits, 1));
-        printf("ln(2) as fxp (%d frac bits) %llX\n\n", \
+        printf("ln(2) as fxp (%d frac bits) %lX\n\n", \
                     frbitsl, bex_from_dec(STR_LN_2_DEC, wbits, frbitsl, 1));
 
         printf("lg10(2) as decimal: %s\n", STR_LG10_2_DEC);
-        printf("lg10(2) as fxp (%d frac bits) %llX\n", \
+        printf("lg10(2) as fxp (%d frac bits) %lX\n", \
                     frbits, bex_from_dec(STR_LG10_2_DEC, wbits, frbits, 1));
-        printf("lg10(2) as fxp (%d frac bits) %llX\n\n", \
+        printf("lg10(2) as fxp (%d frac bits) %lX\n\n", \
                     frbitsl, bex_from_dec(STR_LG10_2_DEC, wbits, frbitsl, 1));
+
+        // For trigonometrics
+
+        // Calculate the Cordic kfactor with maximum precision possible
+        long double kfactor = 1.0L;
+        //printf("Powers 2^(-n), with n = 0,1,... 64:\n");
+        for (int x = 0; x <= 112; x++) {
+                long double vtan = powl(2.0L, ((long double) -x));
+                kfactor *= cosl(atanl(vtan));
+                //printf("%35.33Lf,\n", angle);
+        }
+        printf("Cordic kfactor from long double: %35.33Lf\n", .607252935008881256169446752504929L);
+        printf("Calculated Cordic kfactor:       %35.33Lf\n", kfactor);
+        printf("Cordic kfactor as fxp (%d frac bits) %lX\n", \
+                    frbitsl, bex_from_dec(STR_CORDIC_K, wbits, frbitsl, 1));
+        printf("\nAngles for CORDIC (63 frac bits) in radians:\n");
+        for (int x = 0; x < 64; x++) {
+                long double vtan = powl(2.0L, ((long double) -x));
+                long double angle = atanl( vtan );
+                unsigned long bex = left_aligned_bex_from_Lf(angle);
+                printf("atan(2^(-%2d)): %35.33Lf  0x%016lX\n", x, angle, bex);
+                //printf("0x%016lX,\n", bex);
+        }
+
 
         return 0;
 }
