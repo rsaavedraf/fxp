@@ -165,6 +165,11 @@ static const long double ANGLE[] = {
 
 #define MAX_LOOPS 32
 
+/*
+ * Calculates simultaneously the sine and cosine of the argument x
+ * using the CORDIC algorithm:
+ * https://en.wikibooks.org/wiki/Trigonometry/For_Enthusiasts/The_CORDIC_Algorithm
+ */
 void my_sincos(long double x, long double *mysin, long double *mycos)
 {
         // x should be in [0, pi/2]
