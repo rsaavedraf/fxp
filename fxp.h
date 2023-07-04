@@ -85,8 +85,6 @@ int fxp_unsafe_div(int fxp1, int fxp2);
 // Important constants in fxp format
 unsigned int fxp_get_e();
 unsigned int fxp_get_pi();
-unsigned int fxp_get_ln_2();
-unsigned int fxp_get_lg10_2();
 
 // Beyond the basic four ops
 int fxp_lg2(int fxp1);

@@ -29,24 +29,24 @@
 #define TEST_WITH_RANDS 1
 #define MAX_RAND_LOOPS 5
 //#define MAX_RAND_LOOPS 5000
-#define TEST_BASICS 0
-#define TEST_SUPER_FXP_L 0
-#define TEST_LOGARITHMS 0
+#define TEST_BASICS 1
+#define TEST_SUPER_FXP_L 1
+#define TEST_LOGARITHMS 1
 #define TEST_LG2_MUL_L 0
-#define TEST_POWERS 0
-#define TEST_SQRT 0
-#define TEST_POWXY 0
+#define TEST_POWERS 1
+#define TEST_SQRT 1
+#define TEST_POWXY 1
 #define AVOID_EXTREME_INPUTS_FOR_POWXY 1
-#define TEST_TRIGONOM 1
+#define TEST_TRIGONOM 0
 
 // Max allowed error will be WDELTA_MAX * tiniest (least signif frac bit)
-#define WDELTA_MAX 3.0
+#define WDELTA_MAX 3.0L
 
 // Warnings will start appearing when error >= MIN_DELTA = WDELTA_MAX*tiniest / WDELTA_DIV
-#define WDELTA_DIV 1.2
+#define WDELTA_DIV 1.2L
 
 static int fracbit_configs[] = {8, 11, 16, 24, 28, 31};
-//static int fracbit_configs[] = {28};
+//static int fracbit_configs[] = {31};
 /*
 static int fracbit_configs[] = {
 31, 30,
@@ -938,8 +938,6 @@ void test_logarithms()
         printf("frac bits: %d\n", frac_bits);
         printf("e      : "); print_fxp(fxp_get_e()); printf("\n");
         printf("pi     : "); print_fxp(fxp_get_pi()); printf("\n");
-        printf("ln(2)  : "); print_fxp(fxp_get_ln_2()); printf("\n");
-        printf("lg10(2): "); print_fxp(fxp_get_lg10_2()); printf("\n");
 
         printf("\nTesting logarithms for %d frac bits:", frac_bits);
         // M is also base 2 but using the multiplication algorithm
@@ -1129,8 +1127,8 @@ void test_sqroots()
 {
         printf("\nTesting square roots for %d frac bits:\n", FXP_frac_bits);
         test_sqrt("largest)",   FXP_MAX);
+        test_sqrt("428.56)",    1797550741);    // problematic for 22 bits
         test_sqrt("16)",        fxp(16));
-        test_sqrt("13.7)",      d2fxp(13.7));
         test_sqrt("12.1)",      d2fxp(12.1));
         test_sqrt("4)",         fxp(4));
         test_sqrt("2)",         fxp(2));
@@ -1138,13 +1136,14 @@ void test_sqroots()
         test_sqrt("1+tiniest)", fxp_add(fxp(1), 1));
         test_sqrt("1)",         fxp(1));
         test_sqrt("1-tiniest)", fxp_sub(fxp(1), 1));
-        test_sqrt("0.25)",      d2fxp(0.25));
-        test_sqrt("0.0625)",    d2fxp(0.0625));
-        test_sqrt("0.5)",       d2fxp(0.5));
-        test_sqrt("0.125)",     d2fxp(0.125));
-        test_sqrt("0.333)",     d2fxp(0.33333));
-        test_sqrt("0.07)",      d2fxp(0.07));
+        test_sqrt("0.986)",     2118421993);    // problematic for 31 bits
         test_sqrt("0.75)",      d2fxp(0.75));
+        test_sqrt("0.5)",       d2fxp(0.5));
+        test_sqrt("0.333)",     d2fxp(0.33333));
+        test_sqrt("0.25)",      d2fxp(0.25));
+        test_sqrt("0.125)",     d2fxp(0.125));
+        test_sqrt("0.07)",      d2fxp(0.07));
+        test_sqrt("0.0625)",    d2fxp(0.0625));
         test_sqrt("0.00364)",   d2fxp(0.00364));
         test_sqrt("tiniest)",   1);
 }
@@ -1254,7 +1253,7 @@ void test_powersxy()
         // FXP_INT_BITS + 5. Otherwise an assert gets triggered:
         // n1 = -1.0454773903e+00 (fxp:   -17540200, -x010BA468, -b00000001.000010111010010001101000)
         // n2 =  1.0314526862e+02 (fxp:  1730490451,  x67253053,  b01100111.001001010011000001010011)
-        // test_powxy("24fb3 n1,n2)", 17540200, 1730490451);
+        //test_powxy("24fb3 n1,n2)", 17540200, 1730490451);
         //
         // Here some still tough cases for 24 frac bits, but they do pass under the defaults of
         // WDELTA_MAX = 3.0, and FXP_POWXY_LG_LOOPS = FXP_INT_BITS + 3:
@@ -1276,7 +1275,7 @@ void test_powersxy()
         // requires a WDELTA_MAX >= 6.4
         //n1 =  1.0186194181e+00 (fxp:     8544799,  x0082621F,  b000000001.00000100110001000011111)
         //n2 =  2.4920319748e+02 (fxp:  2090467936,  x7C9A0260,  b011111001.00110100000001001100000)
-        // test_powxy("23fb3 n1,n2)", 8544799, 2090467936);
+        //test_powxy("23fb3 n1,n2)", 8544799, 2090467936);
 }
 
 void test_sin(char * msg, int x)
@@ -1510,21 +1509,17 @@ int main(void)
         int nfb = FXP_frac_bits;
         unsigned int e = fxp_get_e();
         unsigned int pi = fxp_get_pi();
-        unsigned int ln2 = fxp_get_ln_2();
-        unsigned int lg10_2 = fxp_get_lg10_2();
 
         fxp_set_frac_bits( nfb );
-        if ((e != fxp_get_e()) || (pi != fxp_get_pi()) || \
-            (ln2 != fxp_get_ln_2()) || (lg10_2 != fxp_get_lg10_2())) {
+
+        if ((e != fxp_get_e()) || (pi != fxp_get_pi())) {
                 // These differences might happen if rounding for least-significant
                 // bit of the constants is done differently between the startup vs.
                 // what fxp_set_frac_bits() does when called
                 printf("Constant difference detected after resetting frac bits to default:\n");
                 printf("  \tstarting\tafter\n");
-                printf("e:\t%x\t\t%x\n", e, fxp_get_e());
-                printf("pi:\t%x\t\t%x\n", pi, fxp_get_pi());
-                printf("ln2:\t%x\t\t%x\n", ln2, fxp_get_ln_2());
-                printf("lg10_2:\t%x\t\t%x\n", lg10_2, fxp_get_lg10_2());
+                printf("e :\t0x%x\t\t0x%x\n", e, fxp_get_e());
+                printf("pi:\t0x%x\t\t0x%x\n", pi, fxp_get_pi());
                 assert( 0 );
         }
 

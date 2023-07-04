@@ -56,9 +56,11 @@ const int FXP_FRAC_BITS_MIN = 4;
 int FXP_lg2_maxloops = FXP_FRAC_BITS_DEF;           // for lg2
 const int FXP_LOGX_LOOPS = FXP_INT_BITS_M1 - 1;     // for ln and lg10
 const int FXP_POWX_LOOPS = FXP_INT_BITS_M1;         // for pow2, exp, and pow10
-const int FXP_SQRT_LOOPS = FXP_INT_BITS_M1;         // for sqrt
-const int FXP_POWXY_POW_LOOPS = FXP_INT_BITS + 1;   // for pow2 in powxy
+const int FXP_SQRT_LG_LOOPS = FXP_INT_BITS_M2;      // for lg2 in sqrt
+int FXP_sqrt_pw_loops = FXP_FRAC_BITS_DEF \
+            + 1 + (FXP_INT_BITS - FXP_FRAC_BITS_DEF)/2;   // for pow2 in sqrt
 const int FXP_POWXY_LG_LOOPS = FXP_INT_BITS + 3;    // for lg2 in powxy
+const int FXP_POWXY_PW_LOOPS = FXP_INT_BITS + 1;    // for pow2 in powxy
 
 const int FXP_WORD_BITS = FXP_INT_BITS >> 1;
 const int FXP_WORD_BITS_M1 = FXP_WORD_BITS - 1;
@@ -195,45 +197,43 @@ typedef struct lg2tuple {
 
 const unsigned int SFXP_MAX_WBITS = FXP_LONG_BITS - FXP_FRAC_BITS_MIN;
 
-// transcendental constants (2 whole, 30 and 62 frac bits)
+// transcendental constants
 // e = 2.718281828...
-const unsigned int FXP_E_I32 = 0xADF85458u;
-const unsigned int FXP_E_I32_X = 0xA2BB4A9Bu;
+//const unsigned int FXP_E_I32 = 0xADF85458u;
+const unsigned int FXP_E_I32 = 0x56FC2A2Cu;
 
 // pi = 3.14159265...
-const unsigned int FXP_PI_I32 = 0xC90FDAA2u;
-const unsigned int FXP_PI_I32_X = 0x2168C235u;
+//const unsigned int FXP_PI_I32 = 0xC90FDAA2u;
+const unsigned int FXP_PI_I32 = 0x6487ED51u;
 
-// transcendental constants (0 whole, 32 and 64 frac bits)
-// ln(2) = 0.69314718...
-const unsigned int FXP_LN_2_I32 = 0xB17217F7u;
-const unsigned int FXP_LN_2_I32_X = 0xD1CF7C72u;
-const ulongy FXP_LN_2_ULONGY = {FXP_LN_2_I32, FXP_LN_2_I32_X};
-const super_fxp SFXP_LN_2_FACTOR = {0, 0, FXP_LN_2_ULONGY};
-
-// lg10(2) = 0.30102999...
-const unsigned int FXP_LG10_2_I32 = 0x4D104D42u;
-const unsigned int FXP_LG10_2_I32_X = 0x7DE7FD01u;
-const ulongy FXP_LG10_2_ULONGY = {FXP_LG10_2_I32, FXP_LG10_2_I32_X};
-const super_fxp SFXP_LG10_2_FACTOR = {0, 0, FXP_LG10_2_ULONGY};
+// transcendental constants
+// lg2(10) = 3.32192809...
+const unsigned int FXP_LG2_10_I32 = 0x6A4D3C25u;
+const unsigned int FXP_LG2_10_I32_X = 0xE68DC57Fu;
+const ulongy FXP_LG2_10_ULONGY = {FXP_LG2_10_I32, FXP_LG2_10_I32_X};
+const super_fxp SFXP_LG2_10_FACTOR = {0, 3, FXP_LG2_10_ULONGY};
 
 // lg2(e) = 1.44269504... (1 whole, 31 and 63 frac bits)
-const unsigned int FXP_LG2_E_I32 = 0xB8AA3B29u;
-const unsigned int FXP_LG2_E_I32_X = 0x5C17F19Eu;
+const unsigned int FXP_LG2_E_I32 = 0x5C551D94u;
+const unsigned int FXP_LG2_E_I32_X = 0xAE0BF85Eu;
 const ulongy FXP_LG2_E_ULONGY = {FXP_LG2_E_I32, FXP_LG2_E_I32_X};
-const super_fxp SFXP_LG2_E_FACTOR = {0, 1, FXP_LG2_E_ULONGY};
+const super_fxp SFXP_LG2_E_FACTOR = {0, 2, FXP_LG2_E_ULONGY};
 
-// lg2(10) = 3.32192809... (2 whole, 30 and 62 frac bits)
-const unsigned int FXP_LG2_10_I32 = 0xD49A784Bu;
-const unsigned int FXP_LG2_10_I32_X = 0xCD1B8B51u;
-const ulongy FXP_LG2_10_ULONGY = {FXP_LG2_10_I32, FXP_LG2_10_I32_X};
-const super_fxp SFXP_LG2_10_FACTOR = {0, 2, FXP_LG2_10_ULONGY};
+// ln(2) = 0.69314718...
+const unsigned int FXP_LN_2_I32 = 0x58B90BFBu;
+const unsigned int FXP_LN_2_I32_X = 0xE8E7BCD6u;
+const ulongy FXP_LN_2_ULONGY = {FXP_LN_2_I32, FXP_LN_2_I32_X};
+const super_fxp SFXP_LN_2_FACTOR = {0, 1, FXP_LN_2_ULONGY};
+
+// lg10(2) = 0.30102999...
+const unsigned int FXP_LG10_2_I32 = 0x268826A1u;
+const unsigned int FXP_LG10_2_I32_X = 0x3EF3FDE6u;
+const ulongy FXP_LG10_2_ULONGY = {FXP_LG10_2_I32, FXP_LG10_2_I32_X};
+const super_fxp SFXP_LG10_2_FACTOR = {0, 1, FXP_LG10_2_ULONGY};
 
 static const int FXP_DEF_SHIFT = FXP_INT_BITS - FXP_FRAC_BITS_DEF;
-unsigned int FXP_shifted_e = (FXP_E_I32 >> (FXP_DEF_SHIFT - 2));
-unsigned int FXP_shifted_pi = (FXP_PI_I32 >> (FXP_DEF_SHIFT - 2));
-unsigned int FXP_shifted_ln_2 = (FXP_LN_2_I32 >> FXP_DEF_SHIFT);
-unsigned int FXP_shifted_lg10_2 = (FXP_LG10_2_I32 >> FXP_DEF_SHIFT);
+unsigned int FXP_shifted_e = (FXP_E_I32 >> (FXP_DEF_SHIFT - 3));
+unsigned int FXP_shifted_pi = (FXP_PI_I32 >> (FXP_DEF_SHIFT - 3));
 
 // Auxiliary variables used in the lg2 implementations
 int FXP_one = 1 << FXP_FRAC_BITS_DEF;
@@ -265,71 +265,73 @@ long fxp_frac_max_dec_p1 = 10000;
 // The 2nd uint is the continuation of the frac value
 // for extra, long-like precision, 63 frac bits in total
 static const ulongy FXP_BKM_LOGS_NEW[] = {
-        {   0x80000000, 0x00000000 },   // index [0]
-        {   0x4AE00D1C, 0xFDEB4400 },
-        {   0x2934F097, 0x9A371600 },
-        {   0x15C01A39, 0xFBD68800 },
-        {   0xB31FB7D,  0x64898B00 },
-        {   0x5AEB4DD,  0x63BF61C0 },
-        {   0x2DCF2D0,  0xB85A4540 },
-        {   0x16FE50B,  0x6EF08510 },
-        {   0xB84E23,   0x6BD563B8 },
-        {   0x5C3E0F,   0xFC29D594 },
-        {   0x2E24CA,   0x6E87E8A8 },   // [10]
-        {   0x1713D6,   0x2F7957C3 },
-        {   0xB8A47,    0x6150DFE4 },
-        {   0x5C53A,    0xC47E94D8 },
-        {   0x2E2A3,    0x2762FA6B },
-        {   0x17153,    0x05002E4A },
-        {   0xB8A9,     0xDED47C11 },
-        {   0x5C55,     0x067F6E58 },
-        {   0x2E2A,     0x89050622 },
-        {   0x1715,     0x45F3D72B },
-        {   0xB8A,      0xA35640A7 },   // [20]
-        {   0x5C5,      0x51C23599 },
-        {   0x2E2,      0xA8E6E01E },
-        {   0x171,      0x5474E163 },
-        {   0xB8,       0xAA3ACD06 },
-        {   0x5C,       0x551D7D98 },
-        {   0x2E,       0x2A8EC491 },
-        {   0x17,       0x154763BA },
-        {   0xB,        0x8AA3B239 },
-        {   0x5,        0xC551D933 },
-        {   0x2,        0xE2A8EC9F },   // [30]
-        {   0x1,        0x71547651 },
-        {   0x0,        0xB8AA3B28 },
-        {   0x0,        0x5C551D94 },
-        {   0x0,        0x2E2A8ECA },
-        {   0x0,        0x17154765 },   // [35]
-        {   0x0,        0xB8AA3B2  },
-        {   0x0,        0x5C551D9  },
-        {   0x0,        0x2E2A8EC  },
-        {   0x0,        0x1715476  },   // <----- *
-        {   0x0,        0xB8AA3B   }   // [40]
-        //{   0x0,        0x5C551D   },
-        //{   0x0,        0x2E2A8E   },
-        //{   0x0,        0x171547   },
-        //{   0x0,        0xB8AA3    },
-        //{   0x0,        0x5C551    },   // [45]
-        //{   0x0,        0x2E2A8    },
-        //{   0x0,        0x17154    },
-        //{   0x0,        0xB8AA     },
-        //{   0x0,        0x5C55     },
-        //{   0x0,        0x2E2A     },   // [50]
-        //{   0x0,        0x1715     }
-            //0xB8A,
-            //0x5C5,
-            //0x2E2,
-            //0x171,
-            //0xB8,
-            //0x5C,
-            //0x2E,
-            //0x17,
-            //0xB,      // [60]
-            //0x5,
-            //0x2,
-            //0x1,      // [63]
-            //0x0       // [64]
+        { 0x80000000, 0x00000000 },     // [0]
+        { 0x4AE00D1C, 0xFDEB43CF },
+        { 0x2934F097, 0x9A3715FC },
+        { 0x15C01A39, 0xFBD6879F },
+        { 0x0B31FB7D, 0x64898B3E },
+        { 0x05AEB4DD, 0x63BF61CC },
+        { 0x02DCF2D0, 0xB85A4531 },
+        { 0x016FE50B, 0x6EF08517 },
+        { 0x00B84E23, 0x6BD563BA },
+        { 0x005C3E0F, 0xFC29D593 },
+        { 0x002E24CA, 0x6E87E8A8 },     // [10]
+        { 0x001713D6, 0x2F7957C3 },
+        { 0x000B8A47, 0x6150DFE4 },
+        { 0x0005C53A, 0xC47E94D8 },
+        { 0x0002E2A3, 0x2762FA6B },
+        { 0x00017153, 0x05002E4A },
+        { 0x0000B8A9, 0xDED47C11 },
+        { 0x00005C55, 0x067F6E58 },
+        { 0x00002E2A, 0x89050622 },
+        { 0x00001715, 0x45F3D72B },
+        { 0x00000B8A, 0xA35640A7 },     // [20]
+        { 0x000005C5, 0x51C23599 },
+        { 0x000002E2, 0xA8E6E01E },
+        { 0x00000171, 0x5474E163 },
+        { 0x000000B8, 0xAA3ACD06 },
+        { 0x0000005C, 0x551D7D98 },
+        { 0x0000002E, 0x2A8EC491 },
+        { 0x00000017, 0x154763BA },
+        { 0x0000000B, 0x8AA3B239 },
+        { 0x00000005, 0xC551D933 },
+        { 0x00000002, 0xE2A8EC9F },     // [30]
+        { 0x00000001, 0x71547651 },
+        { 0x00000000, 0xB8AA3B28 },
+        { 0x00000000, 0x5C551D94 },
+        { 0x00000000, 0x2E2A8ECA },
+        { 0x00000000, 0x17154765 },
+        { 0x00000000, 0x0B8AA3B2 },
+        { 0x00000000, 0x05C551D9 },
+        { 0x00000000, 0x02E2A8EC },
+        { 0x00000000, 0x01715476 },
+        { 0x00000000, 0x00B8AA3B }      // [40]
+        /*
+        { 0x00000000, 0x005C551D },
+        { 0x00000000, 0x002E2A8E },
+        { 0x00000000, 0x00171547 },
+        { 0x00000000, 0x000B8AA3 },
+        { 0x00000000, 0x0005C551 },
+        { 0x00000000, 0x0002E2A8 },
+        { 0x00000000, 0x00017154 },
+        { 0x00000000, 0x0000B8AA },
+        { 0x00000000, 0x00005C55 },
+        { 0x00000000, 0x00002E2A },     // [50]
+        { 0x00000000, 0x00001715 },
+        { 0x00000000, 0x00000B8A },
+        { 0x00000000, 0x000005C5 },
+        { 0x00000000, 0x000002E2 },
+        { 0x00000000, 0x00000171 },
+        { 0x00000000, 0x000000B8 },
+        { 0x00000000, 0x0000005C },
+        { 0x00000000, 0x0000002E },
+        { 0x00000000, 0x00000017 },
+        { 0x00000000, 0x0000000B },     // [60]
+        { 0x00000000, 0x00000005 },
+        { 0x00000000, 0x00000002 },
+        { 0x00000000, 0x00000001 },
+        { 0x00000000, 0x00000000 },
+        */
 };
 // Interesting that starting with the row marked
 // with the *, each entry is exactly a 4-bit
@@ -585,13 +587,9 @@ int fxp_set_frac_bits(int nfracbits)
 
         // Adjust precision of e, pi, etc. to the frac bits in use
         FXP_shifted_e = fxp_rshift_tconst(FXP_E_I32, \
-                        FXP_INT_BITS_M2, FXP_frac_bits);
+                        FXP_INT_BITS - 3, FXP_frac_bits);
         FXP_shifted_pi = fxp_rshift_tconst(FXP_PI_I32, \
-                        FXP_INT_BITS_M2, FXP_frac_bits);
-        FXP_shifted_ln_2 = fxp_rshift_tconst(FXP_LN_2_I32, \
-                        FXP_INT_BITS, FXP_frac_bits);
-        FXP_shifted_lg10_2 = fxp_rshift_tconst(FXP_LG10_2_I32, \
-                        FXP_INT_BITS, FXP_frac_bits);
+                        FXP_INT_BITS - 3, FXP_frac_bits);
 
         // Auxiliary variables used for lg2 and pow2 calculations
         FXP_half = 1 << (FXP_frac_bits - 1);
@@ -606,6 +604,7 @@ int fxp_set_frac_bits(int nfracbits)
                 FXP_minus_one = -FXP_one;
         }
         FXP_lg2_maxloops = FXP_frac_bits;
+        FXP_sqrt_pw_loops = FXP_frac_bits + FXP_whole_bits/2 + 1;
 
         return FXP_frac_bits;
 }
@@ -1137,16 +1136,6 @@ inline unsigned int fxp_get_pi()
         return FXP_shifted_pi;
 }
 
-inline unsigned int fxp_get_ln_2()
-{
-        return FXP_shifted_ln_2;
-}
-
-inline unsigned int fxp_get_lg10_2()
-{
-        return FXP_shifted_lg10_2;
-}
-
 static inline ulongy fxp_bkm_lmode(unsigned int argument, \
                                    const int MAX_LOOPS)
 {
@@ -1570,15 +1559,15 @@ int fxp_sqrt(int fxp1)
         if (fxp1 == 0) return 0;
         if (fxp1 == FXP_POS_INF) return FXP_POS_INF;
         // First get the lg2 of the argument
-        super_fxp slg = fxp_get_lg2_as_sfxp(fxp1, FXP_SQRT_LOOPS);
+        super_fxp slg = fxp_get_lg2_as_sfxp(fxp1, FXP_SQRT_LG_LOOPS);
         // Halving that value
         slg.nwbits--;
         // parameters for pow2
         int w = (int) sfxp_get_poswhole(slg);
         ulongy bkmearg = get_sfxp_frac_for_bkme(slg);
         return (slg.sign)?
-                fxp_pow2_wneg(w, bkmearg, FXP_SQRT_LOOPS):
-                fxp_pow2_wpos(w, bkmearg, FXP_SQRT_LOOPS);
+                fxp_pow2_wneg(w, bkmearg, FXP_sqrt_pw_loops):
+                fxp_pow2_wpos(w, bkmearg, FXP_sqrt_pw_loops);
 }
 
 // Implementation of powxy_l(x) using pow2() and lg2():
@@ -1621,7 +1610,7 @@ int fxp_powxy(int x, int y)
                         printf("Whole bit counts:  factor: %d,  y: %d\n", \
                                         slg2x.nwbits, fxp_nbits(y) - FXP_frac_bits);
                         #endif
-                        return fxp_pow2_neg_arg_xfactor(y, slg2x, FXP_POWXY_POW_LOOPS);
+                        return fxp_pow2_neg_arg_xfactor(y, slg2x, FXP_POWXY_PW_LOOPS);
                 } else {
                         int posy = -y;
                         int pnwbits = slg2x.nwbits + fxp_nbits(posy) - FXP_frac_bits_p1;
@@ -1633,7 +1622,7 @@ int fxp_powxy(int x, int y)
                         return (pnwbits > FXP_whole_bits)? \
                                         FXP_POS_INF: \
                                         fxp_pow2_pos_arg_xfactor(posy, slg2x, \
-                                                                FXP_POWXY_POW_LOOPS);
+                                                                FXP_POWXY_PW_LOOPS);
                 }
         } else {
                 if (y >= 0) {
@@ -1647,7 +1636,7 @@ int fxp_powxy(int x, int y)
                         return (pnwbits > FXP_whole_bits)?
                                         FXP_POS_INF: \
                                         fxp_pow2_pos_arg_xfactor(y, slg2x, \
-                                                                FXP_POWXY_POW_LOOPS);
+                                                                FXP_POWXY_PW_LOOPS);
                 } else {
                         int posy = -y;
                         int pnwbits = slg2x.nwbits + fxp_nbits(posy) - FXP_frac_bits;
@@ -1660,7 +1649,7 @@ int fxp_powxy(int x, int y)
                         return (pnwbits > FXP_whole_bits)?
                                         0: \
                                         fxp_pow2_neg_arg_xfactor(posy, slg2x, \
-                                                                FXP_POWXY_POW_LOOPS);
+                                                                FXP_POWXY_PW_LOOPS);
                 }
         }
 }

@@ -98,7 +98,7 @@ extern const unsigned int SFXP_MAX_WBITS;
 
 extern const int FXP_LOGX_LOOPS;
 extern const int FXP_POWX_LOOPS;
-extern const int FXP_SQRT_LOOPS;
+extern const int FXP_SQRT_LG_LOOPS;
+extern int FXP_sqrt_pw_loops;
 extern const int FXP_POWXY_LG_LOOPS;
-extern const int FXP_POWXY_POW_LOOPS;
-
+extern const int FXP_POWXY_PW_LOOPS;

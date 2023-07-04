@@ -20,6 +20,7 @@
 #include <math.h>
 #include "fxp.h"
 #include "fxp_aux.h"
+#include "print_as_bits.h"
 
 #define DASHES "========================\n"
 
@@ -70,8 +71,7 @@
 
 // The Cordic scaling factor K(n)
 // = Multiplication from i=0 to n-1 of 1 / sqrt(1 + 2^(-2i))
-//#define STR_CORDIC_K ".6072529350088812561694"
-#define STR_CORDIC_K   ".607252935008881256169446752504929"
+#define STR_CORDIC_K ".60725293500888125616944675250492850317"
 
 /*
  * Return binary expansion (up to nbits) of a string representation
@@ -162,7 +162,12 @@ unsigned long bex_from_dec(char * pdecnum, int wbits, int fbits, int rounded)
         // Process fractional part
         p++; // skip the '.'
         int ndd = nwd;
-        long double ftens = 1.0/10.0;
+
+	// Watchout, there was a bug here because of no L in the literals,
+	// even if ftens was a long double, had only 1/10 represented in
+	// just double precision
+        long double ftens = 1.0L/10.0L;
+
         long double frac = 0;
         int ndig = 0;
         while (*p != '\0') { //&& (ftens > ZERO)) {
@@ -223,7 +228,13 @@ long double Lf_from_dec(char * pdecnum)
         }
         // Process fractional part
         p++; // skip the '.'
-        long double tenth = 1.0 / 10.0;
+
+	// Same as in bex_from_dec, the literals to be divided
+	// need the L for long doubles, otherwise the variable tenth
+	// even if long double gets assigned a representation of 1/10
+	// with only double precision
+        long double tenth = 1.0L / 10.0L;
+
         long double ftens = tenth;
         while (*p != '\0') {
                 char cdigit = *p;
@@ -255,7 +266,7 @@ long double Lf_from_bin(char * pbinnum)
         }
         // Process fractional part
         p++; // skip the '.'
-        long double half = 0.5;
+        long double half = 0.5L;
         long double frac = half;
         while (*p != '\0') {
                 char cdigit = *p;
@@ -265,25 +276,6 @@ long double Lf_from_bin(char * pbinnum)
         }
         return num;
 }
-
-unsigned long left_aligned_bex_from_Lf(long double x)
-{
-        // Processing the magnitude of the number, so ignoring negatives
-        unsigned long whole, frac, rbit, bex;
-        long double px = (x < 0.0L)? -x: x;
-        long double pwld = truncl(px);
-        whole = (unsigned) pwld;
-        int nwb = (whole == 0ul)? 1: FXP_LONG_BITS - __builtin_clzl(whole);
-        long double ldfrac = px - pwld;
-        int nfb = FXP_LONG_BITS - nwb;
-        frac = (unsigned long) truncl(ldfrac * powl(2.0L, nfb));
-        rbit = ((unsigned long) truncl(ldfrac * powl(2.0L, (nfb+1)))) & 1ul;
-        //printf("nwb: %d,  nfb: %d,   whole: %lu  frac:%lu  rbit:%d\n", \
-        //                nwb, nfb, whole, frac, (int) rbit);
-        bex = ((whole << nfb) | frac) + rbit;
-        return bex;
-}
-
 
 int main(void)
 {
@@ -296,26 +288,26 @@ int main(void)
 
         printf("\nPrecisions of e on this system:\n");
         printf("Frac digits   :   ----*----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8----*----9----*----0\n");
-        const long double E_EXP = (long double) exp(1);
+        const long double E_AS_D = (long double) exp(1);
         const long double MY_E_DEC = Lf_from_dec(STR_E_DEC);
         const long double MY_E_BIN = Lf_from_bin(STR_E_BIN);
-        const long double E_EXPL = (long double) expl(1);
+        const long double E_AS_LD = (long double) expl(1);
         printf("e from M_E    : %.64LE (- expl(): %1.4LE)\n",
-                (long double) M_E, (M_E - E_EXPL));
+                (long double) M_E, (M_E - E_AS_LD));
         printf("e from exp()  : %.64LE (- expl(): %1.4LE)\n",
-                E_EXP, (E_EXP - E_EXPL));
+                E_AS_D, (E_AS_D - E_AS_LD));
         printf("My e (dec str): %.64LE (- expl(): %1.4LE)\n",
-                MY_E_DEC, (MY_E_DEC - E_EXPL));
+                MY_E_DEC, (MY_E_DEC - E_AS_LD));
         printf("My e (bin str): %.64LE (- expl(): %1.4LE)\n",
-                MY_E_BIN, (MY_E_BIN - E_EXPL));
+                MY_E_BIN, (MY_E_BIN - E_AS_LD));
         printf("e from expl() : %.64LE (- expl(): %1.4LE)\n",
-                E_EXPL, (E_EXPL - E_EXPL));
+                E_AS_LD, (E_AS_LD - E_AS_LD));
         printf("'True' e (dec): %s\n", STR_E_DEC);
         printf("'True' e (bin):%s\n", STR_E_BIN);
         printf("bin expl()    :");
         int intbits = sizeof(unsigned int) * 8;
         unsigned int first_mask = 1u << (intbits - 1);
-        long double eshifted = E_EXPL * powl(2.0, intbits -2);
+        long double eshifted = E_AS_LD * powl(2.0, intbits -2);
         int e_ref_index = 0;
         int binpoint_seen = 0;
         int match_count = 0;
@@ -353,76 +345,95 @@ int main(void)
                 eshifted = eshifted * powl(2, intbits);
         } while (checking);
 
-        //printf("bin e (expl()): %lx\n\n", bin_e);
-
         // Always reserving 1 bit for the sign
         int wbits = 3;
         int frbits = FXP_INT_BITS - wbits;
         int frbitsl = FXP_LONG_BITS - wbits;
         printf("e as binary: %s\n", STR_E_BIN);
-        printf("e as fxp (%d frac bits) %lX\n", \
+        printf("e as fxp (%d frac bits) 0x%lX\n", \
                     frbits, bex_from_bin(STR_E_BIN, wbits, frbits, 1));
-        printf("e as fxp (%d frac bits) %lX\n\n", \
+        printf("e as fxp (%d frac bits) 0x%lX\n\n", \
                     frbitsl, bex_from_bin(STR_E_BIN, wbits, frbitsl, 1));
 
         printf("pi as binary: %s\n", STR_PI_BIN);
-        printf("pi as fxp (%d frac bits) %lX\n", \
+        printf("pi as fxp (%d frac bits) 0x%lX\n", \
                     frbits, bex_from_bin(STR_PI_BIN, wbits, frbits, 1));
-        printf("pi as fxp (%d frac bits) %lX\n\n", \
+        printf("pi as fxp (%d frac bits) 0x%lX\n\n", \
                     frbitsl, bex_from_bin(STR_PI_BIN, wbits, frbitsl, 1));
 
         printf("lg2(10) as decimal: %s\n", STR_LG2_10_DEC);
-        printf("lg2(10)  as fxp (%d frac bits) %lX\n", \
+        printf("lg2(10)  as fxp (%d frac bits) 0x%lX\n", \
                     frbits, bex_from_dec(STR_LG2_10_DEC, wbits, frbits, 1));
-        printf("lg2(10)  as fxp (%d frac bits) %lX\n\n", \
+        printf("lg2(10)  as fxp (%d frac bits) 0x%lX\n\n", \
                     frbitsl, bex_from_dec(STR_LG2_10_DEC, wbits, frbitsl, 1));
 
         wbits = 2;
         frbits = FXP_INT_BITS - wbits;
         frbitsl = FXP_LONG_BITS - wbits;
         printf("lg2(e)  as decimal: %s\n", STR_LG2_E_DEC);
-        printf("lg2(e)  as fxp (%d frac bits) %lX\n", \
+        printf("lg2(e)  as fxp (%d frac bits) 0x%lX\n", \
                     frbits, bex_from_dec(STR_LG2_E_DEC, wbits, frbits, 1));
-        printf("lg2(e)  as fxp (%d frac bits) %lX\n\n", \
+        printf("lg2(e)  as fxp (%d frac bits) 0x%lX\n\n", \
                     frbitsl, bex_from_dec(STR_LG2_E_DEC, wbits, frbitsl, 1));
 
         wbits = 1;
         frbits = FXP_INT_BITS - wbits;
         frbitsl = FXP_LONG_BITS - wbits;
         printf("ln(2) as decimal: %s\n", STR_LN_2_DEC);
-        printf("ln(2) as fxp (%d frac bits) %lX\n", \
+        printf("ln(2) as fxp (%d frac bits) 0x%lX\n", \
                     frbits, bex_from_dec(STR_LN_2_DEC, wbits, frbits, 1));
-        printf("ln(2) as fxp (%d frac bits) %lX\n\n", \
+        printf("ln(2) as fxp (%d frac bits) 0x%lX\n\n", \
                     frbitsl, bex_from_dec(STR_LN_2_DEC, wbits, frbitsl, 1));
 
         printf("lg10(2) as decimal: %s\n", STR_LG10_2_DEC);
-        printf("lg10(2) as fxp (%d frac bits) %lX\n", \
+        printf("lg10(2) as fxp (%d frac bits) 0x%lX\n", \
                     frbits, bex_from_dec(STR_LG10_2_DEC, wbits, frbits, 1));
-        printf("lg10(2) as fxp (%d frac bits) %lX\n\n", \
+        printf("lg10(2) as fxp (%d frac bits) 0x%lX\n\n", \
                     frbitsl, bex_from_dec(STR_LG10_2_DEC, wbits, frbitsl, 1));
 
-        // For trigonometrics
+	printf("Directly checking stored bits in some long doubles\n");
+	printf("(inspecting IEEE-754 floating point standard):\n");
+	//inspect_long_double(2.0L);
+	inspect_long_double(1.0L, 1);
+	inspect_long_double(0.0L, 1);
+	inspect_long_double(-0.0L, 1);
+	inspect_long_double(-1.0L, 1);
+	inspect_long_double(-2.0L, 1);
+	const long double PI_AS_LD = acosl(-1.0);
+	printf("pi: ");		inspect_long_double(PI_AS_LD, 1);
+	printf("\ne: ");		inspect_long_double(E_AS_LD, 1);
+	printf("\nln(2): ");	inspect_long_double(logl(2.0L), 1);
+	printf("\nlg10(2): ");	inspect_long_double(log10l(2.0L), 1);
+	printf("\nlg2(e): ");	inspect_long_double(log2l(E_AS_LD), 1);
+	printf("\nlg2(10): ");	inspect_long_double(log2l(10.0L), 1);
+	printf("\n");
 
-        // Calculate the Cordic kfactor with maximum precision possible
-        long double kfactor = 1.0L;
-        //printf("Powers 2^(-n), with n = 0,1,... 64:\n");
-        for (int x = 0; x <= 112; x++) {
+        // For trigonometrics
+	// Calculate the Cordic kfactor with maximum precision possible
+	long double kfactor = 1.0L;
+	//printf("Powers 2^(-n), with n = 0,1,... 64:\n");
+        for (int x = 0; x <= 120; x++) {
                 long double vtan = powl(2.0L, ((long double) -x));
-                kfactor *= cosl(atanl(vtan));
+		kfactor *= cosl(atanl(vtan));
                 //printf("%35.33Lf,\n", angle);
         }
-        printf("Cordic kfactor from long double: %35.33Lf\n", .607252935008881256169446752504929L);
-        printf("Calculated Cordic kfactor:       %35.33Lf\n", kfactor);
-        printf("Cordic kfactor as fxp (%d frac bits) %lX\n", \
-                    frbitsl, bex_from_dec(STR_CORDIC_K, wbits, frbitsl, 1));
-        printf("\nAngles for CORDIC (63 frac bits) in radians:\n");
+        printf("Calculated Cordic kfactor:       %40.38Lf\n", kfactor);
+	printf("Ld cordic factor from string:    %40.38Lf\n", Lf_from_dec(STR_CORDIC_K));
+        printf("Cordic kfactor from string:      0x%lX\n", \
+			bex_from_dec(STR_CORDIC_K, wbits, frbitsl, 1));
+
+	printf("CordicK: "); inspect_long_double(kfactor, 1);
+
+	printf("\nAngles for CORDIC (63 frac bits) in radians:\n");
         for (int x = 0; x < 64; x++) {
                 long double vtan = powl(2.0L, ((long double) -x));
                 long double angle = atanl( vtan );
-                unsigned long bex = left_aligned_bex_from_Lf(angle);
-                printf("atan(2^(-%2d)): %35.33Lf  0x%016lX\n", x, angle, bex);
-                //printf("0x%016lX,\n", bex);
+		//unsigned long bex = left_aligned_bex_from_Lf(angle);
+                //printf("atan(2^(-%2d)): %35.33Lf  0x%016lX\n", x, angle, bex);
+		inspect_long_double(angle, 0);
+		if ((x > 0) && (((x+1) % 4) == 0)) printf("\n");
         }
+	printf("\n");
 
 
         return 0;

@@ -25,22 +25,15 @@
 #include "print_as_bits.h"
 #endif
 
-/*
-const unsigned long FXP_E_I64 = 0xADF85458A2BB4A9Bul;
-const unsigned long FXP_PI_I64 = 0xC90FDAA22168C235ul;
-const unsigned long FXP_LN_2_I64 = 0xB17217F7D1CF7C72ul;
-const unsigned long FXP_LG10_2_I64 = 0x4D104D427DE7FD01ul;
-const unsigned long FXP_LG2_E_I64 = 0xB8AA3B295C17F19Eul;
-const unsigned long FXP_LG2_10_I64 = 0xD49A784BCD1B8B51ul;
-*/
-
 // Always reserving most significant bit for sign:
 const unsigned long FXP_E_I64 = 0x56FC2A2C515DA54Dul;
 const unsigned long FXP_PI_I64 = 0x6487ED5110B4611Aul;
-const unsigned long FXP_LG2_10_I64 = 0x6A4D3C25E68DC5A8ul;
-const unsigned long FXP_LG2_E_I64 = 0x5C551D94AE0BF8CFul;
-const unsigned long FXP_LN_2_I64 = 0x58B90BFBE8E7BE3Aul;
-const unsigned long FXP_LG10_2_I64 = 0x268826A13EF3FE7Ful;
+
+// Rectified Values of other constants
+const unsigned long FXP_LG2_10_I64 = 0x6A4D3C25E68DC57Ful;
+const unsigned long FXP_LG2_E_I64 = 0x5C551D94AE0BF85Eul;
+const unsigned long FXP_LN_2_I64 = 0x58B90BFBE8E7BCD6ul;
+const unsigned long FXP_LG10_2_I64 = 0x268826A13EF3FDE6ul;
 
 const unsigned long ULONG_ALL_ONES = ~0ul;
 const unsigned long ULONG_ALL_ONES_RS1 = ~0ul >> 1;
@@ -55,26 +48,61 @@ const unsigned long ULONG_SIGN = ~ULONG_ALL_ONES_RS1;
 // implicitely later, for 1 extra bit of precision.
 // 63 frac bits corresponds to a precision of 18.96 decimal digits
 static const unsigned long FXP_BKM_LOGS_L[] = {
-        0x8000000000000000, 0x4AE00D1CFDEB4400, 0x2934F0979A371600, 0x15C01A39FBD68800,
-        0xB31FB7D64898B00, 0x5AEB4DD63BF61C0, 0x2DCF2D0B85A4540, 0x16FE50B6EF08510,
-        0xB84E236BD563B8, 0x5C3E0FFC29D594, 0x2E24CA6E87E8A8, 0x1713D62F7957C3,
+        0x8000000000000000, 0x4AE00D1CFDEB43CF, 0x2934F0979A3715FC, 0x15C01A39FBD6879F,
+        0xB31FB7D64898B3E, 0x5AEB4DD63BF61CC, 0x2DCF2D0B85A4531, 0x16FE50B6EF08517,
+        0xB84E236BD563BA, 0x5C3E0FFC29D593, 0x2E24CA6E87E8A8, 0x1713D62F7957C3,
         0xB8A476150DFE4, 0x5C53AC47E94D8, 0x2E2A32762FA6B, 0x1715305002E4A,
         0xB8A9DED47C11, 0x5C55067F6E58, 0x2E2A89050622, 0x171545F3D72B,
         0xB8AA35640A7, 0x5C551C23599, 0x2E2A8E6E01E, 0x1715474E163,
         0xB8AA3ACD06, 0x5C551D7D98, 0x2E2A8EC491, 0x17154763BA,
-        0xB8AA3B239, 0x5C551D933, 0x2E2A8EC9F, 0x171547651,
+        0xB8AA3B239, 0x5C551D933, 0x2E2A8EC9F, 0x171547651,     //  32 entries
         0xB8AA3B28, 0x5C551D94, 0x2E2A8ECA, 0x17154765,
-        0xB8AA3B2, 0x5C551D9, 0x2E2A8EC, 0x1715476,       // <---- * 40 entries
-        //0xB8AA3B, 0x5C551D, 0x2E2A8E, 0x171547,
-        //0xB8AA3, 0x5C551, 0x2E2A8, 0x17154,
-        //0xB8AA, 0x5C55, 0x2E2A, 0x1715,         // <--- 52 entries
-        //0xB8A, 0x5C5, 0x2E2, 0x171,
-        //0xB8, 0x5C, 0x2E, 0x17,
-        //0xB, 0x5, 0x2, 0x1,
-        //0x0
-// Starting with the row marked with the *, each entry is exactly
-// a 4-bit right-shift of the value 4 positions earlier
+        0xB8AA3B2, 0x5C551D9, 0x2E2A8EC, 0x1715476,     // 40 entries *
+        /*
+        0xB8AA3B, 0x5C551D, 0x2E2A8E, 0x171547,
+        0xB8AA3, 0x5C551, 0x2E2A8, 0x17154,
+        0xB8AA, 0x5C55, 0x2E2A, 0x1715,
+        0xB8A, 0x5C5, 0x2E2, 0x171,
+        0xB8, 0x5C, 0x2E, 0x17,
+        0xB, 0x5, 0x2, 0x1,
+        0x0
+        // Starting with the row marked with the *, each entry is exactly
+        // a 4-bit right-shift of the value 4 positions earlier
+        */
 };
+
+// CORDIC angles as fxp's with 63 frac bits
+// Angles in this array have all a tangent that is exactly an inverse power of 2:
+// tan(angle[i]) = 1/(2^-i).
+// So all tangents of these angles have a single bit on, and the tangent value
+// for angle[i] is the same as right-shifting by 1 the tangent of angle[i-1],
+// with tan(angle[0]) == 1 (angle[0] is pi/4 == 45º in radians == 0.78539...)
+// For more information on CORDIC:
+// https://en.wikibooks.org/wiki/Trigonometry/For_Enthusiasts/The_CORDIC_Algorithm
+static const unsigned long FXP_CORDIC_ANGLES_L[] = {
+0x6487ED5110B4611A, 0x3B58CE0AC3769ED1, 0x1F5B75F92C80DD63, 0x0FEADD4D5617B6E3, // 4
+0x07FD56EDCB3F7A72, 0x03FFAAB7752EC495, 0x01FFF555BBB729AB, 0x00FFFEAAADDDD4B9, // 8
+0x007FFFD5556EEEDD, 0x003FFFFAAAAB7777, 0x001FFFFF55555BBC, 0x000FFFFFEAAAAADE, // 12
+0x0007FFFFFD555557, 0x0003FFFFFFAAAAAB, 0x0001FFFFFFF55555, 0x0000FFFFFFFEAAAB, // 16
+0x00007FFFFFFFD555, 0x00003FFFFFFFFAAB, 0x00001FFFFFFFFF55, 0x00000FFFFFFFFFEB, // 20
+0x000007FFFFFFFFFD, 0x0000040000000000, 0x0000020000000000, 0x0000010000000000, // 24
+0x0000008000000000, 0x0000004000000000, 0x0000002000000000, 0x0000001000000000, // 28
+0x0000000800000000, 0x0000000400000000, 0x0000000200000000, 0x0000000100000000, // 32
+/*
+0x0000000080000000, 0x0000000040000000, 0x0000000020000000, 0x0000000010000000, // 36
+0x0000000008000000, 0x0000000004000000, 0x0000000002000000, 0x0000000001000000, // 40
+0x0000000000800000, 0x0000000000400000, 0x0000000000200000, 0x0000000000100000, // 44
+0x0000000000080000, 0x0000000000040000, 0x0000000000020000, 0x0000000000010000, // 48
+0x0000000000008000, 0x0000000000004000, 0x0000000000002000, 0x0000000000001000, // 52
+0x0000000000000800, 0x0000000000000400, 0x0000000000000200, 0x0000000000000100, // 56
+0x0000000000000080, 0x0000000000000040, 0x0000000000000020, 0x0000000000000010, // 60
+0x0000000000000008, 0x0000000000000004, 0x0000000000000002, 0x0000000000000001  // 64
+*/
+};
+
+// Cordic scaling factor: 0.607252935008881256169446752504929
+// Cordic scaling factor as fxp with 63 frac bits
+static const unsigned long FXP_CORDIC_KFACTOR_L = 0x4DBA76D421AF2D34;
 
 // Auxiliary struct used internally for lg2
 typedef struct lg2tuple_l {
@@ -891,15 +919,15 @@ int fxp_sqrt_l(int fxp1)
         if (fxp1 == 0) return 0;
         if (fxp1 == FXP_POS_INF) return FXP_POS_INF;
         // First get the lg2 of the argument
-        super_fxp_l slg = fxp_get_lg2_as_sfxp_l(fxp1, FXP_SQRT_LOOPS);
+        super_fxp_l slg = fxp_get_lg2_as_sfxp_l(fxp1, FXP_SQRT_LG_LOOPS);
         // Halving that value
         slg.nwbits--;
         // parameters for pow2
         int w = (int) sfxp_l_get_poswhole(slg);
         unsigned long bkmearg = get_sfxp_frac_for_bkme_l(slg);
         return (slg.sign)?
-                fxp_pow2_wneg_l(w, bkmearg, FXP_SQRT_LOOPS):
-                fxp_pow2_wpos_l(w, bkmearg, FXP_SQRT_LOOPS);
+                fxp_pow2_wneg_l(w, bkmearg, FXP_sqrt_pw_loops):
+                fxp_pow2_wpos_l(w, bkmearg, FXP_sqrt_pw_loops);
 }
 
 /*
@@ -955,7 +983,7 @@ int fxp_powxy_l(int x, int y)
                         printf("Whole bit counts:  factor: %d,  y: %d\n", \
                                         slg2x.nwbits, fxp_nbits(y) - FXP_frac_bits);
                         #endif
-                        return fxp_pow2_neg_arg_xfactor_l(y, slg2x, FXP_POWXY_POW_LOOPS);
+                        return fxp_pow2_neg_arg_xfactor_l(y, slg2x, FXP_POWXY_PW_LOOPS);
                 } else {
                         int posy = -y;
                         int pnwbits = slg2x.nwbits + fxp_nbits(posy) - FXP_frac_bits_p1;
@@ -967,7 +995,7 @@ int fxp_powxy_l(int x, int y)
                         return (pnwbits > FXP_whole_bits)? \
                                         FXP_POS_INF: \
                                         fxp_pow2_pos_arg_xfactor_l(posy, slg2x, \
-                                                                FXP_POWXY_POW_LOOPS);
+                                                                FXP_POWXY_PW_LOOPS);
                 }
         } else {
                 if (y >= 0) {
@@ -981,7 +1009,7 @@ int fxp_powxy_l(int x, int y)
                         return (pnwbits > FXP_whole_bits)?
                                         FXP_POS_INF: \
                                         fxp_pow2_pos_arg_xfactor_l(y, slg2x, \
-                                                                FXP_POWXY_POW_LOOPS);
+                                                                FXP_POWXY_PW_LOOPS);
                 } else {
                         int posy = -y;
                         int pnwbits = slg2x.nwbits + fxp_nbits(posy) - FXP_frac_bits;
@@ -994,7 +1022,7 @@ int fxp_powxy_l(int x, int y)
                         return (pnwbits > FXP_whole_bits)?
                                         0: \
                                         fxp_pow2_neg_arg_xfactor_l(posy, slg2x, \
-                                                                FXP_POWXY_POW_LOOPS);
+                                                                FXP_POWXY_PW_LOOPS);
                 }
         }
 }
