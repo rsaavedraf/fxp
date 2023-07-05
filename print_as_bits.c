@@ -165,19 +165,24 @@ void inspect_long_double(long double x, int VERBOSE)
                 shift_base = -15;
         #endif
         if (VERBOSE) {
-                printf("\tAs stored : ");
-                for (int i = 0; i < 16; i++) {
+                printf("\tAs stored   : ");
+                for (int i = 0; i < ai; i++) {
                         printf("%02x", bytes[i]);
                         if ((i > 0) && (i % 2)) printf(" ");
+                }
+                if (ai == 16) {
+                        printf("  (IEEE-754)");
+                } else {
+                        printf("  (x86 Ext.Prec.)");
                 }
         }
         int sign = ((bytes[0] & 0x80) == 0x80);
         int ebits = ((((int) (bytes[0] & 0x7F)) << 8) | bytes[1]);
         int exponent = ebits + exbias;
         if (VERBOSE) {
-                printf("\n\tsign      : %1d", sign);
-                printf("\n\texponent  : %d", exponent);
-                printf("\n\tmagnitude : ");
+                printf("\n\tsign        : %1d", sign);
+                printf("\n\texponent    : %d", exponent);
+                printf("\n\tmagnitude   : ");
         }
         unsigned long hi = 0ul;
         unsigned long lo = 0ul;
@@ -209,7 +214,7 @@ void inspect_long_double(long double x, int VERBOSE)
                 for (int i = 2; i < 16; i++) {
                         unsigned char c = bytes[i];
                         if (VERBOSE) {
-                                printf("%02x", c);
+                                if (i < ai) printf("%02x", c);
                                 if ((i > 0) && (i % 2)) printf(" ");
                         }
                         if (hiroomleft >= 8) {
@@ -221,23 +226,24 @@ void inspect_long_double(long double x, int VERBOSE)
                 }
         }
         if (VERBOSE) {
-                printf("\n\tAs ulongs : 0x000%lx 0x%016lx", hi, lo);
-                printf("\n\tAs bits   : ");
+                printf("\n\tAs ulongs   : 0x000%lx 0x%016lx", hi, lo);
+                printf("\n\tAs bits     : ");
                 print_ulong_as_bin(hi); printf(" "); print_ulong_as_bin(lo);
         }
         // L-shift the bits
         shift_ulongs(&hi, &lo, shift_base + ((exponent < 0)? -exponent - 1: 0));
         if (VERBOSE) {
-                printf("\n\tL-shifted : ");
+                printf("\n\tL-shifted   : ");
                 print_ulong_as_bin(hi); printf(" "); print_ulong_as_bin(lo);
-                printf("\n\t            ");
         }
         #ifdef __ARM_ARCH
                 // Round last bit in hi ulong
                 if ((lo >> 63) & 1ul) hi++;
+                if (VERBOSE) printf("\n\tRounded Hexa: ");
         #elif __x86_64__
                 // Only bits 0 to 62 hold the fractional part in the x86 Extended
                 // Precision format, so ignore bit 63.
+                if (VERBOSE) printf("\n\tHexadecimal : ");
         #endif
         printf("0x%016lX", hi);
         if (VERBOSE) {

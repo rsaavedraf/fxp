@@ -163,9 +163,9 @@ unsigned long bex_from_dec(char * pdecnum, int wbits, int fbits, int rounded)
         p++; // skip the '.'
         int ndd = nwd;
 
-	// Watchout, there was a bug here because of no L in the literals,
-	// even if ftens was a long double, had only 1/10 represented in
-	// just double precision
+    	// Watchout, there was a bug here because of no L in the literals,
+    	// even if ftens was a long double, had only 1/10 represented in
+    	// just double precision
         long double ftens = 1.0L/10.0L;
 
         long double frac = 0;
@@ -229,10 +229,10 @@ long double Lf_from_dec(char * pdecnum)
         // Process fractional part
         p++; // skip the '.'
 
-	// Same as in bex_from_dec, the literals to be divided
-	// need the L for long doubles, otherwise the variable tenth
-	// even if long double gets assigned a representation of 1/10
-	// with only double precision
+    	// Same as in bex_from_dec, the literals to be divided
+    	// need the L for long doubles, otherwise the variable tenth
+    	// even if long double gets assigned a representation of 1/10
+    	// with only double precision
         long double tenth = 1.0L / 10.0L;
 
         long double ftens = tenth;
@@ -391,50 +391,49 @@ int main(void)
         printf("lg10(2) as fxp (%d frac bits) 0x%lX\n\n", \
                     frbitsl, bex_from_dec(STR_LG10_2_DEC, wbits, frbitsl, 1));
 
-	printf("Directly checking stored bits in some long doubles\n");
-	printf("(inspecting IEEE-754 floating point standard):\n");
-	//inspect_long_double(2.0L);
-	inspect_long_double(1.0L, 1);
-	inspect_long_double(0.0L, 1);
-	inspect_long_double(-0.0L, 1);
-	inspect_long_double(-1.0L, 1);
-	inspect_long_double(-2.0L, 1);
-	const long double PI_AS_LD = acosl(-1.0);
-	printf("pi: ");		inspect_long_double(PI_AS_LD, 1);
-	printf("\ne: ");		inspect_long_double(E_AS_LD, 1);
-	printf("\nln(2): ");	inspect_long_double(logl(2.0L), 1);
-	printf("\nlg10(2): ");	inspect_long_double(log10l(2.0L), 1);
-	printf("\nlg2(e): ");	inspect_long_double(log2l(E_AS_LD), 1);
-	printf("\nlg2(10): ");	inspect_long_double(log2l(10.0L), 1);
-	printf("\n");
+        printf("Directly checking stored bits in some long doubles\n");
+        printf("(inspecting IEEE-754 or x86 Extended Precision floating point values):\n\n");
+        //inspect_long_double(2.0L);
+        inspect_long_double(1.0L, 1);
+        inspect_long_double(0.0L, 1);
+        inspect_long_double(-0.0L, 1);
+        inspect_long_double(-1.0L, 1);
+        inspect_long_double(-2.0L, 1);
+        const long double PI_AS_LD = acosl(-1.0);
+        printf("pi: ");		inspect_long_double(PI_AS_LD, 1);
+        printf("\ne: ");		inspect_long_double(E_AS_LD, 1);
+        printf("\nln(2): ");	inspect_long_double(logl(2.0L), 1);
+        printf("\nlg10(2): ");	inspect_long_double(log10l(2.0L), 1);
+        printf("\nlg2(e): ");	inspect_long_double(log2l(E_AS_LD), 1);
+        printf("\nlg2(10): ");	inspect_long_double(log2l(10.0L), 1);
+        printf("\n");
 
         // For trigonometrics
-	// Calculate the Cordic kfactor with maximum precision possible
-	long double kfactor = 1.0L;
-	//printf("Powers 2^(-n), with n = 0,1,... 64:\n");
+        // Calculate the Cordic kfactor with maximum precision possible
+        long double kfactor = 1.0L;
+        //printf("Powers 2^(-n), with n = 0,1,... 64:\n");
         for (int x = 0; x <= 120; x++) {
                 long double vtan = powl(2.0L, ((long double) -x));
-		kfactor *= cosl(atanl(vtan));
+                kfactor *= cosl(atanl(vtan));
                 //printf("%35.33Lf,\n", angle);
         }
         printf("Calculated Cordic kfactor:       %40.38Lf\n", kfactor);
-	printf("Ld cordic factor from string:    %40.38Lf\n", Lf_from_dec(STR_CORDIC_K));
+        printf("Ld cordic factor from string:    %40.38Lf\n", Lf_from_dec(STR_CORDIC_K));
         printf("Cordic kfactor from string:      0x%lX\n", \
-			bex_from_dec(STR_CORDIC_K, wbits, frbitsl, 1));
+                bex_from_dec(STR_CORDIC_K, wbits, frbitsl, 1));
 
-	printf("CordicK: "); inspect_long_double(kfactor, 1);
+        printf("CordicK: "); inspect_long_double(kfactor, 1);
 
-	printf("\nAngles for CORDIC (63 frac bits) in radians:\n");
+        printf("\nAngles for CORDIC (63 frac bits) in radians:\n");
         for (int x = 0; x < 64; x++) {
                 long double vtan = powl(2.0L, ((long double) -x));
                 long double angle = atanl( vtan );
-		//unsigned long bex = left_aligned_bex_from_Lf(angle);
+                //unsigned long bex = left_aligned_bex_from_Lf(angle);
                 //printf("atan(2^(-%2d)): %35.33Lf  0x%016lX\n", x, angle, bex);
-		inspect_long_double(angle, 0);
-		if ((x > 0) && (((x+1) % 4) == 0)) printf("\n");
+                inspect_long_double(angle, 0);
+                if ((x > 0) && (((x+1) % 4) == 0)) printf("\n");
         }
-	printf("\n");
-
+    	printf("\n");
 
         return 0;
 }
