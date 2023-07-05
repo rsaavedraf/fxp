@@ -706,6 +706,12 @@ within test_powersxy() in fxp_tester() still trigger an assert
 if using the default suggested error-tolerance settings for
 WDELTA_MAX and the different *_LOOPS variables.
 
+2023-07-05
+Bit-level inspection of long doubles now also done for Intel
+processors (x86 extended Precision format, not quite the same as
+IEEE-754)
+
+
 
 Pending:
 Implement trigonometric functions

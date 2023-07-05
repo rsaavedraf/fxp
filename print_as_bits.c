@@ -137,17 +137,28 @@ void inspect_long_double(long double x, int VERBOSE)
         unsigned char bytes[] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
         int ai = 0;
         int sum = 0;
-        // Watch out this is for an ARM processor, it does not work for Intel.
-        // Intel does not use IEEE-754 encoding, but its own 80-bit
-        // floating point format for long doubles
-        // TODO: make alternative version to inspect long doubles also
-        // from a system with Intel
+        int exbias = -16383;
+        int implicit_bit = 0;
+        int shift_base = -14;
+        #ifdef __ARM_ARCH
         for (int i = 15; i >= 0; i--) {
                 unsigned char c = *(pc + i);
                 bytes[ai] = c;
                 ai++;
                 sum += c;
         }
+        #elif __x86_64__
+        // Intel does not quite use IEEE-754 encoding, but its own 80-bit
+        // floating point format for long doubles. For more details:
+        // https://en.wikipedia.org/wiki/Extended_precision
+        shift_base = -15;
+        for (int i = 9; i >= 0; i--) {
+                unsigned char c = *(pc + i);
+                bytes[ai] = c;
+                ai++;
+                sum += c;
+        }
+        #endif
         if (VERBOSE) {
                 printf("\tAs stored : ");
                 for (int i = 0; i < 16; i++) {
@@ -157,7 +168,7 @@ void inspect_long_double(long double x, int VERBOSE)
         }
         int sign = ((bytes[0] & 0x80) == 0x80);
         int ebits = ((((int) (bytes[0] & 0x7F)) << 8) | bytes[1]);
-        int exponent = ebits - 16383;
+        int exponent = ebits + exbias;
         if (VERBOSE) {
                 printf("\n\tsign      : %1d", sign);
                 printf("\n\texponent  : %d", exponent);
@@ -175,13 +186,17 @@ void inspect_long_double(long double x, int VERBOSE)
                         }
                 }
         } else {
-                // implicit (whole) bit
+                #ifdef __ARM_ARCH
+                // Include the implicit bit as in IEEE-754
                 if (ebits == 0x0) {
                         if (VERBOSE) printf("(0). "); // Special case for subnormals
                 } else {
                         if (VERBOSE) printf("(1). "); // normalized values
                         hi = 1ul;
                 }
+                #elif __x86_64__
+                // No implicit/hidden bit in x86's Extended Precision format
+                #endif
                 int hiroomleft = 48; // 2 byte in the "hi" ulong used already
                 // fraction bits
                 for (int i = 2; i < 16; i++) {
@@ -203,13 +218,20 @@ void inspect_long_double(long double x, int VERBOSE)
                 printf("\n\tAs bits   : ");
                 print_ulong_as_bin(hi); printf(" "); print_ulong_as_bin(lo);
         }
-        shift_ulongs(&hi, &lo, -14 + ((exponent < 0)? -exponent - 1: 0));
+        // L-shift the bits
+        shift_ulongs(&hi, &lo, shift_base + ((exponent < 0)? -exponent - 1: 0));
         if (VERBOSE) {
                 printf("\n\tL-shifted : ");
                 print_ulong_as_bin(hi); printf(" "); print_ulong_as_bin(lo);
                 printf("\n\t            ");
         }
+        #ifdef __ARM_ARCH
+        // Round last bit in hi ulong
         if ((lo >> 63) & 1ul) hi++;
+        #elif __x86_64__
+        // Only bits 0 to 62 hold the fractional part in the x86 Extended
+        // Precision format, so ignore bit 63.
+        #endif
         printf("0x%016lX", hi);
         if (VERBOSE) {
                 printf("\n");
