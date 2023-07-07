@@ -394,18 +394,18 @@ int main(void)
         printf("Directly checking stored bits in some long doubles\n");
         printf("(inspecting IEEE-754 or x86 Extended Precision floating point values):\n\n");
         //inspect_long_double(2.0L);
-        inspect_long_double(1.0L, 1);
-        inspect_long_double(0.0L, 1);
-        inspect_long_double(-0.0L, 1);
-        inspect_long_double(-1.0L, 1);
-        inspect_long_double(-2.0L, 1);
+        inspect_long_double( 1.0L);
+        inspect_long_double( 0.0L);
+        inspect_long_double(-0.0L);
+        inspect_long_double(-1.0L);
+        inspect_long_double(-2.0L);
         const long double PI_AS_LD = acosl(-1.0);
-        printf("pi: ");		inspect_long_double(PI_AS_LD, 1);
-        printf("\ne: ");		inspect_long_double(E_AS_LD, 1);
-        printf("\nln(2): ");	inspect_long_double(logl(2.0L), 1);
-        printf("\nlg10(2): ");	inspect_long_double(log10l(2.0L), 1);
-        printf("\nlg2(e): ");	inspect_long_double(log2l(E_AS_LD), 1);
-        printf("\nlg2(10): ");	inspect_long_double(log2l(10.0L), 1);
+        printf("pi: ");		    inspect_long_double(PI_AS_LD);
+        printf("\ne: ");		inspect_long_double(E_AS_LD);
+        printf("\nln(2): ");	inspect_long_double(logl(2.0L));
+        printf("\nlg10(2): ");	inspect_long_double(log10l(2.0L));
+        printf("\nlg2(e): ");	inspect_long_double(log2l(E_AS_LD));
+        printf("\nlg2(10): ");	inspect_long_double(log2l(10.0L));
         printf("\n");
 
         // For trigonometrics
@@ -422,7 +422,7 @@ int main(void)
         printf("Cordic kfactor from string:      0x%lX\n", \
                 bex_from_dec(STR_CORDIC_K, wbits, frbitsl, 1));
 
-        printf("CordicK: "); inspect_long_double(kfactor, 1);
+        printf("CordicK: "); inspect_long_double(kfactor);
 
         printf("\nAngles for CORDIC (63 frac bits) in radians:\n");
         for (int x = 0; x < 64; x++) {
@@ -430,7 +430,7 @@ int main(void)
                 long double angle = atanl( vtan );
                 //unsigned long bex = left_aligned_bex_from_Lf(angle);
                 //printf("atan(2^(-%2d)): %35.33Lf  0x%016lX\n", x, angle, bex);
-                inspect_long_double(angle, 0);
+                printf("0x%016lX, ", get_ulong_bits_from_ldouble(angle));
                 if ((x > 0) && (((x+1) % 4) == 0)) printf("\n");
         }
     	printf("\n");

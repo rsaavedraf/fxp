@@ -11,4 +11,5 @@ void print_int_as_bin(int n, int width);
 void print_long_as_bin(long n);
 void print_uint_as_bin(unsigned int n);
 void print_ulong_as_bin(unsigned long n);
-void inspect_long_double(long double x, int verbose);
+void inspect_long_double(long double x);
+unsigned long get_ulong_bits_from_ldouble(long double x);
