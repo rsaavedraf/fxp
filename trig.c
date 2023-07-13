@@ -16,12 +16,25 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <float.h>
+#include <limits.h>
 #include <math.h>
+#include <time.h>
 #include "fxp_extern.h"
 
 #define DASHES "=========================================\n"
 
+#define SET_RAND_SEED 1
+
 const long double PI_AS_LD = acosl(-1.0L);
+const long double HALF_PI_AS_LD = PI_AS_LD / 2.0L;
+const long double RAD_TO_GRAD = 180.0L / PI_AS_LD;
+const long double GRAD_TO_RAD = PI_AS_LD / 180.0L;
+
+const int MAX_NUMS = 500;
+
+const int LONG_BITS = sizeof(long) * 8;
+
+const long double LOG2_10 = log2l(10.0L);
 
 // ANGLE[n] = atanl(2^-n), with n from 0 to 63
 // These angles all in radians, 1st element is pi/4
@@ -98,14 +111,15 @@ static const long double ANGLE[] = {
 const long double CORDIC_KVALUE = 0.60725293500888125616944675250492850317L;
 
 const unsigned int MAX_LOOPS = 64u;
+
 /*
  * Calculates simultaneously the sine and cosine of the argument x
  * using the CORDIC algorithm:
  * https://en.wikipedia.org/wiki/CORDIC
  */
-void my_sincos(long double x, long double *mysin, long double *mycos, unsigned int loops)
+void my_sincos1(long double x, long double *mysin, long double *mycos, unsigned int loops)
 {
-        // x should be in [0, pi/2]
+        // x should be in [pi/2, -pi/2]
         long double a = 0.0L;
         long double c = 1.0L;
         long double s = 0.0L;
@@ -138,21 +152,101 @@ void my_sincos(long double x, long double *mysin, long double *mycos, unsigned i
         return;
 }
 
+/*
+ * Alternative CORDIC implementation avoids the final multiplication with the scaling factor
+ * by directly starting from point (CORDIC_KVALUE, 0) instead of from (1, 0)
+ */
+void my_sincos2(long double x, long double *mysin, long double *mycos, unsigned int loops)
+{
+        // x should be in [pi/2, -pi/2]
+        long double a = 0.0L;
+        long double c = CORDIC_KVALUE;
+        long double s = 0.0L;
+        if (loops > MAX_LOOPS) loops = MAX_LOOPS;
+        //printf("Start: angle is %Lf, c is %Lf, s is %Lf\n", a/PI_AS_LD*180.0L, c, s);
+        // CORDIC implementation
+        for (int i = 0; i < loops; i++) {
+                long double angle = ANGLE[i];
+                long double tangent = 1.0L / ((long double) (1ul << i));
+                if (a < x) {
+                        //printf("+ rotation\n");
+                        a += angle;
+                        // These products would get implemented with simple shifts
+                        long double newc = c - s*tangent;
+                        s += c*tangent;
+                        c = newc;
+                } else {
+                        //printf("- rotation\n");
+                        a -= angle;
+                        // These products would get implemented with simple shifts
+                        long double newc = c + s*tangent;
+                        s -= c*tangent;
+                        c = newc;
+                }
+                //printf("Iteration %2d: angle change %Lf, new c is %Lf, new s is %Lf, angle' %14.12Lf\n", \
+                //            i, angle/PI_AS_LD*180.0L, c, s, a/PI_AS_LD*180.0L);
+        }
+        *mycos = c;
+        *mysin = s;
+        return;
+}
+
 int main(void)
 {
-        printf("\n%sTests the trigonometric functions using long doubles\n%s", DASHES, DASHES);
-        printf("K scaling factor for Cordic: %40.38Lf\n", CORDIC_KVALUE);
+        if (SET_RAND_SEED) srand((unsigned int) time(0));
 
-        const long double angle = 55.5L / 180.0L * PI_AS_LD;
-        const long double s = sinl(angle);
-        const long double c = cosl(angle);
-        for (int loops = 8; loops < 65; loops += 4) {
-                printf("\nUsing %u Cordic loops: \n", loops);
-                long double mysine = 0.0L, mycos = 0.0L;
-                my_sincos(angle, &mysine, &mycos, (unsigned int) loops);
-                printf("\tclib sin(%Lf) = %40.38Lf\n", angle, s);
-                printf("\tmy   sin(%Lf) = %40.38Lf (delta: %5.3LE)\n", angle, mysine, mysine - s);
-                printf("\tclib cos(%Lf) = %40.38Lf\n", angle, c);
-                printf("\tmy   cos(%Lf) = %40.38Lf (delta: %5.3LE)\n", angle, mycos, mycos - c);
+        printf("\n%sTests the trigonometric functions using long doubles\n%s", DASHES, DASHES);
+        printf("K scaling factor for Cordic: %41.38Lf\n", CORDIC_KVALUE);
+
+        long double errors1[] = {0.0L, 0.0L, 0.0L, 0.0L, 0.0L, 0.0L, 0.0L, 0.0L, \
+                                 0.0L, 0.0L, 0.0L, 0.0L, 0.0L, 0.0L, 0.0L, 0.0L};
+        long double errors2[] = {0.0L, 0.0L, 0.0L, 0.0L, 0.0L, 0.0L, 0.0L, 0.0L, \
+                                 0.0L, 0.0L, 0.0L, 0.0L, 0.0L, 0.0L, 0.0L, 0.0L};
+        int n;
+        for (int i = 0; i < MAX_NUMS; i++) {
+                int sign = ((rand() % 2) == 1)? -1: 1;
+                const long double angle = sign * HALF_PI_AS_LD * ((long double) rand() / INT_MAX);
+                //const long double angle = 44.95L / 180.0L * PI_AS_LD;
+                if (i % 50 == 0)
+                        printf("Angle is: %9.6Lf rad (%9.6Lf °)\n", angle, angle * RAD_TO_GRAD);
+                const long double s = sinl(angle);
+                const long double c = cosl(angle);
+                n = 0;
+                for (unsigned int loops = 8; loops < 65; loops += 8) {
+                        long double mysin1 = 0.0L, mycos1 = 0.0L;
+                        long double mysin2 = 0.0L, mycos2 = 0.0L;
+                        my_sincos1(angle, &mysin1, &mycos1, (unsigned int) loops);
+                        my_sincos2(angle, &mysin2, &mycos2, (unsigned int) loops);
+                        // Accumulate the largest errors for method 1 and 2
+                        long double errsin1 = fabsl(mysin1 - s);
+                        long double errcos1 = fabsl(mycos1 - c);
+                        long double maxerr1 = (errsin1 > errcos1)? errsin1: errcos1;
+                        if (maxerr1 > errors1[n]) errors1[n] = maxerr1;
+                        long double errsin2 = fabsl(mysin2 - s);
+                        long double errcos2 = fabsl(mycos2 - c);
+                        long double maxerr2 = (errsin2 > errcos2)? errsin2: errcos2;
+                        if (maxerr2 > errors2[n]) errors2[n] = maxerr2;
+                        if ((loops == 32) && (i % 50 == 0)) {
+                                printf("\tUsing %u Cordic loops: \n", loops);
+                                printf("\t\tclib sin(%9.6Lf) = %41.38Lf\n", angle, s);
+                                printf("\t\tmy  sin1(%9.6Lf) = %41.38Lf (delta: %5.3LE)\n", angle, mysin1, errsin1);
+                                printf("\t\tmy  sin2(%9.6Lf) = %41.38Lf (delta: %5.3LE)\n", angle, mysin2, errsin2);
+                                printf("\t\tclib cos(%9.6Lf) = %41.38Lf\n", angle, c);
+                                printf("\t\tmy  cos1(%9.6Lf) = %41.38Lf (delta: %5.3LE)\n", angle, mycos1, errcos1);
+                                printf("\t\tmy  cos2(%9.6Lf) = %41.38Lf (delta: %5.3LE)\n", angle, mycos2, errcos2);
+                        }
+                        n++;
+                }
+        }
+        n = 0;
+        for (unsigned int loops = 8; loops < 65; loops += 8) {
+                long double err1 = errors1[n];
+                long double err2 = errors2[n];
+                long double maxerr = (err1 > err2)? err1: err2;
+                long double decprec = fabsl(log10l(maxerr));
+                printf("For %2u Cordic loops, max error: %5.3LE  ", loops, maxerr);
+                printf("-> Dec. Prec: %5.2Lf, Bits of precision: %5.2Lf\n", \
+                        decprec, decprec * LOG2_10);
+                n++;
         }
 }
