@@ -288,14 +288,14 @@ int main(void)
 
         printf("\nPrecisions of e on this system:\n");
         printf("Frac digits   :   ----*----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8----*----9----*----0\n");
-        const long double E_AS_D = (long double) exp(1);
+        const double E_AS_D = (double) exp(1.0);
         const long double MY_E_DEC = Lf_from_dec(STR_E_DEC);
         const long double MY_E_BIN = Lf_from_bin(STR_E_BIN);
-        const long double E_AS_LD = (long double) expl(1);
+        const long double E_AS_LD = (long double) expl(1.0L);
         printf("e from M_E    : %.64LE (- expl(): %1.4LE)\n",
                 (long double) M_E, (M_E - E_AS_LD));
         printf("e from exp()  : %.64LE (- expl(): %1.4LE)\n",
-                E_AS_D, (E_AS_D - E_AS_LD));
+                (long double) E_AS_D, (((long double) E_AS_D) - E_AS_LD));
         printf("My e (dec str): %.64LE (- expl(): %1.4LE)\n",
                 MY_E_DEC, (MY_E_DEC - E_AS_LD));
         printf("My e (bin str): %.64LE (- expl(): %1.4LE)\n",
@@ -307,7 +307,7 @@ int main(void)
         printf("bin expl()    :");
         int intbits = sizeof(unsigned int) * 8;
         unsigned int first_mask = 1u << (intbits - 1);
-        long double eshifted = E_AS_LD * powl(2.0, intbits -2);
+        long double eshifted = E_AS_LD * powl(2.0L, intbits -2);
         int e_ref_index = 0;
         int binpoint_seen = 0;
         int match_count = 0;
@@ -342,7 +342,7 @@ int main(void)
                         e_ref_index++;
                 }
                 eshifted = eshifted - ((long double) e_chunk);
-                eshifted = eshifted * powl(2, intbits);
+                eshifted = eshifted * powl(2.0L, intbits);
         } while (checking);
 
         // Always reserving 1 bit for the sign
@@ -399,7 +399,7 @@ int main(void)
         inspect_long_double(-0.0L);
         inspect_long_double(-1.0L);
         inspect_long_double(-2.0L);
-        const long double PI_AS_LD = acosl(-1.0);
+        const long double PI_AS_LD = acosl(-1.0L);
         printf("pi: ");		    inspect_long_double(PI_AS_LD);
         printf("\ne: ");		inspect_long_double(E_AS_LD);
         printf("\nln(2): ");	inspect_long_double(logl(2.0L));
@@ -410,12 +410,13 @@ int main(void)
 
         // For trigonometrics
         // Calculate the Cordic kfactor with maximum precision possible
+        //printf("CORDIC K-values from 0 to 64 iterations:\n");
         long double kfactor = 1.0L;
-        //printf("Powers 2^(-n), with n = 0,1,... 64:\n");
-        for (int x = 0; x <= 120; x++) {
+        for (int x = 0; x < 64; x++) {
                 long double vtan = powl(2.0L, ((long double) -x));
                 kfactor *= cosl(atanl(vtan));
-                //printf("%35.33Lf,\n", angle);
+                //printf("i:%03d  k:%50.48Lf,\n", x, kfactor);
+                //printf("%40.38LfL,\n", kfactor);
         }
         printf("Calculated Cordic kfactor:       %40.38Lf\n", kfactor);
         printf("Ld cordic factor from string:    %40.38Lf\n", Lf_from_dec(STR_CORDIC_K));
@@ -428,8 +429,8 @@ int main(void)
         for (int x = 0; x < 64; x++) {
                 long double vtan = powl(2.0L, ((long double) -x));
                 long double angle = atanl( vtan );
-                //unsigned long bex = left_aligned_bex_from_Lf(angle);
-                //printf("atan(2^(-%2d)): %35.33Lf  0x%016lX\n", x, angle, bex);
+                //printf("atan(2^(-%2d)): %40.38Lf\n", x, angle);
+                //printf("%40.38LfL,\n", angle);
                 printf("0x%016lX, ", get_ulong_bits_from_ldouble(angle));
                 if ((x > 0) && (((x+1) % 4) == 0)) printf("\n");
         }

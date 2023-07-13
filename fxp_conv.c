@@ -182,12 +182,12 @@ int ld2fxp(long double x)
         int pfrac_i = (int) truncl(frac * shift);
         int pwhole_i = (int) pwld;
         if (pwhole_i > 0)
-                if (x > 0.0)
+                if (x > 0.0L)
                         return fxp_bin(pwhole_i, pfrac_i);
                 else
                         return fxp_bin(-pwhole_i, pfrac_i);
         else    // pwhole == 0
-                if (x >= 0.0)
+                if (x >= 0.0L)
                         return fxp_bin(0, pfrac_i);
                 else
                         return fxp_bin(0, -pfrac_i);
