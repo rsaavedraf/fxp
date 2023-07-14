@@ -711,6 +711,28 @@ Bit-level inspection of long doubles now also done for Intel
 processors (x86 extended Precision format, not quite the same as
 IEEE-754)
 
+2023-07-07
+
+Changed the code to have just one big #ifdef for ARM vs. x86 
+separating the corresponding different implementations of the
+long double inspection function in print_as_bits.c
+
+2023-07-13
+Checking precision of CORDIC using different number of loops.
+Also checking its precision when avoiding the final
+multiplication by the scaling factor K, by simply starting
+the iterations with (K, 0) instead of with (1, 0).
+The results are not actually identical, but offer the
+same precision. Number of fractional bits of precision is
+number of Cordic iterations - 1.
+
+2023-07-14
+Modifying trig.c to also support inputs beyond the
+[pi/2, -pi/2] range, so accepting same inputs just as
+sinl() and cosl() do.
+
+
+
 
 
 Pending:
