@@ -21,6 +21,7 @@
 #include <time.h>
 #include "fxp_extern.h"
 
+//#define VERBOSE 1
 #define DASHES "=========================================\n"
 
 #define SET_RAND_SEED 0
@@ -159,6 +160,7 @@ void my_sincos1(long double x, long double *mysin, long double *mycos, unsigned 
                 //printf("\tIteration %2d: angle change %Lf, new c: %Lf, new s: %Lf, new angle: %14.12Lf\n", \
                 //            i, ANGLE[i]*RAD_TO_GRAD, c, s, a*RAD_TO_GRAD);
         }
+        // Scaling with the K factor at the end
         *mycos = c * CORDIC_KVALUE;
         *mysin = s * CORDIC_KVALUE;
         return;
@@ -187,27 +189,37 @@ void my_sincos2(long double x, long double *s, long double *c, unsigned int loop
         *s = 0.0L;
         long double a = 0.0L, tangent, newc;
         if (loops > MAX_LOOPS) loops = MAX_LOOPS;
-        //printf("x: %Lf, Start: angle is %Lf, c is %Lf, s is %Lf\n", x, a*RAD_TO_GRAD, c, s);
+        #ifdef VERBOSE
+        printf("x: %Lf, Start: angle is %Lf, c is %Lf, s is %Lf\n", x, a*RAD_TO_GRAD, *c, *s);
+        #endif
         for (int i = 0; i < loops; i++) {
                 tangent = 1.0L / ((long double) (1ul << i));
                 if (a < x) {
-                        //printf("+ rotation\n");
+                        #ifdef VERBOSE
+                        printf("%02d: + rot: ", i);
+                        #endif
                         a += ANGLE[i];
                         // These products would get implemented with simple shifts
                         newc = *c - (*s * tangent);
                         *s += (*c * tangent);
                         *c = newc;
                 } else {
-                        //printf("- rotation\n");
+                        #ifdef VERBOSE
+                        printf("%02d, - rot: ", i);
+                        #endif
                         a -= ANGLE[i];
                         // These products would get implemented with simple shifts
                         newc = *c + (*s * tangent);
                         *s -= (*c * tangent);
                         *c = newc;
                 }
-                //printf("Iteration %2d: angle change %Lf, new c: %Lf, new s: %Lf, new angle: %14.12Lf\n", \
-                //            i, ANGLE[i]*RAD_TO_GRAD, c, s, a*RAD_TO_GRAD);
+                #ifdef VERBOSE
+                printf("%22.17Lf,  c:%20.17Lf,  s:%20.17Lf\n", a, *c, *s);
+                //printf("angle change %Lf, new c: %Lf, new s: %Lf, new angle: %14.12Lf\n", \
+                //            ANGLE[i]*RAD_TO_GRAD, c, s, a*RAD_TO_GRAD);
+                #endif
         }
+        // No scaling needed at the end
         return;
 }
 
@@ -276,4 +288,7 @@ int main(void)
                         decprec, decprec * LOG2_10);
                 n++;
         }
+        long double mysin = 0.0L, mycos = 0.0L;
+        angle = PI_AS_LD / 6.0L;
+        my_sincos2(angle, &mysin, &mycos, 32);
 }

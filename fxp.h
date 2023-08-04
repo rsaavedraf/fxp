@@ -13,17 +13,6 @@
 #ifndef FXP_HEADER
 #define FXP_HEADER
 
-/*
-// Aux struct used internally
-typedef struct tuple {
-        int ping;
-        unsigned int pong;
-} tuple;
-
-void print_tuple(char * msg, tuple t);
-tuple negate_tuple(tuple t);
-*/
-
 // Number of bits to use for the whole vs. frac parts
 int fxp_get_frac_bits();
 int fxp_set_frac_bits(int nfb);
@@ -62,7 +51,10 @@ unsigned int fxp_get_lshifted_frac(unsigned int fxp1);
 
 // Aux function to rshift with rounding of last bit
 unsigned int rshift_uint_rounding(unsigned int x, \
-                                  int shift);
+                                  unsigned int shift);
+unsigned long rshift_ulong_rounding(unsigned long n, \
+                                    unsigned int shift);
+
 
 // Aux function to get position of most significant 1 bit
 int fxp_nbits(unsigned int n);
@@ -85,6 +77,9 @@ int fxp_unsafe_div(int fxp1, int fxp2);
 // Important constants in fxp format
 unsigned int fxp_get_e();
 unsigned int fxp_get_pi();
+unsigned int fxp_get_halfpi();
+unsigned long fxp_get_pi_l();
+unsigned long fxp_get_halfpi_l();
 
 // Beyond the basic four ops
 int fxp_lg2(int fxp1);
@@ -97,11 +92,20 @@ int fxp_sqrt(int fxp1);
 int fxp_powxy(int fxp_x, int fxp_y);
 
 // Trigonometric functions
-int fxp_sin(int fxp1);
+
+// Aux struct used to return two values simultaneously,
+// i.e. the sin and cos which get computed simultaneously
+typedef struct fxptuple {
+        int a;
+        int b;
+} fxptuple;
+
+fxptuple fxp_cossin(int fxp1);
 int fxp_cos(int fxp1);
+int fxp_sin(int fxp1);
 int fxp_tan(int fxp1);
-int fxp_asin(int fxp1);
 int fxp_acos(int fxp1);
+int fxp_asin(int fxp1);
 int fxp_atan(int fxp1);
 
 #endif

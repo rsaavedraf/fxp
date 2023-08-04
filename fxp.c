@@ -57,8 +57,9 @@ int FXP_lg2_maxloops = FXP_FRAC_BITS_DEF;           // for lg2
 const int FXP_LOGX_LOOPS = FXP_INT_BITS_M1 - 1;     // for ln and lg10
 const int FXP_POWX_LOOPS = FXP_INT_BITS_M1;         // for pow2, exp, and pow10
 const int FXP_SQRT_LG_LOOPS = FXP_INT_BITS_M2;      // for lg2 in sqrt
-int FXP_sqrt_pw_loops = FXP_FRAC_BITS_DEF \
-            + 1 + (FXP_INT_BITS - FXP_FRAC_BITS_DEF)/2;   // for pow2 in sqrt
+int FXP_sqrt_pw_loops = FXP_FRAC_BITS_DEF + 1 \
+            + (FXP_INT_BITS - FXP_FRAC_BITS_DEF)/2; // for pow2 in sqrt
+int FXP_cordic_loops = FXP_FRAC_BITS_DEF + 2;       // for cordic
 const int FXP_POWXY_LG_LOOPS = FXP_INT_BITS + 3;    // for lg2 in powxy
 const int FXP_POWXY_PW_LOOPS = FXP_INT_BITS + 1;    // for pow2 in powxy
 
@@ -195,16 +196,22 @@ typedef struct lg2tuple {
         ulongy mantissa;
 } lg2tuple;
 
+const fxptuple FXP_TUPLE_UNDEFS = {FXP_UNDEF, FXP_UNDEF};
+
 const unsigned int SFXP_MAX_WBITS = FXP_LONG_BITS - FXP_FRAC_BITS_MIN;
 
 // transcendental constants
 // e = 2.718281828...
-//const unsigned int FXP_E_I32 = 0xADF85458u;
-const unsigned int FXP_E_I32 = 0x56FC2A2Cu;
+const unsigned int FXP_E_I32 = 0x56FC2A2Cu;     // <- 29 frac bits
+const unsigned int FXP_E_I32_X = 0x515DA54Du;
 
 // pi = 3.14159265...
-//const unsigned int FXP_PI_I32 = 0xC90FDAA2u;
-const unsigned int FXP_PI_I32 = 0x6487ED51u;
+// ----*----1----*----2----*----3-- --*----4----*----5----*----6----
+// 01100100100001111110110101010001 00010000101101000110000100011010011000100110001100110001010001011100000
+const unsigned int FXP_PI_I32 = 0x6487ED51u;    // <- 29 frac bits
+const unsigned int FXP_PI_I32_X = 0x10B4611Au;
+const unsigned long FXP_PI_L = (((unsigned long) FXP_PI_I32) << FXP_INT_BITS) \
+                                | FXP_PI_I32_X;
 
 // transcendental constants
 // lg2(10) = 3.32192809...
@@ -230,10 +237,6 @@ const unsigned int FXP_LG10_2_I32 = 0x268826A1u;
 const unsigned int FXP_LG10_2_I32_X = 0x3EF3FDE6u;
 const ulongy FXP_LG10_2_ULONGY = {FXP_LG10_2_I32, FXP_LG10_2_I32_X};
 const super_fxp SFXP_LG10_2_FACTOR = {0, 1, FXP_LG10_2_ULONGY};
-
-static const int FXP_DEF_SHIFT = FXP_INT_BITS - FXP_FRAC_BITS_DEF;
-unsigned int FXP_shifted_e = (FXP_E_I32 >> (FXP_DEF_SHIFT - 3));
-unsigned int FXP_shifted_pi = (FXP_PI_I32 >> (FXP_DEF_SHIFT - 3));
 
 // Auxiliary variables used in the lg2 implementations
 int FXP_one = 1 << FXP_FRAC_BITS_DEF;
@@ -354,6 +357,17 @@ const unsigned long FXP_BKM_A_POINT5_L = FXP_BKM_A_ONE_L >> 1;
 
 unsigned long FXP_max_lshifted = (FXP_MAX_L << FXP_FRAC_BITS_DEF) \
                     | (((1 << FXP_FRAC_BITS_DEF) - 1) / 2);
+
+static const int FXP_DEF_SHIFT = FXP_INT_BITS - FXP_FRAC_BITS_DEF;
+
+// Initializations for FXP_FRAC_BITS_DEF = 16 bits
+int FXP_shifted_e = 0x2B7E1;
+int FXP_shifted_pi = 0x3243F;
+int FXP_shifted_phalfpi = 0x19220;
+int FXP_shifted_nhalfpi = -0x19220;
+long FXP_shifted_pi_l = 0x3243F6A8885A3l;
+long FXP_shifted_phalfpi_l = 0x1921FB54442D2l;
+long FXP_shifted_nhalfpi_l = -0x1921FB54442D2l;
 
 #ifdef VERBOSE
 void print_sfxp(char * msg, super_fxp x)
@@ -477,9 +491,9 @@ static inline super_fxp get_fxp_x_sfxp(int x, super_fxp c)
  * R-shifts an unsigned int rounding the last bit
  */
 inline unsigned int rshift_uint_rounding(unsigned int x, \
-                                         int shift)
+                                         unsigned int shift)
 {
-        unsigned int rbit = (x >> (shift - 1)) & 1u;
+        unsigned int rbit = shift? (x >> (shift - 1)) & 1u: 0;
         return (x >> shift) + rbit;
 }
 
@@ -492,9 +506,22 @@ inline unsigned int rshift_uint_rounding(unsigned int x, \
  */
 static inline unsigned int fxp_rshift_tconst(unsigned int fxp, int x, int y)
 {
-        int shift = x - y;
-        if (shift <= 0) return (unsigned int) FXP_POS_INF;
-        return rshift_uint_rounding(fxp, shift);
+        if (x < y) return (unsigned int) FXP_POS_INF;
+        return rshift_uint_rounding(fxp, x - y);
+}
+
+static inline unsigned long fxp_rshift_tconst_l(unsigned long fxp_l, int x, int y)
+{
+        if (x < y) return ((unsigned long) FXP_POS_INF) << FXP_INT_BITS;
+        return rshift_ulong_rounding(fxp_l, x - y);
+}
+
+inline unsigned long rshift_ulong_rounding( \
+                                    unsigned long n,
+                                    unsigned int shift)
+{
+        unsigned long rbit = (!shift)? 0: (n >> (shift - 1)) & 1ul;
+        return (n >> shift) + rbit;
 }
 
 int fxp_get_whole_bits()
@@ -585,11 +612,19 @@ int fxp_set_frac_bits(int nfracbits)
         FXP_min_ldx = FXP_min_ld - FXP_htiniest_ld;
         FXP_max_ldx = FXP_max_ld + FXP_htiniest_ld;
 
-        // Adjust precision of e, pi, etc. to the frac bits in use
+        // Adjust shifted e, pi, etc. to the frac bits in use
         FXP_shifted_e = fxp_rshift_tconst(FXP_E_I32, \
                         FXP_INT_BITS - 3, FXP_frac_bits);
         FXP_shifted_pi = fxp_rshift_tconst(FXP_PI_I32, \
                         FXP_INT_BITS - 3, FXP_frac_bits);
+        FXP_shifted_phalfpi = fxp_rshift_tconst(FXP_PI_I32, \
+                        FXP_INT_BITS - 2, FXP_frac_bits);
+        FXP_shifted_nhalfpi = -FXP_shifted_phalfpi;
+        FXP_shifted_pi_l = fxp_rshift_tconst_l(FXP_PI_L, \
+                        FXP_LONG_BITS - 3, FXP_INT_BITS + FXP_frac_bits);
+        FXP_shifted_phalfpi_l = fxp_rshift_tconst_l(FXP_PI_L, \
+                        FXP_LONG_BITS - 2, FXP_INT_BITS + FXP_frac_bits);
+        FXP_shifted_nhalfpi_l = -FXP_shifted_phalfpi_l;
 
         // Auxiliary variables used for lg2 and pow2 calculations
         FXP_half = 1 << (FXP_frac_bits - 1);
@@ -605,7 +640,7 @@ int fxp_set_frac_bits(int nfracbits)
         }
         FXP_lg2_maxloops = FXP_frac_bits;
         FXP_sqrt_pw_loops = FXP_frac_bits + FXP_whole_bits/2 + 1;
-
+        FXP_cordic_loops = FXP_frac_bits + 2;
         return FXP_frac_bits;
 }
 
@@ -1134,6 +1169,21 @@ inline unsigned int fxp_get_e()
 inline unsigned int fxp_get_pi()
 {
         return FXP_shifted_pi;
+}
+
+inline unsigned int fxp_get_halfpi()
+{
+        return FXP_shifted_phalfpi;
+}
+
+inline unsigned long fxp_get_pi_l()
+{
+        return FXP_shifted_pi_l;
+}
+
+inline unsigned long fxp_get_halfpi_l()
+{
+        return FXP_shifted_phalfpi_l;
 }
 
 static inline ulongy fxp_bkm_lmode(unsigned int argument, \

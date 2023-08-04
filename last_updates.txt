@@ -712,7 +712,6 @@ processors (x86 extended Precision format, not quite the same as
 IEEE-754)
 
 2023-07-07
-
 Changed the code to have just one big #ifdef for ARM vs. x86 
 separating the corresponding different implementations of the
 long double inspection function in print_as_bits.c
@@ -731,11 +730,27 @@ Modifying trig.c to also support inputs beyond the
 [pi/2, -pi/2] range, so accepting same inputs just as
 sinl() and cosl() do.
 
+2023-07-28
+Added constant flag TEST_L in fxp_tester.c, controlling
+whether the fxp_l functions are to be tested or not.
+The flag gets automatically initialized as true when
+sizeof(long) >= 2 * sizeof(int)
+Added a printout of the main configuration settings at the
+beginning of the output of the tester.
 
+2023-07-31
+First drafts of cos and sin functions in fxp_l.c
 
+2023-08-03
+Representation of +/- PI requires a max of 29 frac bits,
+so at least 3 whole bits (including sign).
+
+2023-08-04
+Shifted Cordic angles from using 63 to 62 frac bits.
+Cos and sin functions in fxp_l.c implemented and tested.
 
 
 Pending:
-Implement trigonometric functions
+Finish implementing trigonometric functions
 Saturated mode?
 Rewrite in Rust?

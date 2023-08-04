@@ -424,14 +424,21 @@ int main(void)
                 bex_from_dec(STR_CORDIC_K, wbits, frbitsl, 1));
 
         printf("CordicK: "); inspect_long_double(kfactor);
+        unsigned long ulkfactor = get_ulong_bits_from_ldouble(kfactor);
+        unsigned long rbit = ulkfactor & 1ul;
+        ulkfactor = (ulkfactor >> 1) + rbit;
+        printf("CordicK (62 frac bits): %lX\n", ulkfactor);
 
-        printf("\nAngles for CORDIC (63 frac bits) in radians:\n");
+        printf("\nAngles for CORDIC (62 frac bits) in radians:\n");
         for (int x = 0; x < 64; x++) {
                 long double vtan = powl(2.0L, ((long double) -x));
                 long double angle = atanl( vtan );
                 //printf("atan(2^(-%2d)): %40.38Lf\n", x, angle);
                 //printf("%40.38LfL,\n", angle);
-                printf("0x%016lX, ", get_ulong_bits_from_ldouble(angle));
+                unsigned long ulangle = get_ulong_bits_from_ldouble(angle);
+                unsigned long ulashifted = ulangle >> 1;
+                //printf("0x%016lX, ", get_ulong_bits_from_ldouble(angle));
+                printf("0x%016lX, ", ulashifted);
                 if ((x > 0) && (((x+1) % 4) == 0)) printf("\n");
         }
     	printf("\n");

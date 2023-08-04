@@ -7,6 +7,7 @@
  *
  * By Raul Saavedra, Bonn, Germany
  */
+#include "fxp.h"
 
 extern const int FXP_INT_BITS;
 extern const int FXP_INT_BITS_M1;
@@ -29,7 +30,11 @@ extern const long double FXP_PINF_LD;
 extern const long double FXP_UNDEF_LD;
 extern const long double FXP_NINF_LD;
 
+extern const unsigned int FXP_E_I32;
+extern const unsigned int FXP_E_I32_X;
 extern const unsigned int FXP_PI_I32;
+extern const unsigned int FXP_PI_I32_X;
+extern const unsigned long FXP_E_I64;
 extern const unsigned long FXP_PI_I64;
 extern const unsigned long FXP_LG10_2_I64;
 extern const unsigned long FXP_LN_2_I64;
@@ -66,8 +71,13 @@ extern long double FXP_min_ld;
 extern long double FXP_max_ld;
 extern long double FXP_max_ldx;
 
-extern unsigned int FXP_shifted_e;
-extern unsigned int FXP_shifted_pi;
+extern int FXP_shifted_e;
+extern int FXP_shifted_pi;
+extern int FXP_shifted_phalfpi;
+extern int FXP_shifted_nhalfpi;
+extern long FXP_shifted_pi_l;
+extern long FXP_shifted_phalfpi_l;
+extern long FXP_shifted_nhalfpi_l;
 extern unsigned int FXP_shifted_ln_2;
 extern unsigned int FXP_shifted_lg10_2;
 extern int FXP_half;
@@ -102,3 +112,11 @@ extern const int FXP_SQRT_LG_LOOPS;
 extern int FXP_sqrt_pw_loops;
 extern const int FXP_POWXY_LG_LOOPS;
 extern const int FXP_POWXY_PW_LOOPS;
+extern const int FXP_TRIG_LOOPS;
+extern const fxptuple FXP_TUPLE_UNDEFS;
+extern long FXP_pi_i64;
+extern int FXP_halfpi;
+extern int FXP_neg_halfpi;
+extern long FXP_halfpi_l;
+extern long FXP_neg_halfpi_l;
+extern int FXP_cordic_loops;

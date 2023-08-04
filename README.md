@@ -21,8 +21,10 @@ also ultimate precision if desired. All tests, including those for the power
 functions, should ideally run with no inaccuracy warnings, or as few as 
 possible, regardless of frac bits in use.
 
+Trigonometric functions: sin() and cos() done using the [CORDIC algorithm (Wikipedia)](https://en.wikipedia.org/wiki/CORDIC)
+
 Later:
-- Trigonometric functions
+- Finish trig functions
 - Saturated mode
 - Rewrite in Rust maybe?
 

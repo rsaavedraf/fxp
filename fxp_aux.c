@@ -143,8 +143,9 @@ void print_sys_info()
         int r1 = system("hostnamectl | grep -e 'Operating System' -e 'Architecture'");
         int r2 = system("cat /proc/cpuinfo | grep -e 'CPU' -e 'model name' -e 'Model' | sort -r | head -1");
 
-        printf("\nNum type sizes:\n");
+        printf("\nType sizes on this system (some might depend on compiler options):\n");
         printf("char        has a size of %zu bytes.\n", sizeof(char));
+        printf("short       has a size of %zu bytes.\n", sizeof(short));
         printf("int         has a size of %zu bytes.\n", sizeof(int));
         printf("long        has a size of %zu bytes.\n", sizeof(long));
         printf("long long   has a size of %zu bytes.\n", sizeof(long long));
