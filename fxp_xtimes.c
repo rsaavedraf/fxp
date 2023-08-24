@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <math.h>
 #include "fxp.h"
 #include "fxp_l.h"
 #include "fxp_aux.h"
@@ -19,6 +20,16 @@
 #define DASHES "=================================================\n"
 #define MAX_NUMS 250
 #define MAX_OPS  100
+
+const long double PI_AS_LD = acosl(-1.0L);
+
+// Returns a random angle in range (-pi, pi)
+long double get_random_angle()
+{
+        return (PI_AS_LD * ((rand() % 2)? -1: 1)) \
+                * (((long double) rand()) / INT_MAX);
+}
+
 
 int main(void) {
 
@@ -28,12 +39,14 @@ int main(void) {
         long double tlg2, tlg2_l, tlg2_mul, tlg2_mul_l, tln, tln_l;
         long double tpow2, tpow2_l, texp, texp_l, tpow10, tpow10_l;
         long double tlg10, tlg10_l, tsqrt, tsqrt_l, tpowxy, tpowxy_l;
+        long double tcos_l, tsin_l, tcossin_l;
         long double avgadd, avgadd_l, avgmul, avgmul_l, avgmul_d;
         long double avgdiv, avgdiv_l, avglg2, avglg2_l, avglg2_mul;
         long double avglg2_mul_l, avgln, avgln_l, avglg10, avglg10_l;
         long double avgpow2, avgpow2_l, avgexp, avgexp_l;
         long double avgpow10, avgpow10_l, avgsqrt, avgsqrt_l;
         long double avgpowxy, avgpowxy_l;
+        long double avgcos_l, avgsin_l, avgcossin_l;
         // Times for the system's native operations
         long double tadd_sys, tmul_sys, tdiv_sys;
         long double avgadd_sys, avgmul_sys, avgdiv_sys;
@@ -83,6 +96,9 @@ int main(void) {
         avgadd_sys = 0.0;
         avgmul_sys = 0.0;
         avgdiv_sys = 0.0;
+        avgcos_l = 0.0;
+        avgsin_l = 0.0;
+        avgcossin_l = 0.0;
         for (int nc = 0; nc < nconfigs; nc++) {
                 int nfb = fracbit_configs[nc];
                 fxp_set_frac_bits(nfb);
@@ -111,6 +127,9 @@ int main(void) {
                 tpowxy_l = 0.0;
                 tsqrt = 0.0;
                 tsqrt_l = 0.0;
+                tcos_l = 0.0;
+                tsin_l = 0.0;
+                tcossin_l = 0.0;
                 lastp = -1;
                 tadd_sys = 0.0;
                 tmul_sys = 0.0;
@@ -124,12 +143,14 @@ int main(void) {
                                 fflush( stdout );
                                 lastp = p;
                         }
-                        s1 = rand() % 2 == 1? -1: 1;
-                        s2 = rand() % 2 == 1? -1: 1;
-                        s3 = rand() % 2 == 1? -1: 1;
+                        // random signs s1, s2, s3
+                        s1 = (rand() % 2)? -1: 1;
+                        s2 = (rand() % 2)? -1: 1;
+                        s3 = (rand() % 2)? -1: 1;
+                        // random ints n1, n2
                         n1 = s1 * rand();
                         n2 = s2 * rand();
-                        // n3 is a number in (-1, 1)
+                        // n3 is a random number in (-1, 1)
                         n3 = s3 * (rand() % FXP_frac_max);
 
                         // System's native sum of ints
@@ -582,48 +603,78 @@ int main(void) {
                         dt = ((double) t1 - t0);
                         tpowxy_l += dt;
                         avgpowxy_l += dt;
+
+                        // Trigonometrics
+                        long double angle1 = get_random_angle();
+                        long double angle2 = get_random_angle();
+                        long double angle3 = get_random_angle();
+                        int n1 = ld2fxp(angle1);
+                        int n2 = ld2fxp(angle2);
+                        int n3 = ld2fxp(angle3);
+
+                        // Calculation of cos and sin of fxp's using
+                        // cossin_l (-> longs)
+                        fxptuple tup;
+                        t0 = clock();
+                        for (int i = 0; i < MAX_OPS; i++) {
+                                tup = fxp_cos_sin_l(n1);
+                                tup = fxp_cos_sin_l(n2);
+                                for (int j = 0; j < nvals; j++) {
+                                        y = val[j];
+                                        tup = fxp_cos_sin_l(n1);
+                                        tup = fxp_cos_sin_l(n2);
+                                        tup = fxp_cos_sin_l(n3);
+                                }
+                        }
+                        t1 = clock();
+                        dt = ((double) t1 - t0);
+                        tcossin_l += dt;
+                        avgcossin_l += dt;
                 }
 
                 // Results for this configuration of frag bits
-                printf("\nadd      : %6.2lf\n", 1.0);
-                printf("mul      : %6.2Lf\n", tmul / tadd);
-                printf("mul_l    : %6.2Lf\n", tmul_l / tadd);
-                printf("div      : %6.2Lf\n", tdiv / tadd);
-                printf("div_l    : %6.2Lf\n", tdiv_l / tadd);
-                printf("lg2      : %6.2Lf  (BKM-L, only ints)\n", \
+                printf("\nUsing only ints:\n");
+                printf("\tadd      : %6.2lf\n", 1.0);
+                printf("\tmul      : %6.2Lf\n", tmul / tadd);
+                printf("\tdiv      : %6.2Lf\n", tdiv / tadd);
+                printf("\tlg2      : %6.2Lf  (BKM-L, only ints)\n", \
                             tlg2 / tadd);
-                printf("lg2_l    : %6.2Lf  (about %5.2Lfx lg2, using BKM-L and longs)\n", \
-                            tlg2_l / tadd, tlg2_l / tlg2);
-                printf("lg2_mul_l: %6.2Lf  (about %5.2Lfx lg2, using mult. and longs)\n", \
-                            tlg2_mul_l / tadd, tlg2_mul_l / tlg2);
-                printf("ln       : %6.2Lf  (using lg2)\n", \
+                printf("\tln       : %6.2Lf  (using lg2)\n", \
                             tln / tadd);
-                printf("ln_l     : %6.2Lf  (about %5.2Lfx lg2, using lg2_l)\n", \
-                            tln_l / tadd, tln_l / tlg2);
-                printf("lg10     : %6.2Lf  (using lg2)\n", \
+                printf("\tlg10     : %6.2Lf  (using lg2)\n", \
                             tlg10 / tadd);
-                printf("lg10_l   : %6.2Lf  (about %5.2Lfx lg2, using lg2_l)\n", \
-                            tlg10_l / tadd, tlg10_l / tlg2);
-                printf("pow2     : %6.2Lf  (BKM-E, only ints)\n", \
+                printf("\tpow2     : %6.2Lf  (BKM-E, only ints)\n", \
                             tpow2 / tadd);
-                printf("pow2_l   : %6.2Lf  (about %5.2Lfx pow2, using BKM-E and longs)\n", \
-                            tpow2_l / tadd, tpow2_l / tpow2);
-                printf("exp      : %6.2Lf  (about %5.2Lfx pow2, using pow2)\n", \
+                printf("\texp      : %6.2Lf  (about %5.2Lfx pow2, using pow2)\n", \
                             texp / tadd, texp / tpow2);
-                printf("exp_l    : %6.2Lf  (about %5.2Lfx pow2, using pow2_l)\n", \
-                            texp_l / tadd, texp_l / tpow2);
-                printf("pow10    : %6.2Lf  (about %5.2Lfx pow2, using pow2)\n", \
+                printf("\tpow10    : %6.2Lf  (about %5.2Lfx pow2, using pow2)\n", \
                             tpow10 / tadd, tpow10 / tpow2);
-                printf("pow10_l  : %6.2Lf  (about %5.2Lfx pow2, using pow2_l)\n", \
-                            tpow10_l / tadd, tpow10_l / tpow2);
-                printf("sqrt     : %6.2Lf  (about %5.2Lfx pow2, using lg2 & pow2)\n", \
+                printf("\tsqrt     : %6.2Lf  (about %5.2Lfx pow2, using lg2 & pow2)\n", \
                             tsqrt / tadd, tsqrt / tpow2);
-                printf("sqrt_l   : %6.2Lf  (about %5.2Lfx pow2, using lg2_l & pow2_l)\n", \
-                            tsqrt_l / tadd, tsqrt_l / tpow2);
-                printf("powxy    : %6.2Lf  (about %5.2Lfx pow2, using lg2 & pow2)\n", \
+                printf("\tpowxy    : %6.2Lf  (about %5.2Lfx pow2, using lg2 & pow2)\n", \
                             tpowxy / tadd, tpowxy / tpow2);
-                printf("powxy_l  : %6.2Lf  (about %5.2Lfx pow2, using lg2_l & pow2_l)\n", \
+                printf("Using longs:\n");
+                printf("\tmul_l    : %6.2Lf\n", tmul_l / tadd);
+                printf("\tdiv_l    : %6.2Lf\n", tdiv_l / tadd);
+                printf("\tlg2_l    : %6.2Lf  (about %5.2Lfx lg2, using BKM-L and longs)\n", \
+                            tlg2_l / tadd, tlg2_l / tlg2);
+                printf("\tlg2_mul_l: %6.2Lf  (about %5.2Lfx lg2, using mult. and longs)\n", \
+                            tlg2_mul_l / tadd, tlg2_mul_l / tlg2);
+                printf("\tln_l     : %6.2Lf  (about %5.2Lfx lg2, using lg2_l)\n", \
+                            tln_l / tadd, tln_l / tlg2);
+                printf("\tlg10_l   : %6.2Lf  (about %5.2Lfx lg2, using lg2_l)\n", \
+                            tlg10_l / tadd, tlg10_l / tlg2);
+                printf("\tpow2_l   : %6.2Lf  (about %5.2Lfx pow2, using BKM-E and longs)\n", \
+                            tpow2_l / tadd, tpow2_l / tpow2);
+                printf("\texp_l    : %6.2Lf  (about %5.2Lfx pow2, using pow2_l)\n", \
+                            texp_l / tadd, texp_l / tpow2);
+                printf("\tpow10_l  : %6.2Lf  (about %5.2Lfx pow2, using pow2_l)\n", \
+                            tpow10_l / tadd, tpow10_l / tpow2);
+                printf("\tsqrt_l   : %6.2Lf  (about %5.2Lfx pow2, using lg2_l & pow2_l)\n", \
+                            tsqrt_l / tadd, tsqrt_l / tpow2);
+                printf("\tpowxy_l  : %6.2Lf  (about %5.2Lfx pow2, using lg2_l & pow2_l)\n", \
                             tpowxy_l / tadd, tpowxy_l / tpow2);
+                printf("\tcossin_l : %6.2Lf\n", tcossin_l / tadd);
         }
 
         // Overall results
@@ -658,60 +709,66 @@ int main(void) {
         avgsqrt_l /= nconfigs;
         avgpowxy /= nconfigs;
         avgpowxy_l /= nconfigs;
-        printf("add      : %6.2Lf  (%6.2Lfx system's native addition of ints)\n", \
+        avgcossin_l /= nconfigs;
+        printf("\nUsing only ints:\n");
+        printf("\tadd      : %6.2Lf  (%6.2Lfx system's native addition of ints)\n", \
                     1.0L, avgadd / avgadd_sys);
-        printf("mul      : %6.2Lf  (%6.2Lfx system's native multiplication of ints)\n", \
+        printf("\tmul      : %6.2Lf  (%6.2Lfx system's native multiplication of ints)\n", \
                     avgmul / avgadd, avgmul / avgmul_sys);
-        printf("mul_l    : %6.2Lf  (%6.2Lfx system's native multiplication of ints)\n", \
-                    avgmul_l / avgadd, avgmul_l / avgmul_sys);
-        printf("div      : %6.2Lf  (%6.2Lfx system's native division of ints)\n", \
+        printf("\tdiv      : %6.2Lf  (%6.2Lfx system's native division of ints)\n", \
                     avgdiv / avgadd, avgdiv / avgdiv_sys);
-        printf("div_l    : %6.2Lf  (%6.2Lfx system's native division of ints)\n", \
-                    avgdiv_l / avgadd, avgdiv_l / avgdiv_sys);
-        printf("lg2      : %6.2Lf  (BKM, only ints)\n", \
+        printf("\tlg2      : %6.2Lf  (BKM, only ints)\n", \
                     avglg2 / avgadd);
-        printf("lg2_l    : %6.2Lf  (about %5.2Lfx lg2, using BKM and longs)\n", \
-                    avglg2_l / avgadd, avglg2_l / avglg2);
-        printf("lg2_mul_l: %6.2Lf  (about %5.2Lfx lg2, using mult. and longs)\n", \
-                    avglg2_mul_l / avgadd, \
-                    avglg2_mul_l / avglg2);
-        printf("ln       : %6.2Lf  (about %5.2Lfx lg2, using lg2)\n", \
+        printf("\tln       : %6.2Lf  (about %5.2Lfx lg2, using lg2)\n", \
                     avgln / avgadd, avgln / avglg2);
-        printf("ln_l     : %6.2Lf  (about %5.2Lfx lg2, using lg2_l)\n", \
-                    avgln_l / avgadd, avgln_l / avglg2);
-        printf("lg10     : %6.2Lf  (about %5.2Lfx lg2, using lg2)\n", \
+        printf("\tlg10     : %6.2Lf  (about %5.2Lfx lg2, using lg2)\n", \
                     avglg10 / avgadd, avglg10 / avglg2);
-        printf("lg10_l   : %6.2Lf  (about %5.2Lfx lg2, using lg2_l)\n", \
-                    avglg10_l / avgadd, avglg10_l / avglg2);
-        printf("pow2     : %6.2Lf  (BKM, only ints)\n", \
+        printf("\tpow2     : %6.2Lf  (BKM, only ints)\n", \
                     avgpow2 / avgadd);
-        printf("pow2_l   : %6.2Lf  (about %5.2Lfx pow2, using BKM and longs)\n", \
-                    avgpow2_l / avgadd, \
-                    avgpow2_l / avgpow2);
-        printf("exp      : %6.2Lf  (about %5.2Lfx pow2, using pow2)\n", \
+        printf("\texp      : %6.2Lf  (about %5.2Lfx pow2, using pow2)\n", \
                     avgexp / avgadd, \
                     avgexp / avgpow2);
-        printf("exp_l    : %6.2Lf  (about %5.2Lfx pow2, using pow2_l)\n", \
-                    avgexp_l / avgadd, \
-                    avgexp_l / avgpow2);
-        printf("pow10    : %6.2Lf  (about %5.2Lfx pow2, using pow2)\n", \
+        printf("\tpow10    : %6.2Lf  (about %5.2Lfx pow2, using pow2)\n", \
                     avgpow10 / avgadd, \
                     avgpow10 / avgpow2);
-        printf("pow10_l  : %6.2Lf  (about %5.2Lfx pow2, using pow2_l)\n", \
-                    avgpow10_l / avgadd, \
-                    avgpow10_l / avgpow2);
-        printf("sqrt     : %6.2Lf  (about %5.2Lfx pow2, using lg2 & pow2)\n", \
+        printf("\tsqrt     : %6.2Lf  (about %5.2Lfx pow2, using lg2 & pow2)\n", \
                     avgsqrt / avgadd, \
                     avgsqrt / avgpow2);
-        printf("sqrt_l   : %6.2Lf  (about %5.2Lfx pow2, using lg2_l & pow2_l)\n", \
-                    avgsqrt_l / avgadd, \
-                    avgsqrt_l / avgpow2);
-        printf("powxy    : %6.2Lf  (about %5.2Lfx pow2, using lg2 & pow2)\n", \
+        printf("\tpowxy    : %6.2Lf  (about %5.2Lfx pow2, using lg2 & pow2)\n", \
                     avgpowxy / avgadd, \
                     avgpowxy / avgpow2);
-        printf("powxy_l  : %6.2Lf  (about %5.2Lfx pow2, using lg2_l & pow2_l)\n", \
+
+        printf("Using longs:\n");
+        printf("\tmul_l    : %6.2Lf  (%6.2Lfx system's native multiplication of ints)\n", \
+                    avgmul_l / avgadd, avgmul_l / avgmul_sys);
+        printf("\tdiv_l    : %6.2Lf  (%6.2Lfx system's native division of ints)\n", \
+                    avgdiv_l / avgadd, avgdiv_l / avgdiv_sys);
+        printf("\tlg2_l    : %6.2Lf  (about %5.2Lfx lg2, using BKM and longs)\n", \
+                    avglg2_l / avgadd, avglg2_l / avglg2);
+        printf("\tlg2_mul_l: %6.2Lf  (about %5.2Lfx lg2, using mult. and longs)\n", \
+                    avglg2_mul_l / avgadd, \
+                    avglg2_mul_l / avglg2);
+        printf("\tln_l     : %6.2Lf  (about %5.2Lfx lg2, using lg2_l)\n", \
+                    avgln_l / avgadd, avgln_l / avglg2);
+        printf("\tlg10_l   : %6.2Lf  (about %5.2Lfx lg2, using lg2_l)\n", \
+                    avglg10_l / avgadd, avglg10_l / avglg2);
+        printf("\tpow2_l   : %6.2Lf  (about %5.2Lfx pow2, using BKM and longs)\n", \
+                    avgpow2_l / avgadd, \
+                    avgpow2_l / avgpow2);
+        printf("\texp_l    : %6.2Lf  (about %5.2Lfx pow2, using pow2_l)\n", \
+                    avgexp_l / avgadd, \
+                    avgexp_l / avgpow2);
+        printf("\tpow10_l  : %6.2Lf  (about %5.2Lfx pow2, using pow2_l)\n", \
+                    avgpow10_l / avgadd, \
+                    avgpow10_l / avgpow2);
+        printf("\tsqrt_l   : %6.2Lf  (about %5.2Lfx pow2, using lg2_l & pow2_l)\n", \
+                    avgsqrt_l / avgadd, \
+                    avgsqrt_l / avgpow2);
+        printf("\tpowxy_l  : %6.2Lf  (about %5.2Lfx pow2, using lg2_l & pow2_l)\n", \
                     avgpowxy_l / avgadd, \
                     avgpowxy_l / avgpow2);
+        printf("\tcossin_l : %6.2Lf\n", \
+                    avgcossin_l / avgadd);
 
         printf("%s", DASHES);
         printf("(Keep in mind: compiler optimization options used/not used can ");

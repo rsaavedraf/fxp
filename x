@@ -1,4 +1,5 @@
 #!/bin/bash
+# Compiles and runs fxp_xtimes.c
 
 clear
 if [ -f "x.out" ]; then

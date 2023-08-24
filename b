@@ -1,4 +1,5 @@
 #!/bin/bash
+# Compiles and runs bkm.c
 
 clear
 if [ -f "b.out" ]; then

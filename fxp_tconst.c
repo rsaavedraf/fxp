@@ -427,7 +427,7 @@ int main(void)
         unsigned long ulkfactor = get_ulong_bits_from_ldouble(kfactor);
         unsigned long rbit = ulkfactor & 1ul;
         ulkfactor = (ulkfactor >> 1) + rbit;
-        printf("CordicK (62 frac bits): %lX\n", ulkfactor);
+        printf("CordicK (62 frac bits): 0x%lXuL\n", ulkfactor);
 
         printf("\nAngles for CORDIC (62 frac bits) in radians:\n");
         for (int x = 0; x < 64; x++) {
@@ -437,9 +437,15 @@ int main(void)
                 //printf("%40.38LfL,\n", angle);
                 unsigned long ulangle = get_ulong_bits_from_ldouble(angle);
                 unsigned long ulashifted = ulangle >> 1;
-                //printf("0x%016lX, ", get_ulong_bits_from_ldouble(angle));
-                printf("0x%016lX, ", ulashifted);
-                if ((x > 0) && (((x+1) % 4) == 0)) printf("\n");
+
+                // As unsigned longs with 62 frac bits
+                //printf("0x%016lX, ", ulashifted);
+                //if ((x > 0) && (((x+1) % 4) == 0)) printf("\n");
+
+                // As two uints for a ulongy
+                unsigned int vhi = ulashifted >> FXP_INT_BITS;
+                unsigned int vlo = (unsigned int) (ulashifted & ~0u);
+                printf("{ 0x%08Xu, 0x%08Xu },\n", vhi, vlo);
         }
     	printf("\n");
 

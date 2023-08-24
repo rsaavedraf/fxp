@@ -24,14 +24,14 @@
 #include "print_as_bits.h"
 #endif
 
-const unsigned long FXP_PI_I64 = 0x6487ED5110B4611Aul;
-const unsigned long FXP_LG2_10_I64 = 0x6A4D3C25E68DC57Ful;
-const unsigned long FXP_LG2_E_I64 = 0x5C551D94AE0BF85Eul;
-const unsigned long FXP_LN_2_I64 = 0x58B90BFBE8E7BCD6ul;
-const unsigned long FXP_LG10_2_I64 = 0x268826A13EF3FDE6ul;
+const unsigned long FXP_PI_I64 = 0x6487ED5110B4611Au;
+const unsigned long FXP_LG2_10_I64 = 0x6A4D3C25E68DC57Fu;
+const unsigned long FXP_LG2_E_I64 = 0x5C551D94AE0BF85Eu;
+const unsigned long FXP_LN_2_I64 = 0x58B90BFBE8E7BCD6u;
+const unsigned long FXP_LG10_2_I64 = 0x268826A13EF3FDE6u;
 
-const unsigned long ULONG_ALL_ONES = ~0ul;
-const unsigned long ULONG_ALL_ONES_RS1 = ~0ul >> 1;
+const unsigned long ULONG_ALL_ONES = ~0uL;
+const unsigned long ULONG_ALL_ONES_RS1 = ~0uL >> 1;
 const unsigned long ULONG_SIGN = ~ULONG_ALL_ONES_RS1;
 
 // For the BKM lg2 calculation when using longs.
@@ -43,24 +43,24 @@ const unsigned long ULONG_SIGN = ~ULONG_ALL_ONES_RS1;
 // implicitely later, for 1 extra bit of precision.
 // 63 frac bits corresponds to a precision of 18.96 decimal digits
 static const unsigned long FXP_BKM_LOGS_L[] = {
-        0x8000000000000000ul, 0x4AE00D1CFDEB43CFul, 0x2934F0979A3715FCul, 0x15C01A39FBD6879Ful,
-        0xB31FB7D64898B3Eul, 0x5AEB4DD63BF61CCul, 0x2DCF2D0B85A4531ul, 0x16FE50B6EF08517ul,
-        0xB84E236BD563BAul, 0x5C3E0FFC29D593ul, 0x2E24CA6E87E8A8ul, 0x1713D62F7957C3ul,
-        0xB8A476150DFE4ul, 0x5C53AC47E94D8ul, 0x2E2A32762FA6Bul, 0x1715305002E4Aul,
-        0xB8A9DED47C11ul, 0x5C55067F6E58ul, 0x2E2A89050622ul, 0x171545F3D72Bul,
-        0xB8AA35640A7ul, 0x5C551C23599ul, 0x2E2A8E6E01Eul, 0x1715474E163ul,
-        0xB8AA3ACD06ul, 0x5C551D7D98ul, 0x2E2A8EC491ul, 0x17154763BAul,
-        0xB8AA3B239ul, 0x5C551D933ul, 0x2E2A8EC9Ful, 0x171547651ul,     //  32 entries
-        0xB8AA3B28ul, 0x5C551D94ul, 0x2E2A8ECAul, 0x17154765ul,
-        0xB8AA3B2ul, 0x5C551D9ul, 0x2E2A8ECul, 0x1715476ul,     // 40 entries *
+        0x8000000000000000u, 0x4AE00D1CFDEB43CFu, 0x2934F0979A3715FCu, 0x15C01A39FBD6879Fu,
+        0xB31FB7D64898B3Eu, 0x5AEB4DD63BF61CCu, 0x2DCF2D0B85A4531u, 0x16FE50B6EF08517u,
+        0xB84E236BD563BAu, 0x5C3E0FFC29D593u, 0x2E24CA6E87E8A8u, 0x1713D62F7957C3u,
+        0xB8A476150DFE4u, 0x5C53AC47E94D8u, 0x2E2A32762FA6Bu, 0x1715305002E4Au, // 16 entries
+        0xB8A9DED47C11u, 0x5C55067F6E58u, 0x2E2A89050622u, 0x171545F3D72Bu,
+        0xB8AA35640A7u, 0x5C551C23599u, 0x2E2A8E6E01Eu, 0x1715474E163u,
+        0xB8AA3ACD06u, 0x5C551D7D98u, 0x2E2A8EC491u, 0x17154763BAu,
+        0xB8AA3B239u, 0x5C551D933u, 0x2E2A8EC9Fu, 0x171547651u,     //  32 entries
+        0xB8AA3B28u, 0x5C551D94u, 0x2E2A8ECAu, 0x17154765u,
+        0xB8AA3B2u, 0x5C551D9u, 0x2E2A8ECu, 0x1715476u,     // 40 entries *
         /*
-        0xB8AA3B, 0x5C551D, 0x2E2A8E, 0x171547,
-        0xB8AA3, 0x5C551, 0x2E2A8, 0x17154,
-        0xB8AA, 0x5C55, 0x2E2A, 0x1715,
-        0xB8A, 0x5C5, 0x2E2, 0x171,
-        0xB8, 0x5C, 0x2E, 0x17,
-        0xB, 0x5, 0x2, 0x1,
-        0x0
+        0xB8AA3Bu, 0x5C551Du, 0x2E2A8Eu, 0x171547u,
+        0xB8AA3u, 0x5C551u, 0x2E2A8u, 0x17154u,
+        0xB8AAu, 0x5C55u, 0x2E2Au, 0x1715u,
+        0xB8Au, 0x5C5u, 0x2E2u, 0x171u,
+        0xB8u, 0x5Cu, 0x2Eu, 0x17u,
+        0xBu, 0x5u, 0x2u, 0x1u,
+        0x0u
         // Starting with the row marked with the *, each entry is exactly
         // a 4-bit right-shift of the value 4 positions earlier
         */
@@ -76,29 +76,29 @@ static const unsigned long FXP_BKM_LOGS_L[] = {
 // https://en.wikipedia.org/wiki/CORDIC
 // https://en.wikibooks.org/wiki/Trigonometry/For_Enthusiasts/The_CORDIC_Algorithm
 static const unsigned long FXP_CORDIC_ANGLES_L[] = {
-0x3243F6A8885A308Dul, 0x1DAC670561BB4F68ul, 0x0FADBAFC96406EB1ul, 0x07F56EA6AB0BDB71ul, // 4
-0x03FEAB76E59FBD39ul, 0x01FFD55BBA97624Aul, 0x00FFFAAADDDB94D5ul, 0x007FFF5556EEEA5Cul, // 8
-0x003FFFEAAAB7776Eul, 0x001FFFFD5555BBBBul, 0x000FFFFFAAAAADDEul, 0x0007FFFFF555556Ful, // 12
-0x0003FFFFFEAAAAABul, 0x0001FFFFFFD55555ul, 0x0000FFFFFFFAAAAAul, 0x00007FFFFFFF5555ul, // 16
-0x00003FFFFFFFEAAAul, 0x00001FFFFFFFFD55ul, 0x00000FFFFFFFFFAAul, 0x000007FFFFFFFFF5ul, // 20
-0x000003FFFFFFFFFEul, 0x0000020000000000ul, 0x0000010000000000ul, 0x0000008000000000ul, // 24
-0x0000004000000000ul, 0x0000002000000000ul, 0x0000001000000000ul, 0x0000000800000000ul, // 28
-0x0000000400000000ul, 0x0000000200000000ul, 0x0000000100000000ul, 0x0000000080000000ul  // 32
+0x3243F6A8885A308Du, 0x1DAC670561BB4F68u, 0x0FADBAFC96406EB1u, 0x07F56EA6AB0BDB71u, // 4 entries
+0x03FEAB76E59FBD39u, 0x01FFD55BBA97624Au, 0x00FFFAAADDDB94D5u, 0x007FFF5556EEEA5Cu, // 8
+0x003FFFEAAAB7776Eu, 0x001FFFFD5555BBBBu, 0x000FFFFFAAAAADDEu, 0x0007FFFFF555556Fu, // 12
+0x0003FFFFFEAAAAABu, 0x0001FFFFFFD55555u, 0x0000FFFFFFFAAAAAu, 0x00007FFFFFFF5555u, // 16
+0x00003FFFFFFFEAAAu, 0x00001FFFFFFFFD55u, 0x00000FFFFFFFFFAAu, 0x000007FFFFFFFFF5u, // 20
+0x000003FFFFFFFFFEu, 0x0000020000000000u, 0x0000010000000000u, 0x0000008000000000u, // 24
+0x0000004000000000u, 0x0000002000000000u, 0x0000001000000000u, 0x0000000800000000u, // 28
+0x0000000400000000u, 0x0000000200000000u, 0x0000000100000000u, 0x0000000080000000u  // 32
 /*
-0x0000000040000000ul, 0x0000000020000000ul, 0x0000000010000000ul, 0x0000000008000000ul,
-0x0000000004000000ul, 0x0000000002000000ul, 0x0000000001000000ul, 0x0000000000800000ul,
-0x0000000000400000ul, 0x0000000000200000ul, 0x0000000000100000ul, 0x0000000000080000ul,
-0x0000000000040000ul, 0x0000000000020000ul, 0x0000000000010000ul, 0x0000000000008000ul,
-0x0000000000004000ul, 0x0000000000002000ul, 0x0000000000001000ul, 0x0000000000000800ul,
-0x0000000000000400ul, 0x0000000000000200ul, 0x0000000000000100ul, 0x0000000000000080ul,
-0x0000000000000040ul, 0x0000000000000020ul, 0x0000000000000010ul, 0x0000000000000008ul,
-0x0000000000000004ul, 0x0000000000000002ul, 0x0000000000000001ul, 0x0000000000000000ul,
+0x0000000040000000u, 0x0000000020000000u, 0x0000000010000000u, 0x0000000008000000u,
+0x0000000004000000u, 0x0000000002000000u, 0x0000000001000000u, 0x0000000000800000u,
+0x0000000000400000u, 0x0000000000200000u, 0x0000000000100000u, 0x0000000000080000u,
+0x0000000000040000u, 0x0000000000020000u, 0x0000000000010000u, 0x0000000000008000u,
+0x0000000000004000u, 0x0000000000002000u, 0x0000000000001000u, 0x0000000000000800u,
+0x0000000000000400u, 0x0000000000000200u, 0x0000000000000100u, 0x0000000000000080u,
+0x0000000000000040u, 0x0000000000000020u, 0x0000000000000010u, 0x0000000000000008u,
+0x0000000000000004u, 0x0000000000000002u, 0x0000000000000001u, 0x0000000000000000u, // 64
 */
 };
 
 // Cordic scaling factor: 0.607252935008881256169446752504929
 // Cordic scaling factor as fxp with 62 frac bits
-static const unsigned long FXP_CORDIC_KFACTOR_L = 0x26DD3B6A10D7969A;
+static const unsigned long FXP_CORDIC_KFACTOR_L = 0x26DD3B6A10D7969Au;
 
 // Auxiliary struct used internally for lg2
 typedef struct lg2tuple_l {
@@ -236,13 +236,17 @@ static inline super_fxp_l get_fxp_x_sfxp_l(int x, super_fxp_l c)
         return product;
 }
 
-/*
- * r-shift a long by shift, rounding its last bit
- */
+// r-shift a long, no rounding
+static inline long rshift_long(long n, unsigned int nbits)
+{
+        return (n < 0l)? ~((~n) >> nbits): n >> nbits;
+}
+
+// r-shift a long by shift, rounding its last bit
 static inline int rshift_long_rounding(long n, unsigned int shift)
 {
         if (n >= 0) {
-                int rbit = shift? (int) ((((unsigned long) n) >> (shift - 1)) & 1ul): 0;
+                int rbit = shift? (int) ((n >> (shift - 1)) & 1ul): 0;
                 int res = (int) ((n >> shift) + rbit);
                 //#ifdef VERBOSE
                 //printf("n: %016lX (%lu),  shift: %d,  rbit: %d,  result: %08X (%d)\n", \
@@ -250,31 +254,18 @@ static inline int rshift_long_rounding(long n, unsigned int shift)
                 //#endif
                 return res;
         } else {
-                unsigned long posn = -n;
-                unsigned long rbit = shift? (int) ((posn >> (shift - 1)) & 1ul): 0;
+                long posn = -n;
+                int rbit = shift? (int) ((posn >> (shift - 1)) & 1ul): 0;
                 return -((int) ((posn >> shift) + rbit));
         }
 }
 
-static inline unsigned int rshift_ulong_into_uint_rounding( \
-                                    unsigned long n)
+static inline unsigned int rshift_ulong_into_uint_rounding(unsigned long n)
 {
-        unsigned long rbit = (n >> FXP_INT_BITS_M1) & 1ul;
+        unsigned int rbit = (n >> FXP_INT_BITS_M1) & 1u;
         return (unsigned int) ((n >> FXP_INT_BITS) + rbit);
 }
 
-static inline int rshift_long_into_int_rounding(long n)
-{
-        if (n >= 0) {
-                unsigned long posn = n;
-                unsigned long rbit = (posn >> FXP_INT_BITS_M1) & 1ul;
-                return (int) ((posn >> FXP_INT_BITS) + rbit);
-        } else {
-                unsigned long posn = -n;
-                unsigned long rbit = (posn >> FXP_INT_BITS_M1) & 1ul;
-                return -((int) ((posn >> FXP_INT_BITS) + rbit));
-        }
-}
 
 /*
  * Safe implementation of fxp multiplication using longs,
@@ -1030,7 +1021,6 @@ int fxp_powxy_l(int x, int y)
         }
 }
 
-
 /*
  *=======================================
  * Trigonometric functions
@@ -1038,9 +1028,27 @@ int fxp_powxy_l(int x, int y)
  * Note: these initial implementations requires +/-PI to be
  * representable in the current fxp configuration, so at least
  * 3 whole bits are needed.
- * TODO: consider using sfxp's to work around this, enabling
- * trig functions for all frac bit configs up.
  */
+
+typedef struct fxptuple_l {
+        long a;
+        long b;
+} fxptuple_l;
+
+//------------------------------------------------------------------------
+// To enforce the 1st Cordic implementation: uses r-shifts of negative longs
+//#if 1
+// To enforce the 2nd Cordic implementation: never r-shifts a negative
+//#if 0
+// To automatically test if r-shifting a negative long in this system
+// provides the right result (and if so use the 1st Cordic implementation,
+// otherwise use the 2nd)
+#if (((-4l) >> 1) == -2l)
+
+//------------------------------------------------------------------------
+// 1st Cordic implementation: can r-shift negatives.
+// This is the faster Cordic implementation, but may not work on
+// some systems depending on how they r-shift negative values
 
 /*
  * Simultaneous calculation of cos(x) and sin(x)
@@ -1048,11 +1056,11 @@ int fxp_powxy_l(int x, int y)
  *
  * For more details on CORDIC:
  * https://en.wikipedia.org/wiki/CORDIC
- * https://en.wikipedia.org/wiki/BKM_algorithm
+ * https://en.wikibooks.org/wiki/Trigonometry/For_Enthusiasts/The_CORDIC_Algorithm
  */
 static inline fxptuple_l fxp_cordic_cossin_l(long x)
 {
-        // argument assumed to be already in range [-pi/2, pi/2],
+        // argument assumed to be within [-pi/2, pi/2],
         // and l-shifted like the Cordic factor and angles,
         // so with 62 frac bits
         long lc = FXP_CORDIC_KFACTOR_L;
@@ -1060,9 +1068,9 @@ static inline fxptuple_l fxp_cordic_cossin_l(long x)
         long newc;
         long a = 0;
         #ifdef VERBOSE
-        long double adenom = (1ul << (FXP_LONG_BITS - 2));
-        long double cdenom = (1ul << (FXP_LONG_BITS - 2));
-        printf("Running CORDIC for %.4Lf (%.4Lfº)", x/adenom, x*180.0L/(adenom*acosl(-1.0L)));
+        long double denom = (1ul << (FXP_LONG_BITS - 2));
+        //long double cdenom = (1ul << (FXP_LONG_BITS - 2));
+        printf("Running CORDIC for %.4Lf (%.4Lfº)", x/denom, x*180.0L/(denom*acosl(-1.0L)));
         #endif
         for (int i = 0; i < FXP_cordic_loops; i++) {
                 if (a < x) {
@@ -1084,12 +1092,71 @@ static inline fxptuple_l fxp_cordic_cossin_l(long x)
                 }
                 #ifdef VERBOSE
                 printf("x%016lX (%7.4Lf),  c:x%016lX (%7.4Lf),  s:x%016lX (%7.4Lf)", \
-                            a, a/adenom, lc, lc/cdenom, ls, ls/cdenom);
+                            a, a/denom, lc, lc/denom, ls, ls/denom);
                 #endif
         }
         fxptuple_l tup_l = { lc, ls };
         return tup_l;
 }
+
+//------------------------------------------------------------------------
+#else
+//------------------------------------------------------------------------
+
+// 2nd Cordic implementation: never r-shifts a negative.
+// This implementation is slower but ought to be more portable.
+
+/*
+ * Simultaneous calculation of cos(x) and sin(x)
+ * using the CORDIC algorithm.
+ *
+ * For more details on CORDIC:
+ * https://en.wikipedia.org/wiki/CORDIC
+ * https://en.wikibooks.org/wiki/Trigonometry/For_Enthusiasts/The_CORDIC_Algorithm
+ */
+static inline fxptuple_l fxp_cordic_cossin_l(long x)
+{
+        // argument assumed to be within [-pi/2, pi/2],
+        // and l-shifted like the Cordic factor and angles,
+        // so with 62 frac bits
+        long lc = FXP_CORDIC_KFACTOR_L;
+        long ls = 0l;
+        long lc_shifted, ls_shifted;
+        long a = 0;
+        #ifdef VERBOSE
+        long double denom = (1ul << (FXP_LONG_BITS - 2));
+        printf("Running CORDIC for %.4Lf (%.4Lfº)", x/denom, x*180.0L/(denom*acosl(-1.0L)));
+        #endif
+        for (int i = 0; i < FXP_cordic_loops; i++) {
+                lc_shifted = rshift_long(lc, i);
+                ls_shifted = rshift_long(ls, i);
+                if (a < x) {
+                        a += FXP_CORDIC_ANGLES_L[i];
+                        ls += lc_shifted;
+                        lc -= ls_shifted;
+                        #ifdef VERBOSE
+                        printf("\n%02d: + rot: ", i);
+                        #endif
+                } else {
+                        a -= FXP_CORDIC_ANGLES_L[i];
+                        ls -= lc_shifted;
+                        lc += ls_shifted;
+                        #ifdef VERBOSE
+                        printf("\n%02d: - rot: ", i);
+                        #endif
+                }
+                #ifdef VERBOSE
+                printf("x%016lX (%7.4Lf),  c:x%016lX (%7.4Lf),  s:x%016lX (%7.4Lf)", \
+                            a, a/denom, lc, lc/denom, ls, ls/denom);
+                #endif
+        }
+        fxptuple_l tup_l = { lc, ls };
+        return tup_l;
+}
+
+//------------------------------------------------------------------------
+#endif
+//------------------------------------------------------------------------
 
 static inline fxptuple_l fxp_cossin_arg_inrange_l(int fxp1)
 {
@@ -1098,34 +1165,33 @@ static inline fxptuple_l fxp_cossin_arg_inrange_l(int fxp1)
         printf("\nAngle 0x%08X (%d, %.4Lfº) in [-pi/2, pi/2]\n", \
                 fxp1, fxp1, fxp2ld(fxp1)*180.0L/acosl(-1.0L));
         #endif
-        if (fxp1 >= 0)
-                return fxp_cordic_cossin_l( \
-                            ((long) fxp1) << FXP_int_plus_whole_bits_m2);
-        else {
-                return fxp_cordic_cossin_l( \
+        return (fxp1 >= 0)?
+                fxp_cordic_cossin_l( \
+                            ((long) fxp1) << FXP_int_plus_whole_bits_m2):
+                fxp_cordic_cossin_l( \
                             -(((long) -fxp1) << FXP_int_plus_whole_bits_m2) );
-        }
 }
 
 static inline fxptuple_l fxp_cossin_arg_above_phalfpi_l(int fxp1)
 {
+        long angle = ((unsigned long) fxp1) << FXP_INT_BITS;
         #ifdef VERBOSE
         printf("\nAngle 0x%08X (%d, %.4Lfº) > pi/2\n", \
                 fxp1, fxp1, fxp2ld(fxp1)*180.0L/acosl(-1.0L));
+        printf("Original num : 0x%016lX\n", angle);
         #endif
         // Get an equivalent angle within [-pi/2, pi/2]
         unsigned int times = 0;
-        const long angle0 = ((unsigned long) fxp1) << FXP_INT_BITS;
-        long angle = angle0;
         do {
                 times++;
                 angle -= FXP_shifted_pi_l;
         } while (angle > FXP_shifted_phalfpi_l);
         #ifdef VERBOSE
         int iangle = rshift_long_rounding(angle, FXP_INT_BITS);
-        printf("Original num: 0x%016lX\n", angle0);
-        printf("shifted pi_l: 0x%016lX\n", FXP_shifted_pi_l);
-        printf("Final angle : 0x%016lX  ", angle);
+        printf("shifted pi_l : 0x%016lX\n", FXP_shifted_pi_l);
+        printf("shifted hpi_l: 0x%016lX\n", FXP_shifted_phalfpi_l);
+        printf("times        : %d\n", times);
+        printf("Final angle  : 0x%016lX  ", angle);
         printf("~(%d, %.4Lfº) in [-pi/2, pi/2]\n", \
                         iangle, fxp2ld(iangle)*180.0L/acosl(-1.0L));
         #endif
@@ -1143,22 +1209,23 @@ static inline fxptuple_l fxp_cossin_arg_above_phalfpi_l(int fxp1)
 
 static inline fxptuple_l fxp_cossin_arg_below_nhalfpi_l(int fxp1)
 {
+        long angle = -(((long) -fxp1) << FXP_INT_BITS);
         #ifdef VERBOSE
         printf("\nAngle 0x%08X (%d, %Lfº) < -pi/2\n", \
                 fxp1, fxp1, fxp2ld(fxp1)*180.0L/acosl(-1.0L));
+        printf("Original num  :\t0x%016lX\n", angle);
         #endif
         // Get an equivalent angle within [-pi/2, pi/2]
         unsigned int times = 0;
-        const long angle0 = -((long) (((unsigned long) -fxp1) << FXP_INT_BITS));
-        long angle = angle0;
         do {
                 times++;
                 angle += FXP_shifted_pi_l;
         } while (angle < FXP_shifted_nhalfpi_l);
         #ifdef VERBOSE
-        printf("Original num:\t0x%016lX\n", angle0);
-        printf("shifted pi_l:\t0x%016lX\n", FXP_shifted_pi_l);
-        printf("Final angle :\t0x%016lX  ", angle);
+        printf("shifted pi_l  :\t0x%016lX\n", FXP_shifted_pi_l);
+        printf("shifted -hpi_l:\t0x%016lX\n", FXP_shifted_nhalfpi_l);
+        printf("times         : %d\n", times);
+        printf("Final angle   :\t0x%016lX  ", angle);
         int iangle = rshift_long_rounding(angle, FXP_INT_BITS);
         printf("~(%d, %.4Lfº) in [-pi/2, pi/2]\n", \
                         iangle, fxp2ld(iangle)*180.0L/acosl(-1.0L));
@@ -1177,7 +1244,7 @@ static inline fxptuple_l fxp_cossin_arg_below_nhalfpi_l(int fxp1)
 
 // Auxiliary function to process depending on where the
 // argument lands with respect to range [-pi/2, pi/2]
-static inline fxptuple_l fxp_cos_and_sin_l_aux(int fxp1)
+static inline fxptuple_l fxp_cos_sin_l_aux(int fxp1)
 {
         if (fxp1 > FXP_shifted_phalfpi)
                 return fxp_cossin_arg_above_phalfpi_l(fxp1);
@@ -1189,12 +1256,12 @@ static inline fxptuple_l fxp_cos_and_sin_l_aux(int fxp1)
 // If needing both cos(x) and sin(x), this is the function to call
 // to get them simultaneously most efficiently (basically at half
 // the cost of calling cos(x), and then calling sin(x))
-fxptuple fxp_cos_and_sin_l(int fxp1)
+fxptuple fxp_cos_sin_l(int fxp1)
 {
         // Argument here can be any fxp value, even outside [-pi/2, pi/2].
         if ((fxp1 == FXP_UNDEF) || (fxp1 == FXP_NEG_INF) || (fxp1 == FXP_POS_INF))
                 return FXP_TUPLE_UNDEFS;
-        fxptuple_l tup_l = fxp_cos_and_sin_l_aux(fxp1);
+        fxptuple_l tup_l = fxp_cos_sin_l_aux(fxp1);
         fxptuple tup = { rshift_long_rounding(tup_l.a, FXP_int_plus_whole_bits_m2), \
                          rshift_long_rounding(tup_l.b, FXP_int_plus_whole_bits_m2) };
         return tup;
@@ -1205,7 +1272,7 @@ int fxp_cos_l(int fxp1)
 {
         if ((fxp1 == FXP_UNDEF) || (fxp1 == FXP_NEG_INF) || (fxp1 == FXP_POS_INF))
                 return FXP_UNDEF;
-        fxptuple_l tup_l = fxp_cos_and_sin_l_aux(fxp1);
+        fxptuple_l tup_l = fxp_cos_sin_l_aux(fxp1);
         return rshift_long_rounding(tup_l.a, FXP_int_plus_whole_bits_m2);
 }
 
@@ -1214,7 +1281,7 @@ int fxp_sin_l(int fxp1)
 {
         if ((fxp1 == FXP_UNDEF) || (fxp1 == FXP_NEG_INF) || (fxp1 == FXP_POS_INF))
                 return FXP_UNDEF;
-        fxptuple_l tup_l = fxp_cos_and_sin_l_aux(fxp1);
+        fxptuple_l tup_l = fxp_cos_sin_l_aux(fxp1);
         return rshift_long_rounding(tup_l.b, FXP_int_plus_whole_bits_m2);
 }
 

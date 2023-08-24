@@ -749,6 +749,24 @@ so at least 3 whole bits (including sign).
 Shifted Cordic angles from using 63 to 62 frac bits.
 Cos and sin functions in fxp_l.c implemented and tested.
 
+2023-08-10
+Added cossin_l to the fxp_xtimes.c measurements.
+Restructured the measurements outputs clustering together all
+for ints vs. all for longs.
+
+2023-08-24
+Created an alternative 2nd. implementation for cossin in fxp_l.c
+that never r-shifts negative values. It is slower though,
+at least this initial version. From runs of fxp_xtimes,
+cossin_l calculations take on average about 60%+ more time
+using this 2nd version. But r-shifting negative longs, as in
+the 1st implementation, may not work on all platforms, while
+this 2nd implementation should always work.
+For now, an #if macro in fxp_l.c chooses to use the 1st
+automatically (for speed) if r-shifting negative longs provides
+the right arithmetic shift result (e.g. #if ((-4l >> 1) == -2l))
+The choice can also be enforced manually if desired, of course.
+
 
 Pending:
 Finish implementing trigonometric functions

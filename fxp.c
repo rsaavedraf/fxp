@@ -178,7 +178,7 @@ long double FXP_htiniest_ld = \
                     / (1uL << FXP_FRAC_BITS_DEF)) / 2.0L;
 
 const unsigned int UINT_ALL_ONES = ~0u;
-const unsigned int UINT_ALL_ONES_RS1 = ~0u >> 1;
+const unsigned int UINT_ALL_ONES_RS1 = UINT_ALL_ONES >> 1;
 
 // A super_fxp is not just a "bigger FXP," it also has its own
 // fxp configuration (it's own number of whole vs. frac bits,)
@@ -195,6 +195,12 @@ typedef struct lg2tuple {
         int characteristic;
         ulongy mantissa;
 } lg2tuple;
+
+// A tuple of ulongy's
+typedef struct fxptuple_ul {
+        ulongy a;
+        ulongy b;
+} tuple_ul;
 
 const fxptuple FXP_TUPLE_UNDEFS = {FXP_UNDEF, FXP_UNDEF};
 
@@ -250,8 +256,8 @@ int FXP_almost1 = (1 << FXP_FRAC_BITS_DEF) - 1;
 // TODO: Candidates to convert to ulongy?
 // they were ints but made them longs since used only
 // for decimal frac conversions, were longs are used.
-long fxp_frac_max_dec = 9999;
-long fxp_frac_max_dec_p1 = 10000;
+long fxp_frac_max_dec = 9999l;
+long fxp_frac_max_dec_p1 = 10000l;
 
 // Single array of structs that have two uints (pseudo-ulongs,)
 // instead of using two separate arrays of uints as before.
@@ -268,72 +274,72 @@ long fxp_frac_max_dec_p1 = 10000;
 // The 2nd uint is the continuation of the frac value
 // for extra, long-like precision, 63 frac bits in total
 static const ulongy FXP_BKM_LOGS_NEW[] = {
-        { 0x80000000, 0x00000000 },     // [0]
-        { 0x4AE00D1C, 0xFDEB43CF },
-        { 0x2934F097, 0x9A3715FC },
-        { 0x15C01A39, 0xFBD6879F },
-        { 0x0B31FB7D, 0x64898B3E },
-        { 0x05AEB4DD, 0x63BF61CC },
-        { 0x02DCF2D0, 0xB85A4531 },
-        { 0x016FE50B, 0x6EF08517 },
-        { 0x00B84E23, 0x6BD563BA },
-        { 0x005C3E0F, 0xFC29D593 },
-        { 0x002E24CA, 0x6E87E8A8 },     // [10]
-        { 0x001713D6, 0x2F7957C3 },
-        { 0x000B8A47, 0x6150DFE4 },
-        { 0x0005C53A, 0xC47E94D8 },
-        { 0x0002E2A3, 0x2762FA6B },
-        { 0x00017153, 0x05002E4A },
-        { 0x0000B8A9, 0xDED47C11 },
-        { 0x00005C55, 0x067F6E58 },
-        { 0x00002E2A, 0x89050622 },
-        { 0x00001715, 0x45F3D72B },
-        { 0x00000B8A, 0xA35640A7 },     // [20]
-        { 0x000005C5, 0x51C23599 },
-        { 0x000002E2, 0xA8E6E01E },
-        { 0x00000171, 0x5474E163 },
-        { 0x000000B8, 0xAA3ACD06 },
-        { 0x0000005C, 0x551D7D98 },
-        { 0x0000002E, 0x2A8EC491 },
-        { 0x00000017, 0x154763BA },
-        { 0x0000000B, 0x8AA3B239 },
-        { 0x00000005, 0xC551D933 },
-        { 0x00000002, 0xE2A8EC9F },     // [30]
-        { 0x00000001, 0x71547651 },
-        { 0x00000000, 0xB8AA3B28 },
-        { 0x00000000, 0x5C551D94 },
-        { 0x00000000, 0x2E2A8ECA },
-        { 0x00000000, 0x17154765 },
-        { 0x00000000, 0x0B8AA3B2 },
-        { 0x00000000, 0x05C551D9 },
-        { 0x00000000, 0x02E2A8EC },
-        { 0x00000000, 0x01715476 },
-        { 0x00000000, 0x00B8AA3B }      // [40]
+        { 0x80000000u, 0x00000000u },     // [0]
+        { 0x4AE00D1Cu, 0xFDEB43CFu },
+        { 0x2934F097u, 0x9A3715FCu },
+        { 0x15C01A39u, 0xFBD6879Fu },
+        { 0x0B31FB7Du, 0x64898B3Eu },
+        { 0x05AEB4DDu, 0x63BF61CCu },
+        { 0x02DCF2D0u, 0xB85A4531u },
+        { 0x016FE50Bu, 0x6EF08517u },
+        { 0x00B84E23u, 0x6BD563BAu },
+        { 0x005C3E0Fu, 0xFC29D593u },
+        { 0x002E24CAu, 0x6E87E8A8u },     // [10]
+        { 0x001713D6u, 0x2F7957C3u },
+        { 0x000B8A47u, 0x6150DFE4u },
+        { 0x0005C53Au, 0xC47E94D8u },
+        { 0x0002E2A3u, 0x2762FA6Bu },
+        { 0x00017153u, 0x05002E4Au },
+        { 0x0000B8A9u, 0xDED47C11u },
+        { 0x00005C55u, 0x067F6E58u },
+        { 0x00002E2Au, 0x89050622u },
+        { 0x00001715u, 0x45F3D72Bu },
+        { 0x00000B8Au, 0xA35640A7u },     // [20]
+        { 0x000005C5u, 0x51C23599u },
+        { 0x000002E2u, 0xA8E6E01Eu },
+        { 0x00000171u, 0x5474E163u },
+        { 0x000000B8u, 0xAA3ACD06u },
+        { 0x0000005Cu, 0x551D7D98u },
+        { 0x0000002Eu, 0x2A8EC491u },
+        { 0x00000017u, 0x154763BAu },
+        { 0x0000000Bu, 0x8AA3B239u },
+        { 0x00000005u, 0xC551D933u },
+        { 0x00000002u, 0xE2A8EC9Fu },     // [30]
+        { 0x00000001u, 0x71547651u },
+        { 0x00000000u, 0xB8AA3B28u },
+        { 0x00000000u, 0x5C551D94u },
+        { 0x00000000u, 0x2E2A8ECAu },
+        { 0x00000000u, 0x17154765u },
+        { 0x00000000u, 0x0B8AA3B2u },
+        { 0x00000000u, 0x05C551D9u },
+        { 0x00000000u, 0x02E2A8ECu },
+        { 0x00000000u, 0x01715476u },
+        { 0x00000000u, 0x00B8AA3Bu }      // [40]
         /*
-        { 0x00000000, 0x005C551D },
-        { 0x00000000, 0x002E2A8E },
-        { 0x00000000, 0x00171547 },
-        { 0x00000000, 0x000B8AA3 },
-        { 0x00000000, 0x0005C551 },
-        { 0x00000000, 0x0002E2A8 },
-        { 0x00000000, 0x00017154 },
-        { 0x00000000, 0x0000B8AA },
-        { 0x00000000, 0x00005C55 },
-        { 0x00000000, 0x00002E2A },     // [50]
-        { 0x00000000, 0x00001715 },
-        { 0x00000000, 0x00000B8A },
-        { 0x00000000, 0x000005C5 },
-        { 0x00000000, 0x000002E2 },
-        { 0x00000000, 0x00000171 },
-        { 0x00000000, 0x000000B8 },
-        { 0x00000000, 0x0000005C },
-        { 0x00000000, 0x0000002E },
-        { 0x00000000, 0x00000017 },
-        { 0x00000000, 0x0000000B },     // [60]
-        { 0x00000000, 0x00000005 },
-        { 0x00000000, 0x00000002 },
-        { 0x00000000, 0x00000001 },
-        { 0x00000000, 0x00000000 },
+        { 0x00000000u, 0x005C551Du },
+        { 0x00000000u, 0x002E2A8Eu },
+        { 0x00000000u, 0x00171547u },
+        { 0x00000000u, 0x000B8AA3u },
+        { 0x00000000u, 0x0005C551u },
+        { 0x00000000u, 0x0002E2A8u },
+        { 0x00000000u, 0x00017154u },
+        { 0x00000000u, 0x0000B8AAu },
+        { 0x00000000u, 0x00005C55u },
+        { 0x00000000u, 0x00002E2Au },     // [50]
+        { 0x00000000u, 0x00001715u },
+        { 0x00000000u, 0x00000B8Au },
+        { 0x00000000u, 0x000005C5u },
+        { 0x00000000u, 0x000002E2u },
+        { 0x00000000u, 0x00000171u },
+        { 0x00000000u, 0x000000B8u },
+        { 0x00000000u, 0x0000005Cu },
+        { 0x00000000u, 0x0000002Eu },
+        { 0x00000000u, 0x00000017u },
+        { 0x00000000u, 0x0000000Bu },     // [60]
+        { 0x00000000u, 0x00000005u },
+        { 0x00000000u, 0x00000002u },
+        { 0x00000000u, 0x00000001u },
+        { 0x00000000u, 0x00000000u },
         */
 };
 // Interesting that starting with the row marked
@@ -365,9 +371,80 @@ int FXP_shifted_e = 0x2B7E1;
 int FXP_shifted_pi = 0x3243F;
 int FXP_shifted_phalfpi = 0x19220;
 int FXP_shifted_nhalfpi = -0x19220;
-long FXP_shifted_pi_l = 0x3243F6A8885A3l;
-long FXP_shifted_phalfpi_l = 0x1921FB54442D2l;
-long FXP_shifted_nhalfpi_l = -0x1921FB54442D2l;
+long FXP_shifted_pi_l = 0x3243F6A8885A3L;
+long FXP_shifted_phalfpi_l = 0x1921FB54442D2L;
+long FXP_shifted_nhalfpi_l = -0x1921FB54442D2L;
+
+static const ulongy FXP_CORDIC_ANGLES[] = {
+{ 0x3243F6A8u, 0x885A308Du },
+{ 0x1DAC6705u, 0x61BB4F68u },
+{ 0x0FADBAFCu, 0x96406EB1u },
+{ 0x07F56EA6u, 0xAB0BDB71u }, // 4 entries
+{ 0x03FEAB76u, 0xE59FBD39u },
+{ 0x01FFD55Bu, 0xBA97624Au },
+{ 0x00FFFAAAu, 0xDDDB94D5u },
+{ 0x007FFF55u, 0x56EEEA5Cu }, // 8
+{ 0x003FFFEAu, 0xAAB7776Eu },
+{ 0x001FFFFDu, 0x5555BBBBu },
+{ 0x000FFFFFu, 0xAAAAADDEu },
+{ 0x0007FFFFu, 0xF555556Fu },
+{ 0x0003FFFFu, 0xFEAAAAABu },
+{ 0x0001FFFFu, 0xFFD55555u },
+{ 0x0000FFFFu, 0xFFFAAAAAu },
+{ 0x00007FFFu, 0xFFFF5555u }, // 16
+{ 0x00003FFFu, 0xFFFFEAAAu },
+{ 0x00001FFFu, 0xFFFFFD55u },
+{ 0x00000FFFu, 0xFFFFFFAAu },
+{ 0x000007FFu, 0xFFFFFFF5u },
+{ 0x000003FFu, 0xFFFFFFFEu },
+{ 0x00000200u, 0x00000000u },
+{ 0x00000100u, 0x00000000u },
+{ 0x00000080u, 0x00000000u }, // 24
+{ 0x00000040u, 0x00000000u },
+{ 0x00000020u, 0x00000000u },
+{ 0x00000010u, 0x00000000u },
+{ 0x00000008u, 0x00000000u },
+{ 0x00000004u, 0x00000000u },
+{ 0x00000002u, 0x00000000u },
+{ 0x00000001u, 0x00000000u },
+{ 0x00000000u, 0x80000000u }  // 32 entries
+/*
+{ 0x00000000u, 0x40000000u },
+{ 0x00000000u, 0x20000000u },
+{ 0x00000000u, 0x10000000u },
+{ 0x00000000u, 0x08000000u },
+{ 0x00000000u, 0x04000000u },
+{ 0x00000000u, 0x02000000u },
+{ 0x00000000u, 0x01000000u },
+{ 0x00000000u, 0x00800000u },
+{ 0x00000000u, 0x00400000u },
+{ 0x00000000u, 0x00200000u },
+{ 0x00000000u, 0x00100000u },
+{ 0x00000000u, 0x00080000u },
+{ 0x00000000u, 0x00040000u },
+{ 0x00000000u, 0x00020000u },
+{ 0x00000000u, 0x00010000u },
+{ 0x00000000u, 0x00008000u },   // 48
+{ 0x00000000u, 0x00004000u },
+{ 0x00000000u, 0x00002000u },
+{ 0x00000000u, 0x00001000u },
+{ 0x00000000u, 0x00000800u },
+{ 0x00000000u, 0x00000400u },
+{ 0x00000000u, 0x00000200u },
+{ 0x00000000u, 0x00000100u },
+{ 0x00000000u, 0x00000080u },
+{ 0x00000000u, 0x00000040u },
+{ 0x00000000u, 0x00000020u },
+{ 0x00000000u, 0x00000010u },
+{ 0x00000000u, 0x00000008u },
+{ 0x00000000u, 0x00000004u },
+{ 0x00000000u, 0x00000002u },
+{ 0x00000000u, 0x00000001u },
+{ 0x00000000u, 0x00000000u }    // 64
+*/
+};
+
+static const ulongy FXP_CORDIC_KFACTOR = { 0x26DD3B6Au, 0x10D7969Au };
 
 #ifdef VERBOSE
 void print_sfxp(char * msg, super_fxp x)
@@ -1704,16 +1781,15 @@ int fxp_powxy(int x, int y)
         }
 }
 
-// Trigonometric functions
-int fxp_sin(int fxp1)
-{
-        return 0;
-}
 
-int fxp_cos(int fxp1)
-{
-        return 0;
-}
+
+
+// Trigonometric functions
+
+/*
+*/
+
+
 
 int fxp_tan(int fxp1)
 {

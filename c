@@ -1,4 +1,5 @@
 #!/bin/bash
+# Compiles and runs fxp_tconst.c
 
 clear
 if [ -f "c.out" ]; then

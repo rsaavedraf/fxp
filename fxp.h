@@ -52,6 +52,7 @@ unsigned int fxp_get_lshifted_frac(unsigned int fxp1);
 // Aux function to rshift with rounding of last bit
 unsigned int rshift_uint_rounding(unsigned int x, \
                                   unsigned int shift);
+
 unsigned long rshift_ulong_rounding(unsigned long n, \
                                     unsigned int shift);
 
@@ -100,7 +101,7 @@ typedef struct fxptuple {
         int b;
 } fxptuple;
 
-fxptuple fxp_cossin(int fxp1);
+fxptuple fxp_cos_sin(int fxp1);
 int fxp_cos(int fxp1);
 int fxp_sin(int fxp1);
 int fxp_tan(int fxp1);

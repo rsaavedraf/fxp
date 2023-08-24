@@ -1,4 +1,5 @@
 #!/bin/bash
+# Compiles and runs test_quad.c
 
 rm q.out
 clear

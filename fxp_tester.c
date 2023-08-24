@@ -30,7 +30,7 @@
 #define MAX_RAND_LOOPS 5
 //#define MAX_RAND_LOOPS 5000
 #define TEST_BASICS 1
-#define TEST_SUPER_FXP_L 1
+#define TEST_SUPER_FXP_L 0
 #define TEST_LOGARITHMS 1
 #define TEST_LG2_MUL_L 0
 #define TEST_POWERS 1
@@ -58,6 +58,7 @@ static int fracbit_configs[] = {
 
 #define NINTBITS (sizeof(int) * 8)
 #define NLONGBITS (sizeof(long) * 8)
+
 // Only test fxp_l.c functions when applicablle
 const static int TEST_L = (NLONGBITS >= (2 * NINTBITS));
 
@@ -1333,7 +1334,12 @@ void test_cossin(char *txtarg, int x)
                 printf("sin_l(%s)", txtarg);
                 test_fxp("", tgt_sin, fxp_sin_l(x));
         }
-        //printf("sin("); test_fxp(msg, tgt, fxp_sin(x));
+        /*
+        printf("cos(%s)", txtarg);
+        test_fxp("", tgt_cos, fxp_cos(x));
+        printf("sin(%s)", txtarg);
+        test_fxp("", tgt_sin, fxp_sin(x));
+        */
 }
 
 /*

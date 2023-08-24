@@ -1,4 +1,5 @@
 #!/bin/bash
+# Compiles and runs dmul_tester.c
 
 clear
 if [ -f "d.out" ]; then

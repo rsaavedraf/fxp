@@ -1,4 +1,5 @@
 #!/bin/bash
+# Compiles and runs fxp_tester.c
 
 clear
 if [ -f "r.out" ]; then

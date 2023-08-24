@@ -30,7 +30,7 @@ int fxp_pow10_l(int fxp1);
 int fxp_sqrt_l(int fxp1);
 int fxp_powxy_l(int fxp1, int fxp2);
 
-fxptuple fxp_cos_and_sin_l(int fxp1);
+fxptuple fxp_cos_sin_l(int fxp1);
 int fxp_cos_l(int fxp1);
 int fxp_sin_l(int fxp1);
 int fxp_tan_l(int fxp1);
@@ -46,11 +46,6 @@ typedef struct super_fxp_l {
         int nwbits;             // <- Number of whole bits
         unsigned long number;   // <- The super fxp number
 } super_fxp_l;
-
-typedef struct fxptuple_l {
-        long a;
-        long b;
-} fxptuple_l;
 
 super_fxp_l sfxp_l_from_fxp(int fxp1);
 int sfxp_l_2_fxp(super_fxp_l x);

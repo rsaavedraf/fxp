@@ -1,4 +1,5 @@
 #!/bin/bash
+# Compiles and runs ulongy_tester.c
 
 clear
 if [ -f "u.out" ]; then
