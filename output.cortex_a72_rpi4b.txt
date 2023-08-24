@@ -2,7 +2,7 @@
 ============================================================
 FXP Tester run
 ============================================================
-Operating System: Ubuntu 22.04.2 LTS
+Operating System: Ubuntu 22.04.3 LTS
     Architecture: arm64
 Model		: Raspberry Pi 4 Model B Rev 1.4
 
@@ -30,7 +30,7 @@ TEST_POWXY      : 1
 AVOID_XTR_INPUTS: 1
 TEST_TRIGONOM   : 1
 TEST_L          : 1
-TEST_SUPER_FXP_L: 1
+TEST_SUPER_FXP_L: 0
 TEST_LG2_MUL_L  : 0
 WDELTA_MAX      : 3.000000E+00
 WDELTA_DIV      : 1.200000E+00
@@ -3564,17 +3564,6 @@ div  (x/y)
     exp:  1.0000000000e+00
     act:  1.0000000000e+00 (fxp:         256,  x00000100,  b000000000000000000000001.00000000)
 
-Testing super_fxp_l
-5.5<->sfxp_l
-    exp:  5.0195312500e+00
-    act:  5.0195312500e+00 (fxp:        1285,  x00000505,  b000000000000000000000101.00000101)
-0<->sfxp_l
-    exp:  0.0000000000e+00
-    act:  0.0000000000e+00 (fxp:           0,  x00000000,  b000000000000000000000000.00000000)
--5.5<->sfxp_l
-    exp: -5.0195312500e+00
-    act: -5.0195312500e+00 (fxp:       -1285, -x00000505, -b000000000000000000000101.00000101)
-
 Showing Transcendental constants as fxp's: frac bits: 8
 e      :  2.7187500000e+00 (fxp:         696,  x000002B8,  b000000000000000000000010.10111000)
 pi     :  3.1406250000e+00 (fxp:         804,  x00000324,  b000000000000000000000011.00100100)
@@ -5306,9 +5295,6 @@ div_l (n1/n3)
 div   (n1/n3)
     exp: +INF
     act: +INF
-n1<->sfxp_l
-    exp: -6.6978004492e+06
-    act: -6.6978004492e+06 (fxp: -1714636915, -x66334873, -b011001100011001101001000.01110011)
 n1,n2,n3 made positive for logs and powers
 Testing lg2 and pow2 implementations, frac bits: 8
 lg2_l(n1)
@@ -5513,9 +5499,6 @@ div_l (n1/n3)
 div   (n1/n3)
     exp: -INF
     act: -INF
-n1<->sfxp_l
-    exp:  4.6470368008e+06
-    act:  4.6470368008e+06 (fxp:  1189641421,  x46E87CCD,  b010001101110100001111100.11001101)
 n1,n2,n3 made positive for logs and powers
 Testing lg2 and pow2 implementations, frac bits: 8
 lg2_l(n1)
@@ -5720,9 +5703,6 @@ div_l (n1/n3)
 div   (n1/n3)
     exp: -INF
     act: -INF
-n1<->sfxp_l
-    exp:  7.6856012734e+06
-    act:  7.6856012734e+06 (fxp:  1967513926,  x7545E146,  b011101010100010111100001.01000110)
 n1,n2,n3 made positive for logs and powers
 Testing lg2 and pow2 implementations, frac bits: 8
 lg2_l(n1)
@@ -5927,9 +5907,6 @@ div_l (n1/n3)
 div   (n1/n3)
     exp: -INF
     act: -INF
-n1<->sfxp_l
-    exp:  2.0374819062e+06
-    act:  2.0374819062e+06 (fxp:   521595368,  x1F16E9E8,  b000111110001011011101001.11101000)
 n1,n2,n3 made positive for logs and powers
 Testing lg2 and pow2 implementations, frac bits: 8
 lg2_l(n1)
@@ -6134,9 +6111,6 @@ div_l (n1/n3)
 div   (n1/n3)
     exp:  1.7974240231e+06
     act:  1.7974240195e+06 (fxp:   460140549,  x1B6D3005,  b000110110110110100110000.00000101)
-n1<->sfxp_l
-    exp:  9.1275438672e+05
-    act:  9.1275438672e+05 (fxp:   233665123,  x0DED7263,  b000011011110110101110010.01100011)
 n1,n2,n3 made positive for logs and powers
 Testing lg2 and pow2 implementations, frac bits: 8
 lg2_l(n1)
@@ -9810,17 +9784,6 @@ div  (x/y)
     exp:  1.0000000000e+00
     act:  1.0000000000e+00 (fxp:        2048,  x00000800,  b000000000000000000001.00000000000)
 
-Testing super_fxp_l
-5.5<->sfxp_l
-    exp:  5.0024414062e+00
-    act:  5.0024414062e+00 (fxp:       10245,  x00002805,  b000000000000000000101.00000000101)
-0<->sfxp_l
-    exp:  0.0000000000e+00
-    act:  0.0000000000e+00 (fxp:           0,  x00000000,  b000000000000000000000.00000000000)
--5.5<->sfxp_l
-    exp: -5.0024414062e+00
-    act: -5.0024414062e+00 (fxp:      -10245, -x00002805, -b000000000000000000101.00000000101)
-
 Showing Transcendental constants as fxp's: frac bits: 11
 e      :  2.7182617188e+00 (fxp:        5567,  x000015BF,  b000000000000000000010.10110111111)
 pi     :  3.1416015625e+00 (fxp:        6434,  x00001922,  b000000000000000000011.00100100010)
@@ -11552,9 +11515,6 @@ div_l (n1/n3)
 div   (n1/n3)
     exp: -5.8538034807e+05
     act: -5.8538034766e+05 (fxp: -1198858952, -x477522C8, -b010001110111010100100.01011001000)
-n1<->sfxp_l
-    exp: -3.1041164941e+05
-    act: -3.1041164941e+05 (fxp:  -635723058, -x25E45D32, -b001001011110010001011.10100110010)
 n1,n2,n3 made positive for logs and powers
 Testing lg2 and pow2 implementations, frac bits: 11
 lg2_l(n1)
@@ -11759,9 +11719,6 @@ div_l (n1/n3)
 div   (n1/n3)
     exp: +INF
     act: +INF
-n1<->sfxp_l
-    exp: -8.0882716895e+05
-    act: -8.0882716895e+05 (fxp: -1656478042, -x62BBD95A, -b011000101011101111011.00101011010)
 n1,n2,n3 made positive for logs and powers
 Testing lg2 and pow2 implementations, frac bits: 11
 lg2_l(n1)
@@ -11966,9 +11923,6 @@ div_l (n1/n3)
 div   (n1/n3)
     exp: -4.2261224846e+05
     act: -4.2261224805e+05 (fxp:  -865509884, -x3396A1FC, -b001100111001011010100.00111111100)
-n1<->sfxp_l
-    exp: -3.6957936377e+05
-    act: -3.6957936377e+05 (fxp:  -756898537, -x2D1D5AE9, -b001011010001110101011.01011101001)
 n1,n2,n3 made positive for logs and powers
 Testing lg2 and pow2 implementations, frac bits: 11
 lg2_l(n1)
@@ -12173,9 +12127,6 @@ div_l (n1/n3)
 div   (n1/n3)
     exp:  1.5674599321e+05
     act:  1.5674599316e+05 (fxp:   321015794,  x13224FF2,  b000100110010001001001.11111110010)
-n1<->sfxp_l
-    exp: -9.0236096680e+04
-    act: -9.0236096680e+04 (fxp:  -184803526, -x0B03E0C6, -b000010110000001111100.00011000110)
 n1,n2,n3 made positive for logs and powers
 Testing lg2 and pow2 implementations, frac bits: 11
 lg2_l(n1)
@@ -12380,9 +12331,6 @@ div_l (n1/n3)
 div   (n1/n3)
     exp:  2.0475795238e+05
     act:  2.0475795215e+05 (fxp:   419344286,  x18FEAF9E,  b000110001111111010101.11110011110)
-n1<->sfxp_l
-    exp:  2.0995688477e+04
-    act:  2.0995688477e+04 (fxp:    42999170,  x02901D82,  b000000101001000000011.10110000010)
 n1,n2,n3 made positive for logs and powers
 Testing lg2 and pow2 implementations, frac bits: 11
 lg2_l(n1)
@@ -15726,17 +15674,6 @@ div  (x/y)
     exp:  1.0000000000e+00
     act:  1.0000000000e+00 (fxp:       65536,  x00010000,  b0000000000000001.0000000000000000)
 
-Testing super_fxp_l
-5.5<->sfxp_l
-    exp:  5.0000762939e+00
-    act:  5.0000762939e+00 (fxp:      327685,  x00050005,  b0000000000000101.0000000000000101)
-0<->sfxp_l
-    exp:  0.0000000000e+00
-    act:  0.0000000000e+00 (fxp:           0,  x00000000,  b0000000000000000.0000000000000000)
--5.5<->sfxp_l
-    exp: -5.0000762939e+00
-    act: -5.0000762939e+00 (fxp:     -327685, -x00050005, -b0000000000000101.0000000000000101)
-
 Showing Transcendental constants as fxp's: frac bits: 16
 e      :  2.7182769775e+00 (fxp:      178145,  x0002B7E1,  b0000000000000010.1011011111100001)
 pi     :  3.1415863037e+00 (fxp:      205887,  x0003243F,  b0000000000000011.0010010000111111)
@@ -17468,9 +17405,6 @@ div_l (n1/n3)
 div   (n1/n3)
     exp: -INF
     act: -INF
-n1<->sfxp_l
-    exp: -2.7882939560e+04
-    act: -2.7882939560e+04 (fxp: -1827336327, -x6CEAF087, -b0110110011101010.1111000010000111)
 n1,n2,n3 made positive for logs and powers
 Testing lg2 and pow2 implementations, frac bits: 16
 lg2_l(n1)
@@ -17675,9 +17609,6 @@ div_l (n1/n3)
 div   (n1/n3)
     exp: -INF
     act: -INF
-n1<->sfxp_l
-    exp:  2.1879972183e+04
-    act:  2.1879972183e+04 (fxp:  1433925857,  x5577F8E1,  b0101010101110111.1111100011100001)
 n1,n2,n3 made positive for logs and powers
 Testing lg2 and pow2 implementations, frac bits: 16
 lg2_l(n1)
@@ -17882,9 +17813,6 @@ div_l (n1/n3)
 div   (n1/n3)
     exp: +INF
     act: +INF
-n1<->sfxp_l
-    exp:  2.3624166367e+04
-    act:  2.3624166367e+04 (fxp:  1548233367,  x5C482A97,  b0101110001001000.0010101010010111)
 n1,n2,n3 made positive for logs and powers
 Testing lg2 and pow2 implementations, frac bits: 16
 lg2_l(n1)
@@ -18089,9 +18017,6 @@ div_l (n1/n3)
 div   (n1/n3)
     exp:  7.2966509990e+03
     act:  7.2966509857e+03 (fxp:   478193319,  x1C80A6A7,  b0001110010000000.1010011010100111)
-n1<->sfxp_l
-    exp: -5.4386414795e+03
-    act: -5.4386414795e+03 (fxp:  -356426808, -x153EA438, -b0001010100111110.1010010000111000)
 n1,n2,n3 made positive for logs and powers
 Testing lg2 and pow2 implementations, frac bits: 16
 lg2_l(n1)
@@ -18296,9 +18221,6 @@ div_l (n1/n3)
 div   (n1/n3)
     exp: -INF
     act: -INF
-n1<->sfxp_l
-    exp:  2.9274027267e+04
-    act:  2.9274027267e+04 (fxp:  1918502651,  x725A06FB,  b0111001001011010.0000011011111011)
 n1,n2,n3 made positive for logs and powers
 Testing lg2 and pow2 implementations, frac bits: 16
 lg2_l(n1)
@@ -21642,17 +21564,6 @@ div  (x/y)
     exp:  1.0000000000e+00
     act:  1.0000000000e+00 (fxp:    16777216,  x01000000,  b00000001.000000000000000000000000)
 
-Testing super_fxp_l
-5.5<->sfxp_l
-    exp:  5.0000002980e+00
-    act:  5.0000002980e+00 (fxp:    83886085,  x05000005,  b00000101.000000000000000000000101)
-0<->sfxp_l
-    exp:  0.0000000000e+00
-    act:  0.0000000000e+00 (fxp:           0,  x00000000,  b00000000.000000000000000000000000)
--5.5<->sfxp_l
-    exp: -5.0000002980e+00
-    act: -5.0000002980e+00 (fxp:   -83886085, -x05000005, -b00000101.000000000000000000000101)
-
 Showing Transcendental constants as fxp's: frac bits: 24
 e      :  2.7182818055e+00 (fxp:    45605201,  x02B7E151,  b00000010.101101111110000101010001)
 pi     :  3.1415926814e+00 (fxp:    52707179,  x03243F6B,  b00000011.001001000011111101101011)
@@ -23384,9 +23295,6 @@ div_l (n1/n3)
 div   (n1/n3)
     exp: +INF
     act: +INF
-n1<->sfxp_l
-    exp:  1.0991056967e+02
-    act:  1.0991056967e+02 (fxp:  1843993368,  x6DE91B18,  b01101101.111010010001101100011000)
 n1,n2,n3 made positive for logs and powers
 Testing lg2 and pow2 implementations, frac bits: 24
 lg2_l(n1)
@@ -23591,9 +23499,6 @@ div_l (n1/n3)
 div   (n1/n3)
     exp: +INF
     act: +INF
-n1<->sfxp_l
-    exp:  1.1660441989e+02
-    act:  1.1660441989e+02 (fxp:  1956297539,  x749ABB43,  b01110100.100110101011101101000011)
 n1,n2,n3 made positive for logs and powers
 Testing lg2 and pow2 implementations, frac bits: 24
 lg2_l(n1)
@@ -23798,9 +23703,6 @@ div_l (n1/n3)
 div   (n1/n3)
     exp: -INF
     act: -INF
-n1<->sfxp_l
-    exp:  1.1277595764e+02
-    act:  1.1277595764e+02 (fxp:  1892066601,  x70C6A529,  b01110000.110001101010010100101001)
 n1,n2,n3 made positive for logs and powers
 Testing lg2 and pow2 implementations, frac bits: 24
 lg2_l(n1)
@@ -24005,9 +23907,6 @@ div_l (n1/n3)
 div   (n1/n3)
     exp: -4.1793257992e+01
     act: -4.1793257952e+01 (fxp:  -701174516, -x29CB12F4, -b00101001.110010110001001011110100)
-n1<->sfxp_l
-    exp: -3.9354607821e+01
-    act: -3.9354607821e+01 (fxp:  -660260756, -x275AC794, -b00100111.010110101100011110010100)
 n1,n2,n3 made positive for logs and powers
 Testing lg2 and pow2 implementations, frac bits: 24
 lg2_l(n1)
@@ -24212,9 +24111,6 @@ div_l (n1/n3)
 div   (n1/n3)
     exp: -INF
     act: -INF
-n1<->sfxp_l
-    exp:  5.3312163889e+01
-    act:  5.3312163889e+01 (fxp:   894429689,  x354FE9F9,  b00110101.010011111110100111111001)
 n1,n2,n3 made positive for logs and powers
 Testing lg2 and pow2 implementations, frac bits: 24
 lg2_l(n1)
@@ -27228,17 +27124,6 @@ div  (x/y)
     exp:  1.0000000000e+00
     act:  1.0000000000e+00 (fxp:   268435456,  x10000000,  b0001.0000000000000000000000000000)
 
-Testing super_fxp_l
-5.5<->sfxp_l
-    exp:  5.0000000186e+00
-    act:  5.0000000186e+00 (fxp:  1342177285,  x50000005,  b0101.0000000000000000000000000101)
-0<->sfxp_l
-    exp:  0.0000000000e+00
-    act:  0.0000000000e+00 (fxp:           0,  x00000000,  b0000.0000000000000000000000000000)
--5.5<->sfxp_l
-    exp: -5.0000000186e+00
-    act: -5.0000000186e+00 (fxp: -1342177285, -x50000005, -b0101.0000000000000000000000000101)
-
 Showing Transcendental constants as fxp's: frac bits: 28
 e      :  2.7182818279e+00 (fxp:   729683222,  x2B7E1516,  b0010.1011011111100001010100010110)
 pi     :  3.1415926553e+00 (fxp:   843314857,  x3243F6A9,  b0011.0010010000111111011010101001)
@@ -28992,9 +28877,6 @@ div_l (n1/n3)
 div   (n1/n3)
     exp: -INF
     act: -INF
-n1<->sfxp_l
-    exp:  6.0838018246e+00
-    act:  6.0838018246e+00 (fxp:  1633108117,  x61574095,  b0110.0001010101110100000010010101)
 n1,n2,n3 made positive for logs and powers
 Testing lg2 and pow2 implementations, frac bits: 28
 lg2_l(n1)
@@ -29199,9 +29081,6 @@ div_l (n1/n3)
 div   (n1/n3)
     exp:  3.4370525078e+00
     act:  3.4370525070e+00 (fxp:   922626757,  x36FE2AC5,  b0011.0110111111100010101011000101)
-n1<->sfxp_l
-    exp: -2.9493083321e+00
-    act: -2.9493083321e+00 (fxp:  -791698927, -x2F305DEF, -b0010.1111001100000101110111101111)
 n1,n2,n3 made positive for logs and powers
 Testing lg2 and pow2 implementations, frac bits: 28
 lg2_l(n1)
@@ -29408,9 +29287,6 @@ div_l (n1/n3)
 div   (n1/n3)
     exp: -INF
     act: -INF
-n1<->sfxp_l
-    exp: -3.4304936789e+00
-    act: -3.4304936789e+00 (fxp:  -920866135, -x36E34D57, -b0011.0110111000110100110101010111)
 n1,n2,n3 made positive for logs and powers
 Testing lg2 and pow2 implementations, frac bits: 28
 lg2_l(n1)
@@ -29615,9 +29491,6 @@ div_l (n1/n3)
 div   (n1/n3)
     exp: -INF
     act: -INF
-n1<->sfxp_l
-    exp: -7.6008322500e+00
-    act: -7.6008322500e+00 (fxp: -2040332871, -x799D0247, -b0111.1001100111010000001001000111)
 n1,n2,n3 made positive for logs and powers
 Testing lg2 and pow2 implementations, frac bits: 28
 lg2_l(n1)
@@ -29822,9 +29695,6 @@ div_l (n1/n3)
 div   (n1/n3)
     exp: -7.9287191253e+00
     act: -7.9287191220e+00 (fxp: -2128349333, -x7EDC0895, -b0111.1110110111000000100010010101)
-n1<->sfxp_l
-    exp: -5.8612352908e+00
-    act: -5.8612352908e+00 (fxp: -1573363368, -x5DC79EA8, -b0101.1101110001111001111010101000)
 n1,n2,n3 made positive for logs and powers
 Testing lg2 and pow2 implementations, frac bits: 28
 lg2_l(n1)
@@ -31661,17 +31531,6 @@ div  (x/y)
     exp: +INF
     act: +INF
 
-Testing super_fxp_l
-5.5<->sfxp_l
-    exp: +INF
-    act: +INF
-0<->sfxp_l
-    exp:  0.0000000000e+00
-    act:  0.0000000000e+00 (fxp:           0,  x00000000,  b0.0000000000000000000000000000000)
--5.5<->sfxp_l
-    exp: -INF
-    act: -INF
-
 Showing Transcendental constants as fxp's: frac bits: 31
 e      : +INF
 pi     : +INF
@@ -33193,9 +33052,6 @@ div_l (n1/n3)
 div   (n1/n3)
     exp: +INF
     act: +INF
-n1<->sfxp_l
-    exp:  1.3490241161e-01
-    act:  1.3490241161e-01 (fxp:   289700723,  x11447B73,  b0.0010001010001000111101101110011)
 n1,n2,n3 made positive for logs and powers
 Testing lg2 and pow2 implementations, frac bits: 31
 lg2_l(n1)
@@ -33386,9 +33242,6 @@ div_l (n1/n3)
 div   (n1/n3)
     exp: -INF
     act: -INF
-n1<->sfxp_l
-    exp:  8.1967727980e-01
-    act:  8.1967727980e-01 (fxp:  1760243555,  x68EB2F63,  b0.1101000111010110010111101100011)
 n1,n2,n3 made positive for logs and powers
 Testing lg2 and pow2 implementations, frac bits: 31
 lg2_l(n1)
@@ -33579,9 +33432,6 @@ div_l (n1/n3)
 div   (n1/n3)
     exp: -INF
     act: -INF
-n1<->sfxp_l
-    exp:  2.0432861056e-01
-    act:  2.0432861056e-01 (fxp:   438792350,  x1A27709E,  b0.0011010001001110111000010011110)
 n1,n2,n3 made positive for logs and powers
 Testing lg2 and pow2 implementations, frac bits: 31
 lg2_l(n1)
@@ -33772,9 +33622,6 @@ div_l (n1/n3)
 div   (n1/n3)
     exp:  7.8356861145e-02
     act:  7.8356861137e-02 (fxp:   168270078,  x0A0798FE,  b0.0001010000001111001100011111110)
-n1<->sfxp_l
-    exp:  7.2328799404e-02
-    act:  7.2328799404e-02 (fxp:   155324914,  x094211F2,  b0.0001001010000100001000111110010)
 n1,n2,n3 made positive for logs and powers
 Testing lg2 and pow2 implementations, frac bits: 31
 lg2_l(n1)
@@ -33965,9 +33812,6 @@ div_l (n1/n3)
 div   (n1/n3)
     exp:  4.7784866038e-01
     act:  4.7784866020e-01 (fxp:  1026172184,  x3D2A2518,  b0.0111101001010100010010100011000)
-n1<->sfxp_l
-    exp: -3.9169023046e-01
-    act: -3.9169023046e-01 (fxp:  -841148365, -x3222E7CD, -b0.0110010001000101110011111001101)
 n1,n2,n3 made positive for logs and powers
 Testing lg2 and pow2 implementations, frac bits: 31
 lg2_l(n1)
