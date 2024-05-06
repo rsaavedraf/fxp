@@ -3,13 +3,13 @@ Implementation of Fixed Point numbers in C using integers. Number of
 bits to use for fraction part configurable at runtime.
 
 For more information about Fixed Point arithmetic:
-[Wikipedia: Fixed-point arithmetic](https://en.wikipedia.org/wiki/Fixed-point_arithmetic)
+[Fixed-point arithmetic (Wikipedia)](https://en.wikipedia.org/wiki/Fixed-point_arithmetic)
 
 The code implements overflow-safe operations for +, -, *, and /,
 following CMU SEI's INT32-C recommendations. For further details:
 [INT32-C. Ensure that operations on signed integers do not result in overflow](https://wiki.sei.cmu.edu/confluence/display/c/INT32-C.+Ensure+that+operations+on+signed+integers+do+not+result+in+overflow)
 
-lg2(), pow2() implemented using the [BKM algorithm (Wikipedia)](https://en.wikipedia.org/wiki/BKM_algorithm)
+lg2(), pow2() implemented using the [BKM algorithm](https://en.wikipedia.org/wiki/BKM_algorithm)
 
 Additional logarithm and power functions (ln, lg10, exp, pow10, sqrt, and 
 powxy,) all implemented through lg2 and pow2. Behind the scenes, these 
@@ -21,7 +21,7 @@ also ultimate precision if desired. All tests, including those for the power
 functions, should ideally run with no inaccuracy warnings, or as few as 
 possible, regardless of frac bits in use.
 
-Trigonometric functions sin() and cos() implemented using the [CORDIC algorithm (Wikipedia)](https://en.wikipedia.org/wiki/CORDIC)
+Trigonometric functions sin() and cos() implemented using the [CORDIC algorithm](https://en.wikipedia.org/wiki/CORDIC)
 
 Later:
 - Finish trigonometric functions

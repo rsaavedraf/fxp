@@ -768,6 +768,17 @@ the right arithmetic shift result (e.g. #if ((-4l >> 1) == -2l))
 The choice can also be enforced manually if desired, of course.
 
 
+2024-05-03
+Wrote to Dr. T. Spiteri, author of the 'fixed' crate in Rust.
+Wrote to Dr. S. Crozet, author of the 'cordic' crate in Rust.
+
+2024-05-05
+After the suggestion from Crozet, joined the Zulip Rust
+community chat, and asked about the state of fixed points in Rust:
+https://rust-lang.zulipchat.com/#narrow/stream/122651-general
+
+
+
 Pending:
 Finish implementing trigonometric functions
 Saturated mode?
