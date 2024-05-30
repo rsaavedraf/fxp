@@ -19,7 +19,7 @@
 #include <math.h>
 #include "fxp_extern.h"
 
-const long double FXP_ZERO_LD = 1.0E-124;
+const long double FXP_ZERO_LD = 1.0E-124L;
 
 #define DASHES "=========================================\n"
 
@@ -140,15 +140,15 @@ static const long double A_2[] = {
  */
 long double my_log2(long double x)
 {
-        if (x < 0.0) return FXP_UNDEF_LD;
+        if (x < 0.0L) return FXP_UNDEF_LD;
         if (x <= FXP_ZERO_LD) return FXP_NINF_LD;
         long double z = x;
         int c = 0; // characteristic
-        while (z >= 2.0) {
+        while (z >= 2.0L) {
                 c++;
                 z /= 2;
         }
-        while (z < 1.0) {
+        while (z < 1.0L) {
                 c--;
                 z *= 2;
         }
@@ -156,12 +156,12 @@ long double my_log2(long double x)
         // we have z satisfying: 1 <= z < 2, so we can use it to calculate
         // the mantissa
         //printf("log c: %d\n", c);
-        long double m = 0.0; // mantissa
-        long double b = 0.5;
+        long double m = 0.0L; // mantissa
+        long double b = 0.5L;
         int nb = 64; // desired number of mantissa bits to process
         while (nb > 0) {
                 z = z * z;
-                if (z >= 2.0) {
+                if (z >= 2.0L) {
                         z /= 2;
                         m += b;
                 }
@@ -183,23 +183,23 @@ long double my_log2(long double x)
  */
 long double my_log2_bkm(long double xin, int nbits)
 {
-        if (xin < 0.0) return FXP_UNDEF_LD;
+        if (xin < 0.0L) return FXP_UNDEF_LD;
         if (xin <= FXP_ZERO_LD) return FXP_NINF_LD;
         long double argument = xin;
         int c = 0; // characteristic
-        while (argument >= 2.0) {
+        while (argument >= 2.0L) {
                 c++;
                 argument /= 2;
         }
-        while (argument < 1.0) {
+        while (argument < 1.0L) {
                 c--;
                 argument *= 2;
         }
         // Here we have already calculated the log characteristic c, and
         // we have z satisfying: 1 <= z < 2
-        long double x = 1.0;
-        long double y = 0.0;
-        long double s = 0.5;
+        long double x = 1.0L;
+        long double y = 0.0L;
+        long double s = 0.5L;
         // Notice ss starting with 0.5. Skipping the 1.0 because we know
         // zz < 2, so that first test if (zz < z) when ss == 1.0 would be
         // false for sure
