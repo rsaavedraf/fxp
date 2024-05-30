@@ -777,9 +777,19 @@ After the suggestion from Crozet, joined the Zulip Rust
 community chat, and asked about the state of fixed points in Rust:
 https://rust-lang.zulipchat.com/#narrow/stream/122651-general
 
+2024-05-30
+Sqrt calculation using Cordic. Here initial implementation
+using long doubles to generate the scaling factors with binary128
+precision, and testing the code with different iteration depths.
+This is likely to be faster than the current sqrt implementation
+which uses lg2 and pow2. Comparison of them pending.
+
+
 
 
 Pending:
+Finish cordic-based sqrt, and compare with initial sqrt implementation based on lg2 and pow2
+Implement an inverse sqrt function (1 / sqrt(x))
 Finish implementing trigonometric functions
 Saturated mode?
 Rewrite in Rust?
