@@ -51,7 +51,7 @@ void print_long_as_bin(long n)
         }
         int i = LONG_BITS;
         while (i > 0) {
-                int bit = (int) ((an >> (i - 1)) & 1ul);
+                int bit = (int) ((an >> (i - 1)) & 1uL);
                 printf("%d", bit);
                 i--;
         }
@@ -72,7 +72,7 @@ void print_ulong_as_bin(unsigned long n)
 {
         int i = LONG_BITS;
         while (i > 0) {
-                int bit = (n >> (i - 1)) & 1ul;
+                int bit = (n >> (i - 1)) & 1uL;
                 printf("%d", bit);
                 i--;
         }
@@ -83,12 +83,12 @@ void shift_ulongs(unsigned long *hi, unsigned long *lo, int shift)
         unsigned long auxhi, auxlo;
         if (shift > 0) {
                 if (shift >= 128) {
-                        *hi = 0ul;
-                        *lo = 0ul;
+                        *hi = 0uL;
+                        *lo = 0uL;
                         return;
                 }
                 if (shift >= 64) {
-                        *hi = 0ul;
+                        *hi = 0uL;
                         *lo = *hi >> (shift - 64);
                 } else {
                         auxhi = *hi;
@@ -97,12 +97,12 @@ void shift_ulongs(unsigned long *hi, unsigned long *lo, int shift)
                 }
         } else if (shift < 0) {
                 if (shift <= -128) {
-                        *hi = 0ul;
-                        *lo = 0ul;
+                        *hi = 0uL;
+                        *lo = 0uL;
                         return;
                 }
                 if (shift <= -64) {
-                        *lo = 0ul;
+                        *lo = 0uL;
                         *hi = *lo << (-shift - 64);
                 } else {
                         auxlo = *lo;
@@ -141,9 +141,9 @@ void shift_ulongs(unsigned long *hi, unsigned long *lo, int shift)
 
 #ifdef __ARM_ARCH
 
-unsigned long inspect_long_double_aux(long double x, int VERBOSE)
+unsigned long inspect_long_double_aux(long double x, int verbose)
 {
-        if (VERBOSE) printf("%40.38Lf\n", x);
+        if (verbose) printf("%40.38Lf\n", x);
         void *px = &x;
         unsigned char *pc = px;
         // Assuming quadruple-precision/binary128 long doubles (16 bytes)
@@ -162,7 +162,7 @@ unsigned long inspect_long_double_aux(long double x, int VERBOSE)
         int sign = ((bytes[0] & 0x80) == 0x80);
         int ebits = ((((int) (bytes[0] & 0x7F)) << 8) | bytes[1]);
         int exponent = ebits + exbias;
-        if (VERBOSE) {
+        if (verbose) {
                 printf("\tAs stored   : ");
                 for (int i = 0; i < ai; i++) {
                         printf("%02x", bytes[i]);
@@ -173,11 +173,11 @@ unsigned long inspect_long_double_aux(long double x, int VERBOSE)
                 printf("\n\texponent    : %d", exponent);
                 printf("\n\tmagnitude   : ");
         }
-        unsigned long hi = 0ul;
-        unsigned long lo = 0ul;
+        unsigned long hi = 0uL;
+        unsigned long lo = 0uL;
         if (ebits == 0x7FFF) {
                 // Special cases
-                if (VERBOSE) {
+                if (verbose) {
                         if (sum == 0) {
                                 printf("<inf>");
                         } else {
@@ -188,17 +188,17 @@ unsigned long inspect_long_double_aux(long double x, int VERBOSE)
                 // Include the implicit bit as in IEEE-754
                 if (ebits == 0x0) {
                         // Special case for subnormals
-                        if (VERBOSE) printf("(0). ");
+                        if (verbose) printf("(0). ");
                 } else {
                         // normalized values
-                        if (VERBOSE) printf("(1). ");
-                        hi = 1ul;
+                        if (verbose) printf("(1). ");
+                        hi = 1uL;
                 }
                 int hiroomleft = 48; // 2 bytes in the "hi" ulong used already
                 // fraction bits
                 for (int i = 2; i < 16; i++) {
                         unsigned char c = bytes[i];
-                        if (VERBOSE) {
+                        if (verbose) {
                                 if (i < ai) printf("%02x", c);
                                 if ((i > 0) && (i % 2)) printf(" ");
                         }
@@ -210,27 +210,29 @@ unsigned long inspect_long_double_aux(long double x, int VERBOSE)
                         }
                 }
         }
-        if (VERBOSE) {
+        if (verbose) {
                 printf("\n\tAs ulongs   : 0x000%lx 0x%016lx", hi, lo);
                 printf("\n\tAs bits     : ");
                 print_ulong_as_bin(hi); printf(" "); print_ulong_as_bin(lo);
         }
         // L-shift the bits
         shift_ulongs(&hi, &lo, shift_base + ((exponent < 0)? -exponent - 1: 0));
-        if (VERBOSE) {
+        if (verbose) {
                 printf("\n\tL-shifted   : ");
                 print_ulong_as_bin(hi); printf(" "); print_ulong_as_bin(lo);
         }
         // Round last bit in hi ulong
-        if ((lo >> 63) & 1ul) hi++;
-        if (VERBOSE) printf("\n\tRounded Hexa: ");
-        if (VERBOSE) printf("0x%016lX\n", hi);
+        if ((lo >> FXP_LONG_BITS_M1) & 1uL) hi++;
+        if (verbose) {
+                printf("\n\tRounded Hexa: ");
+                printf("0x%016lX\n", hi);
+        }
         return hi;
 }
 
 #elif __x86_64__
 
-unsigned long inspect_long_double_aux(long double x, int VERBOSE)
+unsigned long inspect_long_double_aux(long double x, const int VERBOSE)
 {
         if (VERBOSE) printf("%40.38Lf\n", x);
         void *px = &x;
@@ -264,8 +266,8 @@ unsigned long inspect_long_double_aux(long double x, int VERBOSE)
                 printf("\n\texponent    : %d", exponent);
                 printf("\n\tmagnitude   : ");
         }
-        unsigned long hi = 0ul;
-        unsigned long lo = 0ul;
+        unsigned long hi = 0uL;
+        unsigned long lo = 0uL;
         if (ebits == 0x7FFF) {
                 // Special cases
                 if (VERBOSE) {

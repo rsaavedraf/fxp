@@ -784,7 +784,13 @@ precision, and testing the code with different iteration depths.
 This is likely to be faster than the current sqrt implementation
 which uses lg2 and pow2. Comparison of them pending.
 
-
+2024-06-03
+Completed first implementation of sqrt using cordic and longs
+(function fxp_sqrt_cordic_l() in fxp_l.c)
+Determined minimum number of loops to use for sqrt_cordic
+in order to avoid asserts from the tester under WDELTA_MAX = 3.0L.
+Using "uL" as suffix for unsigned long constant definitions.
+Other minor consistency polishings of the code and output.
 
 
 Pending:

@@ -1,3 +1,4 @@
+
 /* SPDX-License-Identifier: MIT */
 /*
  * fxp.c
@@ -60,6 +61,9 @@ const int FXP_SQRT_LG_LOOPS = FXP_INT_BITS_M2;      // for lg2 in sqrt
 int FXP_sqrt_pw_loops = FXP_FRAC_BITS_DEF + 1 \
             + (FXP_INT_BITS - FXP_FRAC_BITS_DEF)/2; // for pow2 in sqrt
 int FXP_cordic_loops = FXP_FRAC_BITS_DEF + 2;       // for cordic
+
+int FXP_sqrt_cordic_loops = 11;                      // for the implementation of sqrt using cordic
+
 const int FXP_POWXY_LG_LOOPS = FXP_INT_BITS + 3;    // for lg2 in powxy
 const int FXP_POWXY_PW_LOOPS = FXP_INT_BITS + 1;    // for pow2 in powxy
 
@@ -68,11 +72,12 @@ const int FXP_WORD_BITS_M1 = FXP_WORD_BITS - 1;
 const unsigned int FXP_RWORD_MASK = ((1u << FXP_WORD_BITS) - 1);
 const unsigned int FXP_LWORD_MASK = FXP_RWORD_MASK \
                                     << FXP_WORD_BITS;
-const unsigned long FXP_RINT_MASK = ((1ul << FXP_INT_BITS) - 1);
+const unsigned long FXP_RINT_MASK = ((1uL << FXP_INT_BITS) - 1);
 const unsigned long FXP_LINT_MASK = FXP_RINT_MASK \
                                     << FXP_INT_BITS;
 const int FXP_LONG_BITS = ((int) sizeof(long)) * 8;
 const int FXP_LONG_BITS_M1 = FXP_LONG_BITS - 1;
+const int FXP_LONG_BITS_M2 = FXP_LONG_BITS - 2;
 
 // Allowing for no whole part, so other than the sign bit,
 // all bits used for fraction part. This use case represents
@@ -115,6 +120,8 @@ unsigned int FXP_frac_max_p1 = (1u << FXP_FRAC_BITS_DEF);
 int FXP_whole_max = FXP_MAX >> FXP_FRAC_BITS_DEF;
 int FXP_whole_min = -(FXP_MAX >> FXP_FRAC_BITS_DEF);
 int FXP_whole_min_m1 = -(FXP_MAX >> FXP_FRAC_BITS_DEF) - 1;
+
+//int FXP_rsqrt_1p5 = (11u << (FXP_FRAC_BITS_DEF - 1));
 
 // Default max and min valid values for the conversion types
 float FXP_min_fx = \
@@ -244,20 +251,36 @@ const unsigned int FXP_LG10_2_I32_X = 0x3EF3FDE6u;
 const ulongy FXP_LG10_2_ULONGY = {FXP_LG10_2_I32, FXP_LG10_2_I32_X};
 const super_fxp SFXP_LG10_2_FACTOR = {0, 1, FXP_LG10_2_ULONGY};
 
-// Auxiliary variables used in the lg2 implementations
+// Auxiliary variables used in the lg2 and cordic implementations
 int FXP_one = 1 << FXP_FRAC_BITS_DEF;
 int FXP_minus_one = -(1 << FXP_FRAC_BITS_DEF);
 int FXP_half = 1 << (FXP_FRAC_BITS_DEF - 1);
+int FXP_quarter = 1 << (FXP_FRAC_BITS_DEF - 2);
 int FXP_two = 1 << (FXP_FRAC_BITS_DEF + 1);
 int FXP_almost1 = (1 << FXP_FRAC_BITS_DEF) - 1;
+
+long FXP_one_l = 1L << (FXP_INT_BITS + FXP_FRAC_BITS_DEF);
+long FXP_half_l = 1L << (FXP_INT_BITS_M1 + FXP_FRAC_BITS_DEF);
+long FXP_quarter_l = 1L << (FXP_INT_BITS_M2 + FXP_FRAC_BITS_DEF);
+long FXP_two_l = 1L << (FXP_INT_BITS + 1 + FXP_FRAC_BITS_DEF);
+
+/*
+// Auxiliary magic number for inverse square root
+const unsigned int FXP_RSQRT_MAGIC_I32 = 0x5FE6EB50;
+const unsigned int FXP_RSQRT_MAGIC_I32_X = 0xC7B537A9;
+//const unsigned int FXP_RSQRT_MAGIC_I32 = 0x5F375A86;
+//const unsigned int FXP_RSQRT_MAGIC_I32_X = 0x0;
+const ulongy FXP_RSQRT_MAGIC_ULONGY = {FXP_RSQRT_MAGIC_I32, FXP_RSQRT_MAGIC_I32_X};
+const super_fxp SFXP_RSQRT_MAGIC = {0, 1, FXP_RSQRT_MAGIC_ULONGY};
+*/
 
 // Default desired max frac decimal value
 // (can be changed dynamically calling set_[auto_]frac_max_dec
 // TODO: Candidates to convert to ulongy?
 // they were ints but made them longs since used only
 // for decimal frac conversions, were longs are used.
-long fxp_frac_max_dec = 9999l;
-long fxp_frac_max_dec_p1 = 10000l;
+long fxp_frac_max_dec = 9999L;
+long fxp_frac_max_dec_p1 = 10000L;
 
 // Single array of structs that have two uints (pseudo-ulongs,)
 // instead of using two separate arrays of uints as before.
@@ -311,7 +334,7 @@ static const ulongy FXP_BKM_LOGS_NEW[] = {
         { 0x00000000u, 0x2E2A8ECAu },
         { 0x00000000u, 0x17154765u },
         { 0x00000000u, 0x0B8AA3B2u },
-        { 0x00000000u, 0x05C551D9u },
+        { 0x00000000u, 0x05C551D9u },     // *
         { 0x00000000u, 0x02E2A8ECu },
         { 0x00000000u, 0x01715476u },
         { 0x00000000u, 0x00B8AA3Bu }      // [40]
@@ -342,8 +365,8 @@ static const ulongy FXP_BKM_LOGS_NEW[] = {
         { 0x00000000u, 0x00000000u },
         */
 };
-// Interesting that starting with the row marked
-// with the *, each entry is exactly a 4-bit
+// Interesting that starting with the row marked with the *
+// ( corresponds to [37]), each entry is exactly a 4-bit
 // right-shift of the value 4 positions earlier
 
 // BKM One aligned for X: unsigned fxp with 2 whole bits
@@ -357,7 +380,7 @@ const ulongy FXP_BKM_A_ONE_ULONGY = { FXP_BKM_A_ONE, 0u };
 const ulongy FXP_BKM_A_POINT5_ULONGY = { FXP_BKM_A_POINT5, 0u };
 
 // Auxiliary variables for the implementations that use longs (fxp_l.c)
-const unsigned long FXP_BKM_X_ONE_L = 1ul << (FXP_LONG_BITS - 2);
+const unsigned long FXP_BKM_X_ONE_L = 1ul << FXP_LONG_BITS_M2;
 const unsigned long FXP_BKM_A_ONE_L = 1ul << FXP_LONG_BITS_M1;
 const unsigned long FXP_BKM_A_POINT5_L = FXP_BKM_A_ONE_L >> 1;
 
@@ -471,7 +494,7 @@ static long double ulongy_as_ld(ulongy x, int nfbits)
 void print_lg2tuple(char * msg, lg2tuple tup)
 {
         long double num = (long double) tup.characteristic \
-                + ulongy_as_ld(tup.mantissa, 63);
+                + ulongy_as_ld(tup.mantissa, FXP_LONG_BITS_M1);
         printf("%s: ", msg);
         printf("{x%X, ", tup.characteristic);
         print_ulongy_as_hex(tup.mantissa);
@@ -695,29 +718,71 @@ int fxp_set_frac_bits(int nfracbits)
         FXP_shifted_pi = fxp_rshift_tconst(FXP_PI_I32, \
                         FXP_INT_BITS - 3, FXP_frac_bits);
         FXP_shifted_phalfpi = fxp_rshift_tconst(FXP_PI_I32, \
-                        FXP_INT_BITS - 2, FXP_frac_bits);
+                        FXP_INT_BITS_M2, FXP_frac_bits);
         FXP_shifted_nhalfpi = -FXP_shifted_phalfpi;
         FXP_shifted_pi_l = fxp_rshift_tconst_l(FXP_PI_L, \
                         FXP_LONG_BITS - 3, FXP_INT_BITS + FXP_frac_bits);
         FXP_shifted_phalfpi_l = fxp_rshift_tconst_l(FXP_PI_L, \
-                        FXP_LONG_BITS - 2, FXP_INT_BITS + FXP_frac_bits);
+                        FXP_LONG_BITS_M2, FXP_INT_BITS + FXP_frac_bits);
         FXP_shifted_nhalfpi_l = -FXP_shifted_phalfpi_l;
 
         // Auxiliary variables used for lg2 and pow2 calculations
         FXP_half = 1 << (FXP_frac_bits - 1);
+        FXP_quarter = FXP_half >> 1;
         FXP_almost1 = (int) ((1u << FXP_frac_bits) - 1);
         if (FXP_whole_bits == 1) {
                 FXP_one = FXP_POS_INF;
                 FXP_two = FXP_POS_INF;
                 FXP_minus_one = FXP_NEG_INF;
+                //FXP_rsqrt_1p5 = FXP_POS_INF;
         } else {
                 FXP_one = 1 << FXP_frac_bits;
                 FXP_two = (FXP_whole_bits >= 3)? FXP_one << 1: FXP_POS_INF;
                 FXP_minus_one = -FXP_one;
+                //FXP_rsqrt_1p5 = (11u << (FXP_frac_bits - 1));
         }
+        FXP_one_l = ((long) FXP_one) << FXP_INT_BITS;
+        FXP_half_l = ((long) FXP_half) << FXP_INT_BITS;
+        FXP_quarter_l = ((long) FXP_quarter) << FXP_INT_BITS;
+        FXP_two_l = ((long) FXP_two) << FXP_INT_BITS;
         FXP_lg2_maxloops = FXP_frac_bits;
         FXP_sqrt_pw_loops = FXP_frac_bits + FXP_whole_bits/2 + 1;
         FXP_cordic_loops = FXP_frac_bits + 2;
+        // Minimum number of sqrt cordic loops needed to avoid
+        // asserts in the tester program (fxp_tester) with its
+        // default WDELTA_MAX = 3.0L.
+        // Note that at least 3 whole bits required for this implementation
+        // fracbits     Loops needed
+        // 29           15
+        // 28           14
+        // 27           14
+        // 26           14
+        // 25           14
+        // 24           13
+        // 23           13
+        // 22           13
+        // 21           13
+        // 20           13
+        // 19           12
+        // 18           12
+        // 17           12
+        // 16           12
+        // 15           11
+        // 14           11
+        // 13           11
+        // 12           10
+        // 11           10
+        // 10           10
+        //  9           10
+        //  8            9
+        //  7            9
+        //  6            9
+        //  5            8
+        //  4            8
+        // The following formula closely matches that table
+        FXP_sqrt_cordic_loops = (FXP_frac_bits - 1)/4 + \
+                (FXP_frac_bits==20 || FXP_frac_bits==16? 9: 8);
+
         return FXP_frac_bits;
 }
 
@@ -1509,7 +1574,7 @@ static inline ulongy fxp_bkm_emode(ulongy argument, \
         }
         #ifdef VERBOSE_BKM
         printf("bkm_emode returning x = {%X,%X}  (%.19Lf)\n", \
-                        x.hi, x.lo, ulongy_as_ld(x, 62));
+                        x.hi, x.lo, ulongy_as_ld(x, FXP_LONG_BITS_M2));
         #endif
         return x;
 }
@@ -1696,6 +1761,15 @@ int fxp_sqrt(int fxp1)
                 fxp_pow2_wneg(w, bkmearg, FXP_sqrt_pw_loops):
                 fxp_pow2_wpos(w, bkmearg, FXP_sqrt_pw_loops);
 }
+
+
+// Implementation of fast inverse square root with
+// the same fast approach used in Quake III
+int fxp_rsqrt(int fxp1)
+{
+    return 0;
+}
+
 
 // Implementation of powxy_l(x) using pow2() and lg2():
 // x^y == 2^( y * lg2(x) )

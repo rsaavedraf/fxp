@@ -46,7 +46,7 @@
 #define WDELTA_DIV 1.2L
 
 static int fracbit_configs[] = {8, 11, 16, 24, 28, 31};
-//static int fracbit_configs[] = {29};
+//static int fracbit_configs[] = {16};
 /*
 static int fracbit_configs[] = {
 31, 30,
@@ -74,8 +74,9 @@ static long double larger_delta = 0.0;
 static long double largest_delta = 0.0;
 static long double largest_madelta = 0.0;
 static int largest_delta_fbits = 0;
-static int twarnings = 0;
-static int nwarnings = 0;
+static unsigned long twarnings = 0;
+static unsigned long nwarnings = 0;
+static unsigned long ttests = 0;
 
 static int frac_bits;
 static int whole_bits;
@@ -92,6 +93,7 @@ const long double GRAD_TO_RAD = PI_AS_LD / 180.0L;
 
 static void test_fxp(char *s, long double d_assert_val, int fxp1)
 {
+        ttests++;
         printf("%s\n", s);
         printf("    exp: ");
         if (d_assert_val <= FXP_UNDEF_LD)
@@ -151,7 +153,7 @@ static void test_fxp(char *s, long double d_assert_val, int fxp1)
         } else {
                 nwarnings++;
                 fracbit_nwarnings[frac_bits]++;
-                printf("\n***** Warning %d: d=%1.2LE for %1.2LE (from %1.2LE to MAX %1.2LE allowed for %d f.bits)\n",
+                printf("\n***** Warning %lu: d=%1.2LE for %1.2LE (from %1.2LE to MAX %1.2LE allowed for %d f.bits)\n",
                             nwarnings, delta, df,
                             min_warn_delta,
                             max_warn_delta,
@@ -237,6 +239,14 @@ static long double get_sqrt_target(int x)
         return get_target(sqrtl(fxp2ld(x)));
 }
 
+/*
+static long double get_rsqrt_target(int x)
+{
+        if ((x == FXP_UNDEF) || (x <= 0)) return FXP_UNDEF_LD;
+        if (x == FXP_POS_INF) return 0;
+        return get_target(1.0L/sqrtl(fxp2ld(x)));
+}
+*/
 
 /*
 Expected output from 2^( y * lg2(x) ) given the combination of inputs x and y:
@@ -1073,9 +1083,25 @@ void test_sqrt(char * msg, int x)
         long double tgt = get_sqrt_target(x);
         if (TEST_L) {
                 printf("sqrt_l("); test_fxp(msg, tgt, fxp_sqrt_l(x));
+                if (FXP_whole_bits >= 3) {
+                        // The sqrt implementation based on cordic
+                        // requires at least 3 whole bits
+                        printf("sqrt_cordic_l("); test_fxp(msg, tgt, fxp_sqrt_cordic_l(x));
+                }
         }
         printf("sqrt(");   test_fxp(msg, tgt, fxp_sqrt(x));
 }
+
+/*
+void test_rsqrt(char * msg, int x)
+{
+        long double tgt = get_rsqrt_target(x);
+        if (TEST_L) {
+                printf("rsqrt_l("); test_fxp(msg, tgt, fxp_rsqrt_l(x));
+        }
+        printf("rsqrt(");   test_fxp(msg, tgt, fxp_rsqrt(x));
+}
+*/
 
 void test_powxy(char * msg, int x, int y)
 {
@@ -1172,18 +1198,26 @@ void test_sqroots()
 {
         printf("\nTesting square roots for %d frac bits:\n", FXP_frac_bits);
         test_sqrt("largest)",   FXP_MAX);
-        test_sqrt("428.56)",    1797550741);    // problematic for 22 bits
+        int n = 1797550741; // problematic for 22 bits
+        printf("n   ==   "); print_fxp(n); printf("\n");
+        test_sqrt("n)",         n);
         test_sqrt("16)",        fxp(16));
         test_sqrt("12.1)",      d2fxp(12.1));
+        test_sqrt("9)",         d2fxp(9.0));
         test_sqrt("4)",         fxp(4));
+        test_sqrt("3)",         fxp(3));
         test_sqrt("2)",         fxp(2));
+        test_sqrt("1.999)",     d2fxp(1.999999999));
         test_sqrt("1.5)",       d2fxp(1.5));
         test_sqrt("1+tiniest)", fxp_add(fxp(1), 1));
         test_sqrt("1)",         fxp(1));
         test_sqrt("1-tiniest)", fxp_sub(fxp(1), 1));
-        test_sqrt("0.986)",     2118421993);    // problematic for 31 bits
+        n = 2118421993; // problematic for 31 bits
+        printf("n   ==   "); print_fxp(n); printf("\n");
+        test_sqrt("n)",         n);
         test_sqrt("0.75)",      d2fxp(0.75));
         test_sqrt("0.5)",       d2fxp(0.5));
+        test_sqrt("0.499999)",  d2fxp(0.499999999));
         test_sqrt("0.333)",     d2fxp(0.33333));
         test_sqrt("0.25)",      d2fxp(0.25));
         test_sqrt("0.125)",     d2fxp(0.125));
@@ -1192,6 +1226,16 @@ void test_sqroots()
         test_sqrt("0.00364)",   d2fxp(0.00364));
         test_sqrt("tiniest)",   1);
 }
+
+/*
+void test_rsqroots()
+{
+        printf("\nTesting reverse square roots for %d frac bits:\n", FXP_frac_bits);
+        test_rsqrt("+INF)",     FXP_POS_INF);
+        test_rsqrt("1)",        fxp(1));
+        test_rsqrt("tiniest)",  1);
+}
+*/
 
 void test_powersxy()
 {
@@ -1460,9 +1504,9 @@ void test_ops_with_rand_nums()
                         }
                 }
                 printf("frac bits: %d", frac_bits);
-                printf("\n    n1 = "); print_fxp(n1);
-                printf("\n    n2 = "); print_fxp(n2);
-                printf("\n    n3 = "); print_fxp(n3); printf("\n");
+                printf("\nn1  ==   "); print_fxp(n1);
+                printf("\nn2  ==   "); print_fxp(n2);
+                printf("\nn3  ==   "); print_fxp(n3); printf("\n");
 
                 if (TEST_BASICS) {
                         // Test that roundtrip conversions from fxp
@@ -1795,6 +1839,7 @@ int main(void)
                 }
                 if (TEST_SQRT) {
                         test_sqroots();
+                        //test_rsqroots();
                 }
                 if (TEST_POWXY) {
                         test_powersxy();
@@ -1813,7 +1858,7 @@ int main(void)
                 }
                 // ==========================================
 
-                printf("\n%d Warnings for %d frac bits.\n", \
+                printf("\n%lu Warnings for %d frac bits.\n", \
                             nwarnings, frac_bits);
                 if (nwarnings > 0) {
                         printf("Largest delta was: %1.2LE (max allowed: %1.2LE)\n", \
@@ -1830,7 +1875,8 @@ int main(void)
         }
 
         printf("\nSummary of FXP Tests:\n");
-        printf("Grand total of %d warnings checking %d configurations.\n", \
+        printf("Total number of tests done: %lu\n", ttests);
+        printf("Grand total of %lu warnings checking %d configurations:\n", \
                     twarnings, nconfigs);
         printf("F.bits  #Warnings  #Thr.cases  Max Delta   Max Delta Allowed   Extr.Powxy Cases\n");
         for (int nfb = 0; nfb < nconfigs; nfb++) {

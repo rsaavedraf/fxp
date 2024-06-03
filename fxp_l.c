@@ -24,15 +24,15 @@
 #include "print_as_bits.h"
 #endif
 
-const unsigned long FXP_PI_I64 = 0x6487ED5110B4611Au;
-const unsigned long FXP_LG2_10_I64 = 0x6A4D3C25E68DC57Fu;
-const unsigned long FXP_LG2_E_I64 = 0x5C551D94AE0BF85Eu;
-const unsigned long FXP_LN_2_I64 = 0x58B90BFBE8E7BCD6u;
-const unsigned long FXP_LG10_2_I64 = 0x268826A13EF3FDE6u;
+const unsigned long FXP_PI_I64 = 0x6487ED5110B4611AuL;
+const unsigned long FXP_LG2_10_I64 = 0x6A4D3C25E68DC57FuL;
+const unsigned long FXP_LG2_E_I64 = 0x5C551D94AE0BF85EuL;
+const unsigned long FXP_LN_2_I64 = 0x58B90BFBE8E7BCD6uL;
+const unsigned long FXP_LG10_2_I64 = 0x268826A13EF3FDE6uL;
 
 const unsigned long ULONG_ALL_ONES = ~0uL;
 const unsigned long ULONG_ALL_ONES_RS1 = ~0uL >> 1;
-const unsigned long ULONG_SIGN = ~ULONG_ALL_ONES_RS1;
+//const unsigned long ULONG_SIGN = ~ULONG_ALL_ONES_RS1;
 
 // For the BKM lg2 calculation when using longs.
 // Values in this array are: a[k] = lg2(1 + 1/2^k) represented as
@@ -43,16 +43,16 @@ const unsigned long ULONG_SIGN = ~ULONG_ALL_ONES_RS1;
 // implicitely later, for 1 extra bit of precision.
 // 63 frac bits corresponds to a precision of 18.96 decimal digits
 static const unsigned long FXP_BKM_LOGS_L[] = {
-        0x8000000000000000u, 0x4AE00D1CFDEB43CFu, 0x2934F0979A3715FCu, 0x15C01A39FBD6879Fu,
-        0xB31FB7D64898B3Eu, 0x5AEB4DD63BF61CCu, 0x2DCF2D0B85A4531u, 0x16FE50B6EF08517u,
-        0xB84E236BD563BAu, 0x5C3E0FFC29D593u, 0x2E24CA6E87E8A8u, 0x1713D62F7957C3u,
-        0xB8A476150DFE4u, 0x5C53AC47E94D8u, 0x2E2A32762FA6Bu, 0x1715305002E4Au, // 16 entries
-        0xB8A9DED47C11u, 0x5C55067F6E58u, 0x2E2A89050622u, 0x171545F3D72Bu,
-        0xB8AA35640A7u, 0x5C551C23599u, 0x2E2A8E6E01Eu, 0x1715474E163u,
-        0xB8AA3ACD06u, 0x5C551D7D98u, 0x2E2A8EC491u, 0x17154763BAu,
-        0xB8AA3B239u, 0x5C551D933u, 0x2E2A8EC9Fu, 0x171547651u,     //  32 entries
-        0xB8AA3B28u, 0x5C551D94u, 0x2E2A8ECAu, 0x17154765u,
-        0xB8AA3B2u, 0x5C551D9u, 0x2E2A8ECu, 0x1715476u,     // 40 entries *
+        0x8000000000000000uL, 0x4AE00D1CFDEB43CFuL, 0x2934F0979A3715FCuL, 0x15C01A39FBD6879FuL,
+        0xB31FB7D64898B3EuL, 0x5AEB4DD63BF61CCuL, 0x2DCF2D0B85A4531uL, 0x16FE50B6EF08517uL,
+        0xB84E236BD563BAuL, 0x5C3E0FFC29D593uL, 0x2E24CA6E87E8A8uL, 0x1713D62F7957C3uL,
+        0xB8A476150DFE4uL, 0x5C53AC47E94D8uL, 0x2E2A32762FA6BuL, 0x1715305002E4AuL, // 16 entries
+        0xB8A9DED47C11uL, 0x5C55067F6E58uL, 0x2E2A89050622uL, 0x171545F3D72BuL,
+        0xB8AA35640A7uL, 0x5C551C23599uL, 0x2E2A8E6E01EuL, 0x1715474E163uL,
+        0xB8AA3ACD06uL, 0x5C551D7D98uL, 0x2E2A8EC491uL, 0x17154763BAuL,
+        0xB8AA3B239uL, 0x5C551D933uL, 0x2E2A8EC9FuL, 0x171547651uL,     //  32 entries
+        0xB8AA3B28uL, 0x5C551D94uL, 0x2E2A8ECAuL, 0x17154765uL,
+        0xB8AA3B2uL, 0x5C551D9uL, 0x2E2A8ECuL, 0x1715476uL,     // 40 entries *
         /*
         0xB8AA3Bu, 0x5C551Du, 0x2E2A8Eu, 0x171547u,
         0xB8AA3u, 0x5C551u, 0x2E2A8u, 0x17154u,
@@ -61,8 +61,8 @@ static const unsigned long FXP_BKM_LOGS_L[] = {
         0xB8u, 0x5Cu, 0x2Eu, 0x17u,
         0xBu, 0x5u, 0x2u, 0x1u,
         0x0u
-        // Starting with the row marked with the *, each entry is exactly
-        // a 4-bit right-shift of the value 4 positions earlier
+        // Starting with the row marked with the * (after first 36 entries),
+        // each entry is exactly a 4-bit right-shift of the value 4 positions earlier
         */
 };
 
@@ -76,29 +76,32 @@ static const unsigned long FXP_BKM_LOGS_L[] = {
 // https://en.wikipedia.org/wiki/CORDIC
 // https://en.wikibooks.org/wiki/Trigonometry/For_Enthusiasts/The_CORDIC_Algorithm
 static const unsigned long FXP_CORDIC_ANGLES_L[] = {
-0x3243F6A8885A308Du, 0x1DAC670561BB4F68u, 0x0FADBAFC96406EB1u, 0x07F56EA6AB0BDB71u, // 4 entries
-0x03FEAB76E59FBD39u, 0x01FFD55BBA97624Au, 0x00FFFAAADDDB94D5u, 0x007FFF5556EEEA5Cu, // 8
-0x003FFFEAAAB7776Eu, 0x001FFFFD5555BBBBu, 0x000FFFFFAAAAADDEu, 0x0007FFFFF555556Fu, // 12
-0x0003FFFFFEAAAAABu, 0x0001FFFFFFD55555u, 0x0000FFFFFFFAAAAAu, 0x00007FFFFFFF5555u, // 16
-0x00003FFFFFFFEAAAu, 0x00001FFFFFFFFD55u, 0x00000FFFFFFFFFAAu, 0x000007FFFFFFFFF5u, // 20
-0x000003FFFFFFFFFEu, 0x0000020000000000u, 0x0000010000000000u, 0x0000008000000000u, // 24
-0x0000004000000000u, 0x0000002000000000u, 0x0000001000000000u, 0x0000000800000000u, // 28
-0x0000000400000000u, 0x0000000200000000u, 0x0000000100000000u, 0x0000000080000000u  // 32
+0x3243F6A8885A308DuL, 0x1DAC670561BB4F68uL, 0x0FADBAFC96406EB1uL, 0x07F56EA6AB0BDB71uL, // 4 entries
+0x03FEAB76E59FBD39uL, 0x01FFD55BBA97624AuL, 0x00FFFAAADDDB94D5uL, 0x007FFF5556EEEA5CuL, // 8
+0x003FFFEAAAB7776EuL, 0x001FFFFD5555BBBBuL, 0x000FFFFFAAAAADDEuL, 0x0007FFFFF555556FuL, // 12
+0x0003FFFFFEAAAAABuL, 0x0001FFFFFFD55555uL, 0x0000FFFFFFFAAAAAuL, 0x00007FFFFFFF5555uL, // 16
+0x00003FFFFFFFEAAAuL, 0x00001FFFFFFFFD55uL, 0x00000FFFFFFFFFAAuL, 0x000007FFFFFFFFF5uL, // 20
+0x000003FFFFFFFFFEuL, 0x0000020000000000uL, 0x0000010000000000uL, 0x0000008000000000uL, // 24
+0x0000004000000000uL, 0x0000002000000000uL, 0x0000001000000000uL, 0x0000000800000000uL, // 28
+0x0000000400000000uL, 0x0000000200000000uL, 0x0000000100000000uL, 0x0000000080000000uL  // 32
 /*
-0x0000000040000000u, 0x0000000020000000u, 0x0000000010000000u, 0x0000000008000000u,
-0x0000000004000000u, 0x0000000002000000u, 0x0000000001000000u, 0x0000000000800000u,
-0x0000000000400000u, 0x0000000000200000u, 0x0000000000100000u, 0x0000000000080000u,
-0x0000000000040000u, 0x0000000000020000u, 0x0000000000010000u, 0x0000000000008000u,
-0x0000000000004000u, 0x0000000000002000u, 0x0000000000001000u, 0x0000000000000800u,
-0x0000000000000400u, 0x0000000000000200u, 0x0000000000000100u, 0x0000000000000080u,
-0x0000000000000040u, 0x0000000000000020u, 0x0000000000000010u, 0x0000000000000008u,
-0x0000000000000004u, 0x0000000000000002u, 0x0000000000000001u, 0x0000000000000000u, // 64
+0x0000000040000000uL, 0x0000000020000000uL, 0x0000000010000000uL, 0x0000000008000000uL,
+0x0000000004000000uL, 0x0000000002000000uL, 0x0000000001000000uL, 0x0000000000800000uL,
+0x0000000000400000uL, 0x0000000000200000uL, 0x0000000000100000uL, 0x0000000000080000uL,
+0x0000000000040000uL, 0x0000000000020000uL, 0x0000000000010000uL, 0x0000000000008000uL,
+0x0000000000004000uL, 0x0000000000002000uL, 0x0000000000001000uL, 0x0000000000000800uL,
+0x0000000000000400uL, 0x0000000000000200uL, 0x0000000000000100uL, 0x0000000000000080uL,
+0x0000000000000040uL, 0x0000000000000020uL, 0x0000000000000010uL, 0x0000000000000008uL,
+0x0000000000000004uL, 0x0000000000000002uL, 0x0000000000000001uL, 0x0000000000000000uL, // 64
 */
 };
 
-// Cordic scaling factor: 0.607252935008881256169446752504929
+// Cordic scaling factor for sin & cos: 0.607252935008881256169446752504929
 // Cordic scaling factor as fxp with 62 frac bits
-static const unsigned long FXP_CORDIC_KFACTOR_L = 0x26DD3B6A10D7969Au;
+static const unsigned long FXP_CORDIC_KFACTOR_L = 0x26DD3B6A10D7969AuL;
+
+// Cordic scaling factor for sqrt
+static const unsigned long FXP_SQRT_CORDIC_SCALER_L = 0x4D47A1C803AE2783uL;
 
 // Auxiliary struct used internally for lg2
 typedef struct lg2tuple_l {
@@ -107,14 +110,17 @@ typedef struct lg2tuple_l {
 } lg2tuple_l;
 
 // A super_fxp is not just a "bigger FXP," it also has its own
-// fxp configuration (it's own number of whole vs. frac bits,)
-// independent of the global fxp setting, always carrying this
-// individual configuration within.
-const super_fxp_l SFXP_ZERO_L = {0, 1, 0ul};
+// fxp configuration (it's own number of whole bits,
+// and number of frac bits,) independent of the global fxp setting,
+// always carrying this individual configuration within.
+// Fields are: sign, number of whole bits, actual number (as an unsigned long)
+//const super_fxp_l SFXP_ZERO_L = {0, 1, 0ul};
 const super_fxp_l SFXP_LG2_10_FACTOR_L = {0, 3, FXP_LG2_10_I64};
 const super_fxp_l SFXP_LG2_E_FACTOR_L = {0, 2, FXP_LG2_E_I64};
 const super_fxp_l SFXP_LN_2_FACTOR_L = {0, 1, FXP_LN_2_I64};
 const super_fxp_l SFXP_LG10_2_FACTOR_L = {0, 1, FXP_LG10_2_I64};
+const super_fxp_l SFXP_SQRT_CORDIC_SCALER_L = {0, 2, FXP_SQRT_CORDIC_SCALER_L};
+
 
 static inline int fxp_nbits_l(unsigned long x)
 {
@@ -239,14 +245,14 @@ static inline super_fxp_l get_fxp_x_sfxp_l(int x, super_fxp_l c)
 // r-shift a long, no rounding
 static inline long rshift_long(long n, unsigned int nbits)
 {
-        return (n < 0l)? ~((~n) >> nbits): n >> nbits;
+        return (n < 0L)? ~((~n) >> nbits): n >> nbits;
 }
 
 // r-shift a long by shift, rounding its last bit
 static inline int rshift_long_rounding(long n, unsigned int shift)
 {
         if (n >= 0) {
-                int rbit = shift? (int) ((n >> (shift - 1)) & 1ul): 0;
+                int rbit = shift? (int) ((n >> (shift - 1)) & 1uL): 0;
                 int res = (int) ((n >> shift) + rbit);
                 //#ifdef VERBOSE
                 //printf("n: %016lX (%lu),  shift: %d,  rbit: %d,  result: %08X (%d)\n", \
@@ -255,7 +261,7 @@ static inline int rshift_long_rounding(long n, unsigned int shift)
                 return res;
         } else {
                 long posn = -n;
-                int rbit = shift? (int) ((posn >> (shift - 1)) & 1ul): 0;
+                int rbit = shift? (int) ((posn >> (shift - 1)) & 1uL): 0;
                 return -((int) ((posn >> shift) + rbit));
         }
 }
@@ -721,7 +727,7 @@ static inline unsigned long fxp_bkm_emode_l(unsigned long argument, \
                 unsigned long const z = y + FXP_BKM_LOGS_L[k];
                 #ifdef VERBOSE_BKM
                 printf("k:%2d,  z:%16lX,  z as ld:%.19Lf\n", \
-                        k, z, print_ulong_as_ld(z, 63));
+                        k, z, print_ulong_as_ld(z, FXP_LONG_BITS_M1));
                 #endif
                 if (z <= argument) {
                         y = z;
@@ -729,13 +735,13 @@ static inline unsigned long fxp_bkm_emode_l(unsigned long argument, \
                         #ifdef VERBOSE_BKM
                         printf("\tUpdating y (x%16lX) und x (x%16lX)\n", y, x);
                         printf("\tx as long double: %.19Lf\n", \
-                                        print_ulong_as_ld(x, 62));
+                                        print_ulong_as_ld(x, FXP_LONG_BITS_M2));
                         #endif
                 }
         }
         #ifdef VERBOSE_BKM
         printf("bkm_emode_l returning x = %lX  (%.19Lf)\n", \
-                        x, print_ulong_as_ld(x, 62));
+                        x, print_ulong_as_ld(x, FXP_LONG_BITS_M2));
         #endif
         return x;
 }
@@ -924,6 +930,117 @@ int fxp_sqrt_l(int fxp1)
                 fxp_pow2_wpos_l(w, bkmearg, FXP_sqrt_pw_loops);
 }
 
+static inline long fxp_sqrt_cordic_kernel_l(long xin)
+{
+        #ifdef VERBOSE
+        printf("\tkernel calculation for sqrt(%lX)\n", xin);
+        #endif
+        int k = 4; // Used for the repeated (3*k + 1) iteration steps
+        long x = xin + FXP_quarter_l;
+        long y = xin - FXP_quarter_l;
+        long npw2 = FXP_half_l, xtmp, ytmp;
+        for (int idx = 1; idx <= FXP_sqrt_cordic_loops; idx++) {
+                xtmp = x >> idx;
+                ytmp = y >> idx;
+                if (y < 0L) {
+                    x += ytmp;
+                    y += xtmp;
+                } else {
+                    x -= ytmp;
+                    y -= xtmp;
+                }
+                if (idx == k) {
+                        xtmp = x >> idx;
+                        ytmp = y >> idx;
+                        if (y < 0L) {
+                            x += ytmp;
+                            y += xtmp;
+                        } else {
+                            x -= ytmp;
+                            y -= xtmp;
+                        }
+                        k = 3*k + 1;
+                }
+                npw2 = npw2 >> 1;
+        }
+        return x;
+}
+
+/*
+ * Square root implementation using CORDIC
+ * Note: this initial implementations requires +2 to be
+ * representable in the current fxp configuration, so at least
+ * 3 whole bits are needed
+ */
+int fxp_sqrt_cordic_l(int fxp1)
+{
+        int shifted;
+        long ksqrt;
+        super_fxp_l sres, scaled;
+        // Find an even integer c, so that:
+        // x = u * 2^c (with 0.5 <= u < 2)
+        // Then we calculate sqrt(x) = sqrt(u) * 2^(c/2)
+        if (fxp1 >= FXP_two) {
+                if (fxp1 == FXP_POS_INF) return FXP_POS_INF;
+                // (Notice that here c will be strictly > 0 because
+                // the input x is already known to be >= 2)
+                int c = FXP_whole_bits_m1 - __builtin_clz(fxp1);
+                if ((c % 2) != 0) c++;  // We want an even c
+                //u = u >> c;
+                long u = ((long) fxp1) << (FXP_INT_BITS - c);
+                #ifdef VERBOSE
+                printf("\n\tCase 1: u>=2, c:%d, loops:%d\n", c, FXP_sqrt_cordic_loops);
+                #endif
+                ksqrt = fxp_sqrt_cordic_kernel_l(u);
+                sres = sfxp_l_create(0, FXP_whole_bits, ksqrt);
+                scaled = get_sfxp_x_sfxp_l(sres, SFXP_SQRT_CORDIC_SCALER_L);
+                // scaled is now == sqrt(u)
+                // Now shift it, same as multiplying it by 2^(c/2)
+                scaled.nwbits += (c >> 1);
+        } else {
+                if (fxp1 < 0) return FXP_UNDEF;
+                if (fxp1 == 0) return 0;
+                int c = __builtin_clz(fxp1) - FXP_whole_bits;
+                if ((c % 2) != 0) c++;
+                long u = ((long) fxp1) << (FXP_INT_BITS + c);
+                #ifdef VERBOSE
+                printf("\n\tCase 2: u<2, c:-%d, loops:%d\n", c, FXP_sqrt_cordic_loops);
+                #endif
+                ksqrt = fxp_sqrt_cordic_kernel_l(u);
+                sres = sfxp_l_create(0, FXP_whole_bits, ksqrt);
+                scaled = get_sfxp_x_sfxp_l(sres, SFXP_SQRT_CORDIC_SCALER_L);
+                // scaled is now == sqrt(u)
+                // Now shift it, same as multiplying it by 2^(-c/2)
+                scaled.nwbits -= (c >> 1);
+        }
+        shifted = sfxp_l_2_fxp(scaled);
+        #ifdef VERBOSE
+        print_sfxp_l("kernel:  ", sres); printf("\n");
+        print_sfxp_l("scaled:  ", scaled);
+        printf("shifted: "); print_fxp(shifted); printf("\n");
+        #endif
+        return shifted;
+}
+
+
+// Implementation of an inverse square root approximation,
+// same fast approach used in Quake III
+int fxp_rsqrt_l(int fxp1)
+{
+        if (fxp1 < 0) return FXP_UNDEF;
+        if (fxp1 == 0) return FXP_POS_INF;
+        if (fxp1 == FXP_POS_INF) return 0;
+        return 0;
+        /*
+        int x2 = (fxp1 >> 1);
+        int y = fxp_rsqrt_magicn_l - (fxp1 >> 1);
+        return fxp_mul_l(y,
+                        fxp_sub(fxp_rsqrt_1p5_l,
+                                fxp_mul_l(x2, fxp_mul_l(y, y))));
+        */
+}
+
+
 /*
 Implementation of powxy_l(x) using pow2_l() and lg2_l():
      x^y == 2^( y * lg2(x) )
@@ -1062,14 +1179,13 @@ static inline fxptuple_l fxp_cordic_cossin_l(long x)
 {
         // argument assumed to be within [-pi/2, pi/2],
         // and l-shifted like the Cordic factor and angles,
-        // so with 62 frac bits
+        // so with 62 frac bits, or FXP_LONG_BITS_M2
         long lc = FXP_CORDIC_KFACTOR_L;
-        long ls = 0l;
+        long ls = 0L;
         long newc;
         long a = 0;
         #ifdef VERBOSE
-        long double denom = (1ul << (FXP_LONG_BITS - 2));
-        //long double cdenom = (1ul << (FXP_LONG_BITS - 2));
+        long double denom = (1uL << FXP_LONG_BITS_M2);
         printf("Running CORDIC for %.4Lf (%.4Lfº)", x/denom, x*180.0L/(denom*acosl(-1.0L)));
         #endif
         for (int i = 0; i < FXP_cordic_loops; i++) {
@@ -1120,11 +1236,11 @@ static inline fxptuple_l fxp_cordic_cossin_l(long x)
         // and l-shifted like the Cordic factor and angles,
         // so with 62 frac bits
         long lc = FXP_CORDIC_KFACTOR_L;
-        long ls = 0l;
+        long ls = 0L;
         long lc_shifted, ls_shifted;
         long a = 0;
         #ifdef VERBOSE
-        long double denom = (1ul << (FXP_LONG_BITS - 2));
+        long double denom = (1ul << FXP_LONG_BITS_M2);
         printf("Running CORDIC for %.4Lf (%.4Lfº)", x/denom, x*180.0L/(denom*acosl(-1.0L)));
         #endif
         for (int i = 0; i < FXP_cordic_loops; i++) {
