@@ -134,7 +134,7 @@ int main(void)
         long double gain = 1;
         int k = 4;
         long double product = 1.0L;
-        for (int i=10; i<=30; i++) {
+        for (int i=1; i<=30; i++) {
                 // compute sqrt( 1 - 2^(-2i) )
                 long double s = powl(2.0L, 2*i);
                 long double p = sqrtl( 1.0L - 1.0L/s );
