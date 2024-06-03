@@ -222,7 +222,7 @@ unsigned long inspect_long_double_aux(long double x, int verbose)
                 print_ulong_as_bin(hi); printf(" "); print_ulong_as_bin(lo);
         }
         // Round last bit in hi ulong
-        if ((lo >> FXP_LONG_BITS_M1) & 1uL) hi++;
+        if ((lo >> (LONG_BITS - 1)) & 1uL) hi++;
         if (verbose) {
                 printf("\n\tRounded Hexa: ");
                 printf("0x%016lX\n", hi);
