@@ -753,7 +753,7 @@ int fxp_set_frac_bits(int nfracbits)
         // default WDELTA_MAX = 3.0L.
         // Note that at least 3 whole bits required for this implementation
         // fracbits     Loops needed
-        // 29           15
+        // 29           15      // <-- can pass with 14, but with many close warnings, preferably 15
         // 28           14
         // 27           14
         // 26           14
@@ -766,7 +766,7 @@ int fxp_set_frac_bits(int nfracbits)
         // 19           12
         // 18           12
         // 17           12
-        // 16           12
+        // 16           11      // <-- can pass with 11, with a few close warnings
         // 15           11
         // 14           11
         // 13           11
@@ -777,11 +777,11 @@ int fxp_set_frac_bits(int nfracbits)
         //  8            9
         //  7            9
         //  6            9
-        //  5            8
+        //  5            9
         //  4            8
-        // The following formula closely matches that table
+        // The following formula matches that table
         FXP_sqrt_cordic_loops = (FXP_frac_bits - 1)/4 + \
-                (FXP_frac_bits==20 || FXP_frac_bits==16? 9: 8);
+                ((FXP_frac_bits==20)? 9: 8);
 
         return FXP_frac_bits;
 }

@@ -134,7 +134,7 @@ int main(void)
         long double gain = 1;
         int k = 4;
         long double product = 1.0L;
-        for (int i=1; i<=30; i++) {
+        for (int i=1; i<=20; i++) {
                 // compute sqrt( 1 - 2^(-2i) )
                 long double s = powl(2.0L, 2*i);
                 long double p = sqrtl( 1.0L - 1.0L/s );
@@ -143,7 +143,7 @@ int main(void)
                         product *= p;
                         k = 3*k + 1;
                 }
-                if ((i == 1) || ((i % 10) == 0) || (i == 64)) {
+                if ((i == 1) || ((i % 5) == 0)) {
                         long double invproduct = 1.0L / product;
                         printf("i:%2d, prod:%41.38Lf, 1/prod:%41.38Lf\n", i, product, invproduct);
                         //unsigned long ulvalue = get_ulong_bits_from_ldouble(product);

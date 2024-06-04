@@ -100,8 +100,8 @@ static const unsigned long FXP_CORDIC_ANGLES_L[] = {
 // Cordic scaling factor as fxp with 62 frac bits
 static const unsigned long FXP_CORDIC_KFACTOR_L = 0x26DD3B6A10D7969AuL;
 
-// Cordic scaling factor for sqrt
-static const unsigned long FXP_SQRT_CORDIC_SCALER_L = 0x4D47A1C803AE2783uL;
+// Cordic scaling factor for sqrt, for up to 15 iterations
+static const unsigned long FXP_SQRT_CORDIC_SCALER_L = 0x4D47A1C7D035F245uL;
 
 // Auxiliary struct used internally for lg2
 typedef struct lg2tuple_l {
