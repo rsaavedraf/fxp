@@ -11,20 +11,25 @@ following CMU SEI's INT32-C recommendations. For further details:
 
 lg2(), pow2() implemented using the [BKM algorithm](https://en.wikipedia.org/wiki/BKM_algorithm)
 
-Additional logarithm and power functions (ln, lg10, exp, pow10, sqrt, and 
-powxy,) all implemented through lg2 and pow2. Behind the scenes, these 
-functions work with longs or emulated longs, so as to avoid calculation 
-inaccuracies that would inevitably appear if working just with the chosen 
-number of frac bits, or just with int-size precision. Goals of this 
-implementation are mostly flexibility (hence the configurable frac bits,) yet 
-also ultimate precision if desired. All tests, including those for the power 
-functions, should ideally run with no inaccuracy warnings, or as few as 
-possible, regardless of frac bits in use.
+Additional logarithm and power functions (ln, lg10, exp, pow10, and 
+powxy,) all implemented through lg2 and pow2.
 
 Trigonometric functions sin() and cos() implemented using the [CORDIC algorithm](https://en.wikipedia.org/wiki/CORDIC)
 
+Square root now also implemented using CORDIC (more than twice as fast compared to
+implementation combining lg2 and pow2.)
+
+Behind the scenes, these functions work with longs or emulated longs,
+so as to avoid calculation inaccuracies that would inevitably appear
+if working just with the chosen number of frac bits, or just with
+int-size precision. Goals of this implementation are mostly flexibility
+(hence the configurable frac bits,) yet also configurable and even
+ultimate precision if desired. All tests should ideally run with no
+inaccuracy warnings, or as few as possible, regardless of frac bits in use.
+
 Later:
 - Finish trigonometric functions
+- Include an inverse square root function (1/sqrt(x))
 - Saturated mode
 - Rewrite in Rust maybe?
 

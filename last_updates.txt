@@ -792,10 +792,20 @@ in order to avoid asserts from the tester under WDELTA_MAX = 3.0L.
 Using "uL" as suffix for unsigned long constant definitions.
 Other minor consistency polishings of the code and output.
 
+2024-06-04
+Added fxp_sqrt_cordic_l() to the relative execution time measurements
+taken by fxp_xtimes. It calculates a square root with comparable
+accuracy taking only 42% - 48% (Arm - Intel) of the time it takes
+the sqrt_l() implementation to do it!
+The CORDIC implementation is then clearly significantly better,
+more than twice as fast compared to composing lg2 and pow2.
+
+
+
+
 
 Pending:
-Finish cordic-based sqrt, and compare with initial sqrt implementation based on lg2 and pow2
-Implement an inverse sqrt function (1 / sqrt(x))
 Finish implementing trigonometric functions
+Add an inverse sqrt function (1 / sqrt(x))
 Saturated mode?
 Rewrite in Rust?
