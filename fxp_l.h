@@ -27,8 +27,8 @@ int fxp_pow2_l(int fxp1);
 int fxp_exp_l(int fxp1);
 
 int fxp_pow10_l(int fxp1);
+int fxp_sqrt_alt_l(int fxp1);
 int fxp_sqrt_l(int fxp1);
-int fxp_sqrt_cordic_l(int fxp1);
 int fxp_powxy_l(int fxp1, int fxp2);
 
 fxptuple fxp_cos_sin_l(int fxp1);

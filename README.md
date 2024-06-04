@@ -16,8 +16,8 @@ powxy,) all implemented through lg2 and pow2.
 
 Trigonometric functions sin() and cos() implemented using the [CORDIC algorithm](https://en.wikipedia.org/wiki/CORDIC)
 
-Square root now also implemented using CORDIC (more than twice as fast compared to
-implementation combining lg2 and pow2.)
+Square root now also implemented using CORDIC (achieving same accuracy, yet
+more than twice as fast compared to implementation combining lg2 and pow2!)
 
 Behind the scenes, these functions work with longs or emulated longs,
 so as to avoid calculation inaccuracies that would inevitably appear

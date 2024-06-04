@@ -913,7 +913,9 @@ int fxp_pow10_l(int fxp1)
 
 // Square root implementation as:
 // sqrt(x) = 2^( 0.5 * lg2(x) )
-int fxp_sqrt_l(int fxp1)
+// Renaming it as "_alt" (alternative) making the more
+// efficient Cordic-based implementation the default one
+int fxp_sqrt_alt_l(int fxp1)
 {
         if (fxp1 < 0) return FXP_UNDEF;
         if (fxp1 == 0) return 0;
@@ -970,11 +972,13 @@ static inline long fxp_sqrt_cordic_kernel_l(long xin)
  * Square root implementation using CORDIC
  * Note: this initial implementations requires +2 to be
  * representable in the current fxp configuration, so at least
- * 3 whole bits are needed
+ * 3 whole bits are needed.
+ * Renaming it as the default sqrt using longs, since its
+ * more than twice as fast as the implementation based on
+ * lg2 and pow2
  */
-int fxp_sqrt_cordic_l(int fxp1)
+int fxp_sqrt_l(int fxp1)
 {
-        int shifted;
         long ksqrt;
         super_fxp_l sres, scaled;
         // Find an even integer c, so that:
@@ -985,7 +989,7 @@ int fxp_sqrt_cordic_l(int fxp1)
                 // (Notice that here c will be strictly > 0 because
                 // the input x is already known to be >= 2)
                 int c = FXP_whole_bits_m1 - __builtin_clz(fxp1);
-                if ((c % 2) != 0) c++;  // We want an even c
+                c += (c % 2);  // We want an even c
                 //u = u >> c;
                 long u = ((long) fxp1) << (FXP_INT_BITS - c);
                 #ifdef VERBOSE
@@ -1001,7 +1005,7 @@ int fxp_sqrt_cordic_l(int fxp1)
                 if (fxp1 < 0) return FXP_UNDEF;
                 if (fxp1 == 0) return 0;
                 int c = __builtin_clz(fxp1) - FXP_whole_bits;
-                if ((c % 2) != 0) c++;
+                c += (c % 2);
                 long u = ((long) fxp1) << (FXP_INT_BITS + c);
                 #ifdef VERBOSE
                 printf("\n\tCase 2: u<2, c:-%d, loops:%d\n", c, FXP_sqrt_cordic_loops);
@@ -1013,7 +1017,7 @@ int fxp_sqrt_cordic_l(int fxp1)
                 // Now shift it, same as multiplying it by 2^(-c/2)
                 scaled.nwbits -= (c >> 1);
         }
-        shifted = sfxp_l_2_fxp(scaled);
+        int shifted = sfxp_l_2_fxp(scaled);
         #ifdef VERBOSE
         print_sfxp_l("kernel:  ", sres); printf("\n");
         print_sfxp_l("scaled:  ", scaled);

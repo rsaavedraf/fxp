@@ -1743,9 +1743,16 @@ int fxp_pow10(int fxp1)
                                     FXP_POWX_LOOPS);
 }
 
-// Implementation of square root as:
-// sqrt(x) = 2^( 0.5 * lg2(x) )
+// Default implementation of sqrt using CORDIC,
+// needs 3 whole bits
 int fxp_sqrt(int fxp1)
+{
+        return 0;
+}
+
+// Alternative implementation of square root as:
+// sqrt(x) = 2^( 0.5 * lg2(x) )
+int fxp_sqrt_alt(int fxp1)
 {
         if (fxp1 < 0) return FXP_UNDEF;
         if (fxp1 == 0) return 0;

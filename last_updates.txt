@@ -798,8 +798,16 @@ taken by fxp_xtimes. It calculates a square root with comparable
 accuracy taking only 42% - 48% (Arm - Intel) of the time it takes
 the sqrt_l() implementation to do it!
 The CORDIC implementation is then clearly significantly better,
-more than twice as fast compared to composing lg2 and pow2.
+more than twice as fast compared to composing lg2 and pow2 while
+achieving the same accuracy. Its only disadvantage would be that
+it requires at least 3 whole bits, so can't be used with more than
+29 frac bits, at least not this current implementation.
 
+Renaming the sqrt functions, so fxp_sqrt_cordic_l() in fxp_l.c
+becomes fxp_sqrt_l(), so that it's the default one using longs.
+The original sqrt_l function that uses lg2 and pow2 is still kept
+and renamed as an 'alternative' with fxp_sqrt_alt_l().
+Doing the same for sqrt functions in fxp.c
 
 
 

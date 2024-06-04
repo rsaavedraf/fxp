@@ -89,6 +89,7 @@ int fxp_lg10(int fxp1);
 int fxp_pow2(int fxp1);
 int fxp_exp(int fxp1);
 int fxp_pow10(int fxp_x);
+int fxp_sqrt_alt(int fxp1);
 int fxp_sqrt(int fxp1);
 int fxp_powxy(int fxp_x, int fxp_y);
 
