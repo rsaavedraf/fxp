@@ -39,13 +39,13 @@ int main(void) {
         long double tlg2, tlg2_l, tlg2_mul, tlg2_mul_l, tln, tln_l;
         long double tpow2, tpow2_l, texp, texp_l, tpow10, tpow10_l;
         long double tlg10, tlg10_l, tsqrt_alt, tsqrt_alt_l, tpowxy, tpowxy_l;
-        long double tcos_l, tsin_l, tcossin_l, tsqrt_cordic_l;
+        long double tcos_l, tsin_l, tcossin_l, tsqrt_cordic_l, tsqrt_cordic;
         long double avgadd, avgadd_l, avgmul, avgmul_l, avgmul_d;
         long double avgdiv, avgdiv_l, avglg2, avglg2_l, avglg2_mul;
         long double avglg2_mul_l, avgln, avgln_l, avglg10, avglg10_l;
         long double avgpow2, avgpow2_l, avgexp, avgexp_l;
         long double avgpow10, avgpow10_l, avgsqrt_alt, avgsqrt_alt_l;
-        long double avgpowxy, avgpowxy_l, avgsqrt_cordic_l;
+        long double avgpowxy, avgpowxy_l, avgsqrt_cordic_l, avgsqrt_cordic;
         long double avgcos_l, avgsin_l, avgcossin_l;
         // Times for the system's native operations
         long double tadd_sys, tmul_sys, tdiv_sys;
@@ -94,6 +94,7 @@ int main(void) {
         avgsqrt_alt = 0.0;
         avgsqrt_alt_l = 0.0;
         avgsqrt_cordic_l = 0.0;
+        avgsqrt_cordic = 0.0;
         avgadd_sys = 0.0;
         avgmul_sys = 0.0;
         avgdiv_sys = 0.0;
@@ -129,6 +130,7 @@ int main(void) {
                 tsqrt_alt = 0.0;
                 tsqrt_alt_l = 0.0;
                 tsqrt_cordic_l = 0.0;
+                tsqrt_cordic = 0.0;
                 tcos_l = 0.0;
                 tsin_l = 0.0;
                 tcossin_l = 0.0;
@@ -585,6 +587,23 @@ int main(void) {
                         tsqrt_alt += dt;
                         avgsqrt_alt += dt;
 
+                        // Calculation of sqrt of fxp's using ints and CORDIC
+                        t0 = clock();
+                        for (int i = 0; i < MAX_OPS; i++) {
+                                x = fxp_sqrt(n1);
+                                x = fxp_sqrt(n2);
+                                for (int j = 0; j < nvals; j++) {
+                                        y = val[j];
+                                        x = fxp_sqrt(n1);
+                                        x = fxp_sqrt(n2);
+                                        x = fxp_sqrt(n3);
+                                }
+                        }
+                        t1 = clock();
+                        dt = ((double) t1 - t0);
+                        tsqrt_cordic += dt;
+                        avgsqrt_cordic += dt;
+
                         // Calculation of powxy of fxp's using
                         // lg2 and pow2
                         // make n3 negative to enforce the calculations
@@ -670,6 +689,8 @@ int main(void) {
                             tpow10 / tadd, tpow10 / tpow2);
                 printf("\tsqrt_alt     : %6.2Lf  (about %5.2Lfx pow2, using lg2 & pow2)\n", \
                             tsqrt_alt / tadd, tsqrt_alt / tpow2);
+                printf("\tsqrt         : %6.2Lf  (about %5.2Lfx tsqrt_alt, using CORDIC)\n", \
+                            tsqrt_cordic / tadd, tsqrt_cordic / tsqrt_alt);
                 printf("\tpowxy        : %6.2Lf  (about %5.2Lfx pow2, using lg2 & pow2)\n", \
                             tpowxy / tadd, tpowxy / tpow2);
                 printf("Using longs:\n");
@@ -691,8 +712,8 @@ int main(void) {
                             tpow10_l / tadd, tpow10_l / tpow2);
                 printf("\tsqrt_alt_l   : %6.2Lf  (about %5.2Lfx sqrt_alt, using lg2_l & pow2_l)\n", \
                             tsqrt_alt_l / tadd, tsqrt_alt_l / tsqrt_alt);
-                printf("\tsqrt_l       : %6.2Lf  (about %5.2Lfx sqrt_l, using CORDIC)\n", \
-                            tsqrt_cordic_l / tadd, tsqrt_cordic_l / tsqrt_alt_l);
+                printf("\tsqrt_l       : %6.2Lf  (about %5.2Lfx sqrt, using CORDIC and longs)\n", \
+                            tsqrt_cordic_l / tadd, tsqrt_cordic_l / tsqrt_cordic);
                 printf("\tpowxy_l      : %6.2Lf  (about %5.2Lfx pow2, using lg2_l & pow2_l)\n", \
                             tpowxy_l / tadd, tpowxy_l / tpow2);
                 printf("\tcossin_l     : %6.2Lf  (using CORDIC)\n", tcossin_l / tadd);
@@ -729,6 +750,7 @@ int main(void) {
         avgsqrt_alt /= nconfigs;
         avgsqrt_alt_l /= nconfigs;
         avgsqrt_cordic_l /= nconfigs;
+        avgsqrt_cordic /= nconfigs;
         avgpowxy /= nconfigs;
         avgpowxy_l /= nconfigs;
         avgcossin_l /= nconfigs;
@@ -756,6 +778,9 @@ int main(void) {
         printf("\tsqrt_alt     : %6.2Lf  (about %5.2Lfx pow2, using lg2 & pow2)\n", \
                     avgsqrt_alt / avgadd, \
                     avgsqrt_alt / avgpow2);
+        printf("\tsqrt         : %6.2Lf  (about %5.2Lfx sqrt_alt, using CORDIC and longs)\n", \
+                    avgsqrt_cordic / avgadd, \
+                    avgsqrt_cordic / avgsqrt_alt);
         printf("\tpowxy        : %6.2Lf  (about %5.2Lfx pow2, using lg2 & pow2)\n", \
                     avgpowxy / avgadd, \
                     avgpowxy / avgpow2);
@@ -786,9 +811,9 @@ int main(void) {
         printf("\tsqrt_alt_l   : %6.2Lf  (about %5.2Lfx sqrt_alt, using lg2_l & pow2_l)\n", \
                     avgsqrt_alt_l / avgadd, \
                     avgsqrt_alt_l / avgsqrt_alt);
-        printf("\tsqrt_l       : %6.2Lf  (about %5.2Lfx sqrt_alt_l, using CORDIC)\n", \
+        printf("\tsqrt_l       : %6.2Lf  (about %5.2Lfx sqrt, using CORDIC and longs)\n", \
                     avgsqrt_cordic_l / avgadd, \
-                    avgsqrt_cordic_l / avgsqrt_alt_l);
+                    avgsqrt_cordic_l / avgsqrt_cordic);
         printf("\tpowxy_l      : %6.2Lf  (about %5.2Lfx pow2, using lg2_l & pow2_l)\n", \
                     avgpowxy_l / avgadd, \
                     avgpowxy_l / avgpow2);
