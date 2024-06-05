@@ -809,6 +809,15 @@ The original sqrt_l function that uses lg2 and pow2 is still kept
 and renamed as an 'alternative' with fxp_sqrt_alt_l().
 Doing the same for sqrt functions in fxp.c
 
+2024-06-05
+Added an arithmetic rshift function for ulongys (ulongy_rshift_as_signed)
+needed for the CORDIC implementation of sqrt using only ints.
+Added a simple test for it in ulongy_tester.c
+Implemented sqrt with cordic using only ints, basically mirroring
+exactly the implementation in fxp_l, just using only ints.
+Cleaned up of some comments. Removed spurious struct definitions
+that were not actually being used (fxptuple_ul, tuple_ul).
+
 
 
 

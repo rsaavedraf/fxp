@@ -203,12 +203,6 @@ typedef struct lg2tuple {
         ulongy mantissa;
 } lg2tuple;
 
-// A tuple of ulongy's
-typedef struct fxptuple_ul {
-        ulongy a;
-        ulongy b;
-} tuple_ul;
-
 const fxptuple FXP_TUPLE_UNDEFS = {FXP_UNDEF, FXP_UNDEF};
 
 const unsigned int SFXP_MAX_WBITS = FXP_LONG_BITS - FXP_FRAC_BITS_MIN;
@@ -262,7 +256,9 @@ int FXP_almost1 = (1 << FXP_FRAC_BITS_DEF) - 1;
 long FXP_one_l = 1L << (FXP_INT_BITS + FXP_FRAC_BITS_DEF);
 long FXP_half_l = 1L << (FXP_INT_BITS_M1 + FXP_FRAC_BITS_DEF);
 long FXP_quarter_l = 1L << (FXP_INT_BITS_M2 + FXP_FRAC_BITS_DEF);
-long FXP_two_l = 1L << (FXP_INT_BITS + 1 + FXP_FRAC_BITS_DEF);
+
+ulongy FXP_quarter_ulongy = { 1 << (FXP_FRAC_BITS_DEF - 2), 0 };
+ulongy FXP_half_ulongy = { 1 << (FXP_FRAC_BITS_DEF - 1), 0 };
 
 /*
 // Auxiliary magic number for inverse square root
@@ -469,11 +465,15 @@ static const ulongy FXP_CORDIC_ANGLES[] = {
 
 static const ulongy FXP_CORDIC_KFACTOR = { 0x26DD3B6Au, 0x10D7969Au };
 
+// Cordic scaling factor for sqrt, for up to 15 iterations
+static const ulongy FXP_SQRT_CORDIC_SCALER = { 0x4D47A1C7, 0xD035F245uL };
+static const super_fxp SFXP_SQRT_CORDIC_SCALER = {0, 2, FXP_SQRT_CORDIC_SCALER};
+
 #ifdef VERBOSE
 void print_sfxp(char * msg, super_fxp x)
 {
         printf("\n%s", msg);
-        printf("Super_fxp  : {x%X, ", x.nwbits);
+        printf("Super_fxp  : {%d, %d, ", x.sign, x.nwbits);
         print_ulongy_as_hex(x.number);
         printf("}\n");
 }
@@ -744,7 +744,8 @@ int fxp_set_frac_bits(int nfracbits)
         FXP_one_l = ((long) FXP_one) << FXP_INT_BITS;
         FXP_half_l = ((long) FXP_half) << FXP_INT_BITS;
         FXP_quarter_l = ((long) FXP_quarter) << FXP_INT_BITS;
-        FXP_two_l = ((long) FXP_two) << FXP_INT_BITS;
+        FXP_half_ulongy = ulongy_create( FXP_half, 0 );
+        FXP_quarter_ulongy = ulongy_create( FXP_quarter, 0 );
         FXP_lg2_maxloops = FXP_frac_bits;
         FXP_sqrt_pw_loops = FXP_frac_bits + FXP_whole_bits/2 + 1;
         FXP_cordic_loops = FXP_frac_bits + 2;
@@ -1743,15 +1744,147 @@ int fxp_pow10(int fxp1)
                                     FXP_POWX_LOOPS);
 }
 
-// Default implementation of sqrt using CORDIC,
-// needs 3 whole bits
-int fxp_sqrt(int fxp1)
+
+static inline ulongy fxp_sqrt_cordic_kernel(ulongy xin)
 {
-        return 0;
+        #ifdef VERBOSE
+        printf("\tkernel calculation for sqrt(");
+        print_ulongy_as_hex(xin); printf(")\n");
+        #endif
+        int k = 4; // Used for the repeated (3*k + 1) iteration steps
+        ulongy x = ulongy_add(xin, FXP_quarter_ulongy);
+        ulongy y = ulongy_sub(xin, FXP_quarter_ulongy);
+        ulongy xtmp, ytmp;
+        for (int idx = 1; idx <= FXP_sqrt_cordic_loops; idx++) {
+                //xtmp = x >> idx;
+                //ytmp = y >> idx;
+                xtmp = rshift_ulongy_as_signed(x, idx);
+                ytmp = rshift_ulongy_as_signed(y, idx);
+                #ifdef VERBOSE
+                printf("x:");   print_ulongy_as_hex(x);
+                printf("  y:"); print_ulongy_as_hex(y);
+                printf("  xtmp:"); print_ulongy_as_hex(xtmp);
+                printf("  ytmp:"); print_ulongy_as_hex(ytmp);
+                #endif
+                //if (y < 0L) {
+                if (ulongy_compare(y, ULONGY_ALL_ONES_RS1) > 0) {
+                        //x += ytmp;
+                        //y += xtmp;
+                        #ifdef VERBOSE
+                        printf("\ty < 0\n");
+                        #endif
+                        x = ulongy_add(x, ytmp);
+                        y = ulongy_add(y, xtmp);
+                } else {
+                        //x -= ytmp;
+                        //y -= xtmp;
+                        #ifdef VERBOSE
+                        printf("\ty >= 0\n");
+                        #endif
+                        x = ulongy_sub(x, ytmp);
+                        y = ulongy_sub(y, xtmp);
+                }
+                if (idx == k) {
+                        #ifdef VERBOSE
+                        printf("\t\trepetition");
+                        #endif
+                        //xtmp = x >> idx;
+                        //ytmp = y >> idx;
+                        xtmp = rshift_ulongy_as_signed(x, idx);
+                        ytmp = rshift_ulongy_as_signed(y, idx);
+                        //if (y < 0L) {
+                        if (ulongy_compare(y, ULONGY_ALL_ONES_RS1) > 0) {
+                                //x += ytmp;
+                                //y += xtmp;
+                                #ifdef VERBOSE
+                                printf("\t\ty < 0\n");
+                                #endif
+                                x = ulongy_add(x, ytmp);
+                                y = ulongy_add(y, xtmp);
+                        } else {
+                                //x -= ytmp;
+                                //y -= xtmp;
+                                #ifdef VERBOSE
+                                printf("\t\ty >= 0\n");
+                                #endif
+                                x = ulongy_sub(x, ytmp);
+                                y = ulongy_sub(y, xtmp);
+                        }
+                        k = 3*k + 1;
+                }
+        }
+        return x;
 }
 
-// Alternative implementation of square root as:
-// sqrt(x) = 2^( 0.5 * lg2(x) )
+
+/*
+ * Default implementation of square root using CORDIC
+ * Note: this initial implementations requires +2 to be
+ * representable in the current fxp configuration, so at least
+ * 3 whole bits are needed.
+ * This code mirrors line by line the implementation in fxp_l.c,
+ * but here adapted to use only ints.
+ * Renaming it as the default sqrt using longs, since its
+ * more than twice as fast as the implementation based on
+ * lg2 and pow2
+ */
+int fxp_sqrt(int fxp1)
+{
+        ulongy ksqrt;
+        super_fxp sres, scaled;
+        int c;
+        // Find an even integer c, so that:
+        // x = u * 2^c (with 0.5 <= u < 2)
+        // Then we calculate sqrt(x) = sqrt(u) * 2^(c/2)
+        if (fxp1 >= FXP_two) {
+                if (fxp1 == FXP_POS_INF) return FXP_POS_INF;
+                // (Notice that here c will be strictly > 0 because
+                // the input x is already known to be >= 2)
+                c = FXP_whole_bits_m1 - __builtin_clz(fxp1);
+                c += (c % 2);  // We want an even c
+                //u = u >> c;
+                //ulongy u = ((long) fxp1) << (FXP_INT_BITS - c);
+                ulongy u = ulongy_create(0, fxp1);
+                u = lshift_ulongy(u, FXP_INT_BITS - c);
+                #ifdef VERBOSE
+                printf("\n\tCase 1: u>=2, c:%d, loops:%d\n", c, FXP_sqrt_cordic_loops);
+                #endif
+                ksqrt = fxp_sqrt_cordic_kernel(u);
+                sres = sfxp_create(0, FXP_whole_bits, ksqrt);
+                scaled = get_sfxp_x_sfxp(sres, SFXP_SQRT_CORDIC_SCALER);
+                // scaled is now == sqrt(u)
+                // Now shift it, same as multiplying it by 2^(c/2)
+                scaled.nwbits += (c >> 1);
+        } else {
+                if (fxp1 < 0) return FXP_UNDEF;
+                if (fxp1 == 0) return 0;
+                c = __builtin_clz(fxp1) - FXP_whole_bits;
+                c += (c % 2);
+                //long u = ((long) fxp1) << (FXP_INT_BITS + c);
+                ulongy u = ulongy_create(0, fxp1);
+                u = lshift_ulongy(u, FXP_INT_BITS + c);
+                #ifdef VERBOSE
+                printf("\n\tCase 2: u<2, c:-%d, loops:%d\n", c, FXP_sqrt_cordic_loops);
+                #endif
+                ksqrt = fxp_sqrt_cordic_kernel(u);
+                sres = sfxp_create(0, FXP_whole_bits, ksqrt);
+                scaled = get_sfxp_x_sfxp(sres, SFXP_SQRT_CORDIC_SCALER);
+                // scaled is now == sqrt(u)
+                // Now shift it, same as multiplying it by 2^(-c/2)
+                scaled.nwbits -= (c >> 1);
+        }
+        int shifted = sfxp_2_fxp(scaled);
+        #ifdef VERBOSE
+        printf("c:%d, new scaled.nwbits:%d\n", c, scaled.nwbits);
+        print_sfxp("kernel:  ", sres);
+        print_sfxp("scaled:  ", scaled);
+        printf("\nshifted: "); print_fxp(shifted); printf("\n\n");
+        #endif
+        return shifted;
+}
+
+// Alternative implementation of square root using lg2 and pow2,
+// calculating it as: sqrt(x) = 2^( 0.5 * lg2(x) )
 int fxp_sqrt_alt(int fxp1)
 {
         if (fxp1 < 0) return FXP_UNDEF;

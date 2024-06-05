@@ -89,7 +89,6 @@ extern int FXP_minus_one;
 extern long FXP_one_l;
 extern long FXP_half_l;
 extern long FXP_quarter_l;
-extern long FXP_two_l;
 extern int FXP_lg2_maxloops;
 extern int FXP_lg2_l_mshift;
 extern int FXP_lg2_l_mshift_m1;

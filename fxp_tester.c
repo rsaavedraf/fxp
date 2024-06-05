@@ -1082,19 +1082,21 @@ void test_sqrt(char * msg, int x)
 {
         long double tgt = get_sqrt_target(x);
         if (TEST_L) {
+                // Test the initial implementation of sqrt (based on lg2 and pow2)
+                // This one does not have the 3-whole-bit requirement, but it
+                // takes slightly more than 2x the execution time
+                printf("sqrt_alt_l("); test_fxp(msg, tgt, fxp_sqrt_alt_l(x));
                 if (FXP_whole_bits >= 3) {
                         // Test default sqrt implementation based on CORDIC,
                         // now made the default square root using longs (sqrt_l).
                         // Requires at least 3 whole bits
                         printf("sqrt_l("); test_fxp(msg, tgt, fxp_sqrt_l(x));
                 }
-                // Test the initial implementation of sqrt (based on lg2 and pow2)
-                // This one does not have the 3-whole-bit requirement, but it
-                // takes slightly more than 2x the execution time
-                printf("sqrt_alt_l("); test_fxp(msg, tgt, fxp_sqrt_alt_l(x));
         }
-        //printf("sqrt(");     test_fxp(msg, tgt, fxp_sqrt(x));
         printf("sqrt_alt("); test_fxp(msg, tgt, fxp_sqrt_alt(x));
+        if (FXP_whole_bits >= 3) {
+                printf("sqrt("); test_fxp(msg, tgt, fxp_sqrt(x));
+        }
 }
 
 /*

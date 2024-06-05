@@ -202,12 +202,14 @@ inline int sfxp_l_2_fxp(super_fxp_l x)
         }
 }
 
+#ifdef VERBOSE
 void print_sfxp_l(char * msg, super_fxp_l x)
 {
         printf("\n%s", msg);
-        printf("Sfxp_l : {%d, %d, x%lX}\n", x.sign, x.nwbits, x.number);
+        printf("Sfxp_l : {%d, %d, x%016lX}\n", x.sign, x.nwbits, x.number);
         printf(" Fxp eq: "); print_fxp(sfxp_l_2_fxp(x)); printf("\n");
 }
+#endif
 
 static inline unsigned long sfxp_l_get_poswhole(super_fxp_l x)
 {
@@ -911,8 +913,8 @@ int fxp_pow10_l(int fxp1)
                                     FXP_POWX_LOOPS);
 }
 
-// Square root implementation as:
-// sqrt(x) = 2^( 0.5 * lg2(x) )
+// Square root implementation using pow2 and lg2,
+// calculating it as sqrt(x) = 2^( 0.5 * lg2(x) )
 // Renaming it as "_alt" (alternative) making the more
 // efficient Cordic-based implementation the default one
 int fxp_sqrt_alt_l(int fxp1)
@@ -935,35 +937,52 @@ int fxp_sqrt_alt_l(int fxp1)
 static inline long fxp_sqrt_cordic_kernel_l(long xin)
 {
         #ifdef VERBOSE
-        printf("\tkernel calculation for sqrt(%lX)\n", xin);
+        printf("\tkernel calculation for sqrt(x%lX)\n", xin);
         #endif
         int k = 4; // Used for the repeated (3*k + 1) iteration steps
         long x = xin + FXP_quarter_l;
         long y = xin - FXP_quarter_l;
-        long npw2 = FXP_half_l, xtmp, ytmp;
+        long xtmp, ytmp;
         for (int idx = 1; idx <= FXP_sqrt_cordic_loops; idx++) {
                 xtmp = x >> idx;
                 ytmp = y >> idx;
+                #ifdef VERBOSE
+                printf("x:x%016lX  y:x%016lX  xtmp:x%016lX  ytmp:x%016lX", x, y, xtmp, ytmp);
+                #endif
                 if (y < 0L) {
-                    x += ytmp;
-                    y += xtmp;
+                        #ifdef VERBOSE
+                        printf("\ty < 0\n");
+                        #endif
+                        x += ytmp;
+                        y += xtmp;
                 } else {
-                    x -= ytmp;
-                    y -= xtmp;
+                        #ifdef VERBOSE
+                        printf("\ty >= 0\n");
+                        #endif
+                        x -= ytmp;
+                        y -= xtmp;
                 }
                 if (idx == k) {
+                        #ifdef VERBOSE
+                        printf("\t\trepetition  ");
+                        #endif
                         xtmp = x >> idx;
                         ytmp = y >> idx;
                         if (y < 0L) {
-                            x += ytmp;
-                            y += xtmp;
+                                #ifdef VERBOSE
+                                printf("\t\ty < 0\n");
+                                #endif
+                                x += ytmp;
+                                y += xtmp;
                         } else {
-                            x -= ytmp;
-                            y -= xtmp;
+                                #ifdef VERBOSE
+                                printf("\t\ty >= 0\n");
+                                #endif
+                                x -= ytmp;
+                                y -= xtmp;
                         }
                         k = 3*k + 1;
                 }
-                npw2 = npw2 >> 1;
         }
         return x;
 }
@@ -981,6 +1000,7 @@ int fxp_sqrt_l(int fxp1)
 {
         long ksqrt;
         super_fxp_l sres, scaled;
+        int c;
         // Find an even integer c, so that:
         // x = u * 2^c (with 0.5 <= u < 2)
         // Then we calculate sqrt(x) = sqrt(u) * 2^(c/2)
@@ -988,7 +1008,7 @@ int fxp_sqrt_l(int fxp1)
                 if (fxp1 == FXP_POS_INF) return FXP_POS_INF;
                 // (Notice that here c will be strictly > 0 because
                 // the input x is already known to be >= 2)
-                int c = FXP_whole_bits_m1 - __builtin_clz(fxp1);
+                c = FXP_whole_bits_m1 - __builtin_clz(fxp1);
                 c += (c % 2);  // We want an even c
                 //u = u >> c;
                 long u = ((long) fxp1) << (FXP_INT_BITS - c);
@@ -1004,7 +1024,7 @@ int fxp_sqrt_l(int fxp1)
         } else {
                 if (fxp1 < 0) return FXP_UNDEF;
                 if (fxp1 == 0) return 0;
-                int c = __builtin_clz(fxp1) - FXP_whole_bits;
+                c = __builtin_clz(fxp1) - FXP_whole_bits;
                 c += (c % 2);
                 long u = ((long) fxp1) << (FXP_INT_BITS + c);
                 #ifdef VERBOSE
@@ -1019,9 +1039,10 @@ int fxp_sqrt_l(int fxp1)
         }
         int shifted = sfxp_l_2_fxp(scaled);
         #ifdef VERBOSE
-        print_sfxp_l("kernel:  ", sres); printf("\n");
+        printf("c:%d, new scaled.nwbits:%d\n", c, scaled.nwbits);
+        print_sfxp_l("kernel:  ", sres);
         print_sfxp_l("scaled:  ", scaled);
-        printf("shifted: "); print_fxp(shifted); printf("\n");
+        printf("\nshifted: "); print_fxp(shifted); printf("\n\n");
         #endif
         return shifted;
 }
