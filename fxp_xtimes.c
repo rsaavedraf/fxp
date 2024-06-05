@@ -689,7 +689,7 @@ int main(void) {
                             tpow10 / tadd, tpow10 / tpow2);
                 printf("\tsqrt_alt     : %6.2Lf  (about %5.2Lfx pow2, using lg2 & pow2)\n", \
                             tsqrt_alt / tadd, tsqrt_alt / tpow2);
-                printf("\tsqrt         : %6.2Lf  (about %5.2Lfx tsqrt_alt, using CORDIC)\n", \
+                printf("\tsqrt         : %6.2Lf  (about %5.2Lfx sqrt_alt, using CORDIC)\n", \
                             tsqrt_cordic / tadd, tsqrt_cordic / tsqrt_alt);
                 printf("\tpowxy        : %6.2Lf  (about %5.2Lfx pow2, using lg2 & pow2)\n", \
                             tpowxy / tadd, tpowxy / tpow2);
