@@ -26,6 +26,7 @@ ulongy ulongy_sub(ulongy x, ulongy y);
 ulongy ulongy_negate(ulongy x);
 ulongy lshift_ulongy(ulongy x, unsigned int lshift);
 ulongy rshift_ulongy(ulongy x, unsigned int rshift);
+ulongy rshift_ulongy_as_signed(ulongy x, unsigned int rshift);
 ulongy rshift_ulongy_rounding(ulongy x, unsigned int rshift);
 unsigned int rshift_ulongy_into_uint_rounding(ulongy x);
 ulongy ulongy_bitwise_and(ulongy x, ulongy y);

@@ -13,6 +13,7 @@
 #include "stdio.h"
 
 const unsigned int ALL_ONES = ~0u;
+const unsigned int SIGN_BIT_MASK = (1u << (sizeof(int)*8 - 1));
 
 inline ulongy ulongy_create(unsigned int vhi, unsigned int vlo)
 {
@@ -64,6 +65,7 @@ inline ulongy ulongy_add(ulongy x, ulongy y)
         return result;
 }
 
+
 // Returns the ulongy that would correspond to the representation
 // of the argument's value negated into two's complement
 inline ulongy ulongy_negate(ulongy x)
@@ -114,6 +116,20 @@ inline ulongy rshift_ulongy(ulongy x, unsigned int rshift)
                 if (rshift >= FXP_LONG_BITS) return ULONGY_ZERO;
                 ulongy shifted = { 0u, x.hi >> (rshift - FXP_INT_BITS) };
                 return shifted;
+        }
+}
+
+inline ulongy rshift_ulongy_as_signed(ulongy x, unsigned int rshift)
+{
+        //printf("rshift_ulongy_as_signed:  x.hi: %08X, SIGN_BIT_MAST: %08X\n", x.hi, SIGN_BIT_MASK);
+        if (x.hi & SIGN_BIT_MASK) {
+                //printf("x is negative, double negating\n");
+                ulongy nx = { ~x.hi, ~x.lo };
+                ulongy rshifted = rshift_ulongy(nx, rshift);
+                ulongy result = { ~rshifted.hi, ~rshifted.lo };
+                return result;
+        } else {
+                return rshift_ulongy(x, rshift);
         }
 }
 
@@ -272,7 +288,7 @@ inline ulongy dmul_ulongy_x_uint(ulongy x, unsigned int y)
 
 void print_ulongy_as_hex(ulongy x)
 {
-        printf("x%X%X", x.hi, x.lo);
+        printf("x%08X%08X", x.hi, x.lo);
 }
 
 void print_ulongy_as_bin(ulongy x)

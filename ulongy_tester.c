@@ -47,12 +47,20 @@ static void print_ulongy(char * msg, ulongy u)
         unsigned int uhi, ulo;
         uhi = ulongy_get_hi(u);
         ulo = ulongy_get_lo(u);
-        printf("%s: {%X,%X}\n", msg, uhi, ulo);
+        printf("%s: {%08X,%08X}\n", msg, uhi, ulo);
         print_uint_as_bin(uhi);
         print_uint_as_bin(ulo);
         printf("\n");
 }
 
+static ulongy ulongy_from_ulong(unsigned long x)
+{
+        //printf("x: %016lX\n", x);
+        unsigned int xhi = (unsigned int) (x >> FXP_INT_BITS);
+        unsigned int xlo = (unsigned int) (x & ((unsigned int) ~0u));
+        //printf("hi: %08X,  lo: %08X\n", xhi, xlo);
+        return ulongy_create(xhi, xlo);
+}
 
 int main(void)
 {
@@ -135,6 +143,17 @@ int main(void)
         print_ulongy("Ulongy rshifted by 0", ubigrs3);
         test_ulongy(bigrs3, ubigrs3);
 
-
+        printf("\n");
+        unsigned long q = (unsigned long) (3L << FXP_INT_BITS) | 512;
+        printf("q: %016lX\n (%lu, signed: %ld)\n", q, q, (long) q);
+        ulongy w = ulongy_from_ulong(q);
+        print_ulongy("w: ", w);
+        print_ulongy("After normal 8 r-shift:", rshift_ulongy(w, 8));
+        print_ulongy("After signed 8 r-shift:", rshift_ulongy_as_signed(w, 8));
+        ulongy nw = ulongy_negate(w);
+        print_ulongy("-w: ", nw);
+        print_ulongy("After normal 8 r-shift:", rshift_ulongy(nw, 8));
+        print_ulongy("After signed 8 r-shift:", rshift_ulongy_as_signed(nw, 8));
+        printf("\n");
         printf("\n\tAll tests passed!\n\n");
 }
