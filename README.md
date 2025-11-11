@@ -28,9 +28,10 @@ ultimate precision if desired. All tests should ideally run with no
 inaccuracy warnings, or as few as possible, regardless of frac bits in use.
 
 Later:
-- Finish trigonometric functions
-- Include an inverse square root function (1/sqrt(x))
-- Saturated mode
+- Finish pending trigonometric functions (asin, acos, tan, atan)
+- Implement non-Cordic-based sqrt function (potentially faster)
+- Include a fast inverse/reverse square root function (1/sqrt(x))
+- Saturated mode?
 - Rewrite in Rust maybe?
 
 &nbsp;

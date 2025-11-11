@@ -818,11 +818,19 @@ exactly the implementation in fxp_l, just using only ints.
 Cleaned up of some comments. Removed spurious struct definitions
 that were not actually being used (fxptuple_ul, tuple_ul).
 
-
+2025-11-11
+An issue was posted on the repo for the missing fxp_get_min_f.
+The tester program has been long using the variables directly,
+but those min max functions were still defined on the header,
+yet indeed not implemented. Now implemented, and closed the issue.
+Edited the README.md to refine the next To-Do's, which are
+also refined here below at the end of this file.
 
 
 Pending:
-Finish implementing trigonometric functions
-Add an inverse sqrt function (1 / sqrt(x))
-Saturated mode?
-Rewrite in Rust?
+- Finish trigonometric functions (asin, acos, tan, atan)
+- Implement non-Cordic-based sqrt function (potentially faster)
+- Include a fast inverse/reverse square root function (1/sqrt(x))
+- Saturated mode?
+- Rewrite in Rust maybe?
+
