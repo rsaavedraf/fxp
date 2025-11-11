@@ -143,6 +143,14 @@ float FXP_max_fx = \
                         / (1uL << (FXP_FRAC_BITS_DEF))
                 + (((float) 1uL) / (1uL << FXP_FRAC_BITS_DEF)) / 2.0;
 
+float fxp_get_min_f() {
+        return FXP_min_f;
+}
+
+float fxp_get_max_f() {
+        return FXP_max_f;
+}
+
 double FXP_min_dx = \
                 -((double) (FXP_MAX >> FXP_FRAC_BITS_DEF) \
                     + ((double) (FXP_MAX & ((1uL << FXP_FRAC_BITS_DEF) - 1))) \
@@ -161,6 +169,14 @@ double FXP_max_dx = \
                     + ((double) (FXP_MAX & ((1uL << FXP_FRAC_BITS_DEF) - 1))) \
                         / (1uL << (FXP_FRAC_BITS_DEF)) \
                 + (((double) 1uL) / (1uL << FXP_FRAC_BITS_DEF)) / 2.0;
+
+double fxp_get_min_d() {
+        return FXP_min_d;
+}
+
+double fxp_get_max_d() {
+        return FXP_max_d;
+}
 
 long double FXP_min_ldx = \
                 -((long double) (FXP_MAX >> FXP_FRAC_BITS_DEF) \
@@ -183,6 +199,14 @@ long double FXP_max_ldx = \
 long double FXP_htiniest_ld = \
                 (((long double) 1uL) \
                     / (1uL << FXP_FRAC_BITS_DEF)) / 2.0L;
+
+long double fxp_get_min_ld() {
+        return FXP_min_ld;
+}
+
+long double fxp_get_max_ld() {
+        return FXP_max_ld;
+}
 
 const unsigned int UINT_ALL_ONES = ~0u;
 const unsigned int UINT_ALL_ONES_RS1 = UINT_ALL_ONES >> 1;
