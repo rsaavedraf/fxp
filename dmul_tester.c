@@ -55,7 +55,7 @@ static void dump_uint(char * msg, unsigned int x)
 
 static void dump_ulong(char * msg, unsigned long x)
 {
-        printf("%s: %20ul  (x%16lX,\n\tb", msg, x, x);
+        printf("%s: %20lu  (x%16lX,\n\tb", msg, x, x);
         print_ulong_as_bin(x);
         printf(")\n");
 }
